@@ -1,6 +1,7 @@
 package openfl.display;
 
 
+import openfl.utils.PerformanceSettings;
 import lime.graphics.cairo.Cairo;
 import lime.ui.MouseCursor;
 import lime.utils.ObjectPool;
@@ -96,6 +97,8 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __cacheBitmapColorTransform:ColorTransform;
 	private var __cacheBitmapData:BitmapData;
 	private var __cacheBitmapRender:Bool;
+	private var __cachedFilters:Array<BitmapFilter>;
+	private var __cachedMask:DisplayObject;
 	private var __cairo:Cairo;
 	private var __children:Array<DisplayObject>;
 	private var __filters:Array<BitmapFilter>;
@@ -109,6 +112,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __objectTransform:Transform;
 	private var __renderable:Bool;
 	private var __renderDirty:Bool;
+	private var __renderMaskWhenDisabled:Bool;
 	private var __renderParent:DisplayObject;
 	private var __renderTransform:Matrix;
 	private var __renderTransformCache:Matrix;
@@ -1429,15 +1433,24 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	private function set_filters (value:Array<BitmapFilter>):Array<BitmapFilter> {
 		
-		if (value != null && value.length > 0) {
+		if (PerformanceSettings.filtersEnabled) {
 			
-			__filters = value;
-			//__updateFilters = true;
+			if (value != null && value.length > 0) {
+				
+				__filters = value;
+				//__updateFilters = true;
+				
+			} else {
+				
+				__filters = null;
+				//__updateFilters = false;
+				
+			}
 			
 		} else {
 			
 			__filters = null;
-			//__updateFilters = false;
+			__cachedFilters = value;
 			
 		}
 		
@@ -1523,20 +1536,44 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 		}
 		
-		if (value != null) {
+		if (PerformanceSettings.maskingEnabled) {
 			
-			value.__isMask = true;
-			value.__maskTarget = this;
+			if (value != null) {
 			
-		}
+				value.__isMask = true;
+				value.__maskTarget = this;
+			
+			}
 		
-		if (__cacheBitmap != null && __cacheBitmap.mask != value) {
-			
-			__cacheBitmap.mask = value;
-			
-		}
+			if (__cacheBitmap != null && __cacheBitmap.mask != value) {
+				
+				__cacheBitmap.mask = value;
+				
+			}
 		
-		return __mask = value;
+			__mask = value;
+			
+		} else {
+			
+			if (__cacheBitmap != null) {
+			
+				__cacheBitmap.mask = null;
+			
+			}
+			
+			__mask = null;
+			__cachedMask = value;
+			
+			
+			if (value != null) {
+			
+				value.__isMask = !__renderMaskWhenDisabled;
+			
+			}
+			
+		} 
+		
+		return value;
 		
 	}
 	
