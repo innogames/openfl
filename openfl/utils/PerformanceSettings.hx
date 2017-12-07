@@ -6,8 +6,21 @@ import openfl.display.DisplayObject;
 @:expose
 @:access(openfl.display.DisplayObject)
 class PerformanceSettings {
+	
+	public static var cacheAsBitmapEnabled(default, null): Bool = true;
 	public static var filtersEnabled(default, null): Bool = true;
 	public static var maskingEnabled(default, null): Bool = true;
+	
+	
+	public static function toggleCachingAsBitmap(): String {
+		
+		cacheAsBitmapEnabled = !cacheAsBitmapEnabled;
+		
+		__toggleCachingAsBitmap(openfl.Lib.current.stage);
+		
+		return "Caching as bitmap " + (cacheAsBitmapEnabled ? "enabled!" : "disabled!");
+		
+	}
 	
 	
 	public static function toggleFilters(): String {
@@ -29,6 +42,34 @@ class PerformanceSettings {
 		return "Masking " + (maskingEnabled ? "enabled!" : "disabled!");
 		
 	}
+	
+	
+	private static function __toggleCachingAsBitmap(displayObject: DisplayObject) {
+		
+		if (cacheAsBitmapEnabled) {
+			
+			displayObject.cacheAsBitmap = displayObject.__cachedCacheAsBitmap;
+			
+		} else {
+			
+			var cachedAsBitmap: Bool = displayObject.cacheAsBitmap;
+			displayObject.cacheAsBitmap = false;
+			displayObject.__cachedCacheAsBitmap = cachedAsBitmap;
+			
+		}
+		
+		var children: Array<DisplayObject> = displayObject.__children;
+		if (children != null && children.length > 0) {
+			
+			for (child in children) {
+				
+				__toggleCachingAsBitmap(child);
+			
+			}
+			
+		}
+		
+	} 
 	
 	
 	private static function __toggleFilters(displayObject: DisplayObject) {
@@ -59,7 +100,7 @@ class PerformanceSettings {
 	} 
 	
 	
-	private static function __toggleMasking(displayObject: DisplayObject, renderMask) {
+	private static function __toggleMasking(displayObject: DisplayObject, renderMask: Bool) {
 		
 		if (maskingEnabled) {
 			
@@ -70,8 +111,8 @@ class PerformanceSettings {
 			var mask: DisplayObject = displayObject.mask;
 			displayObject.mask = null;
 			displayObject.__cachedMask = mask;
-			displayObject.__renderMaskWhenDisabled = renderMask;
 			
+			displayObject.__renderMaskWhenDisabled = renderMask;
 			if (mask != null) {
 				
 				mask.__isMask = !renderMask;

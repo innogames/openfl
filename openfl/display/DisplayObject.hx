@@ -97,6 +97,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __cacheBitmapColorTransform:ColorTransform;
 	private var __cacheBitmapData:BitmapData;
 	private var __cacheBitmapRender:Bool;
+	private var __cachedCacheAsBitmap:Bool;
 	private var __cachedFilters:Array<BitmapFilter>;
 	private var __cachedMask:DisplayObject;
 	private var __cairo:Cairo;
@@ -152,6 +153,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		__alpha = 1;
 		__blendMode = NORMAL;
 		__cacheAsBitmap = false;
+		__cachedCacheAsBitmap = false;
 		__transform = new Matrix ();
 		__visible = true;
 		
@@ -1395,8 +1397,19 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	private function set_cacheAsBitmap (value:Bool):Bool {
 		
+		if (PerformanceSettings.cacheAsBitmapEnabled) {
+			
+			__cacheAsBitmap = value;
+			
+		} else {
+			
+			__cacheAsBitmap = false;
+			__cachedCacheAsBitmap = value;
+			
+		}
+		
 		__setRenderDirty ();
-		return __cacheAsBitmap = value;
+		return value;
 		
 	}
 	
