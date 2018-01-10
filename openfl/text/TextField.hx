@@ -166,6 +166,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		__dirty = true;
 		__layoutDirty = true;
 		__setRenderDirty ();
+		__setLocalBoundsDirty ();
 		
 		__updateText (__text + text);
 		
@@ -579,6 +580,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		__dirty = true;
 		__layoutDirty = true;
 		__setRenderDirty ();
+		__setLocalBoundsDirty ();
 		
 	}
 	
@@ -756,6 +758,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		__dirty = true;
 		__layoutDirty = true;
 		__setRenderDirty ();
+		__setLocalBoundsDirty ();
 		
 	}
 	
@@ -1358,6 +1361,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__dirty = true;
 			__layoutDirty = true;
 			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 		}
 		#end
@@ -1421,6 +1425,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 					__dirty = true;
 					__layoutDirty = true;
 					__setRenderDirty ();
+					__setLocalBoundsDirty ();
 					
 				}
 				
@@ -1690,6 +1695,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__dirty = true;
 			__layoutDirty = true;
 			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 		}
 		
@@ -1821,6 +1827,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		__layoutDirty = true;
 		__dirty = true;
 		__setRenderDirty ();
+		__setLocalBoundsDirty ();
 		
 		return value;
 		
@@ -1841,6 +1848,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__dirty = true;
 			__layoutDirty = true;
 			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 			__displayAsPassword = value;
 			__updateText (__text);
@@ -1910,6 +1918,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__dirty = true;
 			__layoutDirty = true;
 			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 			__textEngine.height = value;
 			#if dom
@@ -1943,6 +1952,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__dirty = true;
 			__layoutDirty = true;
 			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 		}
 		
@@ -1990,6 +2000,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__dirty = true;
 			__layoutDirty = true;
 			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 		}
 		
@@ -2046,6 +2057,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__updateText (__text);
 			__updateScrollH ();
 			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 		}
 		
@@ -2222,6 +2234,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__dirty = true;
 			__layoutDirty = true;
 			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 		} else {
 			
@@ -2351,6 +2364,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__dirty = true;
 			__layoutDirty = true;
 			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 			__textEngine.width = value;
 			
@@ -2381,6 +2395,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__dirty = true;
 			__layoutDirty = true;
 			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 			#if dom
 				if (__renderedOnCanvasWhileOnDOM) {

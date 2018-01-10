@@ -304,6 +304,7 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 		smoothing = false;
 		
 		__setRenderDirty ();
+		__setLocalBoundsDirty ();
 		
 		if (__filters != null && __filters.length > 0) {
 			

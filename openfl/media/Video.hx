@@ -394,6 +394,7 @@ class Video extends DisplayObject implements IShaderDrawable {
 		if (scaleY != 1 || value != __height) {
 			
 			__setTransformDirty ();
+			__setLocalBoundsDirty ();
 			__dirty = true;
 			
 		}
@@ -446,6 +447,7 @@ class Video extends DisplayObject implements IShaderDrawable {
 		if (__scaleX != 1 || __width != value) {
 			
 			__setTransformDirty ();
+			__setLocalBoundsDirty ();
 			__dirty = true;
 			
 		}

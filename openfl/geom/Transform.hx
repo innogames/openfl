@@ -206,6 +206,7 @@ class Transform {
 			__displayObject.__transform.ty = ty;
 			
 			__displayObject.__setTransformDirty ();
+			__displayObject.__setLocalBoundsDirty ();
 			
 		}
 		

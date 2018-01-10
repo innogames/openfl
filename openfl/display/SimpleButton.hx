@@ -282,12 +282,21 @@ class SimpleButton extends InteractiveObject {
 	
 	private override function __renderCanvasMask (renderSession:RenderSession):Void {
 		
-		var bounds = Rectangle.__pool.get ();
-		__getLocalBounds (bounds);
+		if (!__localBoundsDirty) {
 		
-		renderSession.context.rect (0, 0, bounds.width, bounds.height);
+			renderSession.context.rect (0, 0, __localBoundsCache.width, __localBoundsCache.height);
 		
-		Rectangle.__pool.release (bounds);
+		} else {
+		
+			var bounds = Rectangle.__pool.get ();
+			__getLocalBounds (bounds);
+			
+			renderSession.context.rect (0, 0, bounds.width, bounds.height);
+			
+			Rectangle.__pool.release (bounds);
+			
+		}
+		
 		__currentState.__renderCanvasMask (renderSession);
 		
 	}
@@ -480,7 +489,9 @@ class SimpleButton extends InteractiveObject {
 			hitTestState.__renderParent = this;
 			hitTestState.__setRenderDirty ();
 			
+			__setLocalBoundsDirty ();
 		}
+		
 		
 		return this.hitTestState = hitTestState;
 		
@@ -583,6 +594,7 @@ class SimpleButton extends InteractiveObject {
 			}
 			
 			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 		}
 		

@@ -105,7 +105,8 @@ class DisplayObjectContainer extends InteractiveObject {
 			
 			child.__setTransformDirty ();
 			child.__setRenderDirty ();
-			__setRenderDirty();
+			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 			var event = new Event (Event.ADDED, true);
 			event.target = child;
@@ -202,7 +203,8 @@ class DisplayObjectContainer extends InteractiveObject {
 			
 			child.__setTransformDirty ();
 			child.__setRenderDirty ();
-			__setRenderDirty();
+			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 			var event = new Event (Event.REMOVED, true);
 			child.__dispatchWithCapture (event);
@@ -756,12 +758,21 @@ class DisplayObjectContainer extends InteractiveObject {
 			
 		}
 		
-		var bounds = Rectangle.__pool.get ();
-		__getLocalBounds (bounds);
 		
-		renderSession.context.rect (0, 0, bounds.width, bounds.height);
+		if (!__localBoundsDirty) {
 		
-		Rectangle.__pool.release (bounds);
+			renderSession.context.rect (0, 0, __localBoundsCache.width, __localBoundsCache.height);
+			
+		} else {
+				
+			var bounds = Rectangle.__pool.get ();
+			__getLocalBounds (bounds);
+			
+			renderSession.context.rect (0, 0, bounds.width, bounds.height);
+			
+			Rectangle.__pool.release (bounds);
+		
+		}
 		/*for (child in __children) {
 			
 			child.__renderMask (renderSession);

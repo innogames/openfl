@@ -103,6 +103,8 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __interactive:Bool;
 	private var __isMask:Bool;
 	private var __loaderInfo:LoaderInfo;
+	private var __localBoundsDirty: Bool;
+	private var __localBoundsCache: Rectangle;
 	private var __mask:DisplayObject;
 	private var __maskTarget:DisplayObject;
 	private var __name:String;
@@ -148,6 +150,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		__alpha = 1;
 		__blendMode = NORMAL;
 		__cacheAsBitmap = false;
+		__localBoundsDirty = true;
 		__transform = new Matrix ();
 		__visible = true;
 		
@@ -591,6 +594,18 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		rect.x -= __transform.tx;
 		rect.y -= __transform.ty;
 		
+		__localBoundsDirty = false;
+		
+		if (__localBoundsCache == null) {
+			
+			__localBoundsCache = rect.clone ();
+			
+		} else {
+			
+			__localBoundsCache.setTo (rect.x, rect.y, rect.width, rect.height);
+			
+		}
+		
 	}
 	
 	
@@ -867,6 +882,31 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		} else {
 			
 			GLDisplayObject.renderMask (this, renderSession);
+			
+		}
+		
+	}
+	
+	
+	private function __setLocalBoundsDirty ():Void {
+		
+		if (!__localBoundsDirty) {
+			
+			__localBoundsDirty = true;
+			__setParentLocalBoundsDirty ();
+			
+		}
+		
+	}
+	
+	
+	private function __setParentLocalBoundsDirty ():Void {
+		
+		var renderParent = __renderParent != null ? __renderParent : parent;
+		if (renderParent != null && !renderParent.__localBoundsDirty) {
+			
+			renderParent.__localBoundsDirty = true;
+			renderParent.__setParentLocalBoundsDirty ();
 			
 		}
 		
@@ -1442,6 +1482,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		}
 		
 		__setRenderDirty ();
+		__setLocalBoundsDirty ();
 		
 		return value;
 		
@@ -1449,6 +1490,12 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	
 	private function get_height ():Float {
+		
+		if (!__localBoundsDirty) {
+			
+			return __localBoundsCache.height;
+			
+		}
 		
 		var rect = Rectangle.__pool.get ();
 		__getLocalBounds (rect);
@@ -1511,6 +1558,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 			__setTransformDirty ();
 			__setRenderDirty ();
+			__setLocalBoundsDirty ();
 			
 		}
 		
@@ -1520,6 +1568,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			__mask.__maskTarget = null;
 			__mask.__setTransformDirty ();
 			__mask.__setRenderDirty ();
+			__mask.__setLocalBoundsDirty ();
 			
 		}
 		
@@ -1610,6 +1659,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			__transform.d = __rotationCosine * __scaleY;
 			
 			__setTransformDirty ();
+			__setLocalBoundsDirty ();
 			
 		}
 		
@@ -1633,7 +1683,12 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 			if (__transform.b == 0) {
 				
-				if (value != __transform.a) __setTransformDirty ();
+				if (value != __transform.a) {
+					
+					__setTransformDirty ();
+					__setLocalBoundsDirty ();
+					
+				}
 				__transform.a = value;
 				
 			} else {
@@ -1644,6 +1699,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 				if (__transform.a != a || __transform.b != b) {
 					
 					__setTransformDirty ();
+					__setLocalBoundsDirty ();
 					
 				}
 				
@@ -1674,7 +1730,12 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 			if (__transform.c == 0) {
 				
-				if (value != __transform.d) __setTransformDirty ();
+				if (value != __transform.d) {
+					
+					__setTransformDirty ();
+					__setLocalBoundsDirty ();
+					
+				}
 				__transform.d = value;
 				
 			} else {
@@ -1685,6 +1746,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 				if (__transform.d != d || __transform.c != c) {
 					
 					__setTransformDirty ();
+					__setLocalBoundsDirty ();
 					
 				}
 				
@@ -1755,6 +1817,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		}
 		
 		__setTransformDirty ();
+		__setLocalBoundsDirty ();
 		__objectTransform.matrix = value.matrix;
 		__objectTransform.colorTransform = value.colorTransform.__clone();
 		
@@ -1779,6 +1842,12 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	
 	private function get_width ():Float {
+		
+		if (!__localBoundsDirty) {
+			
+			return __localBoundsCache.width;
+			
+		}
 		
 		var rect = Rectangle.__pool.get ();
 		__getLocalBounds (rect);
@@ -1824,7 +1893,12 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	private function set_x (value:Float):Float {
 		
-		if (value != __transform.tx) __setTransformDirty ();
+		if (value != __transform.tx) {
+			
+			__setTransformDirty ();
+			__setParentLocalBoundsDirty();
+			
+		}
 		return __transform.tx = value;
 		
 	}
@@ -1839,7 +1913,12 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	private function set_y (value:Float):Float {
 		
-		if (value != __transform.ty) __setTransformDirty ();
+		if (value != __transform.ty) {
+			
+			__setTransformDirty ();
+			__setParentLocalBoundsDirty();
+			
+		}
 		return __transform.ty = value;
 		
 	}

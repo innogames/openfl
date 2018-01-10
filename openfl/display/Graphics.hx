@@ -1028,7 +1028,8 @@ import js.html.CanvasRenderingContext2D;
 		
 		if (value && __owner != null) {
 			
-			@:privateAccess __owner.__setRenderDirty();
+			@:privateAccess __owner.__setRenderDirty ();
+			@:privateAccess __owner.__setLocalBoundsDirty ();
 			
 		}
 		
