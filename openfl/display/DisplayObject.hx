@@ -126,6 +126,8 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __scrollRect:Rectangle;
 	private var __transform:Matrix;
 	private var __transformDirty:Bool;
+	private var __updateDirty:Bool;
+	private var __updateTraverse:Bool;
 	private var __visible:Bool;
 	private var __worldAlpha:Float;
 	private var __worldAlphaChanged:Bool;
@@ -900,7 +902,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			__setParentRenderDirty ();
 			
 		}
-		
+		__setUpdateDirty();
 	}
 	
 	
@@ -922,7 +924,39 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 		}
 		
+		__setUpdateDirty();
+		
 	}
+	
+	
+	private inline function __setUpdateDirty ():Void {
+ 		
+ 		if (!__updateDirty) {
+ 			
+ 			__updateDirty = true;
+ 			
+ 			// As this DisplayObject needs to be updated, we need to flag all parents to be traversed
+ 			__setParentUpdateTraverse ();
+ 			
+ 		}
+ 		
+ 	}	
+ 	
+ 	
+ 	private function __setParentUpdateTraverse ():Void {
+ 		
+ 		var renderParent = __renderParent != null ? __renderParent : parent;
+ 		
+ 		// Relying on __updateTraverse always being set, is currently too risky and would only bring small performance gain
+ 		// Therefore setting it always to true up to the root objects
+ 		if (renderParent != null/* && !renderParent.__updateTraverse*/) {
+ 			
+ 			renderParent.__updateTraverse = true;
+ 			renderParent.__setParentUpdateTraverse ();
+ 		
+ 		}
+ 		
+ 	}
 	
 	
 	private function __setWorldTransformInvalid ():Void {
@@ -939,7 +973,19 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
+	private function __traverse ():Void {
+		
+		if (__updateDirty) {
+			
+			__update (false, true);
+			
+		}
+	}
+	
+	
 	public function __update (transformOnly:Bool, updateChildren:Bool, ?maskGraphics:Graphics = null):Void {
+		
+		__updateDirty = false;
 		
 		var renderParent = __renderParent != null ? __renderParent : parent;
 		if (__isMask && renderParent == null) renderParent = __maskTarget;
