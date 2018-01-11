@@ -18,6 +18,7 @@ class AbstractRenderer {
 	public var height:Int;
 	public var width:Int;
 	public var transparent:Bool;
+	public var enabled:Bool;
 	public var viewport:Rectangle;
 	
 	private var renderSession:RenderSession;
@@ -27,7 +28,7 @@ class AbstractRenderer {
 	private function new (stage:Stage) {
 		
 		this.stage = stage;
-		
+		enabled = true;
 		width = stage.stageWidth;
 		height = stage.stageHeight;
 		

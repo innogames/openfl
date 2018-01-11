@@ -59,6 +59,8 @@ class CairoRenderer extends AbstractRenderer {
 	
 	public override function render ():Void {
 		
+		if (!enabled) return;
+		
 		renderSession.allowSmoothing = (stage.quality != LOW);
 		
 		stage.__renderCairo (renderSession);

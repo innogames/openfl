@@ -1,7 +1,6 @@
 package openfl.display;
 
 
-import openfl.utils.PerformanceSettings;
 import lime.graphics.cairo.Cairo;
 import lime.ui.MouseCursor;
 import lime.utils.ObjectPool;
@@ -90,6 +89,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	private var __alpha:Float;
 	private var __blendMode:BlendMode;
+	private var __cacheAsBitmapEnabled: Bool = true;
 	private var __cacheAsBitmap:Bool;
 	private var __cacheAsBitmapMatrix:Matrix;
 	private var __cacheBitmap:Bitmap;
@@ -103,11 +103,13 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __cairo:Cairo;
 	private var __children:Array<DisplayObject>;
 	private var __filters:Array<BitmapFilter>;
+	private var __filtersEnabled: Bool = true;
 	private var __graphics:Graphics;
 	private var __interactive:Bool;
 	private var __isMask:Bool;
 	private var __loaderInfo:LoaderInfo;
 	private var __mask:DisplayObject;
+	private var __maskingEnabled: Bool = true;
 	private var __maskTarget:DisplayObject;
 	private var __name:String;
 	private var __objectTransform:Transform;
@@ -1442,7 +1444,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	private function set_cacheAsBitmap (value:Bool):Bool {
 		
-		if (PerformanceSettings.cacheAsBitmapEnabled) {
+		if (__cacheAsBitmapEnabled) {
 			
 			__cacheAsBitmap = value;
 			
@@ -1491,7 +1493,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	private function set_filters (value:Array<BitmapFilter>):Array<BitmapFilter> {
 		
-		if (PerformanceSettings.filtersEnabled) {
+		if (__filtersEnabled) {
 			
 			if (value != null && value.length > 0) {
 				
@@ -1597,7 +1599,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 		}
 		
-		if (PerformanceSettings.maskingEnabled) {
+		if (__maskingEnabled) {
 			
 			if (value != null) {
 			

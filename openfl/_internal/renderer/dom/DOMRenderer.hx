@@ -156,6 +156,8 @@ class DOMRenderer extends AbstractRenderer {
 	
 	public override function render ():Void {
 		
+		if (!enabled) return;
+		
 		renderSession.allowSmoothing = (stage.quality != LOW);
 		
 		if (!stage.__transparent) {
