@@ -979,6 +979,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		
 		if (__updateDirty) {
 			
+			__updateDirty = false;
 			__update (false, true);
 			
 		}
@@ -986,8 +987,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	
 	public function __update (transformOnly:Bool, updateChildren:Bool, ?maskGraphics:Graphics = null):Void {
-		
-		__updateDirty = false;
 		
 		var renderParent = __renderParent != null ? __renderParent : parent;
 		if (__isMask && renderParent == null) renderParent = __maskTarget;
