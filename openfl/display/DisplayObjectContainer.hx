@@ -444,13 +444,6 @@ class DisplayObjectContainer extends InteractiveObject {
 	}
 	
 	
-	private override function __getMouseAllowed ():Bool {
-		
-		return mouseEnabled || mouseChildren;
-		
-	}
-	
-	
 	private override function __getRenderBounds (rect:Rectangle, matrix:Matrix):Void {
 		
 		if (__scrollRect != null) {
@@ -544,7 +537,7 @@ class DisplayObjectContainer extends InteractiveObject {
 					
 					interactive = __children[i].__getInteractive (null);
 					
-					var childHitTestWhenMouseDisabled = hitTestWhenMouseDisabled || (interactive && !__children[i].__getMouseAllowed ()) || (!interactive && !mouseEnabled);
+					var childHitTestWhenMouseDisabled = hitTestWhenMouseDisabled || (interactive && !__children[i].__mouseThroughAllowed ()) || (!interactive && !mouseEnabled);
 					
 					if (interactive || (mouseEnabled && !hitTest) || childHitTestWhenMouseDisabled) {
 						
@@ -552,7 +545,7 @@ class DisplayObjectContainer extends InteractiveObject {
 							
 							hitTest = true;
 							
-							if (!childHitTestWhenMouseDisabled && interactive) {
+							if (!childHitTestWhenMouseDisabled && interactive && stack.length > 0) {
 								
 								break;
 								
@@ -608,6 +601,13 @@ class DisplayObjectContainer extends InteractiveObject {
 		}
 		
 		return false;
+		
+	}
+	
+	
+	private override function __mouseThroughAllowed ():Bool {
+		
+		return mouseEnabled || mouseChildren;
 		
 	}
 	
@@ -995,6 +995,28 @@ class DisplayObjectContainer extends InteractiveObject {
 			
 		}
 		
+	}
+	
+	
+	private override function __traverse ():Void {
+		
+		if (__updateDirty) {
+			
+			__update (false, true);
+			
+		} else if (__updateTraverse) {
+			
+			for (child in __children) {
+				
+				child.__traverse ();
+				
+			}
+			
+		}
+		
+		// This container has been traversed, therefore reset flag
+		__updateTraverse = false;
+			
 	}
 	
 	

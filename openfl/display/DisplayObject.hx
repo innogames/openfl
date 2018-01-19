@@ -123,6 +123,8 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __scrollRect:Rectangle;
 	private var __transform:Matrix;
 	private var __transformDirty:Bool;
+	private var __updateDirty:Bool;
+	private var __updateTraverse:Bool;
 	private var __visible:Bool;
 	private var __worldAlpha:Float;
 	private var __worldAlphaChanged:Bool;
@@ -609,13 +611,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	private function __getMouseAllowed ():Bool {
-		
-		return false;
-		
-	}
-	
-	
 	private function __getRenderBounds (rect:Rectangle, matrix:Matrix):Void {
 		
 		if (__scrollRect == null) {
@@ -742,6 +737,13 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			}
 			
 		}
+		
+		return false;
+		
+	}
+	
+	
+	private function __mouseThroughAllowed ():Bool {
 		
 		return false;
 		
@@ -934,7 +936,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			__setParentRenderDirty ();
 			
 		}
-		
+		__setUpdateDirty();
 	}
 	
 	
@@ -956,7 +958,39 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 		}
 		
+		__setUpdateDirty();
+		
 	}
+	
+	
+	private inline function __setUpdateDirty ():Void {
+ 		
+ 		if (!__updateDirty) {
+ 			
+ 			__updateDirty = true;
+ 			
+ 			// As this DisplayObject needs to be updated, we need to flag all parents to be traversed
+ 			__setParentUpdateTraverse ();
+ 			
+ 		}
+ 		
+ 	}	
+ 	
+ 	
+ 	private function __setParentUpdateTraverse ():Void {
+ 		
+ 		var renderParent = __renderParent != null ? __renderParent : parent;
+ 		
+ 		// Relying on __updateTraverse always being set, is currently too risky and would only bring small performance gain
+ 		// Therefore setting it always to true up to the root objects
+ 		if (renderParent != null/* && !renderParent.__updateTraverse*/) {
+ 			
+ 			renderParent.__updateTraverse = true;
+ 			renderParent.__setParentUpdateTraverse ();
+ 		
+ 		}
+ 		
+ 	}
 	
 	
 	private function __setWorldTransformInvalid ():Void {
@@ -973,7 +1007,19 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
+	private function __traverse ():Void {
+		
+		if (__updateDirty) {
+			
+			__update (false, true);
+			
+		}
+	}
+	
+	
 	public function __update (transformOnly:Bool, updateChildren:Bool, ?maskGraphics:Graphics = null):Void {
+		
+		__updateDirty = false;
 		
 		var renderParent = __renderParent != null ? __renderParent : parent;
 		if (__isMask && renderParent == null) renderParent = __maskTarget;
@@ -1091,9 +1137,20 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			var updateTransform = (needRender || (!__cacheBitmap.__worldTransform.equals (__worldTransform)));
 			var hasFilters = (__filters != null && __filters.length > 0);
 			
+			if (hasFilters && !needRender) {
+				
+				for (filter in __filters) {
+					if (filter.__renderDirty) {
+						needRender = true;
+						break;
+					}
+				}
+			
+			}
+			
 			var bitmapWidth = 0, bitmapHeight = 0;
 			
-			if (updateTransform || hasFilters) {
+			if (updateTransform || needRender) {
 				
 				matrix = Matrix.__pool.get ();
 				rect = Rectangle.__pool.get ();
@@ -1104,27 +1161,15 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 				bitmapWidth = Math.ceil (rect.width);
 				bitmapHeight = Math.ceil (rect.height);
 				
-			}
-			
-			if (hasFilters) {
-				
-				if (__cacheBitmap != null && (bitmapWidth != __cacheBitmap.width || bitmapHeight != __cacheBitmap.height)) {
+				if (!needRender && __cacheBitmap != null && (bitmapWidth != __cacheBitmap.width || bitmapHeight !=__cacheBitmap.height)) {
 					
 					needRender = true;
 					
-				} else {
-					
-					for (filter in __filters) {
-						if (filter.__renderDirty) {
-							needRender = true;
-							break;
-						}
-					}
-					
-				}
+				} 
 				
 			}
 			
+		
 			if (needRender) {
 				
 				__cacheBitmapBackground = opaqueBackground;
@@ -1553,6 +1598,9 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	
 	private function set_mask (value:DisplayObject):DisplayObject {
+		if (value == __mask) {
+			return value;
+		}
 		
 		if (value != __mask) {
 			

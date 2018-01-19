@@ -63,6 +63,10 @@ import openfl.utils.TouchData;
 import openfl.profiler.Telemetry;
 #end
 
+#if gl_stats
+import openfl._internal.renderer.opengl.stats.GLStats;
+#end
+
 #if (js && html5)
 import js.html.CanvasElement;
 import js.html.DivElement;
@@ -984,6 +988,10 @@ class Stage extends DisplayObjectContainer implements IModule {
 			Telemetry.__advanceFrame ();
 			#end
 			
+			#if gl_stats
+				GLStats.resetDrawCalls();
+			#end
+			
 			if (__renderer != null && (Stage3D.__active || stage3Ds[0].__contextRequested)) {
 				
 				__renderer.clear ();
@@ -1012,7 +1020,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 			__enterFrame (__deltaTime);
 			__deltaTime = 0;
-			__update (false, true);
+			__traverse ();
 			
 			if (__renderer != null #if !openfl_always_render && __renderDirty #end) {
 				
