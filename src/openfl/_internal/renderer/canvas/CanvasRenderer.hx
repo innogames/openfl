@@ -75,6 +75,7 @@ class CanvasRenderer extends AbstractRenderer {
 	
 	public override function render ():Void {
 		
+		if (!enabled) return;
 		renderSession.allowSmoothing = (stage.quality != LOW);
 		
 		stage.__renderCanvas (renderSession);

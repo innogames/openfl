@@ -92,6 +92,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	private var __alpha:Float;
 	private var __blendMode:BlendMode;
+	private var __cacheAsBitmapEnabled: Bool = true;
 	private var __cacheAsBitmap:Bool;
 	private var __cacheAsBitmapMatrix:Matrix;
 	private var __cacheBitmap:Bitmap;
@@ -99,19 +100,25 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __cacheBitmapColorTransform:ColorTransform;
 	private var __cacheBitmapData:BitmapData;
 	private var __cacheBitmapRender:Bool;
+	private var __cachedCacheAsBitmap:Bool;
+	private var __cachedFilters:Array<BitmapFilter>;
+	private var __cachedMask:DisplayObject;
 	private var __cairo:Cairo;
 	private var __children:Array<DisplayObject>;
 	private var __filters:Array<BitmapFilter>;
+	private var __filtersEnabled: Bool = true;
 	private var __graphics:Graphics;
 	private var __interactive:Bool;
 	private var __isMask:Bool;
 	private var __loaderInfo:LoaderInfo;
 	private var __mask:DisplayObject;
+	private var __maskingEnabled: Bool = true;
 	private var __maskTarget:DisplayObject;
 	private var __name:String;
 	private var __objectTransform:Transform;
 	private var __renderable:Bool;
 	private var __renderDirty:Bool;
+	private var __renderMaskWhenDisabled:Bool;
 	private var __renderParent:DisplayObject;
 	private var __renderTransform:Matrix;
 	private var __renderTransformCache:Matrix;
@@ -191,6 +198,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		__alpha = 1;
 		__blendMode = NORMAL;
 		__cacheAsBitmap = false;
+		__cachedCacheAsBitmap = false;
 		__transform = new Matrix ();
 		__visible = true;
 		
@@ -1432,8 +1440,19 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	private function set_cacheAsBitmap (value:Bool):Bool {
 		
+		if (__cacheAsBitmapEnabled) {
+			
+			__cacheAsBitmap = value;
+			
+		} else {
+			
+			__cacheAsBitmap = false;
+			__cachedCacheAsBitmap = value;
+			
+		}
+		
 		__setRenderDirty ();
-		return __cacheAsBitmap = value;
+		return value;
 		
 	}
 	
@@ -1470,15 +1489,24 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	private function set_filters (value:Array<BitmapFilter>):Array<BitmapFilter> {
 		
-		if (value != null && value.length > 0) {
+		if (__filtersEnabled) {
 			
-			__filters = value;
-			//__updateFilters = true;
+			if (value != null && value.length > 0) {
+				
+				__filters = value;
+				//__updateFilters = true;
+				
+			} else {
+				
+				__filters = null;
+				//__updateFilters = false;
+				
+			}
 			
 		} else {
 			
 			__filters = null;
-			//__updateFilters = false;
+			__cachedFilters = value;
 			
 		}
 		
@@ -1570,21 +1598,45 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 		}
 		
-		if (value != null) {
+		if (__maskingEnabled) {
 			
-			value.__isMask = true;
-			value.__maskTarget = this;
-			value.__setWorldTransformInvalid ();
+			if (value != null) {
 			
-		}
+				value.__isMask = true;
+				value.__maskTarget = this;
+				value.__setWorldTransformInvalid ();
+			
+			}
 		
-		if (__cacheBitmap != null && __cacheBitmap.mask != value) {
-			
-			__cacheBitmap.mask = value;
-			
-		}
+			if (__cacheBitmap != null && __cacheBitmap.mask != value) {
+				
+				__cacheBitmap.mask = value;
+				
+			}
 		
-		return __mask = value;
+			__mask = value;
+			
+		} else {
+			
+			if (__cacheBitmap != null) {
+			
+				__cacheBitmap.mask = null;
+			
+			}
+			
+			__mask = null;
+			__cachedMask = value;
+			
+			
+			if (value != null) {
+			
+				value.__isMask = !__renderMaskWhenDisabled;
+			
+			}
+			
+		} 
+		
+		return value;
 		
 	}
 	

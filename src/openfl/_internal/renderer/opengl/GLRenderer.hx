@@ -213,6 +213,7 @@ class GLRenderer extends AbstractRenderer {
 	
 	public override function render ():Void {
 		
+		if (!enabled) return;
 		gl.viewport (offsetX, offsetY, displayWidth, displayHeight);
 		
 		renderSession.allowSmoothing = (stage.quality != LOW);
