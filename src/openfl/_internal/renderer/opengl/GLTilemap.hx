@@ -15,6 +15,10 @@ import openfl._internal.renderer.opengl.stats.GLStats;
 import openfl._internal.renderer.opengl.stats.DrawCallContext;
 #end
 
+#if profiling 
+import openfl.profiler.Profiler; 
+#end
+
 #if !openfl_debug
 @:fileXml('tags="haxe,release"')
 @:noDebug
@@ -127,7 +131,9 @@ class GLTilemap {
 				cacheShader.data.uImage0.input = cacheBitmapData;
 				renderSession.shaderManager.updateShader (cacheShader);
 				
+				#if profiling Profiler.begin("drawArrays"); #end
 				gl.drawArrays (gl.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
+				#if profiling Profiler.end(); #end
 				
 				#if gl_stats
 					GLStats.incrementDrawCall (DrawCallContext.STAGE);
@@ -164,7 +170,10 @@ class GLTilemap {
 				
 				shader.data.uImage0.input = tileset.__bitmapData;
 				renderSession.shaderManager.updateShader (shader);
+				
+				#if profiling Profiler.begin("drawArrays"); #end
 				gl.drawArrays (gl.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
+				#if profiling Profiler.end(); #end
 				
 				#if gl_stats
 					GLStats.incrementDrawCall (DrawCallContext.STAGE);
@@ -239,7 +248,9 @@ class GLTilemap {
 				shader.data.uImage0.input = cacheBitmapData;
 				renderSession.shaderManager.updateShader (shader);
 				
+				#if profiling Profiler.begin("drawArrays"); #end
 				gl.drawArrays (gl.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
+				#if profiling Profiler.end(); #end
 				
 				#if gl_stats
 					GLStats.incrementDrawCall (DrawCallContext.STAGE);
@@ -256,7 +267,10 @@ class GLTilemap {
 				
 				shader.data.uImage0.input = tileset.__bitmapData;
 				renderSession.shaderManager.updateShader (shader);
+				
+				#if profiling Profiler.begin("drawArrays"); #end
 				gl.drawArrays (gl.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
+				#if profiling Profiler.end(); #end
 				
 				#if gl_stats
 					GLStats.incrementDrawCall (DrawCallContext.STAGE);

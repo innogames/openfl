@@ -54,6 +54,10 @@ import js.html.Uint8ClampedArray;
 import js.Browser;
 #end
 
+#if profiling 
+import openfl.profiler.Profiler; 
+#end
+
 #if lime_cairo
 import openfl._internal.renderer.cairo.CairoBlendModeManager;
 import openfl._internal.renderer.cairo.CairoRenderer;
@@ -2106,7 +2110,9 @@ class BitmapData implements IBitmapDrawable {
 		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
 		gl.vertexAttribPointer (shader.data.aAlpha.index, 1, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
 		
+		#if profiling Profiler.begin("drawArrays"); #end
 		gl.drawArrays (gl.TRIANGLE_STRIP, 0, 4);
+		#if profiling Profiler.end(); #end
 		
 		#if gl_stats
 			GLStats.incrementDrawCall (DrawCallContext.STAGE);
@@ -2132,7 +2138,9 @@ class BitmapData implements IBitmapDrawable {
 		gl.vertexAttribPointer (shader.data.aPosition.index, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
 		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
 		
+		#if profiling Profiler.begin("drawArrays"); #end
 		gl.drawArrays (gl.TRIANGLE_STRIP, 0, 4);
+		#if profiling Profiler.end(); #end
 		
 		#if gl_stats
 			GLStats.incrementDrawCall (DrawCallContext.STAGE);
