@@ -1,6 +1,7 @@
 package openfl._internal.stage3D.opengl;
 
 
+import openfl.profiler.Profiler;
 import lime.graphics.GLRenderContext;
 import lime.math.Rectangle in LimeRectangle;
 import lime.math.Vector2;
@@ -279,6 +280,7 @@ class GLContext3D {
 	
 	public static function drawTriangles (context:Context3D, indexBuffer:IndexBuffer3D, firstIndex:Int = 0, numTriangles:Int = -1):Void {
 		
+		#if profiling Profiler.begin("drawTriangles"); #end
 		if (context.__program == null) {
 			
 			return;
@@ -288,21 +290,28 @@ class GLContext3D {
 		GLContext3D.context = context;
 		GLContext3D.gl = context.__renderSession.gl;
 		
+		#if profiling Profiler.begin("flush"); #end
 		__flushSamplerState ();
 		context.__program.__flush ();
+		#if profiling Profiler.end(); #end
 		
 		var count = (numTriangles == -1) ? indexBuffer.__numIndices : (numTriangles * 3);
 		
+		#if profiling Profiler.begin("bindBuffer"); #end
 		gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, indexBuffer.__id);
 		GLUtils.CheckGLError ();
+		#if profiling Profiler.end(); #end
 		
+		#if profiling Profiler.begin("drawElements"); #end
 		gl.drawElements (gl.TRIANGLES, count, indexBuffer.__elementType, firstIndex);
 		GLUtils.CheckGLError ();
+		#if profiling Profiler.end(); #end
 		
 		#if gl_stats
 			GLStats.incrementDrawCall (DrawCallContext.STAGE3D);
 		#end
 		// __statsIncrement (Context3DTelemetry.DRAW_CALLS);
+		#if profiling Profiler.end(); #end
 		
 	}
 	

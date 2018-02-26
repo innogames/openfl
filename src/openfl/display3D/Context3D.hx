@@ -49,6 +49,7 @@ import openfl.Vector;
 	private static var TEXTURE_MAX_ANISOTROPY_EXT:Int = 0;
 	private static var DEPTH_STENCIL:Int = 0;
 	
+	private static var __enableDrawTriangles:Bool = true;
 	private static var __stateCache:Context3DStateCache = new Context3DStateCache ();
 	
 	public var backBufferHeight (default, null):Int = 0;
@@ -195,7 +196,7 @@ import openfl.Vector;
 	
 	public function drawTriangles (indexBuffer:IndexBuffer3D, firstIndex:Int = 0, numTriangles:Int = -1):Void {
 		
-		if (__program == null) {
+		if (__program == null || !__enableDrawTriangles) {
 			
 			return;
 			
