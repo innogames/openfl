@@ -206,6 +206,18 @@ import openfl.Vector;
 		
 	}
 	
+	public function drawTrianglesFromVertices (vertices:VertexBuffer3D, firstIndex:Int = 0, numVertices:Int = -1):Void {
+		
+		if (__program == null || !__enableDrawTriangles) {
+			
+			return;
+			
+		}
+		
+		GLContext3D.drawTrianglesFromVertices (this, vertices, firstIndex, numVertices);
+		
+	}
+	
 	
 	
 	public function present ():Void {
