@@ -321,43 +321,6 @@ class GLContext3D {
 		
 	}
 	
-	public static function drawTrianglesFromVertices (context:Context3D, vertices:VertexBuffer3D, firstIndex:Int = 0,
-	                                                  numVertices:Int = -1):Void {
-		
-		#if profiling Profiler.begin("drawTrianglesFromVertices"); #end
-		if (context.__program == null) {
-			
-			return;
-			
-		}
-		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
-		
-		#if profiling Profiler.begin("drawTrianglesFromVertices-flush"); #end
-		__flushSamplerState ();
-		context.__program.__flush ();
-		#if profiling Profiler.end(); #end
-		
-		var count =  vertices.__numVertices;
-		
-		//gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, indexBuffer.__id);
-		//GLUtils.CheckGLError ();
-		
-		#if profiling Profiler.begin("drawTrianglesFromVertices-drawArrays"); #end
-		gl.drawArrays (gl.TRIANGLES, firstIndex, count);
-		#if profiling Profiler.end(); #end
-		GLUtils.CheckGLError ();
-		
-		#if gl_stats
-			GLStats.incrementDrawCall (DrawCallContext.STAGE3D);
-		#end
-		// __statsIncrement (Context3DTelemetry.DRAW_CALLS);
-		#if profiling Profiler.end(); #end
-		
-	}
-	
-	
 	
 	public static function present (context:Context3D):Void {
 		

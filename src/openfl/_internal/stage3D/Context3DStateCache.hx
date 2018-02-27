@@ -19,7 +19,7 @@ class Context3DStateCache {
 	private static inline var FLOATS_PER_REGISTER = 4;
 	private static inline var MAX_NUM_REGISTERS = 1024;
 	
-	private static inline var disableCache = false;
+	private static inline var disableCache = true;
 	
 	private var _activeTexture:Int;
 	private var _activeVertexArray:Int;
