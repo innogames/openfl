@@ -293,23 +293,36 @@ class GLContext3D {
 		GLContext3D.context = context;
 		GLContext3D.gl = context.__renderSession.gl;
 		
-		#if profiling Profiler.begin("flush"); #end
+		#if profiling Profiler.begin("__flushSamplerState"); #end
 		__flushSamplerState ();
+		#if profiling Profiler.end(); #end
+		
+		#if profiling Profiler.begin("program.__flush"); #end
 		context.__program.__flush ();
 		#if profiling Profiler.end(); #end
 		
 		var count = (numTriangles == -1) ? indexBuffer.__numIndices : (numTriangles * 3);
 		
+		#if profiling Profiler.begin("bindBuffer"); #end
 		gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, indexBuffer.__id);
+		#if profiling Profiler.end(); #end
+		
+		#if profiling Profiler.begin("CheckGLError"); #end
 		GLUtils.CheckGLError ();
+		#if profiling Profiler.end(); #end
 		
 		#if profiling Profiler.begin("drawElements"); #end
 		gl.drawElements (gl.TRIANGLES, count, indexBuffer.__elementType, firstIndex);
 		#if profiling Profiler.end(); #end
+		
+		#if profiling Profiler.begin("CheckGLError"); #end
 		GLUtils.CheckGLError ();
+		#if profiling Profiler.end(); #end
 		
 		#if gl_stats
+			#if profiling Profiler.begin("incrementDrawCall"); #end
 			GLStats.incrementDrawCall (DrawCallContext.STAGE3D);
+			#if profiling Profiler.end(); #end
 		#end
 		// __statsIncrement (Context3DTelemetry.DRAW_CALLS);
 		#if profiling Profiler.end(); #end

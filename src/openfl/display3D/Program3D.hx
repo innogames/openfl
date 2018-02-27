@@ -232,12 +232,12 @@ import openfl.Vector;
 			
 			for (uniform in __uniforms) {
 				
-				if (__allDirty || uniform.isDirty) {
+				if (/*__allDirty || */uniform.isDirty) {
 					
 					uniform.flush ();
 					uniform.isDirty = false;
 					
-				}
+				} 
 				
 			}
 			
