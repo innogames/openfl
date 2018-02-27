@@ -306,23 +306,15 @@ class GLContext3D {
 		#if profiling Profiler.begin("bindBuffer"); #end
 		gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, indexBuffer.__id);
 		#if profiling Profiler.end(); #end
-		
-		#if profiling Profiler.begin("CheckGLError"); #end
 		GLUtils.CheckGLError ();
-		#if profiling Profiler.end(); #end
 		
 		#if profiling Profiler.begin("drawElements"); #end
 		gl.drawElements (gl.TRIANGLES, count, indexBuffer.__elementType, firstIndex);
 		#if profiling Profiler.end(); #end
-		
-		#if profiling Profiler.begin("CheckGLError"); #end
 		GLUtils.CheckGLError ();
-		#if profiling Profiler.end(); #end
 		
 		#if gl_stats
-			#if profiling Profiler.begin("incrementDrawCall"); #end
 			GLStats.incrementDrawCall (DrawCallContext.STAGE3D);
-			#if profiling Profiler.end(); #end
 		#end
 		// __statsIncrement (Context3DTelemetry.DRAW_CALLS);
 		#if profiling Profiler.end(); #end
