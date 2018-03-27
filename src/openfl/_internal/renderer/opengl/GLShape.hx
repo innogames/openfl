@@ -59,7 +59,7 @@ class GLShape {
 				shaderManager.applyAlpha (shape.__worldAlpha);
 				shaderManager.applyColorTransform (shape.__worldColorTransform);
 				
-				var vaoRendered = GLVAORenderHelper.renderDO (shape, renderSession, shader, graphics.__bitmap);
+				var vaoRendered = GLVAORenderHelper.renderDO (shape, renderSession, graphics.__bitmap);
 				
 				if (vaoRendered) return;
 				
@@ -114,7 +114,7 @@ class GLShape {
 				shaderManager.applyBitmapData (graphics.__bitmap, renderSession.allowSmoothing);
 				shaderManager.applyMatrix (renderer.getMatrix (graphics.__worldTransform));
 				
-				var vaoRendered = GLVAORenderHelper.renderMask (shape, renderSession, shader, graphics.__bitmap);
+				var vaoRendered = GLVAORenderHelper.renderDO (shape, renderSession, graphics.__bitmap, true);
 				
 				if (vaoRendered) return;
 				

@@ -54,6 +54,7 @@ class Shader {
 	private var __uniformMatrix2:Float32Array;
 	private var __uniformMatrix3:Float32Array;
 	private var __uniformMatrix4:Float32Array;
+	private var __skipEnableVertexAttribArray:Bool;
 	
 	
 	#if openfljs
@@ -589,19 +590,19 @@ class Shader {
 		
 		for (parameter in __paramBool) {
 			
-			parameter.__updateGL (gl);
+			parameter.__updateGL (gl, null, __skipEnableVertexAttribArray);
 			
 		}
 		
 		for (parameter in __paramFloat) {
 			
-			parameter.__updateGL (gl);
+			parameter.__updateGL (gl, null, __skipEnableVertexAttribArray);
 			
 		}
 		
 		for (parameter in __paramInt) {
 			
-			parameter.__updateGL (gl);
+			parameter.__updateGL (gl, null, __skipEnableVertexAttribArray);
 			
 		}
 		

@@ -52,7 +52,7 @@ import lime.utils.Float32Array;
 	}
 	
 	
-	private function __updateGL (gl:GLRenderContext, overrideValue:Array<T> = null):Void {
+	private function __updateGL (gl:GLRenderContext, overrideValue:Array<T> = null, skipEnableVertexAttribArray:Bool = false ):Void {
 		
 		var value = overrideValue != null ? overrideValue : this.value;
 		
@@ -188,7 +188,7 @@ import lime.utils.Float32Array;
 					
 				}
 			
-			} else {
+			} else if (!skipEnableVertexAttribArray) {
 				
 				for (i in 0...__arrayLength) {
 					gl.enableVertexAttribArray (index + i);

@@ -46,7 +46,7 @@ class GLBitmap {
 			shaderManager.applyAlpha (bitmap.__worldAlpha);
 			shaderManager.applyColorTransform (bitmap.__worldColorTransform);
 			
-			var vaoRendered = GLVAORenderHelper.renderDO (bitmap, renderSession, shader, bitmap.__bitmapData);
+			var vaoRendered = GLVAORenderHelper.renderDO (bitmap, renderSession, bitmap.__bitmapData);
 			
 			if (vaoRendered) return;
 			shaderManager.updateShader ();
@@ -83,7 +83,7 @@ class GLBitmap {
 			shaderManager.applyBitmapData (bitmap.__bitmapData, renderSession.allowSmoothing && (bitmap.smoothing || renderSession.upscaled));
 			shaderManager.applyMatrix (renderer.getMatrix (bitmap.__renderTransform));
 			
-			var vaoRendered = GLVAORenderHelper.renderMask (bitmap, renderSession, shader, bitmap.__bitmapData);
+			var vaoRendered = GLVAORenderHelper.renderDO (bitmap, renderSession, bitmap.__bitmapData, true);
 			
 			if (vaoRendered) return;
 			

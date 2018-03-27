@@ -855,11 +855,9 @@ class BitmapData implements IBitmapDrawable {
 		
 	}
 	
-	public function isBufferDirty (gl:GLRenderContext, alpha:Float, colorTransform:ColorTransform):Bool {
+	public function isBufferDirty (gl:GLRenderContext):Bool {
 		
-		return __buffer == null || __bufferContext != gl || __bufferAlpha != alpha || 
-				(__bufferColorTransform == null && colorTransform != null) || 
-				(__bufferColorTransform != null && !__bufferColorTransform.__equals (colorTransform));
+		return __buffer == null || __bufferContext != gl;
 		
 	}
 	

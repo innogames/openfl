@@ -125,7 +125,6 @@ class TextField extends InteractiveObject {
 	private var __div:DivElement;
 	private var __renderedOnCanvasWhileOnDOM:Bool = false;
 	private var __rawHtmlText:String;
-	private var __forceCachedBitmapUpdate:Bool = false;
 	#end
 	
 	
@@ -1727,30 +1726,31 @@ class TextField extends InteractiveObject {
 				
 				if (offsetX > 0) {
 				
-				// TODO: Handle __selectionIndex on drag select?
-				// TODO: Update scrollH by one character width at a time when able
-				
-				if (__caretIndex >= text.length) {
+					// TODO: Handle __selectionIndex on drag select?
+					// TODO: Update scrollH by one character width at a time when able
 					
-					scrollH = Math.ceil (offsetX);
-					
-				} else {
-					
-					var caret = Rectangle.__pool.get ();
-					__getCharBoundaries (__caretIndex, caret);
-					
-					if (caret.x < scrollH) {
+					if (__caretIndex >= text.length) {
 						
-						scrollH = Math.floor (caret.x - 2);
+						scrollH = Math.ceil (offsetX);
 						
-					} else if (caret.x > scrollH + __textEngine.width) {
+					} else {
 						
-						scrollH = Math.ceil (caret.x - __textEngine.width - 2);
+						var caret = Rectangle.__pool.get ();
+						__getCharBoundaries (__caretIndex, caret);
+						
+						if (caret.x < scrollH) {
+							
+							scrollH = Math.floor (caret.x - 2);
+							
+						} else if (caret.x > scrollH + __textEngine.width) {
+							
+							scrollH = Math.ceil (caret.x - __textEngine.width - 2);
+							
+						}
+						
+						Rectangle.__pool.release (caret);
 						
 					}
-					
-					Rectangle.__pool.release (caret);
-					
 				}
 				
 			} else {
