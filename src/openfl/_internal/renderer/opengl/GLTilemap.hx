@@ -3,10 +3,10 @@ package openfl._internal.renderer.opengl;
 
 import lime.graphics.opengl.WebGLContext;
 import lime.utils.Float32Array;
-import openfl._internal.renderer.RenderSession;
 import openfl.display.BitmapData;
 import openfl.display.DisplayObjectShader;
-import openfl.display.TileGroup;
+import openfl.display.OpenGLRenderer;
+import openfl.display.TileContainer;
 import openfl.display.Tilemap;
 import openfl.display.Tileset;
 import openfl.display.Tile;
@@ -48,7 +48,7 @@ class GLTilemap {
 	private static var lastUsedShader:DisplayObjectShader;
 	
 	
-	public static function buildBuffer (tilemap:Tilemap, renderSession:RenderSession):Void {
+	public static function buildBuffer (tilemap:Tilemap, renderer:OpenGLRenderer):Void {
 		
 		if (!tilemap.__renderable || tilemap.__group.__tiles.length == 0 || tilemap.__worldAlpha <= 0) return;
 		
@@ -63,7 +63,7 @@ class GLTilemap {
 		if (tilemap.tileAlphaEnabled) stride++;
 		if (tilemap.tileColorTransformEnabled) stride += 8;
 		
-		buildBufferTileGroup (tilemap, tilemap.__group, renderSession, parentTransform, stride, tilemap.__tileset, tilemap.tileAlphaEnabled, tilemap.__worldAlpha, tilemap.tileColorTransformEnabled, tilemap.__worldColorTransform, null, rect, matrix);
+		buildBufferTileContainer (tilemap, tilemap.__group, renderer, parentTransform, stride, tilemap.__tileset, tilemap.tileAlphaEnabled, tilemap.__worldAlpha, tilemap.tileColorTransformEnabled, tilemap.__worldColorTransform, null, rect, matrix);
 		
 		tilemap.__bufferLength = bufferLength;
 		
@@ -74,10 +74,10 @@ class GLTilemap {
 	}
 	
 	
-	private static function buildBufferTileGroup (tilemap:Tilemap, group:TileGroup, renderSession:RenderSession, parentTransform:Matrix, stride:Int, defaultTileset:Tileset, alphaEnabled:Bool, worldAlpha:Float, colorTransformEnabled:Bool, defaultColorTransform:ColorTransform, cacheBitmapData:BitmapData, rect:Rectangle, matrix:Matrix):Void {
+	private static function buildBufferTileContainer (tilemap:Tilemap, group:TileContainer, renderer:OpenGLRenderer, parentTransform:Matrix, stride:Int, defaultTileset:Tileset, alphaEnabled:Bool, worldAlpha:Float, colorTransformEnabled:Bool, defaultColorTransform:ColorTransform, cacheBitmapData:BitmapData, rect:Rectangle, matrix:Matrix):Void {
 		
 		var tileTransform = Matrix.__pool.get ();
-		var roundPixels = renderSession.roundPixels;
+		var roundPixels = renderer.__roundPixels;
 		
 		var tiles = group.__tiles;
 		var length = group.__length;
@@ -155,7 +155,7 @@ class GLTilemap {
 				cacheLength = bufferLength;
 				cacheBufferPosition = bufferPosition;
 				
-				buildBufferTileGroup (tilemap, cast tile, renderSession, tileTransform, stride, tileset, alphaEnabled, alpha, colorTransformEnabled, colorTransform, cacheBitmapData, rect, matrix);
+				buildBufferTileContainer (tilemap, cast tile, renderer, tileTransform, stride, tileset, alphaEnabled, alpha, colorTransformEnabled, colorTransform, cacheBitmapData, rect, matrix);
 				
 				resizeBuffer (tilemap, cacheLength + (bufferPosition - cacheBufferPosition));
 				__bufferData = tilemap.__bufferData;
@@ -298,12 +298,11 @@ class GLTilemap {
 	}
 	
 	
-	private static function flush (tilemap:Tilemap, renderSession:RenderSession):Void {
+	private static function flush (tilemap:Tilemap, renderer:OpenGLRenderer):Void {
 		
 		if (currentShader == null) {
 			
-			var shaderManager:GLShaderManager = cast renderSession.shaderManager;
-			currentShader = shaderManager.defaultDisplayShader;
+			currentShader = renderer.__defaultDisplayShader;
 			
 		}
 		
@@ -311,37 +310,35 @@ class GLTilemap {
 		
 		if (bufferPosition > lastFlushedPosition && currentBitmapData != null && currentShader != null) {
 			
-			var renderer:GLRenderer = cast renderSession.renderer;
-			var shaderManager:GLShaderManager = cast renderSession.shaderManager;
-			var gl:WebGLContext = renderSession.gl;
+			var gl:WebGLContext = renderer.gl;
 			
-			var shader = shaderManager.initDisplayShader (currentShader);
-			shaderManager.setDisplayShader (shader);
-			shaderManager.applyBitmapData (currentBitmapData, renderSession.allowSmoothing && tilemap.smoothing);
-			shaderManager.applyMatrix (renderer.getMatrix (tilemap.__renderTransform));
+			var shader = renderer.__initDisplayShader (currentShader);
+			renderer.setDisplayShader (shader);
+			renderer.applyBitmapData (currentBitmapData, renderer.__allowSmoothing && tilemap.smoothing);
+			renderer.applyMatrix (renderer.__getMatrix (tilemap.__renderTransform));
 			
 			if (tilemap.tileAlphaEnabled) {
 				
-				shaderManager.useAlphaArray ();
+				renderer.useAlphaArray ();
 				
 			} else {
 				
-				shaderManager.applyAlpha (tilemap.__worldAlpha);
+				renderer.applyAlpha (tilemap.__worldAlpha);
 				
 			}
 			
 			if (tilemap.tileColorTransformEnabled) {
 				
-				shaderManager.applyHasColorTransform (true);
-				shaderManager.useColorTransformArray ();
+				renderer.applyHasColorTransform (true);
+				renderer.useColorTransformArray ();
 				
 			} else {
 				
-				shaderManager.applyColorTransform (tilemap.__worldColorTransform);
+				renderer.applyColorTransform (tilemap.__worldColorTransform);
 				
 			}
 			
-			shaderManager.updateShader ();
+			renderer.updateShader ();
 			
 			var stride = 4;
 			if (tilemap.tileAlphaEnabled) stride++;
@@ -362,21 +359,21 @@ class GLTilemap {
 				
 			}
 			
-			gl.vertexAttribPointer (shader.data.openfl_Position.index, 2, gl.FLOAT, false, stride * Float32Array.BYTES_PER_ELEMENT, 0);
-			gl.vertexAttribPointer (shader.data.openfl_TexCoord.index, 2, gl.FLOAT, false, stride * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer (shader.openfl_Position.index, 2, gl.FLOAT, false, stride * Float32Array.BYTES_PER_ELEMENT, 0);
+			gl.vertexAttribPointer (shader.openfl_TexCoord.index, 2, gl.FLOAT, false, stride * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
 			
 			
 			if (tilemap.tileAlphaEnabled) {
 				
-				gl.vertexAttribPointer (shader.data.alpha.index, 1, gl.FLOAT, false, stride * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT);
+				gl.vertexAttribPointer (shader.openfl_Alpha.index, 1, gl.FLOAT, false, stride * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT);
 				
 			}
 			if (tilemap.tileColorTransformEnabled) {
 				
 				var position = tilemap.tileAlphaEnabled ? 5 : 4;
 				
-				gl.vertexAttribPointer (shader.data.colorMultipliers.index, 4, gl.FLOAT, false, stride * Float32Array.BYTES_PER_ELEMENT, position * Float32Array.BYTES_PER_ELEMENT);
-				gl.vertexAttribPointer (shader.data.colorOffsets.index, 4, gl.FLOAT, false, stride * Float32Array.BYTES_PER_ELEMENT, (position + 4) * Float32Array.BYTES_PER_ELEMENT);
+				gl.vertexAttribPointer (shader.openfl_ColorMultiplier.index, 4, gl.FLOAT, false, stride * Float32Array.BYTES_PER_ELEMENT, position * Float32Array.BYTES_PER_ELEMENT);
+				gl.vertexAttribPointer (shader.openfl_ColorOffset.index, 4, gl.FLOAT, false, stride * Float32Array.BYTES_PER_ELEMENT, (position + 4) * Float32Array.BYTES_PER_ELEMENT);
 				
 			}
 			
@@ -398,7 +395,7 @@ class GLTilemap {
 				GLStats.incrementDrawCall (DrawCallContext.STAGE);
 			#end
 			
-			shaderManager.clear ();
+			renderer.__clearShader ();
 			
 		}
 		
@@ -409,11 +406,11 @@ class GLTilemap {
 	}
 	
 	
-	public static function render (tilemap:Tilemap, renderSession:RenderSession):Void {
+	public static function render (tilemap:Tilemap, renderer:OpenGLRenderer):Void {
 		
 		if (!tilemap.__renderable || tilemap.__worldAlpha <= 0) return;
 		
-		buildBuffer (tilemap, renderSession);
+		buildBuffer (tilemap, renderer);
 		
 		if (tilemap.__bufferLength == 0) return;
 		
@@ -430,25 +427,23 @@ class GLTilemap {
 		if (tilemap.tileAlphaEnabled) stride++;
 		if (tilemap.tileColorTransformEnabled) stride += 8;
 		
-		var renderer:GLRenderer = cast renderSession.renderer;
-		var shaderManager:GLShaderManager = cast renderSession.shaderManager;
-		var gl = renderSession.gl;
+		var gl = renderer.gl;
 		
-		renderSession.blendModeManager.setBlendMode (tilemap.__worldBlendMode);
-		renderSession.maskManager.pushObject (tilemap);
-		renderSession.filterManager.pushObject (tilemap);
+		renderer.__setBlendMode (tilemap.__worldBlendMode);
+		renderer.__pushMaskObject (tilemap);
+		// renderer.filterManager.pushObject (tilemap);
 		
-		renderTileGroup (tilemap, renderSession, tilemap.__group, tilemap.__worldShader, stride, tilemap.__tileset, tilemap.__worldAlpha, null);
-		flush (tilemap, renderSession);
+		renderTileContainer (tilemap, renderer, tilemap.__group, tilemap.__worldRenderShader, stride, tilemap.__tileset, tilemap.__worldAlpha, null);
+		flush (tilemap, renderer);
 		
-		renderSession.filterManager.popObject (tilemap);
-		renderSession.maskManager.popRect ();
-		renderSession.maskManager.popObject (tilemap);
+		// renderer.filterManager.popObject (tilemap);
+		renderer.__popMaskRect ();
+		renderer.__popMaskObject (tilemap);
 		
 	}
 	
 	
-	private static function renderTileGroup (tilemap:Tilemap, renderSession:RenderSession, group:TileGroup, defaultShader:DisplayObjectShader, stride:Int, defaultTileset:Tileset, worldAlpha:Float, cacheBitmapData:BitmapData):Void {
+	private static function renderTileContainer (tilemap:Tilemap, renderer:OpenGLRenderer, group:TileContainer, defaultShader:DisplayObjectShader, stride:Int, defaultTileset:Tileset, worldAlpha:Float, cacheBitmapData:BitmapData):Void {
 		
 		var tiles = group.__tiles;
 		var length = group.__length;
@@ -468,7 +463,7 @@ class GLTilemap {
 			
 			if (tile.__length > 0) {
 				
-				renderTileGroup (tilemap, renderSession, cast tile, shader, stride, tileset, alpha, cacheBitmapData);
+				renderTileContainer (tilemap, renderer, cast tile, shader, stride, tileset, alpha, cacheBitmapData);
 				
 			} else {
 				
@@ -493,7 +488,7 @@ class GLTilemap {
 				
 				if ((shader != currentShader && currentShader != null) || (bitmapData != currentBitmapData && currentBitmapData != null)) {
 					
-					flush (tilemap, renderSession);
+					flush (tilemap, renderer);
 					
 				}
 				
@@ -508,27 +503,27 @@ class GLTilemap {
 	}
 	
 	
-	public static function renderMask (tilemap:Tilemap, renderSession:RenderSession):Void {
+	public static function renderMask (tilemap:Tilemap, renderer:OpenGLRenderer):Void {
 		
 		// tilemap.__updateTileArray ();
 		
 		// if (tilemap.__tileArray == null || tilemap.__tileArray.length == 0) return;
 		
-		// var renderer:GLRenderer = cast renderSession.renderer;
-		// var gl = renderSession.gl;
+		// var renderer:OpenGLRenderer = cast renderer.renderer;
+		// var gl = renderer.gl;
 		
-		// var shader = GLMaskManager.maskShader;
+		// var shader = renderer.__maskShader;
 		
-		// var uMatrix = renderer.getMatrix (tilemap.__renderTransform);
-		// var smoothing = (renderSession.allowSmoothing && tilemap.smoothing);
+		// var uMatrix = renderer.__getMatrix (tilemap.__renderTransform);
+		// var smoothing = (renderer.__allowSmoothing && tilemap.smoothing);
 		
 		// var tileArray = tilemap.__tileArray;
 		// var defaultTileset = tilemap.__tileset;
 		
 		// tileArray.__updateGLBuffer (gl, defaultTileset, tilemap.__worldAlpha, tilemap.__worldColorTransform);
 		
-		// gl.vertexAttribPointer (shader.data.openfl_Position.index, 2, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 0);
-		// gl.vertexAttribPointer (shader.data.openfl_TexCoord.index, 2, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
+		// gl.vertexAttribPointer (shader.openfl_Position.index, 2, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 0);
+		// gl.vertexAttribPointer (shader.openfl_TexCoord.index, 2, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
 		
 		// var cacheBitmapData = null;
 		// var lastIndex = 0;
@@ -561,8 +556,8 @@ class GLTilemap {
 			
 		// 	if (flush) {
 				
-		// 		shader.data.texture0.input = cacheBitmapData;
-		// 		renderSession.shaderManager.updateShader ();
+		// 		shader.openfl_Texture.input = cacheBitmapData;
+		// 		renderer.shaderManager.updateShader ();
 				
 		// 		gl.drawArrays (gl.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
 				
@@ -579,8 +574,8 @@ class GLTilemap {
 			
 		// 	if (i == drawCount && tileset.__bitmapData != null) {
 				
-		// 		shader.data.texture0.input = tileset.__bitmapData;
-		// 		renderSession.shaderManager.updateShader ();
+		// 		shader.openfl_Texture.input = tileset.__bitmapData;
+		// 		renderer.shaderManager.updateShader ();
 		// 		gl.drawArrays (gl.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
 				
 		// 		#if gl_stats

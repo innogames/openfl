@@ -1,7 +1,7 @@
 package openfl.display; #if (display || !flash)
 
 
-#if !js @:generic #end
+#if (!js && !display) @:generic #end
 
 
 @:final extern class ShaderInput<T> /*implements Dynamic*/ {
@@ -11,6 +11,7 @@ package openfl.display; #if (display || !flash)
 	public var height:Int;
 	public var index (default, null):Int;
 	public var input:T;
+	public var smoothing:Bool;
 	public var width:Int;
 	
 	

@@ -1,9 +1,9 @@
 package openfl._internal.renderer.canvas;
 
 import lime.graphics.utils.ImageCanvasUtil;
-import openfl._internal.renderer.RenderSession;
 import openfl.display.BitmapData;
 import openfl.display.BitmapDataChannel;
+import openfl.display.CanvasRenderer;
 import openfl.display.CapsStyle;
 import openfl.display.DisplayObject;
 import openfl._internal.renderer.DrawCommandBuffer;
@@ -881,7 +881,7 @@ class CanvasGraphics {
 					var sourceRect = bitmapFill.rect;
 					
 					var transform = graphics.__renderTransform;
-					// var roundPixels = renderSession.roundPixels;
+					// var roundPixels = renderer.__roundPixels;
 					var alpha = graphics.__owner.__worldAlpha;
 					
 					var ri, ti;
@@ -1096,7 +1096,7 @@ class CanvasGraphics {
 						dy = (uvx1 * (uvy3 * y2 - uvy2 * y3) + uvy1 * (uvx2 * y3 - uvx3 * y2) + (uvx3 * uvy2 - uvx2 * uvy3) * y1) / denom;
 						
 						context.transform (t1, t2, t3, t4, dx, dy);
-						context.drawImage (pattern, 0, 0);
+						context.drawImage (pattern, 0, 0, pattern.width, pattern.height);
 						context.restore ();
 						
 						i += 3;
@@ -1237,18 +1237,18 @@ class CanvasGraphics {
 	}
 	
 	
-	public static function render (graphics:Graphics, renderSession:RenderSession, parentTransform:Matrix):Void {
+	public static function render (graphics:Graphics, renderer:CanvasRenderer):Void {
 		
 		#if (js && html5)
 		
-		graphics.__update ();
+		graphics.__update (renderer.__worldTransform);
 		
 		if (graphics.__dirty) {
 			
 			hitTesting = false;
 			
 			CanvasGraphics.graphics = graphics;
-			CanvasGraphics.allowSmoothing = renderSession.allowSmoothing;
+			CanvasGraphics.allowSmoothing = renderer.__allowSmoothing;
 			bounds = graphics.__bounds;
 			
 			var width = graphics.__width;
@@ -1273,11 +1273,11 @@ class CanvasGraphics {
 				var transform = graphics.__renderTransform;
 				var canvas = graphics.__canvas;
 				
-				var scale = CanvasRenderer.scale;
+				var scale = renderer.pixelRatio;
 				var scaledWidth = Std.int (width * scale);
 				var scaledHeight = Std.int (height * scale);
 				
-				if (renderSession.renderType == DOM) {
+				if (renderer.__isDOM) {
 					
 					if (canvas.width == scaledWidth && canvas.height == scaledHeight) {
 						
@@ -1300,7 +1300,7 @@ class CanvasGraphics {
 					if (canvas.width == scaledWidth && canvas.height == scaledHeight) {
 						
 						context.closePath ();
-						context.resetTransform ();
+						context.setTransform (1, 0, 0, 1, 0, 0);
 						context.clearRect (0, 0, scaledWidth, scaledHeight);
 						
 					} else {
@@ -1589,13 +1589,16 @@ class CanvasGraphics {
 	}
 	
 	
-	public static function renderMask (graphics:Graphics, renderSession:RenderSession) {
+	public static function renderMask (graphics:Graphics, renderer:CanvasRenderer) {
 		
 		#if (js && html5)
 		
+		// TODO: Move to normal render method, browsers appear to support more than
+		// one path in clipping now
+		
 		if (graphics.__commands.length != 0) {
 			
-			context = cast renderSession.context;
+			context = cast renderer.context;
 			
 			var positionX = 0.0;
 			var positionY = 0.0;
@@ -1659,7 +1662,9 @@ class CanvasGraphics {
 					case DRAW_RECT:
 						
 						var c = data.readDrawRect ();
+						context.beginPath ();
 						context.rect (c.x - offsetX, c.y - offsetY, c.width, c.height);
+						context.closePath ();
 					
 					case DRAW_ROUND_RECT:
 						

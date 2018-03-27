@@ -3,6 +3,7 @@ package openfl.display;
 
 import lime.graphics.opengl.GLVertexArrayObject;
 import lime.graphics.cairo.Cairo;
+import lime.graphics.utils.ImageCanvasUtil;
 import lime.ui.MouseCursor;
 import lime.utils.ObjectPool;
 import openfl._internal.renderer.cairo.CairoBitmap;
@@ -15,8 +16,7 @@ import openfl._internal.renderer.dom.DOMBitmap;
 import openfl._internal.renderer.dom.DOMDisplayObject;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLDisplayObject;
-import openfl._internal.renderer.opengl.GLShaderManager;
-import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.opengl.GLGraphics;
 import openfl._internal.Lib;
 import openfl.display.Stage;
 import openfl.errors.TypeError;
@@ -46,8 +46,11 @@ import js.html.Element;
 @:noDebug
 #end
 
+@:access(lime.graphics.Image)
+@:access(lime.graphics.ImageBuffer)
 @:access(openfl.events.Event)
 @:access(openfl.display.Bitmap)
+@:access(openfl.display.BitmapData)
 @:access(openfl.display.DisplayObjectContainer)
 @:access(openfl.display.Graphics)
 @:access(openfl.display.Stage)
@@ -64,6 +67,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private static var __initStage:Stage;
 	private static var __instanceCount = 0;
 	private static #if !js inline #end var __supportDOM:Bool #if !js = false #end;
+	private static var __tempColorTransform = new ColorTransform ();
 	private static var __tempStack = new ObjectPool<Vector<DisplayObject>> (function () { return new Vector<DisplayObject> (); }, function (stack) { stack.length = 0; });
 	
 	@:keep public var alpha (get, set):Float;
@@ -79,13 +83,13 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	public var name (get, set):String;
 	public var opaqueBackground:Null<Int>;
 	public var parent (default, null):DisplayObjectContainer;
+	@:beta public var renderShader (get, set):DisplayObjectShader;
 	public var root (get, never):DisplayObject;
 	@:keep public var rotation (get, set):Float;
 	public var scale9Grid:Rectangle;
 	@:keep public var scaleX (get, set):Float;
 	@:keep public var scaleY (get, set):Float;
 	public var scrollRect (get, set):Rectangle;
-	@:beta public var shader (get, set):DisplayObjectShader;
 	public var stage (default, null):Stage;
 	@:keep public var transform (get, set):Transform;
 	public var visible (get, set):Bool;
@@ -101,7 +105,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __cacheBitmapBackground:Null<Int>;
 	private var __cacheBitmapColorTransform:ColorTransform;
 	private var __cacheBitmapData:BitmapData;
-	private var __cacheBitmapRender:Bool;
+	private var __cacheBitmapRenderer:DisplayObjectRenderer;
 	private var __cairo:Cairo;
 	private var __children:Array<DisplayObject>;
 	private var __customRenderClear:Bool;
@@ -109,6 +113,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __filters:Array<BitmapFilter>;
 	private var __graphics:Graphics;
 	private var __interactive:Bool;
+	private var __isCacheBitmapRender:Bool;
 	private var __isMask:Bool;
 	private var __loaderInfo:LoaderInfo;
 	private var __mask:DisplayObject;
@@ -118,6 +123,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __renderable:Bool;
 	private var __renderDirty:Bool;
 	private var __renderParent:DisplayObject;
+	private var __renderShader:DisplayObjectShader;
 	private var __renderTransform:Matrix;
 	private var __renderTransformCache:Matrix;
 	private var __renderTransformChanged:Bool;
@@ -127,7 +133,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __scaleX:Float;
 	private var __scaleY:Float;
 	private var __scrollRect:Rectangle;
-	private var __shader:DisplayObjectShader;
 	private var __transform:Matrix;
 	private var __transformDirty:Bool;
 	private var __updateDirty:Bool;
@@ -141,7 +146,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __worldClip:Rectangle;
 	private var __worldClipChanged:Bool;
 	private var __worldColorTransform:ColorTransform;
-	private var __worldShader:DisplayObjectShader;
+	private var __worldRenderShader:DisplayObjectShader;
 	private var __worldTransform:Matrix;
 	private var __worldVisible:Bool;
 	private var __worldVisibleChanged:Bool;
@@ -170,6 +175,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			"mouseX": { get: untyped __js__ ("function () { return this.get_mouseX (); }") },
 			"mouseY": { get: untyped __js__ ("function () { return this.get_mouseY (); }") },
 			"name": { get: untyped __js__ ("function () { return this.get_name (); }"), set: untyped __js__ ("function (v) { return this.set_name (v); }") },
+			"renderShader": { get: untyped __js__ ("function () { return this.get_renderShader (); }"), set: untyped __js__ ("function (v) { return this.set_renderShader (v); }") },
 			"root": { get: untyped __js__ ("function () { return this.get_root (); }") },
 			"rotation": { get: untyped __js__ ("function () { return this.get_rotation (); }"), set: untyped __js__ ("function (v) { return this.set_rotation (v); }") },
 			"scaleX": { get: untyped __js__ ("function () { return this.get_scaleX (); }"), set: untyped __js__ ("function (v) { return this.set_scaleX (v); }") },
@@ -246,6 +252,8 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 				if (__customRenderEvent == null) {
 					
 					__customRenderEvent = new RenderEvent (null);
+					__customRenderEvent.objectColorTransform = new ColorTransform ();
+					__customRenderEvent.objectMatrix = new Matrix ();
 					__customRenderClear = true;
 					
 				}
@@ -478,12 +486,8 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	
 	private override function __dispatchEvent (event:Event):Bool {
-		var tmpParent = null;
-
-		if (event.bubbles) {
-			tmpParent = parent;
-		}
-
+		
+		var parent = event.bubbles ? this.parent : null;
 		var result = super.__dispatchEvent (event);
 		
 		if (event.__isCanceled) {
@@ -492,7 +496,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 		}
 		
-		if (tmpParent != null && tmpParent != this) {
+		if (parent != null && parent != this) {
 			
 			event.eventPhase = EventPhase.BUBBLING_PHASE;
 			
@@ -784,33 +788,33 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	private function __renderCairo (renderSession:RenderSession):Void {
+	private function __renderCairo (renderer:CairoRenderer):Void {
 		
 		#if lime_cairo
-		__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
+		__updateCacheBitmap (renderer, !__worldColorTransform.__isDefault ());
 		
-		if (__cacheBitmap != null && !__cacheBitmapRender) {
+		if (__cacheBitmap != null && !__isCacheBitmapRender) {
 			
-			CairoBitmap.render (__cacheBitmap, renderSession);
+			CairoBitmap.render (__cacheBitmap, renderer);
 			
 		} else {
 			
-			CairoDisplayObject.render (this, renderSession);
+			CairoDisplayObject.render (this, renderer);
 			
 		}
 		
-		__renderEvent (renderSession);
+		__renderEvent (renderer);
 		#end
 		
 	}
 	
 	
-	private function __renderCairoMask (renderSession:RenderSession):Void {
+	private function __renderCairoMask (renderer:CairoRenderer):Void {
 		
 		#if lime_cairo
 		if (__graphics != null) {
 			
-			CairoGraphics.renderMask (__graphics, renderSession);
+			CairoGraphics.renderMask (__graphics, renderer);
 			
 		}
 		#end
@@ -818,160 +822,148 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	private function __renderCanvas (renderSession:RenderSession):Void {
+	private function __renderCanvas (renderer:CanvasRenderer):Void {
 		
 		if (mask == null || (mask.width > 0 && mask.height > 0)) {
 			
-			__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
+			__updateCacheBitmap (renderer, !__worldColorTransform.__isDefault ());
 			
-			if (__cacheBitmap != null && !__cacheBitmapRender) {
+			if (__cacheBitmap != null && !__isCacheBitmapRender) {
 				
-				CanvasBitmap.render (__cacheBitmap, renderSession);
+				CanvasBitmap.render (__cacheBitmap, renderer);
 				
 			} else {
 				
-				CanvasDisplayObject.render (this, renderSession);
+				CanvasDisplayObject.render (this, renderer);
 				
 			}
 			
 		}
 		
-		__renderEvent (renderSession);
+		__renderEvent (renderer);
 		
 	}
 	
 	
-	private function __renderCanvasMask (renderSession:RenderSession):Void {
+	private function __renderCanvasMask (renderer:CanvasRenderer):Void {
 		
 		if (__graphics != null) {
 			
-			CanvasGraphics.renderMask (__graphics, renderSession);
+			CanvasGraphics.renderMask (__graphics, renderer);
 			
 		}
 		
 	}
 	
 	
-	private function __renderDOM (renderSession:RenderSession):Void {
+	private function __renderDOM (renderer:DOMRenderer):Void {
 		
-		__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
+		__updateCacheBitmap (renderer, !__worldColorTransform.__isDefault ());
 		
-		if (__cacheBitmap != null && !__cacheBitmapRender) {
+		if (__cacheBitmap != null && !__isCacheBitmapRender) {
 			
-			__renderDOMClear (renderSession);
+			__renderDOMClear (renderer);
 			__cacheBitmap.stage = stage;
 			
-			DOMBitmap.render (__cacheBitmap, renderSession);
+			DOMBitmap.render (__cacheBitmap, renderer);
 			
 		} else {
 			
-			DOMDisplayObject.render (this, renderSession);
+			DOMDisplayObject.render (this, renderer);
 			
 		}
 		
-		__renderEvent (renderSession);
+		__renderEvent (renderer);
 		
 	}
 	
 	
-	private function __renderDOMClear (renderSession:RenderSession):Void {
+	private function __renderDOMClear (renderer:DOMRenderer):Void {
 		
-		DOMDisplayObject.clear (this, renderSession);
+		DOMDisplayObject.clear (this, renderer);
 		
 	}
 	
 	
-	private function __renderEvent (renderSession:RenderSession):Void {
+	private function __renderEvent (renderer:DisplayObjectRenderer):Void {
 		
 		if (__customRenderEvent != null && __renderable) {
 			
-			__customRenderEvent.allowSmoothing = renderSession.allowSmoothing;
-			__customRenderEvent.renderTransform.copyFrom (__renderTransform);
-			__customRenderEvent.worldColorTransform.__copyFrom (__worldColorTransform);
-			__customRenderEvent.worldTransform.copyFrom (__worldTransform);
-			__customRenderEvent.__renderSession = renderSession;
+			__customRenderEvent.allowSmoothing = renderer.__allowSmoothing;
+			__customRenderEvent.objectMatrix.copyFrom (__renderTransform);
+			__customRenderEvent.objectColorTransform.__copyFrom (__worldColorTransform);
+			__customRenderEvent.renderer = renderer;
 			
-			if (renderSession.gl != null) {
+			switch (renderer.__type) {
 				
-				var shaderManager:GLShaderManager = cast renderSession.shaderManager;
-				shaderManager.setShader (__worldShader);
-				
-				__customRenderEvent.gl = renderSession.gl;
-				__customRenderEvent.type = RenderEvent.RENDER_OPENGL;
-				
-			} else if (renderSession.cairo != null) {
-				
-				__customRenderEvent.cairo = renderSession.cairo;
-				__customRenderEvent.type = RenderEvent.RENDER_CAIRO;
-				
-			} else if (renderSession.element != null) {
-				
-				__customRenderEvent.element = renderSession.element;
-				
-				if (stage != null && __worldVisible) {
+				case OPENGL:
 					
-					__customRenderEvent.type = RenderEvent.RENDER_DOM;
-					
-				} else {
-					
-					__customRenderEvent.type = RenderEvent.CLEAR_DOM;
-					
-				}
+					var renderer:OpenGLRenderer = cast renderer;
+					renderer.setShader (__worldRenderShader);
+					__customRenderEvent.type = RenderEvent.RENDER_OPENGL;
 				
-			} else if (renderSession.context != null) {
+				case CAIRO:
+					
+					__customRenderEvent.type = RenderEvent.RENDER_CAIRO;
 				
-				__customRenderEvent.context = renderSession.context;
-				__customRenderEvent.type = RenderEvent.RENDER_CANVAS;
+				case DOM:
+					
+					if (stage != null && __worldVisible) {
+						
+						__customRenderEvent.type = RenderEvent.RENDER_DOM;
+						
+					} else {
+						
+						__customRenderEvent.type = RenderEvent.CLEAR_DOM;
+						
+					}
+				
+				case CANVAS:
+					
+					__customRenderEvent.type = RenderEvent.RENDER_CANVAS;
+				
+				default:
+					
+					return;
 				
 			}
 			
-			renderSession.blendModeManager.setBlendMode (__worldBlendMode);
-			renderSession.maskManager.pushObject (this);
+			renderer.__setBlendMode (__worldBlendMode);
+			renderer.__pushMaskObject (this);
 			
 			dispatchEvent (__customRenderEvent);
 			
-			renderSession.maskManager.popObject (this);
-			
-			__customRenderEvent.gl = null;
-			__customRenderEvent.cairo = null;
-			__customRenderEvent.element = null;
-			__customRenderEvent.context = null;
+			renderer.__popMaskObject (this);
 			
 		}
 		
 	}
 	
 	
-	private function __renderGL (renderSession:RenderSession):Void {
+	private function __renderGL (renderer:OpenGLRenderer):Void {
 		
-		__updateCacheBitmap (renderSession, false);
+		__updateCacheBitmap (renderer, false);
 		
-		if (__cacheBitmap != null && !__cacheBitmapRender) {
+		if (__cacheBitmap != null && !__isCacheBitmapRender) {
 			
-			GLBitmap.render (__cacheBitmap, renderSession);
+			GLBitmap.render (__cacheBitmap, renderer);
 			
 		} else {
 			
-			GLDisplayObject.render (this, renderSession);
+			GLDisplayObject.render (this, renderer);
 			
 		}
 		
-		__renderEvent (renderSession);
+		__renderEvent (renderer);
 		
 	}
 	
 	
-	private function __renderGLMask (renderSession:RenderSession):Void {
+	private function __renderGLMask (renderer:OpenGLRenderer):Void {
 		
-		__updateCacheBitmap (renderSession, false);
-		
-		if (__cacheBitmap != null && !__cacheBitmapRender) {
+		if (__graphics != null) {
 			
-			GLBitmap.renderMask (__cacheBitmap, renderSession);
-			
-		} else {
-			
-			GLDisplayObject.renderMask (this, renderSession);
+			GLGraphics.renderMask (__graphics, renderer);
 			
 		}
 		
@@ -1080,7 +1072,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	public function __update (transformOnly:Bool, updateChildren:Bool, ?maskGraphics:Graphics = null, ?resetUpdateDirty:Bool = false):Void {
+	private function __update (transformOnly:Bool, updateChildren:Bool, ?resetUpdateDirty:Bool = false):Void {
 		
 		if (resetUpdateDirty) {
 			
@@ -1102,12 +1094,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		
 		__worldTransformInvalid = false;
 
-		if (maskGraphics != null) {
-			
-			__updateMask (maskGraphics);
-			
-		}
-		
 		if (!transformOnly) {
 			
 			if (__supportDOM) {
@@ -1126,9 +1112,9 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 				
 			}
 			
-			if (!__worldColorTransform.__equals (transform.colorTransform)) {
+			if (__objectTransform != null) {
 				
-				__worldColorTransform = transform.colorTransform.__clone ();
+				__worldColorTransform.__copyFrom (__objectTransform.colorTransform);
 				
 			}
 			
@@ -1163,13 +1149,13 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 					
 				}
 				
-				if (__shader == null) {
+				if (__renderShader == null) {
 					
-					__worldShader = renderParent.__shader;
+					__worldRenderShader = renderParent.__renderShader;
 					
 				} else {
 					
-					__worldShader = __shader;
+					__worldRenderShader = __renderShader;
 					
 				}
 				
@@ -1198,16 +1184,16 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		
 		if (updateChildren && mask != null) {
 			
-			mask.__update (transformOnly, true, maskGraphics, resetUpdateDirty);
+			mask.__update (transformOnly, true, resetUpdateDirty);
 			
 		}
 		
 	}
 	
 	
-	private function __updateCacheBitmap (renderSession:RenderSession, force:Bool):Bool {
+	private function __updateCacheBitmap (renderer:DisplayObjectRenderer, force:Bool):Bool {
 		
-		if (__cacheBitmapRender) return false;
+		if (__isCacheBitmapRender) return false;
 		
 		if (cacheAsBitmap) {
 			
@@ -1268,6 +1254,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 						// #if !openfljs
 						if (__cacheBitmap == null) __cacheBitmap = new Bitmap ();
 						__cacheBitmap.__bitmapData = __cacheBitmapData;
+						__cacheBitmapRenderer = null;
 						// #end
 						
 					} else {
@@ -1280,6 +1267,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 					
 					__cacheBitmap = null;
 					__cacheBitmapData = null;
+					__cacheBitmapRenderer = null;
 					return true;
 					
 				}
@@ -1290,33 +1278,98 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 				
 				__cacheBitmap.__worldTransform.copyFrom (__worldTransform);
 				
-				__cacheBitmap.__renderTransform.identity ();
-				__cacheBitmap.__renderTransform.tx = rect.x;
-				__cacheBitmap.__renderTransform.ty = rect.y;
-
+				if (parent != null) {
+					
+					__cacheBitmap.__renderTransform.copyFrom (parent.__renderTransform);
+					
+				} else {
+					
+					__cacheBitmap.__renderTransform.identity ();
+					
+				}
+				
+				__cacheBitmap.__renderTransform.tx += rect.x;
+				__cacheBitmap.__renderTransform.ty += rect.y;
+				
 			}
 			
-			__cacheBitmap.smoothing = renderSession.allowSmoothing;
+			__cacheBitmap.smoothing = renderer.__allowSmoothing;
 			__cacheBitmap.__renderable = __renderable;
 			__cacheBitmap.__worldAlpha = __worldAlpha;
 			__cacheBitmap.__worldBlendMode = __worldBlendMode;
-			__cacheBitmap.__worldShader = __worldShader;
+			__cacheBitmap.__worldRenderShader = __worldRenderShader;
 			__cacheBitmap.__scrollRect = __scrollRect;
 			//__cacheBitmap.filters = filters;
 			__cacheBitmap.mask = __mask;
 			
 			if (needRender) {
 				
-				__cacheBitmapRender = true;
+				// TODO: GL cacheBitmap
 				
-				var matrix = Matrix.__pool.get ();
-				matrix.copyFrom (__renderTransform);
-				matrix.tx -= Math.round (rect.x);
-				matrix.ty -= Math.round (rect.y);
-
-				@:privateAccess __cacheBitmapData.__draw (this, matrix, null, null, null, renderSession.allowSmoothing);
-
-				Matrix.__pool.release (matrix);
+				if (__cacheBitmapRenderer == null /*|| renderer.__type != __cacheBitmapRenderer.__type*/) {
+					
+					// if (renderer.__type == OPENGL) {
+						
+					// 	__cacheBitmapRenderer = new OpenGLRenderer (cast (renderer, OpenGLRenderer).gl, __cacheBitmapData);
+						
+					// } else {
+						
+						#if (js && html5)
+						ImageCanvasUtil.convertToCanvas (__cacheBitmapData.image);
+						__cacheBitmapRenderer = new CanvasRenderer (__cacheBitmapData.image.buffer.__srcContext);
+						#else
+						__cacheBitmapRenderer = new CairoRenderer (new Cairo (__cacheBitmapData.getSurface ()));
+						#end
+						
+					// }
+					
+					__cacheBitmapRenderer.__worldTransform = new Matrix ();
+					__cacheBitmapRenderer.__worldColorTransform = new ColorTransform ();
+					
+				}
+				
+				__cacheBitmapRenderer.__allowSmoothing = renderer.__allowSmoothing;
+				__cacheBitmapRenderer.__setBlendMode (NORMAL);
+				__cacheBitmapRenderer.__worldAlpha = 1 / __worldAlpha;
+				
+				if (parent != null) {
+					
+					__cacheBitmapRenderer.__worldTransform.copyFrom (parent.__renderTransform);
+					__cacheBitmapRenderer.__worldTransform.tx = __renderTransform.tx;
+					__cacheBitmapRenderer.__worldTransform.ty = __renderTransform.ty;
+					__cacheBitmapRenderer.__worldTransform.invert ();
+					
+				} else {
+					
+					__cacheBitmapRenderer.__worldTransform.identity ();
+					__cacheBitmapRenderer.__worldTransform.tx = __renderTransform.tx;
+					__cacheBitmapRenderer.__worldTransform.ty = __renderTransform.ty;
+					__cacheBitmapRenderer.__worldTransform.invert ();
+					
+				}
+				
+				__cacheBitmapRenderer.__worldTransform.tx -= Math.round (rect.x);
+				__cacheBitmapRenderer.__worldTransform.ty -= Math.round (rect.y);
+				
+				__cacheBitmapRenderer.__worldColorTransform.__copyFrom (__worldColorTransform);
+				__cacheBitmapRenderer.__worldColorTransform.__invert ();
+				
+				__isCacheBitmapRender = true;
+				
+				if (__cacheBitmapRenderer.__type == OPENGL) {
+					
+					__cacheBitmapRenderer.__resize (__cacheBitmapData.width, __cacheBitmapData.height);
+					__cacheBitmapData.__drawGL (this, cast __cacheBitmapRenderer);
+					
+				} else {
+					
+					#if (js && html5)
+					__cacheBitmapData.__drawCanvas (this, cast __cacheBitmapRenderer);
+					#else
+					__cacheBitmapData.__drawCairo (this, cast __cacheBitmapRenderer);
+					#end
+					
+				}
 				
 				if (hasFilters) {
 					
@@ -1361,7 +1414,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 						lastBitmap = filter.__applyFilter (bitmapData2, bitmapData, sourceRect, destPoint);
 						
 						if (filter.__preserveObject) {
-							lastBitmap.draw (bitmapData3, null, transform.colorTransform);
+							lastBitmap.draw (bitmapData3, null, __objectTransform != null ? __objectTransform.colorTransform : null);
 						}
 						filter.__renderDirty = false;
 						
@@ -1379,7 +1432,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 					
 				}
 				
-				__cacheBitmapRender = false;
+				__isCacheBitmapRender = false;
 				
 				if (__cacheBitmapColorTransform == null) __cacheBitmapColorTransform = new ColorTransform ();
 				__cacheBitmapColorTransform.__copyFrom (__worldColorTransform);
@@ -1402,15 +1455,16 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 		} else if (__cacheBitmap != null) {
 			
-			if (renderSession.renderType == DOM) {
+			if (renderer.__type == DOM) {
 				
-				__cacheBitmap.__renderDOMClear (renderSession);
+				__cacheBitmap.__renderDOMClear (cast renderer);
 				
 			}
 			
 			__cacheBitmap = null;
 			__cacheBitmapData = null;
 			__cacheBitmapColorTransform = null;
+			__cacheBitmapRenderer = null;
 			
 			return true;
 			
@@ -1421,13 +1475,13 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	public function __updateChildren (transformOnly:Bool):Void {
+	private function __updateChildren (transformOnly:Bool):Void {
 		
 		var renderParent = __renderParent != null ? __renderParent : parent;
 		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
 		__worldAlpha = __alpha;
 		__worldBlendMode = __blendMode;
-		__worldShader = __shader;
+		__worldRenderShader = __renderShader;
 		
 		if (__transformDirty) {
 			
@@ -1438,7 +1492,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	public function __updateMask (maskGraphics:Graphics):Void {
+	private function __updateMask (maskGraphics:Graphics):Void {
 		
 		if (__graphics != null) {
 			
@@ -1460,7 +1514,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	public function __updateTransforms (overrideTransform:Matrix = null):Void {
+	private function __updateTransforms (overrideTransform:Matrix = null):Void {
 		
 		var overrided = overrideTransform != null;
 		var local = overrided ? overrideTransform : __transform;
@@ -1747,6 +1801,22 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
+	private function get_renderShader ():DisplayObjectShader {
+		
+		return __renderShader;
+		
+	}
+	
+	
+	private function set_renderShader (value:DisplayObjectShader):DisplayObjectShader {
+		
+		__renderShader = value;
+		__setRenderDirty ();
+		return value;
+		
+	}
+	
+	
 	private function get_root ():DisplayObject {
 		
 		if (stage != null) {
@@ -1921,22 +1991,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		}
 		
 		return __scrollRect;
-		
-	}
-	
-	
-	private function get_shader ():DisplayObjectShader {
-		
-		return __shader;
-		
-	}
-	
-	
-	private function set_shader (value:DisplayObjectShader):DisplayObjectShader {
-		
-		__shader = value;
-		__setRenderDirty ();
-		return value;
 		
 	}
 	

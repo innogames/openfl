@@ -712,7 +712,7 @@ class TextEngine {
 			
 		}
 		
-		if (textHeight == 0 && textField != null) {
+		if (textHeight == 0 && textField != null && textField.type == INPUT) {
 			
 			var currentFormat = textField.__textFormat;
 			var ascent, descent, leading, heightValue;
@@ -938,6 +938,9 @@ class TextEngine {
 				
 			}
 			
+			// __textLayout.direction = RIGHT_TO_LEFT;
+			// __textLayout.script = ARABIC;
+			
 			__textLayout.text = text.substring (startIndex, endIndex);
 			return __textLayout.positions;
 			
@@ -1011,6 +1014,9 @@ class TextEngine {
 				__textLayout.size = formatRange.format.size;
 				
 			}
+			
+			// __textLayout.direction = RIGHT_TO_LEFT;
+			// __textLayout.script = ARABIC;
 			
 			__textLayout.text = text;
 			

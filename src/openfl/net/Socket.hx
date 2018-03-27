@@ -36,7 +36,7 @@ class Socket extends EventDispatcher implements IDataInput implements IDataOutpu
 	public var bytesAvailable (get, never):Int;
 	public var bytesPending (get, never):Int;
 	public var connected (get, never):Bool;
-	public var objectEncoding:UInt;
+	public var objectEncoding:ObjectEncoding;
 	public var secure:Bool;
 	public var timeout:Int;
 	public var endian (get, set):Endian;
@@ -160,12 +160,12 @@ class Socket extends EventDispatcher implements IDataInput implements IDataOutpu
 		#else
 		
 		__socket = new SysSocket ();
-		__socket.setBlocking (false);
-		__socket.setFastSend (true);
 		
 		try {
 			
 			__socket.connect (h, port);
+			__socket.setBlocking (false);
+			__socket.setFastSend (true);
 			
 		} catch (e:Dynamic) {}
 		

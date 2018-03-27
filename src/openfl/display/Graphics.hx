@@ -50,7 +50,6 @@ import js.html.CanvasRenderingContext2D;
 	private static var maxTextureHeight:Null<Int> = null;
 	private static var maxTextureWidth:Null<Int> = null;
 	
-	private var __bitmapFill:BitmapData;
 	private var __bounds:Rectangle;
 	private var __buffer:GLBuffer;
 	private var __bufferContext:GLRenderContext;
@@ -110,7 +109,6 @@ import js.html.CanvasRenderingContext2D;
 		__commands.beginBitmapFill (bitmap, matrix != null ? matrix.clone () : null, repeat, smooth);
 		
 		__visible = true;
-		__bitmapFill = bitmap;
 		
 	}
 	
@@ -120,12 +118,39 @@ import js.html.CanvasRenderingContext2D;
 		__commands.beginFill (color & 0xFFFFFF, alpha);
 		
 		if (alpha > 0) __visible = true;
-		__bitmapFill = null;
 		
 	}
 	
 	
 	public function beginGradientFill (type:GradientType, colors:Array<Int>, alphas:Array<Float>, ratios:Array<Int>, matrix:Matrix = null, spreadMethod:SpreadMethod = SpreadMethod.PAD, interpolationMethod:InterpolationMethod = InterpolationMethod.RGB, focalPointRatio:Float = 0):Void {
+		
+		if (colors == null || colors.length == 0) return;
+		
+		if (alphas == null) {
+			
+			alphas = [];
+			
+			for (i in 0...colors.length) {
+				
+				alphas.push (1);
+				
+			}
+			
+		}
+		
+		if (ratios == null) {
+			
+			ratios = [];
+			
+			for (i in 0...colors.length) {
+				
+				ratios.push (Math.ceil ((i / colors.length) * 255));
+				
+			}
+			
+		}
+		
+		if (alphas.length < colors.length || ratios.length < colors.length) return;
 		
 		__commands.beginGradientFill (type, colors, alphas, ratios, matrix, spreadMethod, interpolationMethod, focalPointRatio);
 		
@@ -140,8 +165,6 @@ import js.html.CanvasRenderingContext2D;
 			
 		}
 		
-		__bitmapFill = null;
-		
 	}
 	
 	
@@ -152,12 +175,6 @@ import js.html.CanvasRenderingContext2D;
 		shaderBuffer.update (shader);
 		
 		__commands.beginShaderFill (shaderBuffer);
-		
-		if (shader != null) {
-			
-			__bitmapFill = shader.data.texture0.input;
-			
-		}
 		
 	}
 	
@@ -510,7 +527,7 @@ import js.html.CanvasRenderingContext2D;
 	
 	public function drawQuads (rects:Vector<Float>, indices:Vector<Int> = null, transforms:Vector<Float> = null):Void {
 		
-		if (rects == null || __bitmapFill == null) return;
+		if (rects == null) return;
 		
 		var hasIndices = (indices != null);
 		var transformABCD = false, transformXY = false;
@@ -607,10 +624,13 @@ import js.html.CanvasRenderingContext2D;
 	
 	public function drawRect (x:Float, y:Float, width:Float, height:Float):Void {
 		
-		if (width <= 0 || height <= 0) return;
+		if(width == 0 && height == 0) return;
 		
-		__inflateBounds (x - __strokePadding, y - __strokePadding);
-		__inflateBounds (x + width + __strokePadding, y + height + __strokePadding);
+		var xSign = width < 0 ? -1 : 1;
+		var ySign = height < 0 ? -1 : 1;
+		
+		__inflateBounds (x - __strokePadding * xSign, y - __strokePadding * ySign);
+		__inflateBounds (x + width + __strokePadding * xSign, y + height + __strokePadding * ySign);
 		
 		__commands.drawRect (x, y, width, height);
 		
@@ -621,10 +641,13 @@ import js.html.CanvasRenderingContext2D;
 	
 	public function drawRoundRect (x:Float, y:Float, width:Float, height:Float, ellipseWidth:Float, ellipseHeight:Null<Float> = null):Void {
 		
-		if (width <= 0 || height <= 0) return;
+		if(width == 0 && height == 0) return;
 		
-		__inflateBounds (x - __strokePadding, y - __strokePadding);
-		__inflateBounds (x + width + __strokePadding, y + height + __strokePadding);
+		var xSign = width < 0 ? -1 : 1;
+		var ySign = height < 0 ? -1 : 1;
+		
+		__inflateBounds (x - __strokePadding * xSign, y - __strokePadding * ySign);
+		__inflateBounds (x + width + __strokePadding * xSign, y + height + __strokePadding * ySign);
 		
 		__commands.drawRoundRect (x, y, width, height, ellipseWidth, ellipseHeight);
 		
@@ -635,7 +658,7 @@ import js.html.CanvasRenderingContext2D;
 	
 	public function drawRoundRectComplex (x:Float, y:Float, width:Float, height:Float, topLeftRadius:Float, topRightRadius:Float, bottomLeftRadius:Float, bottomRightRadius:Float):Void {
 		
-		if (width <= 0 || height <= 0) return;
+		if(width <= 0 || height <= 0) return;
 		
 		__inflateBounds (x - __strokePadding, y - __strokePadding);
 		__inflateBounds (x + width + __strokePadding, y + height + __strokePadding);
@@ -683,19 +706,15 @@ import js.html.CanvasRenderingContext2D;
 	
 	public function drawTriangles (vertices:Vector<Float>, indices:Vector<Int> = null, uvtData:Vector<Float> = null, culling:TriangleCulling = TriangleCulling.NONE):Void {
 		
-		if (vertices == null) return;
+		if (vertices == null || vertices.length == 0) return;
 		
-		var vlen = Std.int (vertices.length / 2);
-		
-		if (culling == null) {
-			
-			culling = NONE;
-			
-		}
+		var vertLength = Std.int (vertices.length / 2);
 		
 		if (indices == null) {
 			
-			if (vlen % 3 != 0) {
+			// TODO: Allow null indices
+			
+			if (vertLength % 3 != 0) {
 				
 				throw new ArgumentError ("Not enough vertices to close a triangle.");
 				
@@ -703,7 +722,7 @@ import js.html.CanvasRenderingContext2D;
 			
 			indices = new Vector<Int> ();
 			
-			for (i in 0...vlen) {
+			for (i in 0...vertLength) {
 				
 				indices.push (i);
 				
@@ -711,23 +730,33 @@ import js.html.CanvasRenderingContext2D;
 			
 		}
 		
-		__inflateBounds (0, 0);
-		
-		var tmpx = Math.NEGATIVE_INFINITY;
-		var tmpy = Math.NEGATIVE_INFINITY;
-		var maxX = Math.NEGATIVE_INFINITY;
-		var maxY = Math.NEGATIVE_INFINITY;
-		
-		for (i in 0...vlen) {
+		if (culling == null) {
 			
-			tmpx = vertices[i * 2];
-			tmpy = vertices[i * 2 + 1];
-			if (maxX < tmpx) maxX = tmpx;
-			if (maxY < tmpy) maxY = tmpy;
+			culling = NONE;
 			
 		}
 		
+		var x, y;
+		var minX = Math.POSITIVE_INFINITY;
+		var minY = Math.POSITIVE_INFINITY;
+		var maxX = Math.NEGATIVE_INFINITY;
+		var maxY = Math.NEGATIVE_INFINITY;
+		
+		for (i in 0...vertLength) {
+			
+			x = vertices[i * 2];
+			y = vertices[i * 2 + 1];
+			
+			if (minX > x) minX = x;
+			if (minY > y) minY = y;
+			if (maxX < x) maxX = x;
+			if (maxY < y) maxY = y;
+			
+		}
+		
+		__inflateBounds (minX, minY);
 		__inflateBounds (maxX, maxY);
+		
 		__commands.drawTriangles (vertices, indices, uvtData, culling);
 		
 		__dirty = true;
@@ -1080,7 +1109,7 @@ import js.html.CanvasRenderingContext2D;
 	}
 	
 	
-	private function __update ():Void {
+	private function __update (displayMatrix:Matrix):Void {
 		
 		if (__bounds == null || __bounds.width <= 0 || __bounds.height <= 0) return;
 		
@@ -1112,6 +1141,30 @@ import js.html.CanvasRenderingContext2D;
 		} else {
 			
 			return;
+			
+		}
+		
+		if (displayMatrix != null) {
+			
+			if (displayMatrix.b == 0) {
+				
+				scaleX *= displayMatrix.a;
+				
+			} else {
+				
+				scaleX *= Math.sqrt (displayMatrix.a * displayMatrix.a + displayMatrix.b * displayMatrix.b);
+				
+			}
+			
+			if (displayMatrix.c == 0) {
+				
+				scaleY *= displayMatrix.d;
+				
+			} else {
+				
+				scaleY *= Math.sqrt (displayMatrix.c * displayMatrix.c + displayMatrix.d * displayMatrix.d);
+				
+			}
 			
 		}
 		
@@ -1171,8 +1224,8 @@ import js.html.CanvasRenderingContext2D;
 		__renderTransform.ty = __worldTransform.__transformInverseY (tx, ty);
 		
 		// Calculate the size to contain the graphics and the extra subpixel
-		var newWidth  = Math.ceil(width  + __renderTransform.tx);
-		var newHeight = Math.ceil(height + __renderTransform.ty);
+		var newWidth  = Math.ceil (width  + __renderTransform.tx);
+		var newHeight = Math.ceil (height + __renderTransform.ty);
 		
 		// Mark dirty if render size changed
 		if (newWidth != __width || newHeight != __height) {

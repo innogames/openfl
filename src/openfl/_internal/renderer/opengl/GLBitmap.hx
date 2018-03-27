@@ -2,8 +2,9 @@ package openfl._internal.renderer.opengl;
 
 
 import lime.utils.Float32Array;
-import openfl._internal.renderer.RenderSession;
 import openfl.display.Bitmap;
+import openfl.display.BitmapData;
+import openfl.display.OpenGLRenderer;
 
 #if gl_stats
 import openfl._internal.renderer.opengl.stats.GLStats;
@@ -25,80 +26,77 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 class GLBitmap {
 	
 	
-	public static function render (bitmap:Bitmap, renderSession:RenderSession):Void {
+	public static function render (bitmap:Bitmap, renderer:OpenGLRenderer):Void {
 		
 		if (!bitmap.__renderable || bitmap.__worldAlpha <= 0) return;
 		
 		if (bitmap.__bitmapData != null && bitmap.__bitmapData.__isValid) {
 			
-			var renderer:GLRenderer = cast renderSession.renderer;
-			var shaderManager:GLShaderManager = cast renderSession.shaderManager;
-			var gl = renderSession.gl;
+			var gl = renderer.gl;
 			
-			renderSession.blendModeManager.setBlendMode (bitmap.__worldBlendMode);
-			renderSession.maskManager.pushObject (bitmap);
-			renderSession.filterManager.pushObject (bitmap);
+			renderer.__setBlendMode (bitmap.__worldBlendMode);
+			renderer.__pushMaskObject (bitmap);
+			// renderer.filterManager.pushObject (bitmap);
 			
-			var shader = shaderManager.initDisplayShader (bitmap.__worldShader);
-			shaderManager.setDisplayShader (shader);
-			shaderManager.applyBitmapData (bitmap.__bitmapData, renderSession.allowSmoothing && (bitmap.smoothing || renderSession.upscaled));
-			shaderManager.applyMatrix (renderer.getMatrix (bitmap.__renderTransform));
-			shaderManager.applyAlpha (bitmap.__worldAlpha);
-			shaderManager.applyColorTransform (bitmap.__worldColorTransform);
+			var shader = renderer.__initDisplayShader (bitmap.__worldRenderShader);
+			renderer.setDisplayShader (shader);
+			renderer.applyBitmapData (bitmap.__bitmapData, renderer.__allowSmoothing && (bitmap.smoothing || renderer.__upscaled));
+			renderer.applyMatrix (renderer.__getMatrix (bitmap.__renderTransform));
+			renderer.applyAlpha (bitmap.__worldAlpha);
+			renderer.applyColorTransform (bitmap.__worldColorTransform);
 			
 			var vaoRendered = GLVAORenderHelper.renderDO (bitmap, renderSession, bitmap.__bitmapData);
 			
 			if (vaoRendered) return;
-			shaderManager.updateShader ();
+			
+			renderer.updateShader ();
 			
 			gl.bindBuffer (gl.ARRAY_BUFFER, bitmap.__bitmapData.getBuffer (gl));
-			gl.vertexAttribPointer (shader.data.openfl_Position.index, 3, gl.FLOAT, false, 14 * Float32Array.BYTES_PER_ELEMENT, 0);
-			gl.vertexAttribPointer (shader.data.openfl_TexCoord.index, 2, gl.FLOAT, false, 14 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer (shader.openfl_Position.index, 3, gl.FLOAT, false, 14 * Float32Array.BYTES_PER_ELEMENT, 0);
+			gl.vertexAttribPointer (shader.openfl_TexCoord.index, 2, gl.FLOAT, false, 14 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
 			gl.drawArrays (gl.TRIANGLE_STRIP, 0, 4);
 			
 			#if gl_stats
 				GLStats.incrementDrawCall (DrawCallContext.STAGE);
 			#end
 			
-			shaderManager.clear ();
+			renderer.__clearShader ();
 			
-			renderSession.filterManager.popObject (bitmap);
-			renderSession.maskManager.popObject (bitmap);
+			// renderer.filterManager.popObject (bitmap);
+			renderer.__popMaskObject (bitmap);
 			
 		}
 		
 	}
 	
 	
-	public static function renderMask (bitmap:Bitmap, renderSession:RenderSession):Void {
+	public static function renderMask (bitmap:Bitmap, renderer:OpenGLRenderer):Void {
 		
 		if (bitmap.__bitmapData != null && bitmap.__bitmapData.__isValid) {
 			
-			var renderer:GLRenderer = cast renderSession.renderer;
-			var shaderManager:GLShaderManager = cast renderSession.shaderManager;
-			var gl = renderSession.gl;
+			var gl = renderer.gl;
 			
-			var shader = GLMaskManager.maskShader;
-			shaderManager.setDisplayShader (shader);
-			shaderManager.applyBitmapData (bitmap.__bitmapData, renderSession.allowSmoothing && (bitmap.smoothing || renderSession.upscaled));
-			shaderManager.applyMatrix (renderer.getMatrix (bitmap.__renderTransform));
+			var shader = renderer.__maskShader;
+			renderer.setDisplayShader (shader);
+			renderer.applyBitmapData (GLMaskShader.opaqueBitmapData, true);
+			renderer.applyMatrix (renderer.__getMatrix (bitmap.__renderTransform));
 			
 			var vaoRendered = GLVAORenderHelper.renderDO (bitmap, renderSession, bitmap.__bitmapData, true);
 			
 			if (vaoRendered) return;
 			
-			shaderManager.updateShader ();
+			renderer.updateShader ();
 			
 			gl.bindBuffer (gl.ARRAY_BUFFER, bitmap.__bitmapData.getBuffer (gl));
-			gl.vertexAttribPointer (shader.data.openfl_Position.index, 3, gl.FLOAT, false, 14 * Float32Array.BYTES_PER_ELEMENT, 0);
-			gl.vertexAttribPointer (shader.data.openfl_TexCoord.index, 2, gl.FLOAT, false, 14 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer (shader.openfl_Position.index, 3, gl.FLOAT, false, 14 * Float32Array.BYTES_PER_ELEMENT, 0);
+			gl.vertexAttribPointer (shader.openfl_TexCoord.index, 2, gl.FLOAT, false, 14 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
 			gl.drawArrays (gl.TRIANGLE_STRIP, 0, 4);
 			
 			#if gl_stats
 				GLStats.incrementDrawCall (DrawCallContext.STAGE);
 			#end
 			
-			shaderManager.clear ();
+			renderer.__clearShader ();
 			
 		}
 		

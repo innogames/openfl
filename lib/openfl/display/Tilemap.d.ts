@@ -1,20 +1,22 @@
 import DisplayObject from "./DisplayObject";
+import ITileContainer from "./ITileContainer";
 import Shader from "./Shader";
 import Tile from "./Tile";
-import TileArray from "./TileArray";
+import TileContainer from "./TileContainer";
 import Tileset from "./Tileset";
 
 
 declare namespace openfl.display {
 	
 	
-	export class Tilemap extends DisplayObject {
+	export class Tilemap extends DisplayObject implements ITileContainer {
 		
 		
 		public readonly numTiles:number;
-		/*@:beta*/ public shader:Shader;
 		public smoothing:boolean;
-		public readonly tileset:Tileset;
+		public tileAlphaEnabled:Boolean;
+		public tileColorTransformEnabled:Boolean;
+		public tileset:Tileset;
 		
 		public constructor (width:number, height:number, tileset?:Tileset, smoothing?:boolean);
 		
@@ -24,11 +26,16 @@ declare namespace openfl.display {
 		public contains (tile:Tile):boolean;
 		public getTileAt (index:number):Tile;
 		public getTileIndex (tile:Tile):number;
-		/*@:beta*/ public getTiles ():TileArray;
+		public getTiles ():TileContainer;
 		public removeTile (tile:Tile):Tile;
 		public removeTileAt (index:number):Tile;
 		public removeTiles (beginIndex?:number, endIndex?:number):void;
-		/*@:beta*/ public setTiles (tileArray:TileArray):void;
+		public setTileIndex (tile:Tile, index:number):void;
+		public setTiles (group:TileContainer):void;
+		public swapTiles (tile1:Tile, tile2:Tile):void;
+		public swapTilesAt (index1:number, index2:number):void;
+		
+		private get_numTiles ():number;
 		
 		
 	}

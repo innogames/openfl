@@ -8,7 +8,7 @@ import lime.graphics.GLRenderContext;
 @:noDebug
 #end
 
-#if !js @:generic #end
+#if (!js && !display) @:generic #end
 
 
 @:final class ShaderInput<T> /*implements Dynamic*/ {
@@ -59,6 +59,11 @@ import lime.graphics.GLRenderContext;
 				gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 				
 			}
+			
+		} else {
+			
+			gl.activeTexture (gl.TEXTURE0 + id);
+			gl.bindTexture (gl.TEXTURE_2D, null);
 			
 		}
 		
