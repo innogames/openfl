@@ -45,7 +45,7 @@ class GLBitmap {
 			renderer.applyAlpha (bitmap.__worldAlpha);
 			renderer.applyColorTransform (bitmap.__worldColorTransform);
 			
-			var vaoRendered = GLVAORenderHelper.renderDO (bitmap, renderSession, bitmap.__bitmapData);
+			var vaoRendered = GLVAORenderHelper.renderDO (bitmap, renderer, bitmap.__bitmapData);
 			
 			if (vaoRendered) return;
 			

@@ -52,6 +52,7 @@ import js.html.Element;
 @:access(openfl.display.Bitmap)
 @:access(openfl.display.BitmapData)
 @:access(openfl.display.DisplayObjectContainer)
+@:access(openfl.display.OpenGLRenderer)
 @:access(openfl.display.Graphics)
 @:access(openfl.display.Stage)
 @:access(openfl.filters.BitmapFilter)
@@ -425,7 +426,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	private function __cleanup (renderSession: RenderSession):Void {
+	private function __cleanup (renderer: OpenGLRenderer = null):Void {
 		
 		__cairo = null;
 		
@@ -440,19 +441,23 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 		}
 		
-		if (__vao != null) {
+		if (renderer != null) {
 			
-			renderSession.vaoContext.deleteVertexArray (__vao);
-			__vao = null;
+			if (__vao != null) {
+				
+				renderer.__vaoContext.deleteVertexArray (__vao);
+				__vao = null;
+				
+			} 
 			
-		} 
-		
-		if (__vaoMask != null) {
+			if (__vaoMask != null) {
+				
+				renderer.__vaoContext.deleteVertexArray (__vaoMask);
+				__vaoMask = null;
+				
+			}
 			
-			renderSession.vaoContext.deleteVertexArray (__vaoMask);
-			__vaoMask = null;
-			
-		} 
+		}
 		
 	}
 	
@@ -506,7 +511,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 				
 			}
 			
-			tmpParent.__dispatchEvent (event);
+			parent.__dispatchEvent (event);
 			
 		}
 		

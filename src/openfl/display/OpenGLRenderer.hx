@@ -1,6 +1,9 @@
 package openfl.display;
 
 
+import openfl._internal.renderer.opengl.vao.VertexArrayObjectContext;
+import openfl._internal.renderer.opengl.vao.VertexArrayObjectExtension;
+import openfl._internal.renderer.opengl.vao.IVertexArrayObjectContext;
 import lime.graphics.opengl.ext.KHR_debug;
 import lime.graphics.opengl.GLFramebuffer;
 import lime.graphics.GLRenderContext;
@@ -79,6 +82,7 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 	private var __upscaled:Bool;
 	private var __values:Array<Float>;
 	private var __width:Int;
+	private var __vaoContext:IVertexArrayObjectContext;
 	
 	
 	private function new (gl:GLRenderContext, ?defaultRenderTarget:BitmapData) {
@@ -130,6 +134,8 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 		__defaultShader = __defaultDisplayShader;
 		
 		__initShader (__defaultShader);
+		
+		__initVAO();
 		
 		__maskShader = new GLMaskShader ();
 		
@@ -291,6 +297,33 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 			return __matrix;
 			
 		}
+		
+	}
+	
+	
+	private inline function __initVAO(): Void {
+		
+		#if vertex_array_object
+		if (gl.type == GLContextType.WEBGL) { 
+			
+			if (gl.version == 2) {
+				
+				__vaoContext = new VertexArrayObjectContext (gl);
+				
+			} else if (gl.version == 1) {
+				
+				var vertexArrayObjectsExtension = gl.getExtension ("OES_vertex_array_object");
+				
+				if (vertexArrayObjectsExtension != null) {
+					
+					__vaoContext = new VertexArrayObjectExtension (vertexArrayObjectsExtension);
+					
+				}
+				
+			}
+			
+		}
+		#end
 		
 	}
 	

@@ -5,6 +5,7 @@ package openfl._internal.renderer.opengl;
 import openfl._internal.renderer.opengl.stats.GLStats;
 import openfl._internal.renderer.opengl.stats.DrawCallContext;
 #end
+import openfl.display.OpenGLRenderer;
 import openfl.display.BitmapData;
 import haxe.io.Float32Array;
 import openfl.display.Shader;
@@ -33,14 +34,14 @@ class GLVAORenderHelper {
 	}
 	
 	
-	public static inline function renderDO (displayObject:DisplayObject, renderSession:RenderSession, bitmapData: BitmapData, isMask: Bool = false):Bool {
+	public static inline function renderDO (displayObject:DisplayObject, renderer:OpenGLRenderer, bitmapData: BitmapData, isMask: Bool = false):Bool {
 		
-		var gl = renderSession.gl;
-		var vaoContext = renderSession.vaoContext;
+		var gl = renderer.gl;
+		var vaoContext = renderer.vaoContext;
 		
 		if (vaoContext != null) {
 			
-			var shaderManager:GLShaderManager = cast renderSession.shaderManager;
+			var shaderManager:GLShaderManager = cast renderer.shaderManager;
 			var shader = shaderManager.currentShader;
 			
 			shader.__skipEnableVertexAttribArray = true;
@@ -79,8 +80,8 @@ class GLVAORenderHelper {
 				GLStats.incrementDrawCall (DrawCallContext.STAGE);
 			#end
 			
-			renderSession.filterManager.popObject (displayObject);
-			renderSession.maskManager.popObject (displayObject);
+			renderer.filterManager.popObject (displayObject);
+			renderer.maskManager.popObject (displayObject);
 			
 			vaoContext.bindVertexArray (null);
 			
