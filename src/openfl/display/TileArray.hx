@@ -3,6 +3,7 @@ package openfl.display;
 
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.GLRenderContext;
+import lime.graphics.opengl.WebGLContext;
 import lime.utils.Float32Array;
 import openfl.geom.ColorTransform;
 import openfl.geom.Matrix;
@@ -15,7 +16,8 @@ import openfl.Vector;
 @:access(openfl.geom.Rectangle)
 
 
-@:beta class TileArray implements ITile {
+#if ((openfl < "9.0.0") && enable_tile_array)
+@:deprecated class TileArray implements ITile {
 	
 	
 	private static inline var ID_INDEX = 0;
@@ -39,7 +41,7 @@ import openfl.Vector;
 	public var matrix (get, set):Matrix;
 	public var position:Int;
 	public var rect (get, set):Rectangle;
-	public var shader (get, set):Shader;
+	public var shader (get, set):DisplayObjectShader;
 	public var tileset (get, set):Tileset;
 	public var visible (get, set):Bool;
 	
@@ -47,6 +49,7 @@ import openfl.Vector;
 	private var __bufferContext:GLRenderContext;
 	private var __bufferDirty:Bool;
 	private var __bufferData:Float32Array;
+	private var __bufferLength:Int;
 	private var __bufferSkipped:Vector<Bool>;
 	private var __cacheAlpha:Float;
 	private var __cacheDefaultTileset:Tileset;
@@ -56,7 +59,7 @@ import openfl.Vector;
 	private var __length:Int;
 	private var __matrix:Matrix;
 	private var __rect:Rectangle;
-	private var __shaders:Vector<Shader>;
+	private var __shaders:Vector<DisplayObjectShader>;
 	private var __tilesets:Vector<Tileset>;
 	private var __visible:Vector<Bool>;
 	
@@ -85,7 +88,7 @@ import openfl.Vector;
 		__cacheAlpha = -1;
 		__data = new Vector<Float> (length * DATA_LENGTH);
 		__dirty = new Vector<Bool> (length * DIRTY_LENGTH);
-		__shaders = new Vector<Shader> (length);
+		__shaders = new Vector<DisplayObjectShader> (length);
 		__tilesets = new Vector<Tileset> (length);
 		__visible = new Vector<Bool> (length);
 		__length = length;
@@ -121,7 +124,7 @@ import openfl.Vector;
 		
 		// TODO: More closely align internal data format with GL buffer format?
 		
-		var attributeLength = 25;
+		var attributeLength = 13;
 		var stride = attributeLength * 6;
 		var bufferLength = __length * stride;
 		
@@ -346,14 +349,14 @@ import openfl.Vector;
 					
 					// 4 x 4 matrix
 					__bufferData[offset + (attributeLength * i) + 5] = redMultiplier;
-					__bufferData[offset + (attributeLength * i) + 10] = greenMultiplier;
-					__bufferData[offset + (attributeLength * i) + 15] = blueMultiplier;
-					__bufferData[offset + (attributeLength * i) + 20] = alphaMultiplier;
+					__bufferData[offset + (attributeLength * i) + 6] = greenMultiplier;
+					__bufferData[offset + (attributeLength * i) + 7] = blueMultiplier;
+					__bufferData[offset + (attributeLength * i) + 8] = alphaMultiplier;
 					
-					__bufferData[offset + (attributeLength * i) + 21] = redOffset / 255;
-					__bufferData[offset + (attributeLength * i) + 22] = greenOffset / 255;
-					__bufferData[offset + (attributeLength * i) + 23] = blueOffset / 255;
-					__bufferData[offset + (attributeLength * i) + 24] = alphaOffset / 255;
+					__bufferData[offset + (attributeLength * i) + 9] = redOffset / 255;
+					__bufferData[offset + (attributeLength * i) + 10] = greenOffset / 255;
+					__bufferData[offset + (attributeLength * i) + 11] = blueOffset / 255;
+					__bufferData[offset + (attributeLength * i) + 12] = alphaOffset / 255;
 					
 				}
 				
@@ -361,7 +364,17 @@ import openfl.Vector;
 				
 			}
 			
-			gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.DYNAMIC_DRAW);
+			if (__bufferLength >= __bufferData.byteLength) {
+				
+				(gl:WebGLContext).bufferSubData (gl.ARRAY_BUFFER, 0, __bufferData);
+				
+			} else {
+				
+				(gl:WebGLContext).bufferData (gl.ARRAY_BUFFER, __bufferData, gl.DYNAMIC_DRAW);
+				
+			}
+			
+			__bufferLength = __bufferData.byteLength;
 			
 			__cacheAlpha = worldAlpha;
 			__cacheDefaultTileset = defaultTileset;
@@ -584,14 +597,14 @@ import openfl.Vector;
 	}
 	
 	
-	private inline function get_shader ():Shader {
+	private inline function get_shader ():DisplayObjectShader {
 		
 		return __shaders[position];
 		
 	}
 	
 	
-	private inline function set_shader (value:Shader):Shader {
+	private inline function set_shader (value:DisplayObjectShader):DisplayObjectShader {
 		
 		__shaders[position] = value;
 		return value;
@@ -676,3 +689,4 @@ private class TileArrayIterator {
 	
 	
 }
+#end

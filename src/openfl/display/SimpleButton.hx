@@ -258,6 +258,8 @@ class SimpleButton extends InteractiveObject {
 		__currentState.__renderCairo (renderSession);
 		renderSession.maskManager.popObject (this);
 		
+		__renderEvent (renderSession);
+		
 	}
 	
 	
@@ -273,11 +275,11 @@ class SimpleButton extends InteractiveObject {
 		if (!__renderable || __worldAlpha <= 0 || __currentState == null) return;
 		
 		#if !neko
-		
 		renderSession.maskManager.pushObject (this);
 		__currentState.__renderCanvas (renderSession);
 		renderSession.maskManager.popObject (this);
 		
+		__renderEvent (renderSession);
 		#end
 		
 	}
@@ -299,7 +301,6 @@ class SimpleButton extends InteractiveObject {
 	private override function __renderDOM (renderSession:RenderSession):Void {
 		
 		#if !neko
-		
 		renderSession.maskManager.pushObject (this);
 		
 		for (previousState in __previousStates) {
@@ -322,6 +323,7 @@ class SimpleButton extends InteractiveObject {
 		
 		renderSession.maskManager.popObject (this);
 		
+		__renderEvent (renderSession);
 		#end
 		
 	}
@@ -334,6 +336,8 @@ class SimpleButton extends InteractiveObject {
 		renderSession.maskManager.pushObject (this);
 		__currentState.__renderGL (renderSession);
 		renderSession.maskManager.popObject (this);
+		
+		__renderEvent (renderSession);
 		
 	}
 	

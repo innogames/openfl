@@ -6,6 +6,7 @@ import lime.graphics.GLRenderContext;
 
 #if !flash
 import openfl._internal.renderer.dom.DOMRenderer;
+import openfl._internal.renderer.opengl.GLShaderManager;
 import openfl._internal.renderer.RenderSession;
 #end
 import openfl._internal.Lib;
@@ -27,7 +28,7 @@ import js.Browser;
 @:access(lime.graphics.opengl.GL)
 
 
-@:replacementPlanned class OpenGLView extends DirectRenderer {
+@:deprecated class OpenGLView extends DirectRenderer {
 	
 	
 	public static inline var CONTEXT_LOST = "glcontextlost";
@@ -207,7 +208,8 @@ import js.Browser;
 				
 			}
 			
-			renderSession.shaderManager.setShader (null);
+			var shaderManager:GLShaderManager = cast renderSession.shaderManager;
+			shaderManager.setShader (null);
 			renderSession.blendModeManager.setBlendMode (null);
 			
 			if (__render != null) __render (rect);

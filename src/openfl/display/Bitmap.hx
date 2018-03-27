@@ -7,7 +7,6 @@ import openfl._internal.renderer.dom.DOMBitmap;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.RenderSession;
 import openfl.geom.Matrix;
-import openfl.geom.Point;
 import openfl.geom.Rectangle;
 
 #if (js && html5)
@@ -25,12 +24,11 @@ import js.html.ImageElement;
 @:access(openfl.geom.Rectangle)
 
 
-class Bitmap extends DisplayObject implements IShaderDrawable {
+class Bitmap extends DisplayObject {
 	
 	
 	public var bitmapData (get, set):BitmapData;
 	public var pixelSnapping:PixelSnapping;
-	@:beta public var shader:Shader;
 	public var smoothing:Bool;
 	
 	#if (js && html5)
@@ -170,6 +168,8 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 			CairoBitmap.render (this, renderSession);
 			
 		}
+		
+		__renderEvent (renderSession);
 		#end
 		
 	}
@@ -195,6 +195,8 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 			CanvasBitmap.render (this, renderSession);
 			
 		}
+		
+		__renderEvent (renderSession);
 		
 	}
 	
@@ -223,6 +225,8 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 			
 		}
 		
+		__renderEvent (renderSession);
+		
 	}
 	
 	
@@ -247,6 +251,8 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 			
 		}
 		
+		__renderEvent (renderSession);
+		
 	}
 	
 	
@@ -269,7 +275,7 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 	
 	private override function __updateCacheBitmap (renderSession:RenderSession, force:Bool):Bool {
 		
-		if (filters == null) return false;
+		if (__filters == null) return false;
 		return super.__updateCacheBitmap (renderSession, force);
 		
 	}

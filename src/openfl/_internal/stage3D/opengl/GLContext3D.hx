@@ -1040,6 +1040,35 @@ class GLContext3D {
 					
 				}
 				
+				if (context.__samplerStates[sampler].textureAlpha) {
+					
+					gl.activeTexture (gl.TEXTURE0 + sampler + 4);
+					GLUtils.CheckGLError ();
+					
+					if (texture != null && texture.__alphaTexture != null) {
+						
+						var target = texture.__alphaTexture.__textureTarget;
+						
+						gl.bindTexture (target, texture.__alphaTexture.__getTexture ());
+						GLUtils.CheckGLError ();
+						
+						texture.__alphaTexture.__setSamplerState (context.__samplerStates[sampler]);
+						
+						gl.uniform1i (context.__program.__alphaSamplerEnabled[sampler].location, 1);
+						GLUtils.CheckGLError ();
+						
+					} else {
+						
+						gl.bindTexture (gl.TEXTURE_2D, null);
+						GLUtils.CheckGLError ();
+						
+						gl.uniform1i (context.__program.__alphaSamplerEnabled[sampler].location, 0);
+						GLUtils.CheckGLError ();
+						
+					}
+					
+				}
+				
 				context.__samplerDirty &= ~(1 << sampler);
 				
 			}
@@ -1211,23 +1240,33 @@ class GLContext3D {
 	// }
 	
 	
-	private static function __updateDepthAndStencilState ():Void {
+	public static function __updateBackbufferViewportTEMP (context:Context3D):Void {
 		
-		var depthAndStencil = context.__renderToTexture != null ? context.__rttDepthAndStencil : context.__backBufferEnableDepthAndStencil;
+		GLContext3D.context = context;
+		GLContext3D.gl = context.__renderSession.gl;
 		
-		if (depthAndStencil) {
+		__updateBackbufferViewport ();
+		
+	}
+	
+	
+	private static function __updateBackbufferViewport ():Void {
+		
+		if (!Stage3D.__active) {
 			
-			gl.enable (gl.DEPTH_TEST);
-			GLUtils.CheckGLError ();
-			gl.enable (gl.STENCIL_TEST);
-			GLUtils.CheckGLError ();
+			Stage3D.__active = true;
+			context.__renderSession.renderer.clear ();
 			
-		} else {
+		}
+		
+		if (context.__renderToTexture == null && context.backBufferWidth > 0 && context.backBufferHeight > 0) {
 			
-			gl.disable (gl.DEPTH_TEST);
-			GLUtils.CheckGLError ();
-			gl.disable (gl.STENCIL_TEST);
-			GLUtils.CheckGLError ();
+			var window = context.__stage3D.__stage.window;
+			
+			var x = Std.int (context.__stage3D.x);
+			var y = Std.int ((window.height * window.scale) - context.backBufferHeight - context.__stage3D.y);
+			
+			__setViewport (x > 0 ? x : 0, (y > 0 ? y : 0), context.backBufferWidth, context.backBufferHeight);
 			
 		}
 		
@@ -1292,6 +1331,29 @@ class GLContext3D {
 	}
 	
 	
+	private static function __updateDepthAndStencilState ():Void {
+		
+		var depthAndStencil = context.__renderToTexture != null ? context.__rttDepthAndStencil : context.__backBufferEnableDepthAndStencil;
+		
+		if (depthAndStencil) {
+			
+			gl.enable (gl.DEPTH_TEST);
+			GLUtils.CheckGLError ();
+			gl.enable (gl.STENCIL_TEST);
+			GLUtils.CheckGLError ();
+			
+		} else {
+			
+			gl.disable (gl.DEPTH_TEST);
+			GLUtils.CheckGLError ();
+			gl.disable (gl.STENCIL_TEST);
+			GLUtils.CheckGLError ();
+			
+		}
+		
+	}
+	
+	
 	private static function __updateScissorRectangle ():Void {
 		
 		if (context.__scissorRectangle == null) {
@@ -1337,34 +1399,6 @@ class GLContext3D {
 			Std.int (context.__scissorRectangle.height)
 		);
 		GLUtils.CheckGLError ();
-		
-	}
-	
-	
-	public static function __updateBackbufferViewportTEMP (context:Context3D):Void {
-		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
-		
-		__updateBackbufferViewport ();
-		
-	}
-	
-	
-	private static function __updateBackbufferViewport ():Void {
-		
-		if (!Stage3D.__active) {
-			
-			Stage3D.__active = true;
-			context.__renderSession.renderer.clear ();
-			
-		}
-		
-		if (context.__renderToTexture == null && context.backBufferWidth > 0 && context.backBufferHeight > 0) {
-			
-			__setViewport (Std.int (context.__stage3D.x), Std.int (context.__stage3D.y), context.backBufferWidth, context.backBufferHeight);
-			
-		}
 		
 	}
 	

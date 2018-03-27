@@ -31,6 +31,7 @@ import openfl._internal.renderer.canvas.CanvasMaskManager;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.opengl.GLMaskManager;
 import openfl._internal.renderer.opengl.GLRenderer;
+import openfl._internal.renderer.opengl.GLShaderManager;
 import openfl._internal.utils.PerlinNoise;
 import openfl.display3D.textures.TextureBase;
 import openfl.errors.Error;
@@ -91,7 +92,7 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 class BitmapData implements IBitmapDrawable {
 	
 	
-	private static inline var __bufferStride = 26;
+	private static inline var __bufferStride = 14;
 	private static var __supportsBGRA:Null<Bool> = null;
 	private static var __tempVector:Vector2 = new Vector2 ();
 	private static var __textureFormat:Int;
@@ -862,7 +863,7 @@ class BitmapData implements IBitmapDrawable {
 		
 	}
 	
-	public function getBuffer (gl:GLRenderContext, alpha:Float, colorTransform:ColorTransform):GLBuffer {
+	public function getBuffer (gl:GLRenderContext):GLBuffer {
 		
 		if (__buffer == null || __bufferContext != gl) {
 			
@@ -917,34 +918,27 @@ class BitmapData implements IBitmapDrawable {
 			__bufferData[__bufferStride * 2] = width;
 			__bufferData[__bufferStride * 2 + 3] = uvWidth;
 			
-			for (i in 0...4) {
+			// for (i in 0...4) {
 				
-				__bufferData[__bufferStride * i + 5] = alpha;
+			// 	__bufferData[__bufferStride * i + 5] = alpha;
 				
-				if (colorTransform != null) {
+			// 	if (colorTransform != null) {
 					
-					__bufferData[__bufferStride * i + 6] = colorTransform.redMultiplier;
-					__bufferData[__bufferStride * i + 11] = colorTransform.greenMultiplier;
-					__bufferData[__bufferStride * i + 16] = colorTransform.blueMultiplier;
-					__bufferData[__bufferStride * i + 21] = colorTransform.alphaMultiplier;
-					__bufferData[__bufferStride * i + 22] = colorTransform.redOffset / 255;
-					__bufferData[__bufferStride * i + 23] = colorTransform.greenOffset / 255;
-					__bufferData[__bufferStride * i + 24] = colorTransform.blueOffset / 255;
-					__bufferData[__bufferStride * i + 25] = colorTransform.alphaOffset / 255;
+			// 		__bufferData[__bufferStride * i + 6] = colorTransform.redMultiplier;
+			// 		__bufferData[__bufferStride * i + 7] = colorTransform.greenMultiplier;
+			// 		__bufferData[__bufferStride * i + 8] = colorTransform.blueMultiplier;
+			// 		__bufferData[__bufferStride * i + 9] = colorTransform.alphaMultiplier;
+			// 		__bufferData[__bufferStride * i + 10] = colorTransform.redOffset / 255;
+			// 		__bufferData[__bufferStride * i + 11] = colorTransform.greenOffset / 255;
+			// 		__bufferData[__bufferStride * i + 12] = colorTransform.blueOffset / 255;
+			// 		__bufferData[__bufferStride * i + 13] = colorTransform.alphaOffset / 255;
 					
-				} else {
-					
-					__bufferData[__bufferStride * i + 6] = 1;
-					__bufferData[__bufferStride * i + 11] = 1;
-					__bufferData[__bufferStride * i + 16] = 1;
-					__bufferData[__bufferStride * i + 21] = 1;
-					
-				}
+			// 	}
 				
-			}
+			// }
 			
-			__bufferAlpha = alpha;
-			__bufferColorTransform = colorTransform != null ? colorTransform.__clone () : null;
+			// __bufferAlpha = alpha;
+			// __bufferColorTransform = colorTransform != null ? colorTransform.__clone () : null;
 			__bufferContext = gl;
 			__buffer = gl.createBuffer ();
 			
@@ -958,73 +952,73 @@ class BitmapData implements IBitmapDrawable {
 			
 		} else {
 			
-			var dirty = false;
+			// var dirty = false;
 			
-			if (__bufferAlpha != alpha) {
+			// if (__bufferAlpha != alpha) {
 				
-				dirty = true;
+			// 	dirty = true;
 				
-				for (i in 0...4) {
+			// 	for (i in 0...4) {
 					
-					__bufferData[__bufferStride * i + 5] = alpha;
+			// 		__bufferData[__bufferStride * i + 5] = alpha;
 					
-				}
+			// 	}
 				
-				__bufferAlpha = alpha;
+			// 	__bufferAlpha = alpha;
 				
-			}
+			// }
 			
-			if ((__bufferColorTransform == null && colorTransform != null) || (__bufferColorTransform != null && !__bufferColorTransform.__equals (colorTransform))) {
+			// if ((__bufferColorTransform == null && colorTransform != null) || (__bufferColorTransform != null && !__bufferColorTransform.__equals (colorTransform))) {
 				
-				dirty = true;
+			// 	dirty = true;
 				
-				if (colorTransform != null) {
+			// 	if (colorTransform != null) {
 					
-					if (__bufferColorTransform == null) {
-						__bufferColorTransform = colorTransform.__clone ();
-					} else {
-						__bufferColorTransform.__copyFrom (colorTransform);
-					}
+			// 		if (__bufferColorTransform == null) {
+			// 			__bufferColorTransform = colorTransform.__clone ();
+			// 		} else {
+			// 			__bufferColorTransform.__copyFrom (colorTransform);
+			// 		}
 					
-					for (i in 0...4) {
+			// 		for (i in 0...4) {
 						
-						__bufferData[__bufferStride * i + 6] = colorTransform.redMultiplier;
-						__bufferData[__bufferStride * i + 11] = colorTransform.greenMultiplier;
-						__bufferData[__bufferStride * i + 16] = colorTransform.blueMultiplier;
-						__bufferData[__bufferStride * i + 21] = colorTransform.alphaMultiplier;
-						__bufferData[__bufferStride * i + 22] = colorTransform.redOffset / 255;
-						__bufferData[__bufferStride * i + 23] = colorTransform.greenOffset / 255;
-						__bufferData[__bufferStride * i + 24] = colorTransform.blueOffset / 255;
-						__bufferData[__bufferStride * i + 25] = colorTransform.alphaOffset / 255;
+			// 			__bufferData[__bufferStride * i + 6] = colorTransform.redMultiplier;
+			// 			__bufferData[__bufferStride * i + 11] = colorTransform.greenMultiplier;
+			// 			__bufferData[__bufferStride * i + 16] = colorTransform.blueMultiplier;
+			// 			__bufferData[__bufferStride * i + 21] = colorTransform.alphaMultiplier;
+			// 			__bufferData[__bufferStride * i + 22] = colorTransform.redOffset / 255;
+			// 			__bufferData[__bufferStride * i + 23] = colorTransform.greenOffset / 255;
+			// 			__bufferData[__bufferStride * i + 24] = colorTransform.blueOffset / 255;
+			// 			__bufferData[__bufferStride * i + 25] = colorTransform.alphaOffset / 255;
 						
-					}
+			// 		}
 					
-				} else {
+			// 	} else {
 					
-					for (i in 0...4) {
+			// 		for (i in 0...4) {
 						
-						__bufferData[__bufferStride * i + 6] = 1;
-						__bufferData[__bufferStride * i + 11] = 1;
-						__bufferData[__bufferStride * i + 16] = 1;
-						__bufferData[__bufferStride * i + 21] = 1;
-						__bufferData[__bufferStride * i + 22] = 0;
-						__bufferData[__bufferStride * i + 23] = 0;
-						__bufferData[__bufferStride * i + 24] = 0;
-						__bufferData[__bufferStride * i + 25] = 0;
+			// 			__bufferData[__bufferStride * i + 6] = 1;
+			// 			__bufferData[__bufferStride * i + 11] = 1;
+			// 			__bufferData[__bufferStride * i + 16] = 1;
+			// 			__bufferData[__bufferStride * i + 21] = 1;
+			// 			__bufferData[__bufferStride * i + 22] = 0;
+			// 			__bufferData[__bufferStride * i + 23] = 0;
+			// 			__bufferData[__bufferStride * i + 24] = 0;
+			// 			__bufferData[__bufferStride * i + 25] = 0;
 						
-					}
+			// 		}
 					
-				}
+			// 	}
 				
-			}
+			// }
 			
 			gl.bindBuffer (gl.ARRAY_BUFFER, __buffer);
 			
-			if (dirty) {
+			// if (dirty) {
 			
-				gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.STATIC_DRAW);
+			// 	gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.STATIC_DRAW);
 			
-			}
+			// }
 			
 		}
 		
@@ -2108,22 +2102,24 @@ class BitmapData implements IBitmapDrawable {
 	private function __renderGL (renderSession:RenderSession):Void {
 		
 		var renderer:GLRenderer = cast renderSession.renderer;
+		var shaderManager:GLShaderManager = cast renderSession.shaderManager;
 		var gl = renderSession.gl;
 		
 		renderSession.blendModeManager.setBlendMode (NORMAL);
 		
-		var shader = renderSession.shaderManager.defaultShader;
+		var shader = shaderManager.defaultDisplayShader;
+		shaderManager.setDisplayShader (shader);
+		shaderManager.applyBitmapData (this, renderSession.allowSmoothing && (renderSession.upscaled));
+		shaderManager.applyMatrix (renderer.getMatrix (__worldTransform));
+		shaderManager.applyAlpha (__worldAlpha);
+		shaderManager.applyColorTransform (__worldColorTransform);
+		shaderManager.updateShader ();
 		
-		shader.data.uImage0.input = this;
-		shader.data.uImage0.smoothing = renderSession.allowSmoothing && (renderSession.upscaled);
-		shader.data.uMatrix.value = renderer.getMatrix (__worldTransform);
+		// alpha == 1, __worldColorTransform
 		
-		renderSession.shaderManager.setShader (shader);
-		
-		gl.bindBuffer (gl.ARRAY_BUFFER, getBuffer (gl, 1, __worldColorTransform));
-		gl.vertexAttribPointer (shader.data.aPosition.index, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
-		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer (shader.data.aAlpha.index, 1, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
+		gl.bindBuffer (gl.ARRAY_BUFFER, getBuffer (gl));
+		gl.vertexAttribPointer (shader.data.openfl_Position.index, 3, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
+		gl.vertexAttribPointer (shader.data.openfl_TexCoord.index, 2, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
 		
 		gl.drawArrays (gl.TRIANGLE_STRIP, 0, 4);
 		
@@ -2131,25 +2127,26 @@ class BitmapData implements IBitmapDrawable {
 			GLStats.incrementDrawCall (DrawCallContext.STAGE);
 		#end
 		
+		shaderManager.clear ();
+		
 	}
 	
 	
 	private function __renderGLMask (renderSession:RenderSession):Void {
 		
 		var renderer:GLRenderer = cast renderSession.renderer;
+		var shaderManager:GLShaderManager = cast renderSession.shaderManager;
 		var gl = renderSession.gl;
 		
 		var shader = GLMaskManager.maskShader;
+		shaderManager.setShader (shader);
+		shaderManager.applyBitmapData (this, renderSession.allowSmoothing && (renderSession.upscaled));
+		shaderManager.applyMatrix (renderer.getMatrix (__worldTransform));
+		shaderManager.updateShader ();
 		
-		shader.data.uImage0.input = this;
-		shader.data.uImage0.smoothing = renderSession.allowSmoothing && (renderSession.upscaled);
-		shader.data.uMatrix.value = renderer.getMatrix (__worldTransform);
-		
-		renderSession.shaderManager.setShader (shader);
-		
-		gl.bindBuffer (gl.ARRAY_BUFFER, getBuffer (gl, 1, __worldColorTransform));
-		gl.vertexAttribPointer (shader.data.aPosition.index, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
-		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+		gl.bindBuffer (gl.ARRAY_BUFFER, getBuffer (gl));
+		gl.vertexAttribPointer (shader.data.openfl_Position.index, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
+		gl.vertexAttribPointer (shader.data.openfl_TexCoord.index, 2, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
 		
 		gl.drawArrays (gl.TRIANGLE_STRIP, 0, 4);
 		
