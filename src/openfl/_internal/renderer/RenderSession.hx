@@ -29,6 +29,7 @@ import openfl.geom.Point;
 class RenderSession {
 	
 	
+	public var painter:openfl._internal.renderer.opengl.BatchGLRenderer.Painter;
 	public var allowSmoothing:Bool;
 	public var cairo:CairoRenderContext;
 	public var clearRenderDirty:Bool;

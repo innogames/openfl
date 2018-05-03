@@ -35,6 +35,7 @@ import openfl._internal.renderer.canvas.CanvasRenderer;
 import openfl._internal.renderer.console.ConsoleRenderer;
 import openfl._internal.renderer.dom.DOMRenderer;
 import openfl._internal.renderer.opengl.GLRenderer;
+import openfl._internal.renderer.opengl.BatchGLRenderer;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.TouchData;
 import openfl.display.Application in OpenFLApplication;
@@ -1039,7 +1040,8 @@ class Stage extends DisplayObjectContainer implements IModule {
 			case OPENGL (gl):
 				
 				#if (!disable_cffi && (!html5 || !canvas))
-				__renderer = new GLRenderer (this, gl);
+				// __renderer = new GLRenderer (this, gl);
+				__renderer = new BatchGLRenderer(this, gl);
 				#end
 			
 			case CANVAS (context):
