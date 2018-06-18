@@ -3,6 +3,7 @@ package openfl.display;
 
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
+import openfl.Vector;
 
 #if !openfl_debug
 @:fileXml('tags="haxe,release"')
@@ -18,6 +19,8 @@ class Tileset {
 	
 	
 	public var bitmapData (get, set):BitmapData;
+	public var rectData:Vector<Float>;
+	public var numRects (get, never):Int;
 	
 	private var __bitmapData:BitmapData;
 	private var __data:Array<TileData>;
@@ -26,7 +29,10 @@ class Tileset {
 	#if openfljs
 	private static function __init__ () {
 		
-		untyped Object.defineProperty (Tileset.prototype, "bitmapData", { get: untyped __js__ ("function () { return this.get_bitmapData (); }"), set: untyped __js__ ("function (v) { return this.set_bitmapData (v); }") });
+		untyped Object.defineProperties (Tileset.prototype, {
+			"bitmapData": { get: untyped __js__ ("function () { return this.get_bitmapData (); }"), set: untyped __js__ ("function (v) { return this.set_bitmapData (v); }") },
+			"numRects": { get: untyped __js__ ("function () { return this.get_numRects (); }") }
+		});
 		
 	}
 	#end
@@ -36,9 +42,10 @@ class Tileset {
 	
 	public function new (bitmapData:BitmapData, rects:Array<Rectangle> = null) {
 		
-		__data = new Array ();
-		
 		__bitmapData = bitmapData;
+		rectData = new Vector<Float> ();
+		
+		__data = new Array ();
 		
 		if (rects != null) {
 			
@@ -54,6 +61,11 @@ class Tileset {
 	public function addRect (rect:Rectangle, offsetX:Int = 0, offsetY:Int = 0, rotated:Bool = false):Int {
 		
 		if (rect == null) return -1;
+		
+		rectData.push (rect.x);
+		rectData.push (rect.y);
+		rectData.push (rect.width);
+		rectData.push (rect.height);
 		
 		var tileData = new TileData (rect, offsetX, offsetY, rotated);
 		tileData.__update (__bitmapData);
@@ -85,11 +97,49 @@ class Tileset {
 	}
 	
 	
+	public function hasRect (rect:Rectangle):Bool {
+		
+		for (tileData in __data) {
+			
+			if (rect.x == tileData.x && rect.y == tileData.y && rect.width == tileData.height && rect.height == tileData.height) {
+				
+				return true;
+				
+			}
+			
+		}
+		
+		return false;
+		
+	}
+	
+	
 	public function getRect (id:Int):Rectangle {
 		
 		if (id < __data.length && id >= 0) {
 			
 			return new Rectangle (__data[id].x, __data[id].y, __data[id].width, __data[id].height);
+			
+		}
+		
+		return null;
+		
+	}
+	
+	
+	public function getRectID (rect:Rectangle):Null<Int> {
+		
+		var tileData;
+		
+		for (i in 0...__data.length) {
+			
+			tileData = __data[i];
+			
+			if (rect.x == tileData.x && rect.y == tileData.y && rect.width == tileData.height && rect.height == tileData.height) {
+				
+				return i;
+				
+			}
 			
 		}
 		
@@ -125,6 +175,13 @@ class Tileset {
 	}
 	
 	
+	private function get_numRects ():Int {
+		
+		return __data.length;
+		
+	}
+	
+	
 }
 
 
@@ -153,15 +210,20 @@ class Tileset {
 	
 	
 	public function new (rect:Rectangle, offsetX:Int, offsetY:Int, rotated:Bool) {
+		
 		if (rect != null) {
+			
 			x = Std.int (rect.x);
 			y = Std.int (rect.y);
 			width = Std.int (rect.width);
 			height = Std.int (rect.height);
+			
 		}
+		
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
 		this.rotated = rotated;
+		
 	}
 	
 	
@@ -169,10 +231,33 @@ class Tileset {
 		
 		if (bitmapData != null) {
 			
-			__uvX = x / bitmapData.width;
-			__uvY = y / bitmapData.height;
-			__uvWidth = (x + width) / bitmapData.width;
-			__uvHeight = (y + height) / bitmapData.height;
+			var bitmapWidth = bitmapData.width;
+			var bitmapHeight = bitmapData.height;
+			
+			#if (openfl_power_of_two && !flash)
+			var newWidth = 1;
+			var newHeight = 1;
+			
+			while (newWidth < bitmapWidth) {
+				
+				newWidth <<= 1;
+				
+			}
+			
+			while (newHeight < bitmapHeight) {
+				
+				newHeight <<= 1;
+				
+			}
+			
+			bitmapWidth = newWidth;
+			bitmapHeight = newHeight;
+			#end
+			
+			__uvX = x / bitmapWidth;
+			__uvY = y / bitmapHeight;
+			__uvWidth = (x + width) / bitmapWidth;
+			__uvHeight = (y + height) / bitmapHeight;
 			
 			#if flash
 			__bitmapData = new BitmapData (width, height);
