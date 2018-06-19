@@ -1542,7 +1542,7 @@ class TextField extends InteractiveObject {
 		setSelection (i, i);
 		
 		// TODO: Solution where this is not run twice (run inside replaceText above)
-		__updateScrollH ();
+		__updateScrollHV (__caretIndex);
 		
 	}
 	
@@ -1704,7 +1704,7 @@ class TextField extends InteractiveObject {
 	
 	private override function __updateCacheBitmap (renderer:DisplayObjectRenderer, force:Bool):Bool {
 		
-		if (!hasFilters () && renderer.__type == OPENGL && __cacheBitmap == null && !__domRender) return false;
+		if (!__hasFilters () && renderer.__type == OPENGL && __cacheBitmap == null && !__domRender) return false;
 		
 		if (super.__updateCacheBitmap (renderer, force || __dirty)) {
 			

@@ -5,6 +5,7 @@ package openfl._internal.renderer.opengl;
 import openfl._internal.renderer.opengl.stats.GLStats;
 import openfl._internal.renderer.opengl.stats.DrawCallContext;
 #end
+import openfl.display.OpenGLRenderer;
 import openfl.display.BitmapData;
 import haxe.io.Float32Array;
 import openfl.display.Shader;
@@ -17,9 +18,9 @@ import lime.graphics.GLRenderContext;
 *  supported in Webgl2 and as an extension in Webgl1, in case they are not supported there is a fallback mechanism 
 *  using usual non-VertexArrayObjects GL rendering.
 **/
+@:access(openfl.display.OpenGLRenderer)
 @:access(openfl.display.DisplayObject)
 @:access(openfl.display.BitmapData)
-@:access(openfl.geom.ColorTransform)
 @:access(openfl.display.Shader)
 
 
@@ -28,27 +29,21 @@ class GLVAORenderHelper {
 	
 	private static inline function __enableVertexAttribArray (gl:GLRenderContext, shader: Shader):Void {
 		
-		gl.enableVertexAttribArray (shader.data.aPosition.index);
-		gl.enableVertexAttribArray (shader.data.aTexCoord.index);
-		gl.enableVertexAttribArray (shader.data.aAlpha.index);
-		gl.enableVertexAttribArray (shader.data.aColorMultipliers0.index);
-		gl.enableVertexAttribArray (shader.data.aColorMultipliers1.index);
-		gl.enableVertexAttribArray (shader.data.aColorMultipliers2.index);
-		gl.enableVertexAttribArray (shader.data.aColorMultipliers3.index);
-		gl.enableVertexAttribArray (shader.data.aColorOffsets.index);
+		gl.enableVertexAttribArray (shader.__position.index);
+		gl.enableVertexAttribArray (shader.__textureCoord.index);
 		
 	}
 	
 	
-	public static inline function renderDO (displayObject:DisplayObject, renderSession:RenderSession, shader:Shader, bitmapData: BitmapData):Bool {
+	public static inline function renderDO (renderer:OpenGLRenderer, shader:Shader, bitmapData: BitmapData):Bool {
 		
-		var gl = renderSession.gl;
-		var vaoContext = renderSession.vaoContext;
+		var gl = renderer.gl;
+		var vaoContext = renderer.__vaoContext;
 		
 		if (vaoContext != null) {
 			
 			shader.__skipEnableVertexAttribArray = true;
-			renderSession.shaderManager.updateShader (shader);
+			renderer.updateShader ();
 			shader.__skipEnableVertexAttribArray = false;
 			
 			var hasVAO: Bool = bitmapData.__vao != null;
@@ -59,10 +54,10 @@ class GLVAORenderHelper {
 			}
 			
 			vaoContext.bindVertexArray (bitmapData.__vao);
-			if (!hasVAO || bitmapData.isBufferDirty (gl, displayObject.__worldAlpha, displayObject.__worldColorTransform)) {
+			if (!hasVAO) {
 				
 				__enableVertexAttribArray (gl, shader);
-				bitmapData.getBuffer (gl, displayObject.__worldAlpha, displayObject.__worldColorTransform);
+				bitmapData.getBuffer (gl);
 				__setVertexAttribPointer (gl, shader);
 				
 			} 
@@ -73,9 +68,6 @@ class GLVAORenderHelper {
 				GLStats.incrementDrawCall (DrawCallContext.STAGE);
 			#end
 			
-			renderSession.filterManager.popObject (displayObject);
-			renderSession.maskManager.popObject (displayObject);
-			
 			vaoContext.bindVertexArray (null);
 			
 			return true;
@@ -85,15 +77,15 @@ class GLVAORenderHelper {
 		
 	}
 	
-	public static inline function renderMask (displayObject:DisplayObject, renderSession:RenderSession, shader:Shader, bitmapData: BitmapData):Bool {
+	public static inline function renderMask (renderer:OpenGLRenderer, shader:Shader, bitmapData: BitmapData):Bool {
 		
-		var gl = renderSession.gl;
-		var vaoContext = renderSession.vaoContext;
+		var gl = renderer.gl;
+		var vaoContext = renderer.__vaoContext;
 		
 		if (vaoContext != null) {
 			
 			shader.__skipEnableVertexAttribArray = true;
-			renderSession.shaderManager.updateShader (shader);
+			renderer.updateShader ();
 			shader.__skipEnableVertexAttribArray = false;
 			
 			var hasVAO: Bool = bitmapData.__vaoMask != null;
@@ -104,15 +96,14 @@ class GLVAORenderHelper {
 			}
 			
 			vaoContext.bindVertexArray (bitmapData.__vaoMask);
-			if (!hasVAO || bitmapData.isBufferDirty (gl, displayObject.__worldAlpha, displayObject.__worldColorTransform)) {
+			if (!hasVAO) {
 				
-				gl.enableVertexAttribArray (shader.data.aPosition.index);
-				gl.enableVertexAttribArray (shader.data.aTexCoord.index);
+				gl.enableVertexAttribArray (shader.__position.index);
+				gl.enableVertexAttribArray (shader.__textureCoord.index);
 				
-				bitmapData.getBuffer (gl, displayObject.__worldAlpha, displayObject.__worldColorTransform);
+				bitmapData.getBuffer (gl);
 				
-				gl.vertexAttribPointer (shader.data.aPosition.index, 3, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 0);
-				gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+				__setVertexAttribPointer (gl, shader);
 				
 			} 
 			
@@ -135,14 +126,8 @@ class GLVAORenderHelper {
 	
 	private static inline function __setVertexAttribPointer (gl:GLRenderContext, shader: Shader):Void {
 		
-		gl.vertexAttribPointer (shader.data.aPosition.index, 3, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 0);
-		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer (shader.data.aAlpha.index, 1, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);		
-		gl.vertexAttribPointer (shader.data.aColorMultipliers0.index, 4, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 6 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer (shader.data.aColorMultipliers1.index, 4, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 10 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer (shader.data.aColorMultipliers2.index, 4, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 14 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer (shader.data.aColorMultipliers3.index, 4, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 18 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer (shader.data.aColorOffsets.index, 4, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 22 * Float32Array.BYTES_PER_ELEMENT);
+		if (shader.__position != null) gl.vertexAttribPointer (shader.__position.index, 3, gl.FLOAT, false, 14 * Float32Array.BYTES_PER_ELEMENT, 0);
+		if (shader.__textureCoord != null) gl.vertexAttribPointer (shader.__textureCoord.index, 2, gl.FLOAT, false, 14 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
 		
 	}
 	

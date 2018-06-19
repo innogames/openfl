@@ -644,19 +644,19 @@ class Shader {
 		
 		for (parameter in __paramBool) {
 			
-			parameter.__updateGL (gl, __skipEnableVertexAttribArray);
+			parameter.__updateGL (gl, null, __skipEnableVertexAttribArray);
 			
 		}
 		
 		for (parameter in __paramFloat) {
 			
-			parameter.__updateGL (gl, __skipEnableVertexAttribArray);
+			parameter.__updateGL (gl, null, __skipEnableVertexAttribArray);
 			
 		}
 		
 		for (parameter in __paramInt) {
 			
-			parameter.__updateGL (gl, __skipEnableVertexAttribArray);
+			parameter.__updateGL (gl, null, __skipEnableVertexAttribArray);
 			
 		}
 		

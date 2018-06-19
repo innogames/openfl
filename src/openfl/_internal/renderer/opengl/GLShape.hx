@@ -58,9 +58,12 @@ class GLShape {
 				renderer.applyAlpha (shape.__worldAlpha);
 				renderer.applyColorTransform (shape.__worldColorTransform);
 				
-				var vaoRendered = GLVAORenderHelper.renderDO (shape, renderer, shader, graphics.__bitmap);
+				var vaoRendered = GLVAORenderHelper.renderDO (renderer, shader, graphics.__bitmap);
 				
-				if (vaoRendered) return;
+				if (vaoRendered) {
+					renderer.__popMaskObject (shape);
+					return;
+				}
 				
 				renderer.updateShader ();
 				
@@ -107,7 +110,7 @@ class GLShape {
 				renderer.applyMatrix (renderer.__getMatrix (graphics.__worldTransform));
 				renderer.updateShader ();
 				
-				var vaoRendered = GLVAORenderHelper.renderMask (shape, renderer, shader, graphics.__bitmap);
+				var vaoRendered = GLVAORenderHelper.renderMask (renderer, shader, graphics.__bitmap);
 				
 				if (vaoRendered) return;
 				

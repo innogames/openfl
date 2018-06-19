@@ -1,7 +1,11 @@
 package openfl.display;
 
 
+import openfl._internal.renderer.opengl.vao.VertexArrayObjectExtension;
+import openfl._internal.renderer.opengl.vao.VertexArrayObjectContext;
+import openfl._internal.renderer.opengl.vao.IVertexArrayObjectContext;
 import lime.graphics.opengl.ext.KHR_debug;
+import lime.graphics.opengl.GLContextType;
 import lime.graphics.opengl.GLFramebuffer;
 import lime.graphics.GLRenderContext;
 import lime.math.Matrix4;
@@ -88,6 +92,7 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 	private var __tempRect:Rectangle;
 	private var __upscaled:Bool;
 	private var __values:Array<Float>;
+	private var __vaoContext:IVertexArrayObjectContext;
 	private var __width:Int;
 	
 	
@@ -148,6 +153,28 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 		__initShader (__defaultShader);
 		
 		__maskShader = new GLMaskShader ();
+		
+		#if vertex_array_object
+		if (gl.type == GLContextType.WEBGL) { 
+			
+			if (gl.version == 2) {
+				
+				__vaoContext = new VertexArrayObjectContext (gl);
+				
+			} else if (gl.version == 1) {
+				
+				var vertexArrayObjectsExtension = gl.getExtension ("OES_vertex_array_object");
+				
+				if (vertexArrayObjectsExtension != null) {
+					
+					__vaoContext = new VertexArrayObjectExtension (vertexArrayObjectsExtension);
+					
+				}
+				
+			}
+			
+		}
+		#end
 		
 	}
 	
@@ -593,13 +620,13 @@ class OpenGLRenderer extends DisplayObjectRenderer {
 		
 		if (__stencilReference == 0) return;
 		
+		var mask = __maskObjects.pop ();
 		if (__stencilReference > 1) {
 			
 			__gl.stencilOp (__gl.KEEP, __gl.KEEP, __gl.DECR);
 			__gl.stencilFunc (__gl.EQUAL, __stencilReference, 0xFF);
-			__gl.colorMask (false, false, false, false);
+			__gl.colorMask (false, false, false, false);			
 			
-			var mask = __maskObjects.pop ();
 			mask.__renderGLMask (this);
 			__stencilReference--;
 			

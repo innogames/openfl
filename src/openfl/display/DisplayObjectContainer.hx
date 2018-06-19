@@ -973,7 +973,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		
 		if (__updateDirty) {
 			
-			__update (false, true, null, true);
+			__update (false, true, true);
 			
 		} else if (__updateTraverse) {
 			

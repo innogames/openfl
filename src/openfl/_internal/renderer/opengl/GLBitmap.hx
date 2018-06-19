@@ -46,11 +46,14 @@ class GLBitmap {
 			renderer.applyAlpha (bitmap.__worldAlpha);
 			renderer.applyColorTransform (bitmap.__worldColorTransform);
 			
-			var vaoRendered = GLVAORenderHelper.renderDO (bitmap, renderer, shader, bitmap.__bitmapData);
+			var vaoRendered = GLVAORenderHelper.renderDO (renderer, shader, bitmap.__bitmapData);
 			
-			if (vaoRendered) return;
+			if (vaoRendered) {
+				renderer.__popMaskObject (bitmap);
+				return;
+			}
 			
-			renderer.updateShader ();			
+			renderer.updateShader ();
 			gl.bindBuffer (gl.ARRAY_BUFFER, bitmap.__bitmapData.getBuffer (gl));
 			if (shader.__position != null) gl.vertexAttribPointer (shader.__position.index, 3, gl.FLOAT, false, 14 * Float32Array.BYTES_PER_ELEMENT, 0);
 			if (shader.__textureCoord != null) gl.vertexAttribPointer (shader.__textureCoord.index, 2, gl.FLOAT, false, 14 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
@@ -81,7 +84,7 @@ class GLBitmap {
 			renderer.applyBitmapData (GLMaskShader.opaqueBitmapData, true);
 			renderer.applyMatrix (renderer.__getMatrix (bitmap.__renderTransform));
 			
-			var vaoRendered = GLVAORenderHelper.renderMask (bitmap, renderer, shader, bitmap.__bitmapData);
+			var vaoRendered = GLVAORenderHelper.renderMask (renderer, shader, bitmap.__bitmapData);
 			
 			if (vaoRendered) return;
 			

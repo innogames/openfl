@@ -67,6 +67,7 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 @:access(openfl.display.DisplayObjectShader)
 @:access(openfl.display.Graphics)
 @:access(openfl.display.Shader)
+@:access(openfl.display.OpenGLRenderer)
 @:access(openfl.filters.BitmapFilter)
 @:access(openfl.geom.ColorTransform)
 @:access(openfl.geom.Matrix)
@@ -818,15 +819,7 @@ class BitmapData implements IBitmapDrawable {
 		return sourceRect.clone ();
 		
 	}
-	
-	public function isBufferDirty (gl:GLRenderContext, alpha:Float, colorTransform:ColorTransform):Bool {
-		
-		return __buffer == null || __bufferContext != gl || __bufferAlpha != alpha || 
-				(__bufferColorTransform == null && colorTransform != null) || 
-				(__bufferColorTransform != null && !__bufferColorTransform.__equals (colorTransform));
-		
-	}
-	
+
 	public function getBuffer (gl:GLRenderContext):GLBuffer {
 		
 		if (__buffer == null || __bufferContext != gl) {
@@ -1622,18 +1615,19 @@ class BitmapData implements IBitmapDrawable {
 	}
 	
 	
-	function __cleanup (renderSession: RenderSession):Void {
+	function __cleanup (renderer:DisplayObjectRenderer):Void {
 
+		var renderer:OpenGLRenderer = cast renderer;
 		if (__vao != null) {
 			
-			renderSession.vaoContext.deleteVertexArray (__vao);
+			renderer.__vaoContext.deleteVertexArray (__vao);
 			__vao = null;
 			
 		}
 		
 		if (__vaoMask != null) {
 			
-			renderSession.vaoContext.deleteVertexArray (__vaoMask);
+			renderer.__vaoContext.deleteVertexArray (__vaoMask);
 			__vaoMask = null;
 			
 		}
@@ -2061,7 +2055,7 @@ class BitmapData implements IBitmapDrawable {
 	}
 	
 
-	private function __update (transformOnly:Bool, updateChildren:Bool):Void {
+	private function __update (transformOnly:Bool, updateChildren:Bool, ?resetUpdateDirty:Bool = false):Void {
 		
 		__updateTransforms ();
 		

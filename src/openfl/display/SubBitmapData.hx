@@ -5,7 +5,6 @@ import openfl.display.BitmapData;
 #if !display
 import js.Browser;
 import js.html.CanvasElement;
-import openfl._internal.renderer.RenderSession;
 import openfl.geom.ColorTransform;
 import openfl.geom.Rectangle;
 import openfl.display.BitmapData.TextureRegionResult;
@@ -20,6 +19,7 @@ import lime.utils.Float32Array;
 #end
 
 @:access(openfl.geom.ColorTransform)
+@:access(openfl.display.CanvasRenderer)
 class SubBitmapData extends BitmapData {
 	private var __offsetX = 0;
 	private var __offsetY = 0;
@@ -134,7 +134,7 @@ class SubBitmapData extends BitmapData {
 		return __texture;
 	}
 
-	override function getBuffer (gl:GLRenderContext, alpha:Float, colorTransform:ColorTransform):GLBuffer {
+	override function getBuffer (gl:GLRenderContext):GLBuffer {
 		var __bufferStride = BitmapData.__bufferStride;
 
 		if (__buffer == null || __bufferContext != gl) {
@@ -210,7 +210,7 @@ class SubBitmapData extends BitmapData {
 				__bufferData[__bufferStride * 3 + 4] = __texY0;
 			}
 
-			for (i in 0...4) {
+		/*	for (i in 0...4) {
 
 				__bufferData[__bufferStride * i + 5] = alpha;
 
@@ -237,7 +237,7 @@ class SubBitmapData extends BitmapData {
 			}
 
 			__bufferAlpha = alpha;
-			__bufferColorTransform = colorTransform != null ? colorTransform.__clone () : null;
+			__bufferColorTransform = colorTransform != null ? colorTransform.__clone () : null;*/
 			__bufferContext = gl;
 			__buffer = gl.createBuffer ();
 
@@ -250,7 +250,7 @@ class SubBitmapData extends BitmapData {
 
 		} else {
 
-			var dirty = false;
+			/*var dirty = false;
 
 			if (__bufferAlpha != alpha) {
 				dirty = true;
@@ -295,13 +295,13 @@ class SubBitmapData extends BitmapData {
 					}
 				}
 
-			}
+			}*/
 
 			gl.bindBuffer (gl.ARRAY_BUFFER, __buffer);
 
-			if (dirty) {
+			/*if (dirty) {
 				gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.STATIC_DRAW);
-			}
+			}*/
 		}
 
 		return __buffer;
@@ -370,16 +370,16 @@ class SubBitmapData extends BitmapData {
 		context.drawImage(parentImage.src, __texX, __texY, __texWidth, __texHeight, 0, 0, __texWidth, __texHeight);
 	}
 
-	override function __renderCanvas(renderSession:RenderSession) {
+	override function __renderCanvas(renderer:CanvasRenderer) {
 		var transform = __worldTransform;
 		var tx = transform.tx;
 		var ty = transform.ty;
-		if (renderSession.roundPixels) {
+		if (renderer.__roundPixels) {
 			tx = Std.int(tx);
 			ty = Std.int(ty);
 		}
 
-		var context = renderSession.context;
+		var context = renderer.context;
 		context.globalAlpha = 1;
 		__drawToCanvas(context, transform.a, transform.b, transform.c, transform.d, tx, ty);
 	}

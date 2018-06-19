@@ -127,7 +127,7 @@ class Tile #if ((openfl < "9.0.0") && enable_tile_array) implements ITile #end {
 	}
 	
 	
-	public function invalidate ():Void {
+	public function __invalidate ():Void {
 		
 		__setRenderDirty ();
 		

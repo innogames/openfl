@@ -372,7 +372,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 	}
 	
 	
-	public function invalidate ():Void {
+	public function __invalidate ():Void {
 		
 		__setRenderDirty ();
 		
@@ -431,7 +431,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 	}
 	
 	
-	private function __cleanup ():Void {
+	private function __cleanup (renderer:DisplayObjectRenderer):Void {
 		
 		__cairo = null;
 		
@@ -1085,7 +1085,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 		
 		if (__updateDirty) {
 			
-			__update (false, true, null, true);
+			__update (false, true, true);
 			
 		}
 	}

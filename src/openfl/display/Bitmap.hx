@@ -63,13 +63,13 @@ class Bitmap extends DisplayObject {
 		
 	}
 	
-	private override function __cleanup (renderSession: RenderSession):Void {
+	private override function __cleanup (renderer:DisplayObjectRenderer):Void {
 		
-		super.__cleanup (renderSession);
+		super.__cleanup (renderer);
 		
 		if (__bitmapData != null) {
 			
-			__bitmapData.__cleanup (renderSession);
+			__bitmapData.__cleanup (renderer);
 			
 		}
 		
