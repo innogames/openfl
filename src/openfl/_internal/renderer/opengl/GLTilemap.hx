@@ -90,9 +90,11 @@ class GLTilemap {
 		var tile, tileset, alpha, visible, colorTransform = null, id, tileData, tileRect, bitmapData;
 		var tileWidth, tileHeight, uvX, uvY, uvHeight, uvWidth, offset;
 		var x, y, x2, y2, x3, y3, x4, y4;
-		
+		var offsetX, offsetY, rotated;
 		var alphaPosition = 4;
 		var ctPosition = alphaEnabled ? 5 : 4;
+		
+		var textureRegion = new openfl.display.BitmapData.TextureRegionResult();
 		
 		for (tile in tiles) {
 			
@@ -179,6 +181,8 @@ class GLTilemap {
 					uvY = tileRect.y / bitmapData.height;
 					uvWidth = tileRect.right / bitmapData.width;
 					uvHeight = tileRect.bottom / bitmapData.height;
+					offsetX = offsetY = 0;
+					rotated = false;
 					
 				} else {
 					
@@ -192,52 +196,94 @@ class GLTilemap {
 					uvY = tileData.__uvY;
 					uvWidth = tileData.__uvWidth;
 					uvHeight = tileData.__uvHeight;
+					offsetX = tileData.offsetX;
+					offsetY = tileData.offsetY;
+					rotated = tileData.rotated;
 					
 				}
 				
 				tileWidth = tileRect.width;
 				tileHeight = tileRect.height;
+				bitmapData.__getTextureRegion(uvX, uvY, uvWidth, uvHeight, textureRegion);
 				
-				x = tileTransform.__transformX (0, 0);
-				y = tileTransform.__transformY (0, 0);
-				x2 = tileTransform.__transformX (tileWidth, 0);
-				y2 = tileTransform.__transformY (tileWidth, 0);
-				x3 = tileTransform.__transformX (0, tileHeight);
-				y3 = tileTransform.__transformY (0, tileHeight);
-				x4 = tileTransform.__transformX (tileWidth, tileHeight);
-				y4 = tileTransform.__transformY (tileWidth, tileHeight);
+				if (rotated) {
+					x = tileTransform.__transformX (offsetX, offsetY);
+					y = tileTransform.__transformY (offsetX, offsetY);
+					x2 = tileTransform.__transformX (offsetX + tileHeight, offsetY);
+					y2 = tileTransform.__transformY (offsetX + tileHeight, offsetY);
+					x3 = tileTransform.__transformX (offsetX, offsetY + tileWidth);
+					y3 = tileTransform.__transformY (offsetX, offsetY + tileWidth);
+					x4 = tileTransform.__transformX (offsetX + tileHeight, offsetY + tileWidth);
+					y4 = tileTransform.__transformY (offsetX + tileHeight, offsetY + tileWidth);
+				} else {
+					x = tileTransform.__transformX (offsetX, offsetY);
+					y = tileTransform.__transformY (offsetX, offsetY);
+					x2 = tileTransform.__transformX (offsetX + tileWidth, offsetY);
+					y2 = tileTransform.__transformY (offsetX + tileWidth, offsetY);
+					x3 = tileTransform.__transformX (offsetX, offsetY + tileHeight);
+					y3 = tileTransform.__transformY (offsetX, offsetY + tileHeight);
+					x4 = tileTransform.__transformX (offsetX + tileWidth, offsetY + tileHeight);
+					y4 = tileTransform.__transformY (offsetX + tileWidth, offsetY + tileHeight);
+				}
 				
 				offset = bufferPosition;
 				
 				__bufferData[offset + 0] = x;
 				__bufferData[offset + 1] = y;
-				__bufferData[offset + 2] = uvX;
-				__bufferData[offset + 3] = uvY;
 				
 				__bufferData[offset + stride + 0] = x2;
 				__bufferData[offset + stride + 1] = y2;
-				__bufferData[offset + stride + 2] = uvWidth;
-				__bufferData[offset + stride + 3] = uvY;
 				
 				__bufferData[offset + (stride * 2) + 0] = x3;
 				__bufferData[offset + (stride * 2) + 1] = y3;
-				__bufferData[offset + (stride * 2) + 2] = uvX;
-				__bufferData[offset + (stride * 2) + 3] = uvHeight;
 				
 				__bufferData[offset + (stride * 3) + 0] = x3;
 				__bufferData[offset + (stride * 3) + 1] = y3;
-				__bufferData[offset + (stride * 3) + 2] = uvX;
-				__bufferData[offset + (stride * 3) + 3] = uvHeight;
 				
 				__bufferData[offset + (stride * 4) + 0] = x2;
 				__bufferData[offset + (stride * 4) + 1] = y2;
-				__bufferData[offset + (stride * 4) + 2] = uvWidth;
-				__bufferData[offset + (stride * 4) + 3] = uvY;
 				
 				__bufferData[offset + (stride * 5) + 0] = x4;
 				__bufferData[offset + (stride * 5) + 1] = y4;
-				__bufferData[offset + (stride * 5) + 2] = uvWidth;
-				__bufferData[offset + (stride * 5) + 3] = uvHeight;
+				
+						
+				if (rotated) {
+					__bufferData[offset + 2] = textureRegion.u1;
+					__bufferData[offset + 3] = textureRegion.v1;
+					
+					__bufferData[offset + stride + 2] = textureRegion.u2;
+					__bufferData[offset + stride + 3] = textureRegion.v2;
+					
+					__bufferData[offset + (stride * 2) + 2] = textureRegion.u0;
+					__bufferData[offset + (stride * 2) + 3] = textureRegion.v0;
+					
+					__bufferData[offset + (stride * 3) + 2] = textureRegion.u0;
+					__bufferData[offset + (stride * 3) + 3] = textureRegion.v0;
+					
+					__bufferData[offset + (stride * 4) + 2] = textureRegion.u2;
+					__bufferData[offset + (stride * 4) + 3] = textureRegion.v2;
+					
+					__bufferData[offset + (stride * 5) + 2] = textureRegion.u3;
+					__bufferData[offset + (stride * 5) + 3] = textureRegion.v3;
+				} else {
+					__bufferData[offset + 2] = textureRegion.u0;
+					__bufferData[offset + 3] = textureRegion.v0;
+					
+					__bufferData[offset + stride + 2] = textureRegion.u1;
+					__bufferData[offset + stride + 3] = textureRegion.v1;
+					
+					__bufferData[offset + (stride * 2) + 2] = textureRegion.u3;
+					__bufferData[offset + (stride * 2) + 3] = textureRegion.v3;
+					
+					__bufferData[offset + (stride * 3) + 2] = textureRegion.u3;
+					__bufferData[offset + (stride * 3) + 3] = textureRegion.v3;
+					
+					__bufferData[offset + (stride * 4) + 2] = textureRegion.u1;
+					__bufferData[offset + (stride * 4) + 3] = textureRegion.v1;
+					
+					__bufferData[offset + (stride * 5) + 2] = textureRegion.u2;
+					__bufferData[offset + (stride * 5) + 3] = textureRegion.v2;
+				}
 				
 				if (alphaEnabled) {
 					
