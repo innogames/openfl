@@ -81,7 +81,7 @@ class GLBitmap {
 			
 			var shader = renderer.__maskShader;
 			renderer.setShader (shader);
-			renderer.applyBitmapData (GLMaskShader.opaqueBitmapData, true);
+			renderer.applyBitmapData (bitmap.__bitmapData, true);
 			renderer.applyMatrix (renderer.__getMatrix (bitmap.__renderTransform));
 			
 			var vaoRendered = GLVAORenderHelper.renderMask (renderer, shader, bitmap.__bitmapData);
