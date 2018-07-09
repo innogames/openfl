@@ -94,6 +94,9 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	public var type (get, set):TextFieldType;
 	public var wordWrap (get, set):Bool;
 	
+	private var __autoSizeDirty:Bool = false;
+	private var __autoSizeWidth:Float = 0;
+	private var __autoSizeXOffset:Float = 0;
 	private var __bounds:Rectangle;
 	private var __caretIndex:Int;
 	private var __cursorTimer:Timer;
@@ -804,6 +807,19 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	}
 	
 	
+	private function __addAutoSizeOffset (offset: Float):Void {
+		
+		if (offset != 0) {
+			
+			__transform.tx += offset;
+			__setTransformDirty ();
+			__autoSizeXOffset = 0;
+			
+		}
+		
+	}
+	
+	
 	private override function __allowMouseFocus ():Bool {
 		
 		return __textEngine.type == INPUT || tabEnabled || selectable;
@@ -1151,6 +1167,21 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		#else
 		return position.advance.x;
 		#end
+		
+	}
+	
+	
+	private inline function __getAutoSizeOffset (autoSize:TextFieldAutoSize, displacement:Float):Float {
+		
+		return switch (autoSize) {
+					
+					case RIGHT: displacement;
+					
+					case CENTER: displacement * 0.5;
+					
+					default: 0;
+					
+				}
 		
 	}
 	
@@ -1609,30 +1640,23 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 		if (__layoutDirty) {
 			
+			if (__autoSizeDirty) {
+				
+				__addAutoSizeOffset (__autoSizeXOffset);
+				__autoSizeDirty = false;
+				
+			}
+			
 			var cacheWidth = __textEngine.width;
-			var cacheHeight = __textEngine.height;
 			
 			__textEngine.update ();
 			
-			if (__textEngine.autoSize != NONE) {
+			var autoSize = __textEngine.autoSize;
+			if (autoSize != NONE) {
 				
 				if (__textEngine.width != cacheWidth) {
 					
-					switch (__textEngine.autoSize) {
-						
-						case RIGHT:
-							
-							x += cacheWidth - __textEngine.width;
-						
-						case CENTER:
-							
-							x += (cacheWidth - __textEngine.width) / 2;
-						
-						default:
-							
-						
-					}
-					
+					__addAutoSizeOffset (__getAutoSizeOffset (autoSize, cacheWidth - __textEngine.width));
 					
 				}
 				
@@ -1786,11 +1810,17 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__textEngine.autoSize = value;
 			__layoutDirty = true;
 			
-			/*if (value == RIGHT || value == CENTER) {
+			if (!__autoSizeDirty && !wordWrap && (value == RIGHT || value == CENTER)) {
 				
-				__updateLayout ();
+				__autoSizeDirty = true;
 				
-			}*/
+				var cacheWidth = __textEngine.width;
+				__textEngine.update ();
+				__autoSizeWidth = __textEngine.width;
+				
+				__autoSizeXOffset = __getAutoSizeOffset (value, cacheWidth - __autoSizeWidth);
+				
+			}
 			
 			__dirty = true;
 			__setRenderDirty ();
@@ -2343,6 +2373,15 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 		__updateText (value);
 		
+		var autoSize = __textEngine.autoSize;
+		if (__autoSizeDirty && !wordWrap && (autoSize == RIGHT || autoSize == CENTER)) {
+			
+			__textEngine.update ();
+			
+			__autoSizeXOffset += __getAutoSizeOffset (autoSize, __autoSizeWidth - __textEngine.width);
+			
+		}
+		
 		return value;
 		
 	}
@@ -2454,6 +2493,13 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			
 			__textEngine.width = value;
 			
+			var autoSize = __textEngine.autoSize;
+			if (__autoSizeDirty && !wordWrap && (autoSize == RIGHT || autoSize == CENTER)) {
+				
+				__autoSizeXOffset = __getAutoSizeOffset (autoSize, value - __autoSizeWidth);
+				
+			}
+			
 			#if (js && html5)
 			if (DisplayObject.__supportDOM && __renderedOnCanvasWhileOnDOM) {
 				
@@ -2483,6 +2529,13 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__layoutDirty = true;
 			__setRenderDirty ();
 			
+			if (__autoSizeDirty) {
+				
+				__autoSizeDirty = false;
+				__autoSizeXOffset = 0;
+				
+			}
+			
 			#if (js && html5)
 			if (DisplayObject.__supportDOM && __renderedOnCanvasWhileOnDOM) {
 				
@@ -2500,6 +2553,13 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	private override function get_x ():Float {
 		
+		if (__autoSizeDirty) {
+			
+			__layoutDirty = true;
+			__updateLayout();
+			
+		}
+		
 		return __transform.tx + __offsetX;
 		
 	}
@@ -2507,6 +2567,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	private override function set_x (value:Float):Float {
 		
+		__autoSizeXOffset = 0;
 		if (value != __transform.tx + __offsetX) __setTransformDirty ();
 		return __transform.tx = value - __offsetX;
 		
