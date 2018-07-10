@@ -8,6 +8,7 @@ import js.html.CanvasElement;
 import openfl._internal.renderer.RenderSession;
 import openfl.geom.ColorTransform;
 import openfl.geom.Rectangle;
+import openfl.geom.Matrix;
 import openfl.display.BitmapData.TextureRegionResult;
 import lime.graphics.CanvasRenderContext;
 import lime.graphics.GLRenderContext;
@@ -341,47 +342,181 @@ class SubBitmapData extends BitmapData {
 			result.v3 = v1;
 		}
 	}
-
+	
 	override function __prepareImage() {
 		if (image == null) {
 			var canvas:CanvasElement = cast Browser.document.createElement("canvas");
 			canvas.width = width;
 			canvas.height = height;
 
-			__drawToCanvas(canvas.getContext("2d"), 1, 0, 0, 1, 0, 0);
+			__drawToCanvas(canvas.getContext("2d"), @:privateAccess Matrix.__identity, false, null, false);
 
 			image = lime.graphics.Image.fromCanvas(canvas);
 		}
 		return true;
 	}
+
+	override function __canBeDrawnToCanvas () return __parentBitmap.__canBeDrawnToCanvas();
 	
-	inline function __drawToCanvas(context:CanvasRenderContext, a:Float, b:Float, c:Float, d:Float, tx:Float, ty:Float) {
-		var parentImage = __parentBitmap.image;
-		if (parentImage.type == DATA) {
-			ImageCanvasUtil.convertToCanvas(parentImage);
+	static var __drawToCanvasTransform = new Matrix();
+	
+	override function __drawToCanvas (context:CanvasRenderContext, transform:Matrix, roundPixels:Bool, scrollRect:Rectangle, useScrollRectCoords:Bool):Void {
+		var image = __parentBitmap.image;
+		if (image.type == DATA) {
+			ImageCanvasUtil.convertToCanvas (image);
 		}
 
-		context.setTransform(a, b, c, d, tx + __offsetX * a, ty + __offsetY * d);
+		var sx:Float = __texX;
+		var sy:Float = __texY;
+		var w:Float = __texWidth;
+		var h:Float = __texHeight;
+		var dx:Float = 0;
+		var dy:Float = 0;
+		var offsetX:Float = __offsetX;
+		var offsetY:Float = __offsetY;
+		
+		if (scrollRect != null) {
+			
+			if (!__rotated) {
+				
+				offsetX -= scrollRect.x;
+				if (offsetX < 0) {
+					sx += -offsetX;
+					w = Math.min(scrollRect.width, __texWidth + offsetX);
+					offsetX = 0;
+				} else {
+					w = Math.min(scrollRect.width, __texWidth);
+				}
+				
+				offsetY -= scrollRect.y;
+				if (offsetY < 0) {
+					sy += -offsetY;
+					h = Math.min(scrollRect.height, __texHeight + offsetY);
+					offsetY = 0;
+				} else {
+					h = Math.min(scrollRect.height, __texHeight);
+				}
+			
+			} else {
+
+				offsetX -= scrollRect.x;
+				if (offsetX < 0) {
+					sy -= offsetX;
+					h = Math.min(scrollRect.width, __texHeight + offsetX);
+					offsetX = 0;
+				} else {
+					h = Math.min(scrollRect.width, __texHeight);
+				}
+
+				offsetY -= scrollRect.y;
+				if (offsetY < 0) {
+					var rightOffset = __texWidth + offsetY - scrollRect.height;
+					sx = Math.min(__texX, __texX + rightOffset);
+					// w = 20;//Math.min(scrollRect.height, __texWidth - offsetY);
+					offsetY = 0;
+				} else {
+					w = Math.min(scrollRect.height, __texWidth);
+				}
+				
+				// h = Math.min(scrollRect.width, __texHeight + __offsetX - scrollRect.x);
+
+				// w = Math.min(, __texWidth - scrollRect.y);
+				// h = Math.min(scrollRect.width, __texHeight - scrollRect.x);
+				
+				
+				// var cropX = 0.0, cropY = 0.0;
+
+				// offsetX -= scrollRect.x;
+				// if (offsetX < 0) {
+				// 	cropX = -offsetX;
+				// 	offsetX = 0;
+				// }
+				
+				// offsetY -= scrollRect.y;
+				// if (offsetY < 0) {
+				// 	cropY = -offsetY;
+				// 	offsetY = 0;
+				// }
+
+				// var rightOffset = __texWidth - cropY - scrollRect.height;
+				// sx = __texX + Math.max(0, rightOffset);
+				// w = Math.min(scrollRect.height, __texWidth - cropY);
+				// h = Math.min(scrollRect.width, __texHeight - cropX);
+			}
+			
+			
+			// if (__rotated) {
+			// 	var rightOffset = __texWidth - scrollRect.y - scrollRect.height;
+			// 	sx = __texX + Math.max(0, rightOffset);
+			// 	sy = __texY + scrollRect.x;
+			// 	w = Math.min(scrollRect.height, __texWidth - scrollRect.y);
+			// 	h = Math.min(scrollRect.width, __texHeight - scrollRect.x);
+			// } else {
+			// 	sx = __texX + scrollRect.x;
+			// 	sy = __texY + scrollRect.y;
+			// 	w = Math.min(scrollRect.width, __texWidth - scrollRect.x);
+			// 	h = Math.min(scrollRect.height, __texHeight - scrollRect.y);
+			// }
+			
+			if (useScrollRectCoords) {
+				dx = scrollRect.x;
+				dy = scrollRect.y;
+			}
+			
+			// var scrollX, scrollY, scrollH, scrollW;
+			// if (!__rotated) {
+			// 	scrollX = scrollRect.x;
+			// 	scrollY = scrollRect.y;
+			// 	scrollW = scrollRect.width;
+			// 	scrollH = scrollRect.height;
+			// } else {
+			// 	scrollX = scrollRect.y;
+			// 	scrollY = scrollRect.x;
+			// 	scrollW = scrollRect.height;
+			// 	scrollH = scrollRect.width;
+			// }
+
+			// offsetX -= scrollX;
+			// offsetY -= scrollY;
+			
+			// if (offsetX < 0) {
+			// 	sx -= offsetX;
+			// 	offsetX = 0;
+			// }
+
+			// if (offsetY < 0) {
+			// 	sy -= offsetY;
+			// 	offsetY = 0;
+			// }
+			
+			// if (useScrollRectCoords) {
+			// 	dx = scrollRect.x;
+			// 	dy = scrollRect.y;
+			// }
+			
+			// w = Math.min(w, scrollW - offsetX);
+			// h = Math.min(h, scrollH - offsetY);
+		}
+		
+		__drawToCanvasTransform.copyFrom(transform);
+		
+		__drawToCanvasTransform.__translateTransformed(offsetX + dx, offsetY + dy);
+		
+		// we always round tx/ty because of a Chrome issue: if the number is not whole, it might render a line of pixels from the neighboring region
+		context.setTransform (__drawToCanvasTransform.a, __drawToCanvasTransform.b, __drawToCanvasTransform.c, __drawToCanvasTransform.d, Math.round(__drawToCanvasTransform.tx), Math.round(__drawToCanvasTransform.ty));
+
 		if (__rotated) {
 			context.rotate(-90 * Math.PI / 180);
-			context.translate(-__texWidth, 0);
+			context.translate(-w, 0);
 		}
 
-		context.drawImage(parentImage.src, __texX, __texY, __texWidth, __texHeight, 0, 0, __texWidth, __texHeight);
+		context.drawImage (image.src, sx, sy, w, h, 0, 0, w, h);
 	}
 
 	override function __renderCanvas(renderSession:RenderSession) {
-		var transform = __worldTransform;
-		var tx = transform.tx;
-		var ty = transform.ty;
-		if (renderSession.roundPixels) {
-			tx = Std.int(tx);
-			ty = Std.int(ty);
-		}
-
 		var context = renderSession.context;
 		context.globalAlpha = 1;
-		__drawToCanvas(context, transform.a, transform.b, transform.c, transform.d, tx, ty);
+		__drawToCanvas(context, __worldTransform, false, null, false);
 	}
 	#end
 }

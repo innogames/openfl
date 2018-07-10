@@ -9,6 +9,7 @@ import lime.graphics.cairo.CairoImageSurface;
 import lime.graphics.cairo.CairoPattern;
 import lime.graphics.cairo.CairoSurface;
 import lime.graphics.cairo.Cairo;
+import lime.graphics.CanvasRenderContext;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLFramebuffer;
 import lime.graphics.opengl.GLTexture;
@@ -2109,36 +2110,40 @@ class BitmapData implements IBitmapDrawable {
 		
 	}
 	
+	private function __canBeDrawnToCanvas () return image != null;
+	
+	private function __drawToCanvas (context:CanvasRenderContext, transform:Matrix, roundPixels:Bool, scrollRect:Rectangle, useScrollRectCoords:Bool):Void {
+		#if (js && html5)
+		if (image.type == DATA) {
+			ImageCanvasUtil.convertToCanvas (image);
+		}
+		
+		if (roundPixels) {
+			context.setTransform (transform.a, transform.b, transform.c, transform.d, Math.round (transform.tx), Math.round (transform.ty));
+		} else {
+			context.setTransform (transform.a, transform.b, transform.c, transform.d, transform.tx, transform.ty);
+		}
+		
+		if (scrollRect == null) {
+			context.drawImage (image.src, 0, 0);
+		} else {
+			var dx, dy;
+			if (useScrollRectCoords) {
+				dx = scrollRect.x;
+				dy = scrollRect.y;
+			} else {
+				dx = dy = 0;
+			}
+			context.drawImage (image.src, scrollRect.x, scrollRect.y, scrollRect.width, scrollRect.height, dx, dy, scrollRect.width, scrollRect.height);
+		}
+		#end
+	}
 	
 	private function __renderCanvas (renderSession:RenderSession):Void {
 		
 		#if (js && html5)
 		if (!readable) return;
-		
-		if (image.type == DATA) {
-			
-			ImageCanvasUtil.convertToCanvas (image);
-			
-		}
-		
-		var context = renderSession.context;
-		
-		if (__worldTransform == null) __worldTransform = new Matrix ();
-		
-		context.globalAlpha = 1;
-		var transform = __worldTransform;
-		
-		if (renderSession.roundPixels) {
-			
-			context.setTransform (transform.a, transform.b, transform.c, transform.d, Std.int (transform.tx), Std.int (transform.ty));
-			
-		} else {
-			
-			context.setTransform (transform.a, transform.b, transform.c, transform.d, transform.tx, transform.ty);
-			
-		}
-		
-		context.drawImage (image.src, 0, 0);
+		__drawToCanvas(renderSession.context, __worldTransform, renderSession.roundPixels, null, false);
 		#end
 		
 	}

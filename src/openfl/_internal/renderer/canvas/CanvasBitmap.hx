@@ -19,26 +19,12 @@ class CanvasBitmap {
 		
 		var context = renderSession.context;
 		
-		if (bitmap.__bitmapData != null && bitmap.__bitmapData.__isValid && bitmap.__bitmapData.__prepareImage()) {
+		if (bitmap.__bitmapData != null && bitmap.__bitmapData.__isValid && bitmap.__bitmapData.__canBeDrawnToCanvas()) {
 			
 			renderSession.blendModeManager.setBlendMode (bitmap.__worldBlendMode);
 			renderSession.maskManager.pushObject (bitmap, false);
 			
-			ImageCanvasUtil.convertToCanvas (bitmap.__bitmapData.image);
-			
 			context.globalAlpha = bitmap.__worldAlpha;
-			var transform = bitmap.__renderTransform;
-			var scrollRect = bitmap.__scrollRect;
-			
-			if (renderSession.roundPixels) {
-				
-				context.setTransform (transform.a, transform.b, transform.c, transform.d, Std.int (transform.tx), Std.int (transform.ty));
-				
-			} else {
-				
-				context.setTransform (transform.a, transform.b, transform.c, transform.d, transform.tx, transform.ty);
-				
-			}
 			
 			if (!renderSession.allowSmoothing || !bitmap.smoothing) {
 				
@@ -46,15 +32,7 @@ class CanvasBitmap {
 				
 			}
 			
-			if (scrollRect == null) {
-				
-				context.drawImage (bitmap.__bitmapData.image.src, 0, 0);
-				
-			} else {
-				
-				context.drawImage (bitmap.__bitmapData.image.src, scrollRect.x, scrollRect.y, scrollRect.width, scrollRect.height, scrollRect.x, scrollRect.y, scrollRect.width, scrollRect.height);
-				
-			}
+			bitmap.__bitmapData.__drawToCanvas(context, bitmap.__renderTransform, renderSession.roundPixels || bitmap.__snapToPixel(), bitmap.__scrollRect, true);
 			
 			if (!renderSession.allowSmoothing || !bitmap.smoothing) {
 				
