@@ -7,7 +7,6 @@ import lime.utils.UInt16Array;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLTexture;
-import openfl.display.BlendMode;
 import openfl._internal.renderer.opengl.GLBlendModeManager;
 import openfl._internal.renderer.opengl.GLShaderManager;
 import openfl._internal.renderer.opengl.batcher.BitHacks.*;
@@ -34,7 +33,7 @@ class BatchRenderer {
 	var groups:Vector<RenderGroup>;
 	var boundTextures:Vector<TextureData>;
 
-	var currentBlendMode:BlendMode;
+	var currentBlendMode = BlendMode.NORMAL;
 	var currentTexture:TextureData;
 	var currentQuadIndex = 0;
 	var currentGroup:RenderGroup;
@@ -249,11 +248,6 @@ class BatchRenderer {
 		var boundTextures = this.boundTextures;
 		var groups = this.groups;
 
-		// disable the current OpenFL shader so it'll be re-enabled properly on next non-batched openfl render
-		// this is needed because we don't use ShaderManager to set our shader. Ideally we should do that, but
-		// this will requires some rework for the whole OpenFL shader system, which we'll do when we'll fork away for good 
-		shaderManager.setShader(null);
-		
 		shader.enable(projectionMatrix);
 
 		// bind the index buffer
@@ -276,9 +270,15 @@ class BatchRenderer {
 			gl.bindTexture(gl.TEXTURE_2D, emptyTexture);
 		}
 
+		var lastBlendMode = null;
+
 		// iterate over groups and render them
 		for (i in 0...currentGroupCount) {
 			var group = groups[i];
+			if (group.size == 0) {
+				// TODO: don't even create empty groups (can happen when staring drawing with a non-NORMAL blendmode)
+				continue;
+			}
 			// trace('Rendering group ${i + 1} (${group.size})');
 
 			// bind this group's textures
@@ -296,10 +296,18 @@ class BatchRenderer {
 					gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 				}
 
+				gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+				gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
 				currentTexture.textureUnitId = -1; // clear the binding for subsequent flush calls
 			}
 
-			blendModeManager.setBlendMode(group.blendMode);
+			// apply the blend mode if changed
+			if (group.blendMode != lastBlendMode) {
+				lastBlendMode = group.blendMode;
+				lastBlendMode.apply(gl);
+			}
+			
 
 			// draw this group's slice of vertices
 			gl.drawElements(gl.TRIANGLES, group.size * 6, gl.UNSIGNED_SHORT, group.start * 6 * UInt16Array.BYTES_PER_ELEMENT);
@@ -309,12 +317,18 @@ class BatchRenderer {
 			#end
 		}
 
+		// disable the current OpenFL shader so it'll be re-enabled properly on next non-batched openfl render
+		// this is needed because we don't use ShaderManager to set our shader. Ideally we should do that, but
+		// this will requires some rework for the whole OpenFL shader system, which we'll do when we'll fork away for good 
+		shaderManager.setShader(null);
+		blendModeManager.setBlendMode(NORMAL);
+
 		for (i in 0...maxTextures) {
 			boundTextures[i] = null;
 		}
 		currentTexture = null;
 		currentQuadIndex = 0;
-		currentBlendMode = null;
+		currentBlendMode = BlendMode.NORMAL;
 		currentGroupCount = 0;
 		startNextGroup();
 	}
