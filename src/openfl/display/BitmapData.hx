@@ -24,6 +24,7 @@ import lime.math.ColorMatrix;
 import lime.math.Rectangle in LimeRectangle;
 import lime.math.Vector2;
 import lime.utils.Float32Array;
+import lime.utils.ObjectPool;
 import lime.utils.UInt8Array;
 // import openfl.Lib;
 import openfl._internal.renderer.canvas.CanvasBlendModeManager;
@@ -100,6 +101,7 @@ class BitmapData implements IBitmapDrawable {
 	private static var __tempVector:Vector2 = new Vector2 ();
 	private static var __textureFormat:Int;
 	private static var __textureInternalFormat:Int;
+	private static var __colorTransformPool = new ObjectPool<ColorTransform> (function () { return new ColorTransform (); }, function (colorTransform) { colorTransform.__identity (); });
 	
 	public var height (default, null):Int;
 	public var image (default, null):Image;
@@ -570,6 +572,9 @@ class BitmapData implements IBitmapDrawable {
 				
 			}
 			
+			var matrixCacheColorTransform = __colorTransformPool.get (); 
+			matrixCacheColorTransform.__copyFrom (source.__worldColorTransform);
+			source.__worldColorTransform.__identity ();
 			var matrixCache = Matrix.__pool.get ();
 			matrixCache.copyFrom (source.__worldTransform);
 			var cacheAlpha = source.__alpha;
@@ -578,6 +583,8 @@ class BitmapData implements IBitmapDrawable {
 			source.__updateChildren (false);
 			source.__renderCanvas (renderSession);
 			source.__alpha = cacheAlpha;
+			source.__worldColorTransform.__copyFrom (matrixCacheColorTransform);
+			__colorTransformPool.release (matrixCacheColorTransform);
 			source.__updateTransforms (matrixCache);
 			Matrix.__pool.release (matrixCache);
 			source.__updateChildren (true);
@@ -652,6 +659,9 @@ class BitmapData implements IBitmapDrawable {
 				
 			}
 			
+			var matrixCacheColorTransform = __colorTransformPool.get (); 
+			matrixCacheColorTransform.__copyFrom (source.__worldColorTransform);
+			source.__worldColorTransform.__identity ();
 			var matrixCache = Matrix.__pool.get ();
 			matrixCache.copyFrom (source.__worldTransform);
 			var cacheAlpha = source.__alpha;
@@ -660,6 +670,8 @@ class BitmapData implements IBitmapDrawable {
 			source.__updateChildren (false);
 			source.__renderCairo (renderSession);
 			source.__alpha = cacheAlpha;
+			source.__worldColorTransform.__copyFrom (matrixCacheColorTransform);
+			__colorTransformPool.release (matrixCacheColorTransform);
 			source.__updateTransforms (matrixCache);
 			Matrix.__pool.release (matrixCache);
 			source.__updateChildren (true);
@@ -1820,6 +1832,9 @@ class BitmapData implements IBitmapDrawable {
 				
 			}
 			
+			var matrixCacheColorTransform = __colorTransformPool.get (); 
+			matrixCacheColorTransform.__copyFrom (source.__worldColorTransform);
+			source.__worldColorTransform.__identity ();
 			var matrixCache = Matrix.__pool.get ();
 			matrixCache.copyFrom (source.__worldTransform);
 			var cacheAlpha = source.__alpha;
@@ -1837,7 +1852,8 @@ class BitmapData implements IBitmapDrawable {
 			source.__renderCanvas (renderSession);
 			source.__renderable = cacheRenderable;
 			source.__alpha = cacheAlpha;
-			
+			source.__worldColorTransform.__copyFrom (matrixCacheColorTransform);
+			__colorTransformPool.release (matrixCacheColorTransform); 
 			source.__updateTransforms (matrixCache);
 			Matrix.__pool.release (matrixCache);
 			source.__updateChildren (true);
@@ -1911,6 +1927,9 @@ class BitmapData implements IBitmapDrawable {
 				
 			}
 			
+			var matrixCacheColorTransform = __colorTransformPool.get (); 
+			matrixCacheColorTransform.__copyFrom (source.__worldColorTransform);
+			source.__worldColorTransform.__identity ();
 			var matrixCache = Matrix.__pool.get ();
 			matrixCache.copyFrom (source.__worldTransform);
 			var cacheAlpha = source.__alpha;
@@ -1930,7 +1949,8 @@ class BitmapData implements IBitmapDrawable {
 			source.__renderCairo (renderSession);
 			source.__renderable = cacheRenderable;
 			source.__alpha = cacheAlpha;
-			
+			source.__worldColorTransform.__copyFrom (matrixCacheColorTransform);
+			__colorTransformPool.release (matrixCacheColorTransform); 
 			source.__updateTransforms (matrixCache);
 			Matrix.__pool.release (matrixCache);
 			source.__updateChildren (true);
