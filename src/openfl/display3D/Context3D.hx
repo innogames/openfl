@@ -48,7 +48,6 @@ import openfl.Vector;
 	private static var DEPTH_STENCIL:Int = 0;
 	
 	private static var __stateCache:Context3DStateCache = new Context3DStateCache ();
-	private static var __scissorRect: Rectangle = new Rectangle();
 	
 	public var backBufferHeight (default, null):Int = 0;
 	public var backBufferWidth (default, null):Int = 0;
@@ -75,7 +74,6 @@ import openfl.Vector;
 	private var __samplerDirty:Int;
 	private var __samplerTextures:Vector<TextureBase>;
 	private var __samplerStates:Array<SamplerState>;
-	private var __scissorRectangle:Rectangle;
 	private var __stage3D:Stage3D;
 	private var __stats:Vector<Int>;
 	private var __statsCache:Vector<Int>;
