@@ -839,7 +839,18 @@ class GLContext3D {
 		GLContext3D.context = context;
 		GLContext3D.gl = context.__renderSession.gl;
 		
-		context.__scissorRectangle = rectangle != null ? rectangle.clone () : null;
+		if (rectangle != null) {
+			
+			var scale = context.__stage3D.__stage.window.scale;
+			Context3D.__scissorRect.setTo (rectangle.x * scale, rectangle.y * scale, rectangle.width * scale, rectangle.height * scale);
+			context.__scissorRectangle = Context3D.__scissorRect;
+			
+		} else {
+			
+			context.__scissorRectangle = null;
+			
+		}
+		
 		__updateScissorRectangle ();
 		
 	}
