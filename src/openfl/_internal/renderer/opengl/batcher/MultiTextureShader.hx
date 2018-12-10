@@ -20,7 +20,7 @@ class MultiTextureShader {
 	public var aTextureId(default,null):Int;
 	public var aColorOffset(default,null):Int;
 	public var aColorMultiplier(default,null):Int;
-	public var aPremultipledAlpha(default,null):Int;
+	public var aPremultipliedAlpha(default,null):Int;
 
 	var uProjMatrix:GLUniformLocation;
 	var uPositionScale:GLUniformLocation;
@@ -53,7 +53,7 @@ class MultiTextureShader {
 		aTextureId = gl.getAttribLocation(program, 'aTextureId');
 		aColorOffset = gl.getAttribLocation(program, 'aColorOffset');
 		aColorMultiplier = gl.getAttribLocation(program, 'aColorMultiplier');
-		aPremultipledAlpha = gl.getAttribLocation(program, 'aPremultipledAlpha');
+		aPremultipliedAlpha = gl.getAttribLocation(program, 'aPremultipliedAlpha');
 		uProjMatrix = gl.getUniformLocation(program, "uProjMatrix");
 		uPositionScale = gl.getUniformLocation(program, "uPostionScale");
 
@@ -69,7 +69,7 @@ class MultiTextureShader {
 		gl.enableVertexAttribArray(aTextureId);
 		gl.enableVertexAttribArray(aColorOffset);
 		gl.enableVertexAttribArray(aColorMultiplier);
-		gl.enableVertexAttribArray(aPremultipledAlpha);
+		gl.enableVertexAttribArray(aPremultipliedAlpha);
 
 		gl.uniformMatrix4fv(uProjMatrix, 0, false, projectionMatrix);
 		gl.uniform4fv (uPositionScale, 1, positionScale);
@@ -133,7 +133,7 @@ class MultiTextureShader {
 			varying float vTextureId;
 			varying vec4 vColorMultiplier;
 			varying vec4 vColorOffset;
-			varying float vPremultipledAlpha;
+			varying float vPremultipliedAlpha;
 
 			uniform sampler2D uSamplers[$numTextures];
 
@@ -148,7 +148,7 @@ ${select.join("\n")}
 
 				} else {
 
-					if (vPremultipledAlpha > 0.0) {
+					if (vPremultipliedAlpha > 0.0) {
 
 						color = vec4 (color.rgb / color.a, color.a);
 
@@ -174,7 +174,7 @@ ${select.join("\n")}
 		attribute float aTextureId;
 		attribute vec4 aColorMultiplier;
 		attribute vec4 aColorOffset;
-		attribute float aPremultipledAlpha;
+		attribute float aPremultipliedAlpha;
 
 		uniform mat4 uProjMatrix;
 		uniform vec4 uPostionScale;
@@ -183,7 +183,7 @@ ${select.join("\n")}
 		varying float vTextureId;
 		varying vec4 vColorMultiplier;
 		varying vec4 vColorOffset;
-		varying float vPremultipledAlpha;
+		varying float vPremultipliedAlpha;
 
 		void main(void) {
 			gl_Position = uProjMatrix * vec4(aVertexPosition, 0, 1) * uPostionScale;
@@ -191,7 +191,7 @@ ${select.join("\n")}
 			vTextureId = aTextureId;
 			vColorMultiplier = aColorMultiplier;
 			vColorOffset = aColorOffset;
-			vPremultipledAlpha = aPremultipledAlpha;
+			vPremultipliedAlpha = aPremultipliedAlpha;
 		}
 	';
 }

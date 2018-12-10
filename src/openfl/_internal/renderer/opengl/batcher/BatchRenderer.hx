@@ -274,7 +274,7 @@ class BatchRenderer {
 		gl.vertexAttribPointer(shader.aTextureId, 1, gl.FLOAT, false, stride, 4 * Float32Array.BYTES_PER_ELEMENT);
 		gl.vertexAttribPointer(shader.aColorOffset, 4, gl.FLOAT, false, stride, 5 * Float32Array.BYTES_PER_ELEMENT);
 		gl.vertexAttribPointer(shader.aColorMultiplier, 4, gl.FLOAT, false, stride, 9 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer(shader.aPremultipledAlpha, 1, gl.FLOAT, false, stride, 13 * Float32Array.BYTES_PER_ELEMENT);
+		gl.vertexAttribPointer(shader.aPremultipliedAlpha, 1, gl.FLOAT, false, stride, 13 * Float32Array.BYTES_PER_ELEMENT);
 
 		for (i in 0...maxTextures) {
 			gl.activeTexture(gl.TEXTURE0 + i);
