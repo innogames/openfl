@@ -8,7 +8,7 @@ class QuadTextureData {
 	/** Texture coordinates (0x0-1x1 for full texture, some region for atlas sub-textures) **/
 	public var uvs(default,null):Float32Array;
 	
-	//Is the texture with premutliplied alpha or not
+	/** Is the texture with premutliplied alpha or not **/
 	public var premultipliedAlpha(default,null):Bool;
 
 	static var fullFrameUVs = new Float32Array([
