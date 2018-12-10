@@ -21,12 +21,13 @@ class MultiTextureShader {
 	public var aAlpha(default,null):Int;
 	public var aColorOffset(default,null):Int;
 	public var aColorMultiplier(default,null):Int;
+	public var aPremultipledAlpha(default,null):Int;
 
 	var uProjMatrix:GLUniformLocation;
 	var uPositionScale:GLUniformLocation;
 
 	// x, y, u, v, texId, alpha, colorMult, colorOfs
-	public static inline var floatsPerVertex = 2 + 2 + 1 + 1 + 4 + 4;
+	public static inline var floatsPerVertex = 2 + 2 + 1 + 1 + 4 + 4 + 1;
 
 	public function new(gl:GLRenderContext) {
 		this.gl = gl;
@@ -54,6 +55,7 @@ class MultiTextureShader {
 		aAlpha = gl.getAttribLocation(program, 'aAlpha');
 		aColorOffset = gl.getAttribLocation(program, 'aColorOffset');
 		aColorMultiplier = gl.getAttribLocation(program, 'aColorMultiplier');
+		aPremultipledAlpha = gl.getAttribLocation(program, 'aPremultipledAlpha');
 		uProjMatrix = gl.getUniformLocation(program, "uProjMatrix");
 		uPositionScale = gl.getUniformLocation(program, "uPostionScale");
 
@@ -70,6 +72,7 @@ class MultiTextureShader {
 		gl.enableVertexAttribArray(aAlpha);
 		gl.enableVertexAttribArray(aColorOffset);
 		gl.enableVertexAttribArray(aColorMultiplier);
+		gl.enableVertexAttribArray(aPremultipledAlpha);
 
 		gl.uniformMatrix4fv(uProjMatrix, 0, false, projectionMatrix);
 		gl.uniform4fv (uPositionScale, 1, positionScale);
@@ -134,6 +137,7 @@ class MultiTextureShader {
 			varying float vAlpha;
 			varying vec4 vColorMultiplier;
 			varying vec4 vColorOffset;
+			varying float vPremultipledAlpha;
 
 			uniform sampler2D uSamplers[$numTextures];
 
@@ -147,26 +151,25 @@ ${select.join("\n")}
 					gl_FragColor = vec4 (0.0, 0.0, 0.0, 0.0);
 
 				} else {
-					color = vec4 (color.rgb / color.a, color.a);
 
-					mat4 colorMultiplier;
-					colorMultiplier[0] = vec4(vColorMultiplier.r, 0, 0, 0);
-					colorMultiplier[1] = vec4(0, vColorMultiplier.g, 0, 0);
-					colorMultiplier[2] = vec4(0, 0, vColorMultiplier.b, 0);
-					colorMultiplier[3] = vec4(0, 0, 0, vColorMultiplier.a);
+					if (vPremultipledAlpha > 0.0) {
 
-					color = vColorOffset + (color * colorMultiplier);
+						color = vec4 (color.rgb / color.a, color.a);
 
-					if (color.a > 0.0) {
+						color = vColorOffset + (color * vColorMultiplier);
 
 						gl_FragColor = vec4 (color.rgb * color.a * vAlpha, color.a * vAlpha);
 
 					} else {
 
-						gl_FragColor = vec4 (0.0, 0.0, 0.0, 0.0);
+						color = vColorOffset + (color * vColorMultiplier);
+
+						gl_FragColor = vec4 (color.rgb, color.a * vAlpha);
 
 					}
+
 				}
+
 			}
 		';
 	}
@@ -178,6 +181,7 @@ ${select.join("\n")}
 		attribute float aAlpha;
 		attribute vec4 aColorMultiplier;
 		attribute vec4 aColorOffset;
+		attribute float aPremultipledAlpha;
 
 		uniform mat4 uProjMatrix;
 		uniform vec4 uPostionScale;
@@ -187,6 +191,7 @@ ${select.join("\n")}
 		varying float vAlpha;
 		varying vec4 vColorMultiplier;
 		varying vec4 vColorOffset;
+		varying float vPremultipledAlpha;
 
 		void main(void) {
 			gl_Position = uProjMatrix * vec4(aVertexPosition, 0, 1) * uPostionScale;
@@ -195,6 +200,7 @@ ${select.join("\n")}
 			vAlpha = aAlpha;
 			vColorMultiplier = aColorMultiplier;
 			vColorOffset = aColorOffset;
+			vPremultipledAlpha = aPremultipledAlpha;
 		}
 	';
 }

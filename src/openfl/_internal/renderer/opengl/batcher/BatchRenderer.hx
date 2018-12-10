@@ -193,6 +193,7 @@ class BatchRenderer {
 		var uvs = quad.texture.uvs;
 		var textureUnitId = nextTexture.textureUnitId;
 		var alpha = quad.alpha;
+		var pme = quad.texture.premultipliedAlpha;
 		var colorTransform = quad.colorTransform;
 		var currentVertexBufferIndex = currentQuadIndex * floatsPerQuad;
 
@@ -231,6 +232,8 @@ class BatchRenderer {
 				vertexBufferData[offset + 12] = 1;
 				vertexBufferData[offset + 13] = 1;
 			}
+
+			vertexBufferData[offset + 14] = pme ? 1 : 0;
 		}
 
 		setVertex(0);
@@ -274,6 +277,7 @@ class BatchRenderer {
 		gl.vertexAttribPointer(shader.aAlpha, 1, gl.FLOAT, false, stride, 5 * Float32Array.BYTES_PER_ELEMENT);
 		gl.vertexAttribPointer(shader.aColorOffset, 4, gl.FLOAT, false, stride, 6 * Float32Array.BYTES_PER_ELEMENT);
 		gl.vertexAttribPointer(shader.aColorMultiplier, 4, gl.FLOAT, false, stride, 10 * Float32Array.BYTES_PER_ELEMENT);
+		gl.vertexAttribPointer(shader.aPremultipledAlpha, 1, gl.FLOAT, false, stride, 14 * Float32Array.BYTES_PER_ELEMENT);
 
 		for (i in 0...maxTextures) {
 			gl.activeTexture(gl.TEXTURE0 + i);
