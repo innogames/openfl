@@ -824,6 +824,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__selectionIndex = getLineOffset (getLineIndexOfChar (__selectionIndex));
 			
 		}
+		scrollH = 0;
 		
 	}
 	
@@ -851,7 +852,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__caretIndex = __text.length;
 			
 		}
-		
+		scrollH = maxScrollH;
 	}
 	
 	
@@ -862,6 +863,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__caretIndex++;
 			
 		}
+
+		__scrollHorizontal ();
 		
 	}
 	
@@ -900,6 +903,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__caretIndex--;
 			
 		}
+
+		__scrollHorizontal ();
 		
 	}
 	
@@ -929,7 +934,27 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		}
 		
 	}
-	
+
+	private function __updateCursor ():Void {
+		__updateScrollHV (__caretIndex);
+		__stopCursorTimer();
+		__startCursorTimer();
+	}
+
+	private function __scrollHorizontal ():Void {
+		var left : Int = getCharIndexAtPoint(20, 4);
+
+		if (__caretIndex < left) {
+			scrollH -= 60;
+			return;
+		}
+
+		var right : Int = getCharIndexAtPoint(__textEngine.width - 20, 4);
+
+		if (__caretIndex > right) {
+			scrollH += 60;
+		}
+	}
 	
 	private function __disableInput ():Void {
 		
@@ -2850,9 +2875,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 					__selectionIndex = __caretIndex;
 					
 				}
-				
-				__stopCursorTimer ();
-				__startCursorTimer ();
+
+				__updateCursor ();
 			
 			case RIGHT:
 				
@@ -2885,9 +2909,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 					__selectionIndex = __caretIndex;
 					
 				}
-				
-				__stopCursorTimer ();
-				__startCursorTimer ();
+
+				__updateCursor ();
 			
 			case DOWN:
 				
@@ -2923,9 +2946,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 					}
 					
 				}
-				
-				__stopCursorTimer ();
-				__startCursorTimer ();
+
+				__updateCursor ();
 			
 			case UP:
 				
@@ -2961,21 +2983,18 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 					}
 					
 				}
-				
-				__stopCursorTimer ();
-				__startCursorTimer ();
+
+				__updateCursor ();
 			
 			case HOME:
 				
 				__caretBeginningOfLine ();
-				__stopCursorTimer ();
-				__startCursorTimer ();
+				__updateCursor ();
 			
 			case END:
 				
 				__caretEndOfLine ();
-				__stopCursorTimer ();
-				__startCursorTimer ();
+				__updateCursor ();
 			
 			case C:
 				
