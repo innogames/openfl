@@ -753,9 +753,61 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
+	private inline function __getRenderState ():RenderState {
+		
+		if (__renderState == null) {
+			
+			__renderState = new RenderState (this);
+			
+		}
+		
+		return __renderState;
+		
+	}
+	
+	
 	private function __mouseThroughAllowed ():Bool {
 		
 		return false;
+		
+	}
+	
+	
+	private function __prepareBitmapCachingRenderState (transformMatrix:Matrix):Void {
+		
+			__getRenderState ().save ();
+		
+			__worldTransform.copyFrom (transformMatrix);
+			__renderTransform.copyFrom (transformMatrix);
+			
+			if (__scrollRect != null) {
+				
+				__renderTransform.__translateTransformed (-__scrollRect.x, -__scrollRect.y);
+				
+			}
+			
+			var renderParent = __renderParent != null ? __renderParent : parent;
+			__renderable = __isMask || (visible && __scaleX != 0 && __scaleY != 0 && (renderParent == null || !renderParent.__isMask));
+		
+			__worldAlpha = 1;
+			//Check the ColorTransform PR to fix color transform properly
+			//__worldColorTransform.__identity ();
+			__worldBlendMode = blendMode;
+		
+	}
+	
+	
+	private function __prepareChildrensBitmapCachingRenderState ():Void {
+		
+		__getRenderState ().save ();
+		
+		__updateRenderData ();
+			
+		if (mask != null) {
+			
+			mask.__prepareChildrensBitmapCachingRenderState ();
+			
+		}
 		
 	}
 	
@@ -896,6 +948,23 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
+	private function __restoreRenderState ():Void {
+		
+		if (__renderState != null) {
+			
+			__renderState.restore ();
+			
+			if (mask != null) {
+				
+				mask.__restoreRenderState ();
+				
+			}
+			
+		}
+		
+	}
+	
+	
 	private function __setParentRenderDirty ():Void {
 		
 		var renderParent = __renderParent != null ? __renderParent : parent;
@@ -1019,89 +1088,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		
 	}
 	
-	private function __updateRenderData ():Void {
-		
-		var renderParent = __renderParent != null ? __renderParent : parent;
-		if (__isMask && renderParent == null) renderParent = __maskTarget;
-		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
-		
-		__updateTransforms ();
-		
-		if (__supportDOM) {
-				
-				__renderTransformChanged = !__renderTransform.equals (__renderTransformCache);
-				
-				if (__renderTransformCache == null) {
-					
-					__renderTransformCache = __renderTransform.clone ();
-					
-				} else {
-					
-					__renderTransformCache.copyFrom (__renderTransform);
-					
-				}
-				
-			}
-			
-			if (!__worldColorTransform.__equals (transform.colorTransform)) {
-				
-				__worldColorTransform = transform.colorTransform.__clone ();
-				
-			}
-			
-			if (renderParent != null) {
-				
-				if (__supportDOM) {
-					
-					var worldVisible = (renderParent.__worldVisible && visible);
-					__worldVisibleChanged = (__worldVisible != worldVisible);
-					__worldVisible = worldVisible;
-					
-					var worldAlpha = alpha * renderParent.__worldAlpha;
-					__worldAlphaChanged = (__worldAlpha != worldAlpha);
-					__worldAlpha = worldAlpha;
-					
-				} else {
-					
-					__worldAlpha = alpha * renderParent.__worldAlpha;
-					
-				}
-				
-				__worldColorTransform.__combine (renderParent.__worldColorTransform);
-				
-				if (__blendMode == null || __blendMode == NORMAL) {
-					
-					// TODO: Handle multiple blend modes better
-					__worldBlendMode = renderParent.__blendMode;
-					
-				} else {
-					
-					__worldBlendMode = __blendMode;
-					
-				}
-				
-			} else {
-				
-				__worldAlpha = alpha;
-				
-				if (__supportDOM) {
-					
-					__worldVisibleChanged = (__worldVisible != visible);
-					__worldVisible = visible;
-					
-					__worldAlphaChanged = (__worldAlpha != alpha);
-					
-				}
-				
-			}
-			
-			//if (updateChildren && __renderDirty) {
-				
-				//__renderDirty = false;
-				
-			//}
-		
-	}
 	
 	
 	private function __updateCacheBitmap (renderSession:RenderSession, force:Bool):Bool {
@@ -1325,71 +1311,87 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	private inline function __getRenderState ():RenderState {
+	private function __updateRenderData ():Void {
 		
-		if (__renderState == null) {
-			
-			__renderState = new RenderState (this);
-			
-		}
+		var renderParent = __renderParent != null ? __renderParent : parent;
+		if (__isMask && renderParent == null) renderParent = __maskTarget;
+		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
 		
-		return __renderState;
+		__updateTransforms ();
 		
-	}
-	
-	
-	private function __prepareBitmapCachingRenderState (transformMatrix:Matrix):Void {
-		
-			__getRenderState ().save ();
-		
-			__worldTransform.copyFrom (transformMatrix);
-			__renderTransform.copyFrom (transformMatrix);
-			
-			if (__scrollRect != null) {
+		if (__supportDOM) {
 				
-				__renderTransform.__translateTransformed (-__scrollRect.x, -__scrollRect.y);
+				__renderTransformChanged = !__renderTransform.equals (__renderTransformCache);
+				
+				if (__renderTransformCache == null) {
+					
+					__renderTransformCache = __renderTransform.clone ();
+					
+				} else {
+					
+					__renderTransformCache.copyFrom (__renderTransform);
+					
+				}
 				
 			}
 			
-			var renderParent = __renderParent != null ? __renderParent : parent;
-			__renderable = __isMask || (visible && __scaleX != 0 && __scaleY != 0 && (renderParent == null || !renderParent.__isMask));
-		
-			__worldAlpha = 1;
-			//Check the ColorTransform PR to fix color transform properly
-			//__worldColorTransform.__identity ();
-			__worldBlendMode = blendMode;
-		
-	}
-	
-	
-	private function __prepareChildrensBitmapCachingRenderState ():Void {
-		
-		__getRenderState ().save ();
-		
-		__updateRenderData ();
-			
-		if (mask != null) {
-			
-			mask.__prepareChildrensBitmapCachingRenderState ();
-			
-		}
-		
-	}
-	
-	
-	private function __restoreRenderState ():Void {
-		
-		if (__renderState != null) {
-			
-			__renderState.restore ();
-			
-			if (mask != null) {
+			if (!__worldColorTransform.__equals (transform.colorTransform)) {
 				
-				mask.__restoreRenderState ();
+				__worldColorTransform = transform.colorTransform.__clone ();
 				
 			}
 			
-		}
+			if (renderParent != null) {
+				
+				if (__supportDOM) {
+					
+					var worldVisible = (renderParent.__worldVisible && visible);
+					__worldVisibleChanged = (__worldVisible != worldVisible);
+					__worldVisible = worldVisible;
+					
+					var worldAlpha = alpha * renderParent.__worldAlpha;
+					__worldAlphaChanged = (__worldAlpha != worldAlpha);
+					__worldAlpha = worldAlpha;
+					
+				} else {
+					
+					__worldAlpha = alpha * renderParent.__worldAlpha;
+					
+				}
+				
+				__worldColorTransform.__combine (renderParent.__worldColorTransform);
+				
+				if (__blendMode == null || __blendMode == NORMAL) {
+					
+					// TODO: Handle multiple blend modes better
+					__worldBlendMode = renderParent.__blendMode;
+					
+				} else {
+					
+					__worldBlendMode = __blendMode;
+					
+				}
+				
+			} else {
+				
+				__worldAlpha = alpha;
+				
+				if (__supportDOM) {
+					
+					__worldVisibleChanged = (__worldVisible != visible);
+					__worldVisible = visible;
+					
+					__worldAlphaChanged = (__worldAlpha != alpha);
+					
+				}
+				
+			}
+			
+			//if (updateChildren && __renderDirty) {
+				
+				//__renderDirty = false;
+				
+			//}
 		
 	}
 	

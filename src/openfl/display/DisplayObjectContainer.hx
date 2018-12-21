@@ -651,6 +651,32 @@ class DisplayObjectContainer extends InteractiveObject {
 	}
 	
 	
+	private override function __prepareBitmapCachingRenderState (transformMatrix:Matrix):Void {
+		
+		super.__prepareBitmapCachingRenderState (transformMatrix);
+		
+		for (child in __children) {
+			
+			child.__prepareChildrensBitmapCachingRenderState ();
+			
+		}
+		
+	}
+	
+	
+	private override function __prepareChildrensBitmapCachingRenderState ():Void {
+		
+		super.__prepareChildrensBitmapCachingRenderState ();
+		
+		for (child in __children) {
+			
+			child.__prepareChildrensBitmapCachingRenderState ();
+			
+		}
+		
+	}
+	
+	
 	private override function __readGraphicsData (graphicsData:Vector<IGraphicsData>, recurse:Bool):Void {
 		
 		super.__readGraphicsData (graphicsData, recurse);
@@ -923,6 +949,19 @@ class DisplayObjectContainer extends InteractiveObject {
 	}
 	
 	
+	private override function __restoreRenderState ():Void {
+		
+		super.__restoreRenderState ();
+		
+		for (child in __children) {
+			
+			child.__restoreRenderState ();
+			
+		}
+		
+	}
+	
+	
 	private override function __setStageReference (stage:Stage):Void {
 		
 		super.__setStageReference (stage);
@@ -1002,45 +1041,6 @@ class DisplayObjectContainer extends InteractiveObject {
 		
 			child.__update ();
 		
-		}
-		
-	}
-	
-	
-	private override function __prepareBitmapCachingRenderState (transformMatrix:Matrix):Void {
-		
-		super.__prepareBitmapCachingRenderState (transformMatrix);
-		
-		for (child in __children) {
-			
-			child.__prepareChildrensBitmapCachingRenderState ();
-			
-		}
-		
-	}
-	
-	
-	private override function __prepareChildrensBitmapCachingRenderState ():Void {
-		
-		super.__prepareChildrensBitmapCachingRenderState ();
-		
-		for (child in __children) {
-			
-			child.__prepareChildrensBitmapCachingRenderState ();
-			
-		}
-		
-	}
-	
-	
-	private override function __restoreRenderState ():Void {
-		
-		super.__restoreRenderState ();
-		
-		for (child in __children) {
-			
-			child.__restoreRenderState ();
-			
 		}
 		
 	}

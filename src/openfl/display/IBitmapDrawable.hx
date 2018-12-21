@@ -19,13 +19,13 @@ interface IBitmapDrawable {
 	private var __worldTransform:Matrix;
 	
 	private function __getBounds (rect:Rectangle, matrix:Matrix):Void;
+	private function __prepareBitmapCachingRenderState (trasformMatrix:Matrix):Void;
 	private function __renderCairo (renderSession:RenderSession):Void;
 	private function __renderCairoMask (renderSession:RenderSession):Void;
 	private function __renderCanvas (renderSession:RenderSession):Void;
 	private function __renderCanvasMask (renderSession:RenderSession):Void;
 	private function __renderGL (renderSession:RenderSession):Void;
 	private function __renderGLMask (renderSession:RenderSession):Void;
-	private function __updateTransforms ():Void;
-	private function __prepareBitmapCachingRenderState (trasformMatrix:Matrix):Void;
 	private function __restoreRenderState ():Void;
+	private function __updateTransforms ():Void;
 }

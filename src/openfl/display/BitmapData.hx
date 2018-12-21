@@ -1835,6 +1835,13 @@ class BitmapData implements IBitmapDrawable {
 	}
 	
 	
+	private function __prepareBitmapCachingRenderState (trasformMatrix: Matrix):Void {
+		
+		__worldTransform = trasformMatrix;
+		
+	}
+	
+	
 	private function __prepareImage() return image != null;
 
 	private function __loadFromFile (path:String):Future<BitmapData> {
@@ -2038,6 +2045,11 @@ class BitmapData implements IBitmapDrawable {
 	}
 	
 	
+	private function __restoreRenderState (): Void {
+	
+	}
+	
+	
 	public function __updateTransforms ():Void {
 		
 		__worldTransform.identity ();
@@ -2045,18 +2057,8 @@ class BitmapData implements IBitmapDrawable {
 	}
 	
 	
-	private function __prepareBitmapCachingRenderState (trasformMatrix: Matrix):Void {
-		
-		__worldTransform = trasformMatrix;
-		
-	}
 	
 	
-	private function __restoreRenderState (): Void {
-	
-	}		
-		
-		
 }
 
 

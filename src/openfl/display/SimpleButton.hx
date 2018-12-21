@@ -263,6 +263,44 @@ class SimpleButton extends InteractiveObject {
 	}
 	
 	
+	private override function __prepareBitmapCachingRenderState (transformMatrix:Matrix):Void {
+		
+		super.__prepareBitmapCachingRenderState (transformMatrix);
+		
+		if (__currentState != null) {
+			
+			__currentState.__prepareBitmapCachingRenderState (transformMatrix);
+			
+		}
+		
+		if (hitTestState != null && hitTestState != __currentState) {
+			
+			hitTestState.__prepareBitmapCachingRenderState (transformMatrix);
+			
+		}
+		
+	}
+	
+	
+	private override function __prepareChildrensBitmapCachingRenderState ():Void {
+		
+		super.__prepareChildrensBitmapCachingRenderState ();
+		
+		if (__currentState != null) {
+			
+			__currentState.__prepareChildrensBitmapCachingRenderState ();
+			
+		}
+		
+		if (hitTestState != null && hitTestState != __currentState) {
+			
+			hitTestState.__prepareChildrensBitmapCachingRenderState ();
+			
+		}
+		
+	}
+	
+	
 	private override function __renderCairo (renderSession:RenderSession):Void {
 		
 		if (!__renderable || __worldAlpha <= 0 || __currentState == null) return;
@@ -360,6 +398,25 @@ class SimpleButton extends InteractiveObject {
 	}
 	
 	
+	private override function __restoreRenderState ():Void {
+		
+		super.__restoreRenderState ();
+		
+		if (__currentState != null) {
+			
+			__currentState.__restoreRenderState ();
+			
+		}
+		
+		if (hitTestState != null && hitTestState != __currentState) {
+			
+			hitTestState.__restoreRenderState ();
+			
+		}
+		
+	}
+	
+	
 	private override function __setStageReference (stage:Stage):Void {
 		
 		super.__setStageReference (stage);
@@ -430,63 +487,6 @@ class SimpleButton extends InteractiveObject {
 		if (hitTestState != null && hitTestState != __currentState) {
 			
 			hitTestState.__updateTransforms ();
-			
-		}
-		
-	}
-	
-	
-	private override function __prepareBitmapCachingRenderState (transformMatrix:Matrix):Void {
-		
-		super.__prepareBitmapCachingRenderState (transformMatrix);
-		
-		if (__currentState != null) {
-			
-			__currentState.__prepareBitmapCachingRenderState (transformMatrix);
-			
-		}
-		
-		if (hitTestState != null && hitTestState != __currentState) {
-			
-			hitTestState.__prepareBitmapCachingRenderState (transformMatrix);
-			
-		}
-		
-	}
-	
-	
-	private override function __prepareChildrensBitmapCachingRenderState ():Void {
-		
-		super.__prepareChildrensBitmapCachingRenderState ();
-		
-		if (__currentState != null) {
-			
-			__currentState.__prepareChildrensBitmapCachingRenderState ();
-			
-		}
-		
-		if (hitTestState != null && hitTestState != __currentState) {
-			
-			hitTestState.__prepareChildrensBitmapCachingRenderState ();
-			
-		}
-		
-	}
-	
-	
-	private override function __restoreRenderState ():Void {
-		
-		super.__restoreRenderState ();
-		
-		if (__currentState != null) {
-			
-			__currentState.__restoreRenderState ();
-			
-		}
-		
-		if (hitTestState != null && hitTestState != __currentState) {
-			
-			hitTestState.__restoreRenderState ();
 			
 		}
 		
