@@ -2005,60 +2005,36 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public override function __update (transformOnly:Bool, updateChildren:Bool, ?resetUpdateDirty:Bool = false):Void {
+	public override function __update ():Void {
 		
-		if (transformOnly) {
+		if (__transformDirty || __renderDirty) {
+				
+			super.__update ();
 			
-			if (__transformDirty) {
+			// #if dom
+			if (DisplayObject.__supportDOM) {
 				
-				super.__update (true, updateChildren, resetUpdateDirty);
-				
-				if (updateChildren) {
-					
-					__transformDirty = false;
-					//__dirty = true;
-					
-				}
+				__wasDirty = true;
 				
 			}
 			
-		} else {
+			// #end
 			
-			if (__transformDirty || __renderDirty) {
+			//__dirty = false;
 				
-				super.__update (false, updateChildren, resetUpdateDirty);
-				
-				if (updateChildren) {
-					
-					// #if dom
-					if (DisplayObject.__supportDOM) {
-						
-						__wasDirty = true;
-						
-					}
-					
-					// #end
-					
-					//__dirty = false;
-					
-				}
-				
-			} /*#if dom*/ else if (__wasDirty) {
-				
-				// If we were dirty last time, we need at least one more
-				// update in order to clear "changed" properties
-				
-				super.__update (false, updateChildren, resetUpdateDirty);
-				
-				if (updateChildren) {
-					
-					__wasDirty = false;
-					
-				}
-				
-			} /*#end*/
 			
-		}
+		} /*#if dom*/ else if (__wasDirty) {
+			
+			// If we were dirty last time, we need at least one more
+			// update in order to clear "changed" properties
+			
+			super.__update ();
+			
+			__wasDirty = false;
+			
+		} /*#end*/
+			
+		
 		
 	}
 	

@@ -269,14 +269,15 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 		
 	}
 
-	override function __updateTransforms (overrideTransform:Matrix = null):Void {
-		super.__updateTransforms (overrideTransform);
+	
+	public override function __updateTransforms ():Void {
 		
-		if (overrideTransform == null) {
-			__batchQuadDirty = true;
-		}
+		super.__updateTransforms ();
+		__batchQuadDirty = true;
 		
 	}
+	
+	
 	private override function __renderDOMClear (renderSession: RenderSession):Void {
 		
 		DOMBitmap.clear (this, renderSession);

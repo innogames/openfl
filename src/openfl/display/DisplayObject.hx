@@ -114,6 +114,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __renderable:Bool;
 	private var __renderDirty:Bool;
 	private var __renderParent:DisplayObject;
+	private var __renderState: RenderState;
 	private var __renderTransform:Matrix;
 	private var __renderTransformCache:Matrix;
 	private var __renderTransformChanged:Bool;
@@ -652,7 +653,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 
 			if (parent == null) {
 				
-				__update (true, false);
+				__updateTransforms ();
 				
 			} else {
 				
@@ -670,10 +671,10 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			while (--i >= 0) {
 
 				current = list[i];
-				current.__update (true, false);
+				current.__updateTransforms ();
 
 			}
-				
+			
 
 		}
 		
@@ -989,26 +990,18 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		
 		if (__updateDirty) {
 			
-			__update (false, true, true);
+			__update ();
 			
 		}
 	}
 	
 	
-	public function __update (transformOnly:Bool, updateChildren:Bool, ?resetUpdateDirty:Bool = false):Void {
+	public function __update ():Void {
 		
-		if (resetUpdateDirty) {
-			
-			__updateDirty = false;
-			__updateTraverse = false;
-			
-		}
+		__updateRenderData ();
 		
-		var renderParent = __renderParent != null ? __renderParent : parent;
-		if (__isMask && renderParent == null) renderParent = __maskTarget;
-		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
-		__updateTransforms ();
-		
+		__updateDirty = false;
+		__updateTraverse = false;
 		//if (updateChildren && __transformDirty) {
 			
 			__transformDirty = false;
@@ -1017,9 +1010,24 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		
 		__worldTransformInvalid = false;
 
-		if (!transformOnly) {
+		
+		if (mask != null) {
 			
-			if (__supportDOM) {
+			mask.__update ();
+			
+		}
+		
+	}
+	
+	private function __updateRenderData ():Void {
+		
+		var renderParent = __renderParent != null ? __renderParent : parent;
+		if (__isMask && renderParent == null) renderParent = __maskTarget;
+		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
+		
+		__updateTransforms ();
+		
+		if (__supportDOM) {
 				
 				__renderTransformChanged = !__renderTransform.equals (__renderTransformCache);
 				
@@ -1092,14 +1100,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 				//__renderDirty = false;
 				
 			//}
-			
-		}
-		
-		if (updateChildren && mask != null) {
-			
-			mask.__update (transformOnly, true, resetUpdateDirty);
-			
-		}
 		
 	}
 	
@@ -1325,26 +1325,76 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	public function __updateChildren (transformOnly:Bool):Void {
+	private inline function __getRenderState ():RenderState {
 		
-		var renderParent = __renderParent != null ? __renderParent : parent;
-		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
-		__worldAlpha = alpha;
-		__worldBlendMode = blendMode;
-		
-		if (__transformDirty) {
+		if (__renderState == null) {
 			
-			__transformDirty = false;
+			__renderState = new RenderState (this);
+			
+		}
+		
+		return __renderState;
+		
+	}
+	
+	
+	private function __prepareBitmapCachingRenderState (transformMatrix:Matrix):Void {
+		
+			__getRenderState ().save ();
+		
+			__worldTransform.copyFrom (transformMatrix);
+			__renderTransform.copyFrom (transformMatrix);
+			
+			if (__scrollRect != null) {
+				
+				__renderTransform.__translateTransformed (-__scrollRect.x, -__scrollRect.y);
+				
+			}
+			
+			var renderParent = __renderParent != null ? __renderParent : parent;
+			__renderable = __isMask || (visible && __scaleX != 0 && __scaleY != 0 && (renderParent == null || !renderParent.__isMask));
+		
+			__worldAlpha = 1;
+			//Check the ColorTransform PR to fix color transform properly
+			//__worldColorTransform.__identity ();
+			__worldBlendMode = blendMode;
+		
+	}
+	
+	
+	private function __prepareChildrensBitmapCachingRenderState ():Void {
+		
+		__getRenderState ().save ();
+		
+		__updateRenderData ();
+			
+		if (mask != null) {
+			
+			mask.__prepareChildrensBitmapCachingRenderState ();
 			
 		}
 		
 	}
 	
 	
-	public function __updateTransforms (overrideTransform:Matrix = null):Void {
+	private function __restoreRenderState ():Void {
 		
-		var overrided = overrideTransform != null;
-		var local = overrided ? overrideTransform : __transform;
+		if (__renderState != null) {
+			
+			__renderState.restore ();
+			
+			if (mask != null) {
+				
+				mask.__restoreRenderState ();
+				
+			}
+			
+		}
+		
+	}
+	
+	
+	public function __updateTransforms ():Void {
 		
 		if (__worldTransform == null) {
 			
@@ -1360,23 +1410,23 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		
 		var renderParent = __renderParent != null ? __renderParent : parent;
 		
-		if (!overrided && parent != null) {
+		if (parent != null) {
 			
-			__calculateAbsoluteTransform (local, parent.__worldTransform, __worldTransform);
+			__calculateAbsoluteTransform (__transform, parent.__worldTransform, __worldTransform);
 			
 		} else {
 			
-			__worldTransform.copyFrom (local);
+			__worldTransform.copyFrom (__transform);
 			
 		}
 		
-		if (!overrided && renderParent != null) {
+		if (renderParent != null) {
 			
-			__calculateAbsoluteTransform (local, renderParent.__renderTransform, __renderTransform);
+			__calculateAbsoluteTransform (__transform, renderParent.__renderTransform, __renderTransform);
 			
 		} else {
 			
-			__renderTransform.copyFrom (local);
+			__renderTransform.copyFrom (__transform);
 			
 		}
 		
@@ -1964,6 +2014,66 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		return __transform.ty = value;
 		
 	}
+	
+	
+}
+
+@:access(openfl.display.DisplayObject)
+@:access(openfl.geom.ColorTransform)
+class RenderState {
+	
+	
+		private var __displayObject:DisplayObject;
+		private var __renderable:Bool;
+		private var __renderTransform:Matrix;
+		private var __worldAlpha:Float;
+		private var __worldBlendMode:BlendMode;
+		private var __worldColorTransform:ColorTransform;
+		private var __worldTrasform:Matrix;
+		
+		public function new (displayObject:DisplayObject) {
+			__displayObject = displayObject;
+		}
+	
+		public function save ():Void {
+			
+			if (__worldTrasform == null) {
+				
+				__worldTrasform = new Matrix ();
+				
+			}
+			__worldTrasform.copyFrom (__displayObject.__worldTransform);
+			
+			if (__renderTransform == null) {
+				
+				__renderTransform = new Matrix ();
+				
+			}
+			__renderTransform.copyFrom (__displayObject.__renderTransform);
+			
+			if (__worldColorTransform == null) {
+				
+				__worldColorTransform = new ColorTransform ();
+				
+			} 
+			__worldColorTransform.__copyFrom (__displayObject.__worldColorTransform);
+			
+			__worldAlpha = __displayObject.__worldAlpha;
+			__worldBlendMode = __displayObject.__worldBlendMode;
+			__renderable = __displayObject.__renderable;
+			
+		}
+
+		public function restore ():Void {
+			
+			__displayObject.__worldColorTransform.__copyFrom (__worldColorTransform);
+			__displayObject.__worldTransform.copyFrom (__worldTrasform);
+			__displayObject.__renderTransform.copyFrom (__renderTransform);
+			__displayObject.__worldAlpha = __worldAlpha;
+			__displayObject.__worldBlendMode = __worldBlendMode;
+			__displayObject.__renderable = __renderable;
+			
+		} 
 	
 	
 }

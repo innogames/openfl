@@ -976,7 +976,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		
 		if (__updateDirty) {
 			
-			__update (false, true, true);
+			__update ();
 			
 		} else if (__updateTraverse) {
 			
@@ -992,32 +992,54 @@ class DisplayObjectContainer extends InteractiveObject {
 		__updateTraverse = false;
 			
 	}
+
+
+	public override function __update ():Void {
+		
+		super.__update ();
+		
+		for (child in __children) {
+		
+			child.__update ();
+		
+		}
+		
+	}
 	
 	
-	public override function __update (transformOnly:Bool, updateChildren:Bool, ?resetUpdateDirty:Bool = false):Void {
+	private override function __prepareBitmapCachingRenderState (transformMatrix:Matrix):Void {
 		
-		super.__update (transformOnly, updateChildren, resetUpdateDirty);
+		super.__prepareBitmapCachingRenderState (transformMatrix);
 		
-		if (updateChildren) {
+		for (child in __children) {
 			
-			for (child in __children) {
-				
-				child.__update (transformOnly, true, resetUpdateDirty);
-				
-			}
+			child.__prepareChildrensBitmapCachingRenderState ();
 			
 		}
 		
 	}
 	
 	
-	public override function __updateChildren (transformOnly:Bool):Void {
+	private override function __prepareChildrensBitmapCachingRenderState ():Void {
 		
-		super.__updateChildren (transformOnly);
+		super.__prepareChildrensBitmapCachingRenderState ();
 		
 		for (child in __children) {
 			
-			child.__update (transformOnly, true);
+			child.__prepareChildrensBitmapCachingRenderState ();
+			
+		}
+		
+	}
+	
+	
+	private override function __restoreRenderState ():Void {
+		
+		super.__restoreRenderState ();
+		
+		for (child in __children) {
+			
+			child.__restoreRenderState ();
 			
 		}
 		

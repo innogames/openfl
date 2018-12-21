@@ -1747,9 +1747,9 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	}
 	
 	
-	public override function __updateTransforms (overrideTransform:Matrix = null):Void {
+	public override function __updateTransforms ():Void {
 		
-		super.__updateTransforms (overrideTransform);
+		super.__updateTransforms ();
 		__renderTransform.__translateTransformed (__offsetX, __offsetY);
 		
 	}

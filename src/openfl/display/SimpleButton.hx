@@ -398,51 +398,28 @@ class SimpleButton extends InteractiveObject {
 	}
 	
 	
-	public override function __update (transformOnly:Bool, updateChildren:Bool, ?resetUpdateDirty:Bool = false):Void {
+	public override function __update ():Void {
 		
-		super.__update (transformOnly, updateChildren, resetUpdateDirty);
-		
-		if (updateChildren) {
-			
-			if (__currentState != null) {
-				
-				__currentState.__update (transformOnly, true, resetUpdateDirty);
-				
-			}
-			
-			if (hitTestState != null && hitTestState != __currentState) {
-				
-				hitTestState.__update (transformOnly, true, resetUpdateDirty);
-				
-			}
-			
-		}
-		
-	}
-	
-	
-	public override function __updateChildren (transformOnly:Bool):Void {
-		
-		super.__updateChildren (transformOnly);
+		super.__update ();
 		
 		if (__currentState != null) {
 			
-			__currentState.__updateChildren (transformOnly);
+			__currentState.__update ();
 			
 		}
 		
 		if (hitTestState != null && hitTestState != __currentState) {
 			
-			hitTestState.__updateChildren (transformOnly);
+			hitTestState.__update ();
 			
 		}
 		
 	}
 	
 	
-	public override function __updateTransforms (overrideTransform:Matrix = null):Void {
+	public override function __updateTransforms ():Void {
 		
-		super.__updateTransforms (overrideTransform);
+		super.__updateTransforms ();
 		
 		if (__currentState != null) {
 			
@@ -453,6 +430,63 @@ class SimpleButton extends InteractiveObject {
 		if (hitTestState != null && hitTestState != __currentState) {
 			
 			hitTestState.__updateTransforms ();
+			
+		}
+		
+	}
+	
+	
+	private override function __prepareBitmapCachingRenderState (transformMatrix:Matrix):Void {
+		
+		super.__prepareBitmapCachingRenderState (transformMatrix);
+		
+		if (__currentState != null) {
+			
+			__currentState.__prepareBitmapCachingRenderState (transformMatrix);
+			
+		}
+		
+		if (hitTestState != null && hitTestState != __currentState) {
+			
+			hitTestState.__prepareBitmapCachingRenderState (transformMatrix);
+			
+		}
+		
+	}
+	
+	
+	private override function __prepareChildrensBitmapCachingRenderState ():Void {
+		
+		super.__prepareChildrensBitmapCachingRenderState ();
+		
+		if (__currentState != null) {
+			
+			__currentState.__prepareChildrensBitmapCachingRenderState ();
+			
+		}
+		
+		if (hitTestState != null && hitTestState != __currentState) {
+			
+			hitTestState.__prepareChildrensBitmapCachingRenderState ();
+			
+		}
+		
+	}
+	
+	
+	private override function __restoreRenderState ():Void {
+		
+		super.__restoreRenderState ();
+		
+		if (__currentState != null) {
+			
+			__currentState.__restoreRenderState ();
+			
+		}
+		
+		if (hitTestState != null && hitTestState != __currentState) {
+			
+			hitTestState.__restoreRenderState ();
 			
 		}
 		
