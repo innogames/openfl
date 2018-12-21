@@ -1457,7 +1457,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		}
 		__forceCachedBitmapUpdate = __forceCachedBitmapUpdate || __dirty;
 		
-		CanvasTextField.render (this, renderSession, __worldTransform);
+		if (!__cacheBitmapRender) CanvasTextField.render (this, renderSession, __worldTransform);
 		
 		if (__textEngine.antiAliasType == ADVANCED && __textEngine.gridFitType == PIXEL) {
 			

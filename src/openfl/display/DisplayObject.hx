@@ -1113,9 +1113,9 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			var rect = null;
 			
 			//if (!renderSession.lockTransform) __getWorldTransform ();
-			
-			var needRender = (__cacheBitmap == null || (__renderDirty && (force || (__children != null && __children.length > 0) || (__graphics!= null && __graphics.__dirty))) || opaqueBackground != __cacheBitmapBackground || !__cacheBitmapColorTransform.__equals (__worldColorTransform));
-			var updateTransform = (needRender || (!__cacheBitmap.__worldTransform.equals (__worldTransform)));
+			var isGL = renderSession.renderType == OPENGL;
+			var needRender = (__cacheBitmap == null || (__renderDirty && (force || (__children != null && __children.length > 0) || (__graphics!= null && __graphics.__dirty))) || opaqueBackground != __cacheBitmapBackground || (!isGL && !__cacheBitmapColorTransform.__equals (__worldColorTransform)));
+			var updateTransform = (needRender || (!__cacheBitmap.__worldTransform.equals (__worldTransform))) || (isGL && !__cacheBitmap.__worldColorTransform.__equals (__worldColorTransform));
 			var hasFilters = __hasFilters ();
 			var pixelRatio = renderSession.pixelRatio;
 			
@@ -1189,6 +1189,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 			if (updateTransform || needRender) {
 				
+				__cacheBitmap.__worldColorTransform.__copyFrom (__worldColorTransform);
 				__cacheBitmap.__worldTransform.copyFrom (__worldTransform);
 				
 				__cacheBitmap.__renderTransform.identity ();
@@ -1264,7 +1265,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 						lastBitmap = filter.__applyFilter (bitmapData2, bitmapData, sourceRect, destPoint);
 						
 						if (filter.__preserveObject) {
-							lastBitmap.draw (bitmapData3, null, transform.colorTransform);
+							lastBitmap.draw (bitmapData3, null, null);
 						}
 						filter.__renderDirty = false;
 						
@@ -1285,12 +1286,16 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 				
 				__cacheBitmapRender = false;
 				
-				if (__cacheBitmapColorTransform == null) __cacheBitmapColorTransform = new ColorTransform ();
-				__cacheBitmapColorTransform.__copyFrom (__worldColorTransform);
-				
-				if (!__cacheBitmapColorTransform.__isDefault ()) {
+				if (!isGL) {
 					
-					__cacheBitmapData.colorTransform (__cacheBitmapData.rect, __cacheBitmapColorTransform);
+					if (__cacheBitmapColorTransform == null) __cacheBitmapColorTransform = new ColorTransform ();
+					__cacheBitmapColorTransform.__copyFrom (__worldColorTransform);
+					
+					if (!__cacheBitmapColorTransform.__isDefault ()) {
+						
+						__cacheBitmapData.colorTransform (__cacheBitmapData.rect, __worldColorTransform);
+						
+					}
 					
 				}
 				
