@@ -25,6 +25,13 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	}
 	
 	
+	public inline function filter (callback:T->Bool):Vector<T> {
+		
+		return new AbstractVector<T> (this.data.filter (callback));
+		
+	}
+	
+	
 	public inline function copy ():Vector<T> {
 		
 		return cast new AbstractVector<T> (this.data.copy ());
@@ -162,6 +169,13 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 		}
 		
 		return vector;
+		
+	}
+	
+	
+	public inline static function isVector (obj:Any):Bool {
+		
+		return Std.is (obj, AbstractVector);
 		
 	}
 	
@@ -347,6 +361,13 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 			return new BoolVector (__array.concat (cast (a, BoolVector).__array));
 			
 		}
+		
+	}
+	
+	
+	public function filter (callback:Bool->Bool):IVector<Bool> {
+		
+		return new BoolVector (fixed, __array.filter (callback));
 		
 	}
 	
@@ -667,6 +688,13 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	}
 	
 	
+	public function filter (callback:Float->Bool):IVector<Float> {
+		
+		return new FloatVector (fixed, __array.filter (callback));
+		
+	}
+	
+	
 	public function copy ():IVector<Float> {
 		
 		return new FloatVector (fixed, __array.copy ());
@@ -973,6 +1001,13 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 			return new FunctionVector (__array.concat (cast (a, FunctionVector).__array));
 			
 		}
+		
+	}
+	
+	
+	public function filter (callback:Function->Bool):IVector<Function> {
+		
+		return new FunctionVector (fixed, __array.filter (callback));
 		
 	}
 	
@@ -1293,6 +1328,13 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 		}
 		
 	}
+
+	
+	public function filter (callback:Int->Bool):IVector<Int> {
+		
+		return new IntVector (fixed, __array.filter (callback));
+		
+	}
 	
 	
 	public function copy ():IVector<Int> {
@@ -1604,6 +1646,13 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	}
 	
 	
+	public function filter (callback:T->Bool):IVector<T> {
+		
+		return new ObjectVector (fixed, __array.filter (callback));
+		
+	}
+	
+	
 	public function copy ():IVector<T> {
 		
 		return new ObjectVector (__array.copy ());
@@ -1866,6 +1915,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	public var length (get, set):Int;
 	
 	public function concat (?a:IVector<T>):IVector<T>;
+	public function filter (callback:T->Bool):IVector<T>;
 	public function copy ():IVector<T>;
 	public function get (index:Int):T;
 	public function indexOf (x:T, ?from:Int = 0):Int;

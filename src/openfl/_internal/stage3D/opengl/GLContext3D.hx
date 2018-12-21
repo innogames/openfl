@@ -573,9 +573,8 @@ class GLContext3D {
 		GLUtils.CheckGLError ();
 		
 		context.__renderToTexture = null;
-		context.__scissorRectangle = null;
 		__updateBackbufferViewport ();
-		__updateScissorRectangle ();
+		__disableScissorRectangle ();
 		__updateDepthAndStencilState ();
 		
 		context.__positionScale[1] = 1.0;
@@ -611,19 +610,19 @@ class GLContext3D {
 			
 			if (Std.is (texture, Texture)) {
 				
-				gl.framebufferTexture2D (gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture.__textureID, 0);
+				gl.framebufferTexture2D (gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture.__textureData.glTexture, 0);
 				GLUtils.CheckGLError ();
 				
 			} else if (Std.is (texture, RectangleTexture)) {
 				
-				gl.framebufferTexture2D (gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture.__textureID, 0);
+				gl.framebufferTexture2D (gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture.__textureData.glTexture, 0);
 				GLUtils.CheckGLError ();
 				
 			} else if (Std.is (texture, CubeTexture)) {
 				
 				for (i in 0...6) {
 					
-					gl.framebufferTexture2D (gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, texture.__textureID, 0);
+					gl.framebufferTexture2D (gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, texture.__textureData.glTexture, 0);
 					GLUtils.CheckGLError ();
 					
 				}
@@ -704,9 +703,8 @@ class GLContext3D {
 		GLUtils.CheckGLError ();
 		
 		context.__renderToTexture = texture;
-		context.__scissorRectangle = null;
 		context.__rttDepthAndStencil = enableDepthAndStencil;
-		__updateScissorRectangle ();
+		__disableScissorRectangle();
 		__updateDepthAndStencilState ();
 		
 	}
@@ -839,8 +837,17 @@ class GLContext3D {
 		GLContext3D.context = context;
 		GLContext3D.gl = context.__renderSession.gl;
 		
-		context.__scissorRectangle = rectangle != null ? rectangle.clone () : null;
-		__updateScissorRectangle ();
+		if (rectangle != null) {
+			
+			var scale = context.__stage3D.__stage.window.scale;
+			__setScissorRectangle (Std.int (rectangle.x * scale), Std.int (rectangle.y * scale), 
+								Std.int (rectangle.width * scale), Std.int (rectangle.height * scale));
+			
+		} else {
+			
+			__disableScissorRectangle ();
+			
+		}
 		
 	}
 	
@@ -944,6 +951,14 @@ class GLContext3D {
 	}
 	
 	
+	private static function __disableScissorRectangle ():Void {
+		
+		gl.disable (gl.SCISSOR_TEST);
+		GLUtils.CheckGLError ();
+		
+	}
+	
+	
 	private static function __flushSamplerState ():Void {
 		
 		var sampler = 0;
@@ -965,7 +980,7 @@ class GLContext3D {
 					
 					var target = texture.__textureTarget;
 					
-					gl.bindTexture (target, texture.__getTexture ());
+					gl.bindTexture (target, texture.__getTexture ().glTexture);
 					GLUtils.CheckGLError ();
 					
 					texture.__setSamplerState (context.__samplerStates[sampler]);
@@ -1069,6 +1084,33 @@ class GLContext3D {
 	private static function __hasGLExtension (name:String):Bool {
 		
 		return (gl.getSupportedExtensions ().indexOf (name) != -1);
+		
+	}
+	
+	
+	private static function __setScissorRectangle (x: Int, y: Int, width: Int, height: Int):Void {
+		
+		gl.enable (gl.SCISSOR_TEST);
+		GLUtils.CheckGLError ();
+		
+		var renderTargetHeight = 0;
+		var offsetX = 0;
+		var offsetY = 0;
+		
+		if (context.__renderToTexture != null) {
+			
+			renderTargetHeight = context.__renderToTexture.__height;
+			
+		} else {
+			
+			renderTargetHeight = context.backBufferHeight;
+			offsetX = Std.int (context.__stage3D.x);
+			offsetY = Std.int (context.__stage3D.y);
+			
+		}
+		
+		gl.scissor (x + offsetX, renderTargetHeight - y - height + offsetY, width, height);
+		GLUtils.CheckGLError ();
 		
 	}
 	
@@ -1190,45 +1232,6 @@ class GLContext3D {
 			GLUtils.CheckGLError ();
 			
 		}
-		
-	}
-	
-	
-	private static function __updateScissorRectangle ():Void {
-		
-		if (context.__scissorRectangle == null) {
-			
-			gl.disable (gl.SCISSOR_TEST);
-			GLUtils.CheckGLError ();
-			return;
-			
-		}
-		
-		gl.enable (gl.SCISSOR_TEST);
-		GLUtils.CheckGLError ();
-		
-		var height = 0;
-		var offsetX = 0;
-		var offsetY = 0;
-		
-		if (context.__renderToTexture != null) {
-			
-			height = context.__renderToTexture.__height;
-			
-		} else {
-			
-			height = context.backBufferHeight;
-			offsetX = Std.int (context.__stage3D.x);
-			offsetY = Std.int (context.__stage3D.y);
-			
-		}
-		
-		gl.scissor (Std.int (context.__scissorRectangle.x) + offsetX,
-			height - Std.int (context.__scissorRectangle.y) - Std.int (context.__scissorRectangle.height) + offsetY,
-			Std.int (context.__scissorRectangle.width),
-			Std.int (context.__scissorRectangle.height)
-		);
-		GLUtils.CheckGLError ();
 		
 	}
 	
