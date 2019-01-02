@@ -791,7 +791,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			__renderable = __isMask || (visible && __scaleX != 0 && __scaleY != 0 && (renderParent == null || !renderParent.__isMask));
 		
 			__worldAlpha = 1;
-			//Check the ColorTransform PR to fix color transform properly
+			//ColorTransform will be fixed in separate PR
 			//__worldColorTransform.__identity ();
 			__worldBlendMode = blendMode;
 		
