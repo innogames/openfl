@@ -654,6 +654,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			if (parent == null) {
 				
 				__updateTransforms ();
+				__setWorldTransformValid ();
 				
 			} else {
 				
@@ -672,9 +673,9 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 
 				current = list[i];
 				current.__updateTransforms ();
+				current.__setWorldTransformValid ();
 
 			}
-			
 
 		}
 		
@@ -1044,6 +1045,14 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private function __setWorldTransformInvalid ():Void {
 		
 		__worldTransformInvalid = true;
+		
+	}
+	
+	
+	private function __setWorldTransformValid ():Void {
+		
+		__worldTransformInvalid = false;
+		__transformDirty = false;
 		
 	}
 	
