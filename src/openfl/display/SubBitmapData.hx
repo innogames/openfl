@@ -216,6 +216,7 @@ class SubBitmapData extends BitmapData {
 
 	override function __prepareQuadTextureData(texture:TextureData):QuadTextureData {
 		var u0, v0, u1, v1, u2, v2, u3, v3;
+
 		if (__rotated) {
 			u0 = __texX1;
 			v0 = __texY0;
@@ -408,17 +409,18 @@ class SubBitmapData extends BitmapData {
 		var bottom = uvHeight * height;
 
 		if (__rotated) {
-			result.u0 = (__texX + __texWidth - top + __offsetY) / __parentBitmap.width;
-			result.v0 = (__texY + left - __offsetX) / __parentBitmap.height;
-
-			result.u1 = (__texX + __texWidth - top + __offsetY) / __parentBitmap.width;
-			result.v1 = (__texY + right - __offsetX) / __parentBitmap.height;
-
-			result.u2 = (__texX + __texWidth - bottom + __offsetY) / __parentBitmap.width;
-			result.v2 = (__texY + right - __offsetX) / __parentBitmap.height;
-
-			result.u3 = (__texX + __texWidth - bottom + __offsetY) / __parentBitmap.width;
-			result.v3 = (__texY + left - __offsetX) / __parentBitmap.height;
+			var u0 = (__texX + __texWidth - top + __offsetY) / __parentBitmap.width;
+			var v0 = (__texY + left - __offsetX) / __parentBitmap.height;
+			var u1 = (__texX + __texWidth - bottom + __offsetY) / __parentBitmap.width;
+			var v1 = (__texY + right - __offsetX) / __parentBitmap.height;
+			result.u0 = u0;
+			result.v0 = v0;
+			result.u1 = u0;
+			result.v1 = v1;
+			result.u2 = u1;
+			result.v2 = v1;
+			result.u3 = u1;
+			result.v3 = v0;
 		} else {
 			var u0 = (__texX + left - __offsetX) / __parentBitmap.width;
 			var v0 = (__texY + top - __offsetY) / __parentBitmap.height;
