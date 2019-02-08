@@ -3046,7 +3046,13 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	}
 	
 	
-	private function window_onTextInput (value:String):Void {
+	private function window_onTextInput (value:String, replacement:Bool):Void {
+		
+		if (replacement && __selectionIndex == __caretIndex && __caretIndex > 0) {
+			
+			__selectionIndex = __caretIndex - 1;
+			
+		}
 		
 		replaceSelectedText (value);
 		

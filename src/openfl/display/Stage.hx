@@ -703,7 +703,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onTextInput (window:Window, text:String):Void {
+	public function onTextInput (window:Window, text:String, replacement:Bool):Void {
 		
 		if (this.window == null || this.window != window) return;
 		
