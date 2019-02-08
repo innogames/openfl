@@ -3034,6 +3034,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 					
 					__caretIndex = __text.length;
 					__selectionIndex = 0;
+					__stopCursorTimer ();
+					__startCursorTimer ();
 					
 				}
 			
