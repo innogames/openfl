@@ -8,7 +8,6 @@ import lime.graphics.opengl.GLTexture;
 import lime.system.System;
 import lime.text.GlyphPosition;
 import lime.text.TextLayout;
-import lime.text.UTF8String;
 import openfl.Vector;
 import openfl.events.Event;
 import openfl.events.FocusEvent;
@@ -82,12 +81,13 @@ class TextEngine {
 	public var maxScrollV (default, null):Int;
 	public var multiline:Bool;
 	public var numLines (default, null):Int;
-	public var restrict (default, set):UTF8String;
+
+	public var restrict (default, set):String;
 	public var scrollH:Int;
 	public var scrollV:Int;
 	public var selectable:Bool;
 	public var sharpness:Float;
-	public var text (default, set):UTF8String;
+	public var text (default, set):String;
 	public var textHeight:Float;
 	public var textFormatRanges:Vector<TextFormatRange>;
 	public var textWidth:Float;
@@ -861,7 +861,7 @@ class TextEngine {
 		var lineIndex = 0;
 		var lineFormat = null;
 		
-		inline function getPositions (text:UTF8String, startIndex:Int, endIndex:Int) {
+		inline function getPositions (text:String, startIndex:Int, endIndex:Int) {
 			
 			// TODO: optimize
 			

@@ -3,7 +3,6 @@ package openfl.text;
 
 import haxe.Timer;
 import lime.system.Clipboard;
-import lime.text.UTF8String;
 import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 import lime.ui.MouseCursor;
@@ -72,7 +71,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	public var displayAsPassword (get, set):Bool;
 	public var embedFonts (get, set):Bool;
 	public var gridFitType (get, set):GridFitType;
-	public var htmlText (get, set):UTF8String;
+	public var htmlText (get, set):String;
 	public var length (get, never):Int;
 	public var maxChars (get, set):Int;
 	public var maxScrollH (get, never):Int;
@@ -80,7 +79,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	public var mouseWheelEnabled (get, set):Bool;
 	public var multiline (get, set):Bool;
 	public var numLines (get, never):Int;
-	public var restrict (get, set):UTF8String;
+	public var restrict (get, set):String;
 	public var scrollH (get, set):Int;
 	public var scrollV (get, set):Int;
 	public var selectable (get, set):Bool;
@@ -88,7 +87,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	public var selectionEndIndex (get, never):Int;
 	@:beta public var shader:Shader;
 	public var sharpness (get, set):Float;
-	public var text (get, set):UTF8String;
+	public var text (get, set):String;
 	public var textColor (get, set):Int;
 	public var textHeight (get, never):Float;
 	public var textWidth (get, never):Float;
@@ -110,8 +109,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	private var __selectionIndex:Int;
 	private var __showCursor:Bool;
 	private var __symbol:DynamicTextSymbol;
-	private var __text:UTF8String;
-	private var __htmlText:UTF8String;
+	private var __text:String;
+	private var __htmlText:String;
 	private var __textEngine:TextEngine;
 	private var __textFormat:TextFormat;
 	private var __forceCachedBitmapUpdate:Bool = false;
@@ -561,7 +560,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 		replaceText (startIndex, endIndex, value);
 		
-		var i = startIndex + cast (value, UTF8String).length;
+		var i = startIndex + value.length;
 		if (i > __text.length) i = __text.length;
 		
 		setSelection (i, i);
@@ -619,7 +618,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			
 		}
 		
-		var caretIndex = beginIndex + cast (newText, UTF8String).length;
+		var caretIndex = beginIndex + newText.length;
 		if (caretIndex > __text.length) caretIndex = __text.length;
 		
 		__updateScrollHV (caretIndex);
@@ -2356,11 +2355,10 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			
 		}
 		
-		var utfValue:UTF8String = value;
 		var range = __textEngine.textFormatRanges[0];
 		range.format = __textFormat;
 		range.start = 0;
-		range.end = utfValue.length;
+		range.end = value.length;
 		
 		__isHTML = false;
 		
