@@ -817,32 +817,14 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	private function __caretBeginningOfLine ():Void {
 		
-		if (__selectionIndex == __caretIndex || __caretIndex < __selectionIndex) {
-			
-			__caretIndex = getLineOffset (getLineIndexOfChar (__caretIndex));
-			
-		} else {
-			
-			__selectionIndex = getLineOffset (getLineIndexOfChar (__selectionIndex));
-			
-		}
+		__caretIndex = getLineOffset (getLineIndexOfChar (__caretIndex));
 		
 	}
 	
 	
 	private function __caretEndOfLine ():Void {
 		
-		var lineIndex;
-		
-		if (__selectionIndex == __caretIndex) {
-			
-			lineIndex = getLineIndexOfChar (__caretIndex);
-			
-		} else {
-			
-			lineIndex = getLineIndexOfChar (Std.int (Math.max (__caretIndex, __selectionIndex)));
-			
-		}
+		var lineIndex = getLineIndexOfChar (__caretIndex);
 		
 		if (lineIndex < __textEngine.numLines - 1) {
 			
@@ -868,23 +850,13 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	}
 	
 	
-	private function __caretNextLine (lineIndex:Null<Int> = null, caretIndex:Null<Int> = null):Void {
+	private function __caretNextLine ():Void {
 		
-		if (lineIndex == null) {
-			
-			lineIndex = getLineIndexOfChar (__caretIndex);
-			
-		}
+		var lineIndex = getLineIndexOfChar (__caretIndex);
 		
 		if (lineIndex < __textEngine.numLines - 1) {
 			
-			if (caretIndex == null) {
-				
-				caretIndex = __caretIndex;
-				
-			}
-			
-			__caretIndex = __getCharIndexOnDifferentLine (caretIndex, lineIndex + 1);
+			__caretIndex = __getCharIndexOnDifferentLine (__caretIndex, lineIndex + 1);
 			
 		} else {
 			
@@ -906,23 +878,13 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	}
 	
 	
-	private function __caretPreviousLine (lineIndex:Null<Int> = null, caretIndex:Null<Int> = null):Void {
+	private function __caretPreviousLine ():Void {
 		
-		if (lineIndex == null) {
-			
-			lineIndex = getLineIndexOfChar (__caretIndex);
-			
-		}
+		var lineIndex = getLineIndexOfChar (__caretIndex);
 		
 		if (lineIndex > 0) {
 			
-			if (caretIndex == null) {
-				
-				caretIndex = __caretIndex;
-				
-			}
-			
-			__caretIndex = __getCharIndexOnDifferentLine (caretIndex, lineIndex - 1);
+			__caretIndex = __getCharIndexOnDifferentLine (__caretIndex, lineIndex - 1);
 			
 		} else {
 			
@@ -2898,22 +2860,9 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			
 			case DOWN:
 				
-				if (modifier.shiftKey) {
-					
-					__caretNextLine ();
-					
-				} else {
-					
-					if (__selectionIndex == __caretIndex) {
-						
-						__caretNextLine ();
-						
-					} else {
-						
-						var lineIndex = getLineIndexOfChar (Std.int (Math.max (__caretIndex, __selectionIndex)));
-						__caretNextLine (lineIndex, Std.int (Math.min (__caretIndex, __selectionIndex)));
-						
-					}
+				__caretNextLine ();
+				
+				if (!modifier.shiftKey) {
 					
 					__selectionIndex = __caretIndex;
 					
@@ -2936,22 +2885,9 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			
 			case UP:
 				
-				if (modifier.shiftKey) {
-					
-					__caretPreviousLine ();
-					
-				} else {
-					
-					if (__selectionIndex == __caretIndex) {
-						
-						__caretPreviousLine ();
-						
-					} else {
-						
-						var lineIndex = getLineIndexOfChar (Std.int (Math.min (__caretIndex, __selectionIndex)));
-						__caretPreviousLine (lineIndex, Std.int (Math.min (__caretIndex, __selectionIndex)));
-						
-					}
+				__caretPreviousLine ();
+				
+				if (!modifier.shiftKey) {
 					
 					__selectionIndex = __caretIndex;
 					
@@ -2975,12 +2911,26 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			case HOME:
 				
 				__caretBeginningOfLine ();
+				
+				if (!modifier.shiftKey) {
+					
+					__selectionIndex = __caretIndex;
+					
+				}
+				
 				__stopCursorTimer ();
 				__startCursorTimer ();
 			
 			case END:
 				
 				__caretEndOfLine ();
+				
+				if (!modifier.shiftKey) {
+					
+					__selectionIndex = __caretIndex;
+					
+				}
+				
 				__stopCursorTimer ();
 				__startCursorTimer ();
 			
