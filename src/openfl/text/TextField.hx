@@ -3055,6 +3055,14 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	private function window_onTextInput (value:String):Void {
 		
+		if (!multiline) {
+			
+			// strip newlines when pasting the multi-line text,
+			// this is consistent with the Flash API
+			value = StringTools.replace (value, "\n", "");
+			
+		}
+		
 		replaceSelectedText (value);
 		
 		dispatchEvent (new Event (Event.CHANGE, true));
