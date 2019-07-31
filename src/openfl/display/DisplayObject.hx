@@ -493,6 +493,10 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 				
 				parent.__dispatch (event);
 				
+				if (event.__isCanceled) {
+					return true;
+				}
+				
 			} else {
 				
 				var stack = __tempStack.get ();
@@ -507,14 +511,24 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 					
 				}
 				
+				var canceled = false;
+				
 				for (j in 0...i) {
 					
 					stack[i - j - 1].__dispatch (event);
+					
+					if (event.__isCanceled) {
+						canceled = true;
+						break;
+					}
 					
 				}
 				
 				__tempStack.release (stack);
 				
+				if (canceled) {
+					return true;
+				}
 			}
 			
 		}
