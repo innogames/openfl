@@ -7,6 +7,7 @@ import lime.text.UTF8String;
 import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 import lime.ui.MouseCursor;
+import lime.ui.Window.CopyDataProvider;
 import lime.utils.Log;
 import openfl._internal.renderer.cairo.CairoTextField;
 import openfl._internal.renderer.canvas.CanvasTextField;
@@ -901,7 +902,10 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			
 			stage.window.enableTextEvents = false;
 			stage.window.onTextInput.remove (window_onTextInput);
+			stage.window.onTextPaste.remove (window_onTextPaste);
 			stage.window.onKeyDown.remove (window_onKeyDown);
+			stage.window.onTextCopy.remove (window_onTextCopy);
+			stage.window.onTextCut.remove (window_onTextCut);
 			
 			__inputEnabled = false;
 			__stopCursorTimer ();
@@ -958,7 +962,10 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 				if (!stage.window.onTextInput.has (window_onTextInput)) {
 					
 					stage.window.onTextInput.add (window_onTextInput);
+					stage.window.onTextPaste.add (window_onTextPaste);
 					stage.window.onKeyDown.add (window_onKeyDown);
+					stage.window.onTextCopy.add (window_onTextCopy);
+					stage.window.onTextCut.add (window_onTextCut);
 					
 				}
 				
@@ -2673,7 +2680,10 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		} else {
 			
 			stage.window.onTextInput.remove (window_onTextInput);
+			stage.window.onTextPaste.remove (window_onTextPaste);
 			stage.window.onKeyDown.remove (window_onKeyDown);
+			stage.window.onTextCopy.remove (window_onTextCopy);
+			stage.window.onTextCut.remove (window_onTextCut);
 			__inputEnabled = false;
 			
 		}
@@ -2934,59 +2944,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 				__stopCursorTimer ();
 				__startCursorTimer ();
 			
-			case C:
-				
-				if (#if mac modifier.metaKey #elseif js modifier.metaKey || modifier.ctrlKey #else modifier.ctrlKey #end) {
-					
-					if (__caretIndex != __selectionIndex) {
-						
-						Clipboard.text = __text.substring (__caretIndex, __selectionIndex);
-						
-					}
-					
-				}
-			
-			case X:
-				
-				if (#if mac modifier.metaKey #elseif js modifier.metaKey || modifier.ctrlKey #else modifier.ctrlKey #end) {
-					
-					if (__caretIndex != __selectionIndex) {
-						
-						Clipboard.text = __text.substring (__caretIndex, __selectionIndex);
-						
-						replaceSelectedText ("");
-						dispatchEvent (new Event (Event.CHANGE, true));
-						
-					}
-					
-				}
-			
-			#if !js
-			case V:
-				
-				if (#if mac modifier.metaKey #else modifier.ctrlKey #end) {
-					
-					var text = Clipboard.text;
-					
-					if (text != null) {
-						
-						replaceSelectedText (text);
-						
-					} else {
-						
-						replaceSelectedText ("");
-						
-					}
-					
-					dispatchEvent (new Event (Event.CHANGE, true));
-					
-				} else {
-					
-					__textEngine.textFormatRanges[__textEngine.textFormatRanges.length - 1].end = __text.length;
-					
-				}
-			#end
-			
 			case A:
 				
 				if (#if mac modifier.metaKey #elseif js modifier.metaKey || modifier.ctrlKey #else modifier.ctrlKey #end) {
@@ -3005,6 +2962,13 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	private function window_onTextInput (value:String):Void {
 		
+		__inputText (value);
+		
+	}
+	
+	
+	private function window_onTextPaste (value:String):Void {
+		
 		if (!multiline) {
 			
 			// strip newlines when pasting the multi-line text,
@@ -3013,9 +2977,47 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			
 		}
 		
-		replaceSelectedText (value);
+		__inputText (value);
 		
-		dispatchEvent (new Event (Event.CHANGE, true));
+	}
+	
+	
+	private function __inputText (value:String):Void {
+		
+		var event = new TextEvent (TextEvent.TEXT_INPUT, true, true, value);
+		dispatchEvent (event);
+		
+		if (!event.isDefaultPrevented ()) {
+			
+			replaceSelectedText (value);
+			dispatchEvent (new Event (Event.CHANGE, true));
+			
+		}
+		
+	}
+	
+	
+	private function window_onTextCopy (provideData:CopyDataProvider):Void {
+		
+		if (__caretIndex != __selectionIndex) {
+			
+			provideData (__text.substring (__caretIndex, __selectionIndex));
+			
+		}
+		
+	}
+	
+	
+	private function window_onTextCut (provideData:CopyDataProvider):Void {
+		
+		if (__caretIndex != __selectionIndex) {
+			
+			provideData (__text.substring (__caretIndex, __selectionIndex));
+			
+			replaceSelectedText ("");
+			dispatchEvent (new Event (Event.CHANGE, true));
+			
+		}
 		
 	}
 	
