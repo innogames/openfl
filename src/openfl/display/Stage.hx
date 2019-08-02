@@ -373,7 +373,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 		window.onResize.add (onWindowResize.bind (window));
 		window.onRestore.add (onWindowRestore.bind (window));
 		window.onTextEdit.add (onTextEdit.bind (window));
-		window.onTextInput.add (onTextInput.bind (window));
 		
 	}
 	
@@ -699,37 +698,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 	public function onTextEdit (window:Window, text:String, start:Int, length:Int):Void {
 		
 		//if (this.window == null || this.window != window) return;
-		
-	}
-	
-	
-	public function onTextInput (window:Window, text:String):Void {
-		
-		if (this.window == null || this.window != window) return;
-		
-		var stack = new Array <DisplayObject> ();
-		
-		if (__focus == null) {
-			
-			__getInteractive (stack);
-			
-		} else {
-			
-			__focus.__getInteractive (stack);
-			
-		}
-		
-		var event = new TextEvent (TextEvent.TEXT_INPUT, true, false, text);
-		if (stack.length > 0) {
-			
-			stack.reverse ();
-			__dispatchStack (event, stack);
-			
-		} else {
-			
-			__dispatchEvent (event);
-			
-		}
 		
 	}
 	
