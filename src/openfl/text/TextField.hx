@@ -2197,13 +2197,14 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 		if (value != __textEngine.scrollH) {
 			
+			__textEngine.scrollH = value;
 			__dirty = true;
 			__setRenderDirty ();
 			dispatchEvent (new Event (Event.SCROLL));
 			
 		}
 		
-		return __textEngine.scrollH = value;
+		return value;
 		
 	}
 	
@@ -2224,13 +2225,14 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 		if (value != __textEngine.scrollV) {
 			
+			__textEngine.scrollV = value;
 			__dirty = true;
 			__setRenderDirty ();
 			dispatchEvent (new Event (Event.SCROLL));
 			
 		}
 		
-		return __textEngine.scrollV = value;
+		return value;
 		
 	}
 	
