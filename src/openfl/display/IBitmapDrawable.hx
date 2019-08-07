@@ -10,6 +10,7 @@ import openfl.geom.Rectangle;
 interface IBitmapDrawable {
 	
 	private var __alpha:Float;
+	private var __visible:Bool;
 	private var __blendMode:BlendMode;
 	private var __isMask:Bool;
 	private var __renderable:Bool;
