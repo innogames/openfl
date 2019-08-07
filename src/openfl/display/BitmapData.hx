@@ -109,6 +109,7 @@ class BitmapData implements IBitmapDrawable {
 	public var width (default, null):Int;
 	
 	private var __alpha:Float;
+	private var __visible:Bool;
 	private var __blendMode:BlendMode;
 	private var __buffer:GLBuffer;
 	private var __bufferColorTransform:ColorTransform;
@@ -579,11 +580,14 @@ class BitmapData implements IBitmapDrawable {
 			matrixCache.copyFrom (source.__worldTransform);
 			var cacheWorldAlpha = source.__worldAlpha;
 			var cacheAlpha = source.__alpha;
+			var cacheVisible = source.__visible;
 			source.__alpha = 1;
+			source.__visible = true;
 			source.__updateTransforms (matrix);
 			source.__updateChildren (false);
 			source.__renderCanvas (renderSession);
 			source.__alpha = cacheAlpha;
+			source.__visible = cacheVisible;
 			source.__updateTransforms (matrixCache);
 			Matrix.__pool.release (matrixCache);
 			source.__updateChildren (true);
@@ -662,11 +666,14 @@ class BitmapData implements IBitmapDrawable {
 			matrixCache.copyFrom (source.__worldTransform);
 			var cacheWorldAlpha = source.__worldAlpha;
 			var cacheAlpha = source.__alpha;
+			var cacheVisible = source.__visible;
 			source.__alpha = 1;
+			source.__visible = true;
 			source.__updateTransforms (matrix);
 			source.__updateChildren (false);
 			source.__renderCairo (renderSession);
 			source.__alpha = cacheAlpha;
+			source.__visible = cacheVisible;
 			source.__updateTransforms (matrixCache);
 			Matrix.__pool.release (matrixCache);
 			source.__updateChildren (true);
@@ -1831,7 +1838,9 @@ class BitmapData implements IBitmapDrawable {
 			matrixCache.copyFrom (source.__worldTransform);
 			var cacheWorldAlpha = source.__worldAlpha;
 			var cacheAlpha = source.__alpha;
+			var cacheVisible = source.__visible;
  			source.__alpha = 1;
+			source.__visible = true;
  			source.__updateTransforms (matrix);
 			source.__updateChildren (false);
 			
@@ -1845,6 +1854,7 @@ class BitmapData implements IBitmapDrawable {
 			source.__renderCanvas (renderSession);
 			source.__renderable = cacheRenderable;
 			source.__alpha = cacheAlpha;
+			source.__visible = cacheVisible;
 			
 			source.__updateTransforms (matrixCache);
 			Matrix.__pool.release (matrixCache);
@@ -1923,7 +1933,9 @@ class BitmapData implements IBitmapDrawable {
 			matrixCache.copyFrom (source.__worldTransform);
 			var cacheWorldAlpha = source.__worldAlpha;
 			var cacheAlpha = source.__alpha;
+			var cacheVisible = source.__visible;
  			source.__alpha = 1;
+			source.__visible = true;
 			source.__updateTransforms (matrix);
 			source.__updateChildren (false);
 			
@@ -1939,6 +1951,7 @@ class BitmapData implements IBitmapDrawable {
 			source.__renderCairo (renderSession);
 			source.__renderable = cacheRenderable;
 			source.__alpha = cacheAlpha;
+			source.__visible = cacheVisible;
 			
 			source.__updateTransforms (matrixCache);
 			Matrix.__pool.release (matrixCache);
