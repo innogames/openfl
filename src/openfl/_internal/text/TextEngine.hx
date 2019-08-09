@@ -83,7 +83,7 @@ class TextEngine {
 	public var numLines (default, null):Int;
 	public var restrict (default, set):UTF8String;
 	public var scrollH:Int;
-	public var scrollV:Int;
+	public var scrollV(default, set):Int = 1;
 	public var selectable:Bool;
 	public var sharpness:Float;
 	public var text (default, set):UTF8String;
@@ -95,6 +95,7 @@ class TextEngine {
 	public var wordWrap:Bool;
 	
 	private var textField:TextField;
+	private var numVisibleLines:Int;
 	
 	@:noCompletion private var __cursorTimer:Timer;
 	@:noCompletion private var __hasFocus:Bool;
@@ -139,7 +140,6 @@ class TextEngine {
 		multiline = false;
 		sharpness = 0;
 		scrollH = 0;
-		scrollV = 1;
 		wordWrap = false;
 		
 		lineAscents = new Vector ();
@@ -642,7 +642,7 @@ class TextEngine {
 		textWidth = 0;
 		textHeight = 0;
 		numLines = 1;
-		bottomScrollV = 0;
+		numVisibleLines = 0;
 		maxScrollH = 0;
 		
 		for (group in layoutGroups) {
@@ -665,7 +665,7 @@ class TextEngine {
 				
 				if (textHeight <= height - GUTTER) {
 					
-					bottomScrollV++;
+					numVisibleLines++;
 					
 				}
 				
@@ -780,7 +780,7 @@ class TextEngine {
 		
 		if (numLines == 1) {
 			
-			bottomScrollV = 1;
+			numVisibleLines = 1;
 			
 			if (currentLineLeading > 0) {
 				
@@ -790,7 +790,7 @@ class TextEngine {
 			
 		} else if (textHeight <= height - GUTTER) {
 			
-			bottomScrollV++;
+			numVisibleLines++;
 			
 		}
 		
@@ -807,7 +807,7 @@ class TextEngine {
 					}
 					
 					height = textHeight + 4;
-					bottomScrollV = numLines;
+					numVisibleLines = numLines;
 				
 				default:
 					
@@ -815,6 +815,8 @@ class TextEngine {
 			}
 			
 		}
+		
+		updateBottomScrollV ();
 		
 		if (textWidth > width - 4) {
 			
@@ -826,8 +828,15 @@ class TextEngine {
 			
 		}
 		
-		maxScrollV = numLines - bottomScrollV + 1;
+		maxScrollV = numLines - numVisibleLines + 1;
 		
+	}
+	
+	
+	function updateBottomScrollV () {
+		bottomScrollV = numVisibleLines + scrollV - 1;
+		if (bottomScrollV < 1) bottomScrollV = 1;
+		if (bottomScrollV > numLines) bottomScrollV = numLines;
 	}
 	
 	
@@ -1793,6 +1802,16 @@ class TextEngine {
 		}
 		
 		return restrict;
+		
+	}
+	
+	
+	function set_scrollV (value:Int):Int {
+		
+		scrollV = value;
+		updateBottomScrollV ();
+		
+		return value;
 		
 	}
 	

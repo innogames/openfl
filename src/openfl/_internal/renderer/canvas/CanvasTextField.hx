@@ -171,7 +171,7 @@ class CanvasTextField {
 					for (group in textEngine.layoutGroups) {
 						
 						if (group.lineIndex < textField.scrollV - 1) continue;
-						if (group.lineIndex > textField.scrollV + textEngine.bottomScrollV - 2) break;
+						if (group.lineIndex > textEngine.bottomScrollV - 1) break;
 						
 						if (group.format.underline) {
 							
