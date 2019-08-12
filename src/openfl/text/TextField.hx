@@ -1663,11 +1663,11 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 				if (currentNumLines != __textEngine.numLines) {
 					
 					var lineIndex = getLineIndexOfChar (caretIndex);
-					var lineScrollV = lineIndex - __textEngine.bottomScrollV + 2;
+					var lineNumber = lineIndex + 1;
 					
-					if (lineScrollV > __textEngine.scrollV) {
+					if (lineNumber > __textEngine.bottomScrollV) {
 						
-						scrollV = lineScrollV;
+						scrollV = lineNumber - (__textEngine.bottomScrollV - __textEngine.scrollV);
 						
 					}
 					
@@ -2884,7 +2884,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 					
 					var currentLineIndex = getLineIndexOfChar (currentCaretIndex);
 					var newLineIndex = getLineIndexOfChar (__caretIndex);
-					if (newLineIndex != currentLineIndex && newLineIndex >= __textEngine.scrollV + __textEngine.bottomScrollV - 1) {
+					if (newLineIndex != currentLineIndex && newLineIndex > __textEngine.bottomScrollV - 1) {
 						
 						scrollV += (newLineIndex - currentLineIndex);
 						
