@@ -1556,6 +1556,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			
 		}
 		
+		__ensureCaretVisible ();
+		
 	}
 
 	
@@ -2798,8 +2800,12 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 					
 				}
 				
-				replaceSelectedText ("");
-				dispatchEvent (new Event (Event.CHANGE, true));
+				if (__selectionIndex != __caretIndex) {
+					
+					replaceSelectedText ("");
+					dispatchEvent (new Event (Event.CHANGE, true));
+					
+				}
 			
 			case LEFT:
 				
