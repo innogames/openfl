@@ -61,6 +61,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	private static var __defaultTextFormat:TextFormat;
 	private static var __missingFontWarning = new Map<String, Bool> ();
 	private static inline var __scrollStep = 24;
+	private static inline var __mouseWheelScrollLines = 3;
 	
 	public var antiAliasType (get, set):AntiAliasType;
 	public var autoSize (get, set):TextFieldAutoSize;
@@ -180,7 +181,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		__layoutDirty = true;
 		__offsetX = 0;
 		__offsetY = 0;
-		__mouseWheelEnabled = true;
 		__text = "";
 		
 		if (__defaultTextFormat == null) {
@@ -200,6 +200,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		addEventListener (FocusEvent.FOCUS_IN, this_onFocusIn);
 		addEventListener (FocusEvent.FOCUS_OUT, this_onFocusOut);
 		addEventListener (KeyboardEvent.KEY_DOWN, this_onKeyDown);
+		
+		mouseWheelEnabled = true;
 		
 	}
 	
@@ -2162,7 +2164,23 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	private function set_mouseWheelEnabled (value:Bool):Bool {
 		
-		return __mouseWheelEnabled = value;
+		if (value != __mouseWheelEnabled) {
+			
+			__mouseWheelEnabled = value;
+			
+			if (value) {
+				
+				addEventListener (MouseEvent.MOUSE_WHEEL, this_onMouseWheel);
+				
+			} else {
+				
+				removeEventListener (MouseEvent.MOUSE_WHEEL, this_onMouseWheel);
+				
+			}
+			
+		}
+		
+		return value;
 		
 	}
 	
@@ -2796,6 +2814,21 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 		stage.addEventListener (MouseEvent.MOUSE_MOVE, stage_onMouseMove);
 		stage.addEventListener (MouseEvent.MOUSE_UP, stage_onMouseUp);
+		
+	}
+	
+	
+	private function this_onMouseWheel (event:MouseEvent):Void {
+		
+		if (event.delta > 0) {
+			
+			scrollV -= __mouseWheelScrollLines;
+			
+		} else {
+			
+			scrollV += __mouseWheelScrollLines;
+			
+		}
 		
 	}
 	
