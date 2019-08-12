@@ -2941,6 +2941,10 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 					
 					setSelection (0, __text.length);
 					
+					// this seems to the Flash behaviour...
+					scrollH = 0;
+					scrollV = maxScrollV;
+					
 				}
 			
 			default:
