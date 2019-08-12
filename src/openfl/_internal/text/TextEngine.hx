@@ -81,6 +81,7 @@ class TextEngine {
 	public var maxScrollV (default, null):Int;
 	public var multiline:Bool;
 	public var numLines (default, null):Int;
+	public var numVisibleLines (default,null):Int;
 	public var restrict (default, set):UTF8String;
 	public var scrollH:Int;
 	public var scrollV(default, set):Int = 1;
@@ -95,7 +96,6 @@ class TextEngine {
 	public var wordWrap:Bool;
 	
 	private var textField:TextField;
-	private var numVisibleLines:Int;
 	
 	@:noCompletion private var __cursorTimer:Timer;
 	@:noCompletion private var __hasFocus:Bool;
