@@ -1671,21 +1671,25 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		}
 
 		if (lineIndex == -1) {
-			
-			return; // not sure this can happen
+
+			// probably there is no text, so just reset the scrolls
+			__setScrollHV (0, 1);
+			return;
 			
 		}
+		
+		var newScrollH = scrollH, newScrollV = scrollV;
 		
 		var scrollX = scrollH + TextEngine.GUTTER;
 		var scrolledX = charX - scrollX;
 		
 		if (scrolledX < 0) {
 			
-			scrollH = Std.int (charX - __scrollStep);
+			newScrollH = Std.int (charX - __scrollStep);
 			
 		} else if (scrolledX > __textEngine.width - TextEngine.GUTTER * 2) {
 			
-			scrollH = Std.int (charX - __textEngine.width + __scrollStep);
+			newScrollH = Std.int (charX - __textEngine.width + __scrollStep);
 			
 		}
 		
@@ -1693,13 +1697,16 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 		if (lineNumber < scrollV) {
 			
-			scrollV = lineNumber;
+			newScrollV = lineNumber;
 			
 		} else if (lineNumber > bottomScrollV) {
 			
-			scrollV = lineNumber - __textEngine.numVisibleLines + 1;
+			newScrollV = lineNumber - __textEngine.numVisibleLines + 1;
 			
 		}
+		
+		__setScrollHV (newScrollH, newScrollV);
+		
 	}
 	
 	
@@ -2256,6 +2263,28 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		}
 		
 		return value;
+		
+	}
+	
+	
+	private function __setScrollHV (scrollH:Int, scrollV:Int) {
+		
+		__updateLayout ();
+		
+		if (scrollH > __textEngine.maxScrollH) scrollH = __textEngine.maxScrollH;
+		if (scrollH < 0) scrollH = 0;
+		
+		if (scrollV > __textEngine.maxScrollV) scrollV = __textEngine.maxScrollV;
+		if (scrollV < 1) scrollV = 1;
+		
+		if (scrollH == __textEngine.scrollH && scrollV == __textEngine.scrollV) return;
+		
+		__textEngine.scrollH = scrollH;
+		__textEngine.scrollV = scrollV;
+		
+		__dirty = true;
+		__setRenderDirty ();
+		dispatchEvent (new Event (Event.SCROLL));
 		
 	}
 	
