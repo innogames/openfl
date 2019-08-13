@@ -648,13 +648,13 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onMouseWheel (window:Window, deltaX:Float, deltaY:Float):Void {
+	public function onMouseWheel (window:Window, delta:Int):Void {
 		
 		if (this.window == null || this.window != window) return;
 		
 		dispatchPendingMouseMove ();
 		
-		__onMouseWheel (Std.int (deltaX * window.scale), Std.int (deltaY * window.scale));
+		__onMouseWheel (delta);
 		
 	}
 	
@@ -1634,7 +1634,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	private function __onMouseWheel (deltaX:Float, deltaY:Float):Void {
+	private function __onMouseWheel (delta:Int):Void {
 		
 		var x = __mouseX;
 		var y = __mouseY;
@@ -1657,7 +1657,11 @@ class Stage extends DisplayObjectContainer implements IModule {
 		var targetPoint = Point.__pool.get ();
 		targetPoint.setTo (x, y);
 		__displayMatrix.__transformInversePoint (targetPoint);
-		var delta = Std.int (deltaY);
+		
+		// Flash API docs say it can be a greater value when scrolling fast,
+		// but I couldn't figure out how to get the `3` from Chrome's pixel delta (it's around 6 for me)
+		if (delta < -3) delta = -3
+		else if (delta > 3) delta = 3;
 		
 		__dispatchStack (MouseEvent.__create (MouseEvent.MOUSE_WHEEL, 0, __mouseX, __mouseY, target.__globalToLocal (targetPoint, targetPoint), target, delta), stack);
 		

@@ -61,7 +61,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	private static var __defaultTextFormat:TextFormat;
 	private static var __missingFontWarning = new Map<String, Bool> ();
 	private static inline var __scrollStep = 24;
-	private static inline var __mouseWheelScrollLines = 3;
 	
 	public var antiAliasType (get, set):AntiAliasType;
 	public var autoSize (get, set):TextFieldAutoSize;
@@ -2820,15 +2819,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	private function this_onMouseWheel (event:MouseEvent):Void {
 		
-		if (event.delta > 0) {
-			
-			scrollV -= __mouseWheelScrollLines;
-			
-		} else {
-			
-			scrollV += __mouseWheelScrollLines;
-			
-		}
+		scrollV -= event.delta;
 		
 	}
 	
