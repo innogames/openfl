@@ -1712,6 +1712,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	private function __updateText (value:String):Void {
 		
+		value = __normalizeNewlines (value);
+		
 		#if (js && html5)
 		if (DisplayObject.__supportDOM && __renderedOnCanvasWhileOnDOM) {
 			
@@ -1749,6 +1751,14 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__textEngine.text = mask;
 			
 		}
+		
+	}
+	
+	
+	static inline function __normalizeNewlines (text:String):String {
+		
+		// don't ask, this is Flash API spec...
+		return StringTools.replace(text, "\n", "\r");
 		
 	}
 	
@@ -2801,7 +2811,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 				
 				if (__textEngine.multiline) {
 					
-					replaceSelectedText ("\n");
+					replaceSelectedText ("\r");
 					dispatchEvent (new Event (Event.CHANGE, true));
 					
 				}
