@@ -181,7 +181,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		__layoutDirty = true;
 		__offsetX = 0;
 		__offsetY = 0;
-		__mouseWheelEnabled = true;
 		__text = "";
 		
 		if (__defaultTextFormat == null) {
@@ -201,6 +200,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		addEventListener (FocusEvent.FOCUS_IN, this_onFocusIn);
 		addEventListener (FocusEvent.FOCUS_OUT, this_onFocusOut);
 		addEventListener (KeyboardEvent.KEY_DOWN, this_onKeyDown);
+		
+		mouseWheelEnabled = true;
 		
 	}
 	
@@ -2174,7 +2175,23 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	private function set_mouseWheelEnabled (value:Bool):Bool {
 		
-		return __mouseWheelEnabled = value;
+		if (value != __mouseWheelEnabled) {
+			
+			__mouseWheelEnabled = value;
+			
+			if (value) {
+				
+				addEventListener (MouseEvent.MOUSE_WHEEL, this_onMouseWheel);
+				
+			} else {
+				
+				removeEventListener (MouseEvent.MOUSE_WHEEL, this_onMouseWheel);
+				
+			}
+			
+		}
+		
+		return value;
 		
 	}
 	
@@ -2822,6 +2839,13 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 		stage.addEventListener (MouseEvent.MOUSE_MOVE, stage_onMouseMove);
 		stage.addEventListener (MouseEvent.MOUSE_UP, stage_onMouseUp);
+		
+	}
+	
+	
+	private function this_onMouseWheel (event:MouseEvent):Void {
+		
+		scrollV -= event.delta;
 		
 	}
 	
