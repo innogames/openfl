@@ -119,6 +119,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	private var __textEngine:TextEngine;
 	private var __textFormat:TextFormat;
 	private var __forceCachedBitmapUpdate:Bool = false;
+	private var __ensureCaretVisibleNeeded = false;
 	
 	#if (js && html5)
 	private var __div:DivElement;
@@ -1396,6 +1397,17 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	}
 	
 	
+	override function __enterFrame(deltaTime:Int) {
+		
+		if (__ensureCaretVisibleNeeded) {
+			
+			__ensureCaretVisible();
+			
+		}
+		
+	}
+	
+	
 	private override function __renderCairo (renderSession:RenderSession):Void {
 		
 		#if lime_cairo
@@ -1556,8 +1568,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			
 		}
 		
-		__ensureCaretVisible ();
-		
 	}
 
 	
@@ -1644,6 +1654,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	
 	private function __ensureCaretVisible () {
+		
+		__ensureCaretVisibleNeeded = false;
 		
 		__updateLayout ();
 		
@@ -2313,6 +2325,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			if (stage != null && stage.focus == this) {
 				
 				__startTextInput ();
+				__ensureCaretVisible ();
 				
 			} else if (!value) {
 				
@@ -2725,6 +2738,15 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		if (type == INPUT && stage != null && stage.focus == this) {
 			
 			__startTextInput ();
+
+			if (event != null) {
+				
+				// delay __ensureCaretVisible instead of calling it directly, because if the focusing was caused by a mouse button,
+				// the mouse-down event will follow and its handler will change the caret position to the character under the cursor,
+				// in which case we don't want to do scrolling to the previous caret position
+				__ensureCaretVisibleNeeded = true;
+				
+			}
 			
 		}
 		
@@ -2786,6 +2808,10 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 		__caretIndex = __getPosition (mouseX + scrollH, mouseY);
 		__selectionIndex = __caretIndex;
+		
+		// remove delayed __ensureCaretVisible calls, that could be added by the focus-in event before,
+		// because we changed the caret index and it's known to be within the visible area
+		__ensureCaretVisibleNeeded = false;
 		
 		if (!DisplayObject.__supportDOM) {
 			
