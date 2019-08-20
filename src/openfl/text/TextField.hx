@@ -1402,7 +1402,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 		if (__ensureCaretVisibleNeeded) {
 			
-			__ensureCaretVisible();
+			__doEnsureCaretVisible ();
 			
 		}
 		
@@ -1653,8 +1653,14 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 	}
 	
+	inline function __ensureCaretVisible () {
+		
+		__ensureCaretVisibleNeeded = true;
+		
+	}
 	
-	private function __ensureCaretVisible () {
+	
+	private function __doEnsureCaretVisible () {
 		
 		__ensureCaretVisibleNeeded = false;
 		
@@ -2758,10 +2764,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 
 			if (event != null) {
 				
-				// delay __ensureCaretVisible instead of calling it directly, because if the focusing was caused by a mouse button,
-				// the mouse-down event will follow and its handler will change the caret position to the character under the cursor,
-				// in which case we don't want to do scrolling to the previous caret position
-				__ensureCaretVisibleNeeded = true;
+				__ensureCaretVisible ();
 				
 			}
 			
