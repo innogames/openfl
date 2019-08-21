@@ -31,7 +31,7 @@ class DOMMaskManager extends AbstractMaskManager {
 	}
 	
 	
-	public override function pushMask (mask:DisplayObject):Void {
+	public function pushMask (mask:DisplayObject):Void {
 		
 		// TODO: Handle true mask shape, as well as alpha test
 		
@@ -95,7 +95,7 @@ class DOMMaskManager extends AbstractMaskManager {
 	}
 	
 	
-	public override function popMask ():Void {
+	public function popMask ():Void {
 		
 		popRect ();
 		

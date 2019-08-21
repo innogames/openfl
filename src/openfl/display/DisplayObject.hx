@@ -854,6 +854,42 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
+	private function __canvasPushMask (renderSession:RenderSession):Void {
+		
+		if (!cacheAsBitmap) {
+			
+			var context = renderSession.context;
+			var transform = __renderTransform;
+			var pixelRatio = renderSession.pixelRatio;
+			context.setTransform (transform.a * pixelRatio, transform.b, transform.c, transform.d * pixelRatio, transform.tx * pixelRatio, transform.ty * pixelRatio);
+			
+			context.beginPath ();
+			__renderCanvasMask (renderSession);
+			context.clip ();
+			
+		}
+		
+	}
+	
+	
+	private function __canvasPopMask (renderSession:RenderSession):Void {
+		
+		if (cacheAsBitmap) {
+			
+			__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
+			
+			if (__cacheBitmap != null) {
+				
+				renderSession.context.globalCompositeOperation = "destination-in";
+				CanvasBitmap.renderMaskPop(__cacheBitmap, renderSession);
+				
+			}
+			
+		}
+		
+	}
+	
+	
 	private function __renderDOM (renderSession:RenderSession):Void {
 		
 		__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());

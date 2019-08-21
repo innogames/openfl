@@ -226,6 +226,21 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 	}
 	
 	
+	override function __canvasPopMask(renderSession:RenderSession) {
+		
+		if (cacheAsBitmap) {
+			
+			__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
+			
+			var bitmap = if (__cacheBitmap != null) __cacheBitmap else this;
+			renderSession.context.globalCompositeOperation = "destination-in";
+			CanvasBitmap.renderMaskPop(bitmap, renderSession);
+			
+		}
+		
+	}
+	
+	
 	private override function __renderDOM (renderSession:RenderSession):Void {
 		
 		__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
