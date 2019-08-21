@@ -21,11 +21,8 @@ interface IBitmapDrawable {
 	
 	private function __getBounds (rect:Rectangle, matrix:Matrix):Void;
 	private function __renderCairo (renderSession:RenderSession):Void;
-	private function __renderCairoMask (renderSession:RenderSession):Void;
 	private function __renderCanvas (renderSession:RenderSession):Void;
-	private function __renderCanvasMask (renderSession:RenderSession):Void;
 	private function __renderGL (renderSession:RenderSession):Void;
-	private function __renderGLMask (renderSession:RenderSession):Void;
 	private function __updateChildren (transformOnly:Bool):Void;
 	private function __updateTransforms (?overrideTransform:Matrix = null):Void;
 	
