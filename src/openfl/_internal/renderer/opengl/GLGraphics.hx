@@ -96,7 +96,7 @@ class GLGraphics {
 		if (!isCompatible (graphics, parentTransform)) {
 			
 			#if (js && html5)
-			CanvasGraphics.render (graphics, renderSession, parentTransform);
+			CanvasGraphics.render (graphics, renderSession);
 			#elseif lime_cairo
 			CairoGraphics.render (graphics, renderSession, parentTransform);
 			#end
@@ -207,7 +207,7 @@ class GLGraphics {
 		// TODO: Support invisible shapes
 		
 		#if (js && html5)
-		CanvasGraphics.render (graphics, renderSession, parentTransform);
+		CanvasGraphics.render (graphics, renderSession);
 		#elseif lime_cairo
 		CairoGraphics.render (graphics, renderSession, parentTransform);
 		#end
