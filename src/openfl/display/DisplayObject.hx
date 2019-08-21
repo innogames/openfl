@@ -876,10 +876,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		
 		if (cacheAsBitmap) {
 			
-			__isMask = false;
 			__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
-			__isMask = true;
-			__updateChildren(true);
 			
 			if (__cacheBitmap != null) {
 				
