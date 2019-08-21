@@ -38,7 +38,7 @@ class GLShape {
 		if (graphics != null) {
 			
 			#if (js && html5)
-			CanvasGraphics.render (graphics, renderSession, shape.__renderTransform);
+			CanvasGraphics.render (graphics, renderSession);
 			#elseif lime_cairo
 			CairoGraphics.render (graphics, renderSession, shape.__renderTransform);
 			#end
@@ -117,7 +117,7 @@ class GLShape {
 			// TODO: Support invisible shapes
 			
 			#if (js && html5)
-			CanvasGraphics.render (graphics, renderSession, shape.__renderTransform);
+			CanvasGraphics.render (graphics, renderSession);
 			#elseif lime_cairo
 			CairoGraphics.render (graphics, renderSession, shape.__renderTransform);
 			#end
