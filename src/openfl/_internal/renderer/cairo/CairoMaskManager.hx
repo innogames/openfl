@@ -26,7 +26,7 @@ class CairoMaskManager extends AbstractMaskManager {
 	}
 	
 	
-	public override function pushMask (mask:DisplayObject):Void {
+	public function pushMask (mask:DisplayObject):Void {
 		
 		var cairo = renderSession.cairo;
 		
@@ -77,7 +77,7 @@ class CairoMaskManager extends AbstractMaskManager {
 	}
 	
 	
-	public override function popMask ():Void {
+	public function popMask ():Void {
 		
 		renderSession.cairo.restore ();
 		

@@ -26,13 +26,6 @@ class AbstractMaskManager {
 	}
 	
 	
-	public function pushMask (mask:DisplayObject):Void {
-		
-		
-		
-	}
-	
-	
 	public function pushObject (object:DisplayObject, handleScrollRect:Bool = true):Void {
 		
 		
@@ -41,13 +34,6 @@ class AbstractMaskManager {
 	
 	
 	public function pushRect (rect:Rectangle, transform:Matrix):Void {
-		
-		
-		
-	}
-	
-	
-	public function popMask ():Void {
 		
 		
 		

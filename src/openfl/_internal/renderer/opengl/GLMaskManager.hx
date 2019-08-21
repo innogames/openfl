@@ -49,7 +49,7 @@ class GLMaskManager extends AbstractMaskManager {
 	}
 	
 	
-	public override function pushMask (mask:DisplayObject):Void {
+	public function pushMask (mask:DisplayObject):Void {
 		
 		// flush everything in the current batch, since we're rendering stuff differently now
 		renderSession.batcher.flush ();
@@ -136,7 +136,7 @@ class GLMaskManager extends AbstractMaskManager {
 	}
 	
 	
-	public override function popMask ():Void {
+	public function popMask ():Void {
 		
 		if (stencilReference == 0) return;
 		

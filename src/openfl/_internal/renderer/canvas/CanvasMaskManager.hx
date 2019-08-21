@@ -19,23 +19,10 @@ class CanvasMaskManager extends AbstractMaskManager {
 	}
 	
 	
-	public override function pushMask (mask:DisplayObject):Void {
+	public function pushMask (mask:DisplayObject):Void {
 		
-		var context = renderSession.context;
-		
-		context.save ();
-		
-		//var cacheAlpha = mask.__worldAlpha;
-		var transform = mask.__renderTransform;
-		var pixelRatio = renderSession.pixelRatio;
-		context.setTransform (transform.a * pixelRatio, transform.b, transform.c, transform.d * pixelRatio, transform.tx * pixelRatio, transform.ty * pixelRatio);
-		
-		context.beginPath ();
-		mask.__renderCanvasMask (renderSession);
-		
-		context.clip ();
-		
-		//mask.worldAlpha = cacheAlpha;
+		renderSession.context.save ();
+		mask.__canvasPushMask (renderSession);
 		
 	}
 	
@@ -72,8 +59,9 @@ class CanvasMaskManager extends AbstractMaskManager {
 	}
 	
 	
-	public override function popMask ():Void {
+	public function popMask (mask:DisplayObject):Void {
 		
+		mask.__canvasPopMask(renderSession);
 		renderSession.context.restore ();
 		
 	}
@@ -83,7 +71,7 @@ class CanvasMaskManager extends AbstractMaskManager {
 		
 		if (!object.__cacheBitmapRender && object.__mask != null) {
 			
-			popMask ();
+			popMask (object.__mask);
 			
 		}
 		

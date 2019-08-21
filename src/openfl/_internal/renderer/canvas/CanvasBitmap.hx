@@ -47,4 +47,20 @@ class CanvasBitmap {
 	}
 	
 	
+	public static inline function renderMaskPop (bitmap:Bitmap, renderSession:RenderSession):Void {
+		
+		#if (js && html5)
+		if (bitmap.__worldAlpha > 0 && bitmap.__bitmapData != null && bitmap.__bitmapData.__isValid && bitmap.__bitmapData.__canBeDrawnToCanvas ()) {
+			
+			var context = renderSession.context;
+			
+			CanvasSmoothing.setEnabled(context, renderSession.allowSmoothing && bitmap.smoothing);
+			context.globalAlpha = bitmap.__worldAlpha;
+			bitmap.__bitmapData.__drawToCanvas (context, bitmap.__renderTransform, renderSession.roundPixels || bitmap.__snapToPixel (), renderSession.pixelRatio, bitmap.__scrollRect, true);
+			
+		}
+		#end
+		
+	}
+	
 }
