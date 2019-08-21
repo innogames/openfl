@@ -221,6 +221,9 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 	
 	private override function __renderCanvasMask (renderSession:RenderSession):Void {
 		
+		var transform = __renderTransform;
+		var pixelRatio = renderSession.pixelRatio;
+		renderSession.context.setTransform (transform.a * pixelRatio, transform.b, transform.c, transform.d * pixelRatio, transform.tx * pixelRatio, transform.ty * pixelRatio);
 		renderSession.context.rect (0, 0, __bitmapData.width, __bitmapData.height);
 		
 	}

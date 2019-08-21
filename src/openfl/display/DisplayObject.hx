@@ -847,6 +847,10 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		
 		if (__graphics != null) {
 			
+			var transform = __renderTransform;
+			var pixelRatio = renderSession.pixelRatio;
+			renderSession.context.setTransform (transform.a * pixelRatio, transform.b, transform.c, transform.d * pixelRatio, transform.tx * pixelRatio, transform.ty * pixelRatio);
+			
 			CanvasGraphics.renderMask (__graphics, renderSession);
 			
 		}
@@ -859,9 +863,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		if (!cacheAsBitmap) {
 			
 			var context = renderSession.context;
-			var transform = __renderTransform;
-			var pixelRatio = renderSession.pixelRatio;
-			context.setTransform (transform.a * pixelRatio, transform.b, transform.c, transform.d * pixelRatio, transform.tx * pixelRatio, transform.ty * pixelRatio);
 			
 			context.beginPath ();
 			__renderCanvasMask (renderSession);
