@@ -221,7 +221,7 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 	
 	private override function __renderCanvasMask (renderSession:RenderSession):Void {
 		
-		renderSession.context.rect (0, 0, width, height);
+		renderSession.context.rect (0, 0, __bitmapData.width, __bitmapData.height);
 		
 	}
 	
