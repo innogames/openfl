@@ -771,23 +771,13 @@ class DisplayObjectContainer extends InteractiveObject {
 	
 	private override function __renderCanvasMask (renderSession:RenderSession):Void {
 		
-		if (__graphics != null) {
+		super.__renderCanvasMask (renderSession);
+		
+		for (child in __children) {
 			
-			CanvasGraphics.renderMask (__graphics, renderSession);
+			child.__renderCanvasMask (renderSession);
 			
 		}
-		
-		var bounds = Rectangle.__pool.get ();
-		__getLocalBounds (bounds);
-		
-		renderSession.context.rect (0, 0, bounds.width, bounds.height);
-		
-		Rectangle.__pool.release (bounds);
-		/*for (child in __children) {
-			
-			child.__renderMask (renderSession);
-			
-		}*/
 		
 	}
 	
