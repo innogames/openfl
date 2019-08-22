@@ -581,13 +581,16 @@ class BitmapData implements IBitmapDrawable {
 			var cacheWorldAlpha = source.__worldAlpha;
 			var cacheAlpha = source.__alpha;
 			var cacheVisible = source.__visible;
+			var cacheIsMask = source.__isMask;
 			source.__alpha = 1;
 			source.__visible = true;
+			source.__isMask = false;
 			source.__updateTransforms (matrix);
 			source.__updateChildren (false);
 			source.__renderCanvas (renderSession);
 			source.__alpha = cacheAlpha;
 			source.__visible = cacheVisible;
+			source.__isMask = cacheIsMask;
 			source.__updateTransforms (matrixCache);
 			Matrix.__pool.release (matrixCache);
 			source.__updateChildren (true);
@@ -667,13 +670,16 @@ class BitmapData implements IBitmapDrawable {
 			var cacheWorldAlpha = source.__worldAlpha;
 			var cacheAlpha = source.__alpha;
 			var cacheVisible = source.__visible;
+			var cacheIsMask = source.__isMask;
 			source.__alpha = 1;
 			source.__visible = true;
+			source.__isMask = false;
 			source.__updateTransforms (matrix);
 			source.__updateChildren (false);
 			source.__renderCairo (renderSession);
 			source.__alpha = cacheAlpha;
 			source.__visible = cacheVisible;
+			source.__isMask = cacheIsMask;
 			source.__updateTransforms (matrixCache);
 			Matrix.__pool.release (matrixCache);
 			source.__updateChildren (true);
@@ -1839,22 +1845,17 @@ class BitmapData implements IBitmapDrawable {
 			var cacheWorldAlpha = source.__worldAlpha;
 			var cacheAlpha = source.__alpha;
 			var cacheVisible = source.__visible;
+			var cacheIsMask = source.__isMask;
  			source.__alpha = 1;
 			source.__visible = true;
+			source.__isMask = false;
  			source.__updateTransforms (matrix);
 			source.__updateChildren (false);
 			
-			var cacheRenderable = source.__renderable;
-			if (source.__isMask) {
-				
-				source.__renderable = true;
-				
-			}
-			
 			source.__renderCanvas (renderSession);
-			source.__renderable = cacheRenderable;
 			source.__alpha = cacheAlpha;
 			source.__visible = cacheVisible;
+			source.__isMask = cacheIsMask;
 			
 			source.__updateTransforms (matrixCache);
 			Matrix.__pool.release (matrixCache);
@@ -1934,24 +1935,17 @@ class BitmapData implements IBitmapDrawable {
 			var cacheWorldAlpha = source.__worldAlpha;
 			var cacheAlpha = source.__alpha;
 			var cacheVisible = source.__visible;
+			var cacheIsMask = source.__isMask;
  			source.__alpha = 1;
 			source.__visible = true;
+			source.__isMask = false;
 			source.__updateTransforms (matrix);
 			source.__updateChildren (false);
 			
-			// TODO: Force renderable using render session?
-			
-			var cacheRenderable = source.__renderable;
-			if (source.__isMask) {
-				
-				source.__renderable = true;
-				
-			}
- 			
 			source.__renderCairo (renderSession);
-			source.__renderable = cacheRenderable;
 			source.__alpha = cacheAlpha;
 			source.__visible = cacheVisible;
+			source.__isMask = cacheIsMask;
 			
 			source.__updateTransforms (matrixCache);
 			Matrix.__pool.release (matrixCache);
@@ -2151,12 +2145,6 @@ class BitmapData implements IBitmapDrawable {
 	}
 	
 	
-	private function __renderCairoMask (renderSession:RenderSession):Void {
-		
-		
-		
-	}
-	
 	#if (js && html5)
 	function __canBeDrawnToCanvas ():Bool {
 		
@@ -2219,13 +2207,6 @@ class BitmapData implements IBitmapDrawable {
 	}
 	
 	
-	private function __renderCanvasMask (renderSession:RenderSession):Void {
-		
-		
-		
-	}
-	
-	
 	private function __renderGL (renderSession:RenderSession):Void {
 		
 		var renderer:GLRenderer = cast renderSession.renderer;
@@ -2245,32 +2226,6 @@ class BitmapData implements IBitmapDrawable {
 		gl.vertexAttribPointer (shader.data.aPosition.index, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
 		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
 		gl.vertexAttribPointer (shader.data.aAlpha.index, 1, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
-		
-		gl.drawArrays (gl.TRIANGLE_STRIP, 0, 4);
-		
-		#if gl_stats
-			GLStats.incrementDrawCall (DrawCallContext.STAGE);
-		#end
-		
-	}
-	
-	
-	private function __renderGLMask (renderSession:RenderSession):Void {
-		
-		var renderer:GLRenderer = cast renderSession.renderer;
-		var gl = renderSession.gl;
-		
-		var shader = (cast renderSession.maskManager:GLMaskManager).maskShader;
-		
-		shader.data.uImage0.input = this;
-		shader.data.uImage0.smoothing = renderSession.allowSmoothing && renderSession.forceSmoothing;
-		shader.data.uMatrix.value = renderer.getMatrix (__worldTransform);
-		
-		renderSession.shaderManager.setShader (shader);
-		
-		gl.bindBuffer (gl.ARRAY_BUFFER, getBuffer (gl, 1, __worldColorTransform));
-		gl.vertexAttribPointer (shader.data.aPosition.index, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
-		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
 		
 		gl.drawArrays (gl.TRIANGLE_STRIP, 0, 4);
 		
