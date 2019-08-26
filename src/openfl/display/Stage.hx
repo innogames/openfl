@@ -1370,17 +1370,8 @@ class Stage extends DisplayObjectContainer implements IModule {
 		switch (type) {
 			
 			case MouseEvent.MOUSE_DOWN:
-				
-				if (target.__allowMouseFocus ()) {
-					
-					focus = target;
-					
-				} else {
-					
-					focus = null;
-					
-				}
-				
+			
+				__maybeChangeFocus (target);
 				__mouseDownLeft = target;
 				MouseEvent.__buttonDown = true;
 			
@@ -1630,6 +1621,35 @@ class Stage extends DisplayObjectContainer implements IModule {
 		
 		Point.__pool.release (targetPoint);
 		Point.__pool.release (localPoint);
+		
+	}
+	
+	
+	private function __maybeChangeFocus (target:InteractiveObject) {
+
+		var currentFocus = __focus;
+		var newFocus = if (target.__allowMouseFocus ()) target else null;
+		
+		if (currentFocus != newFocus) {
+			
+			if (currentFocus != null) {
+				
+				// we always set `event.relatedObject` to `target` even if it's not focusable, because that's how it is in Flash
+				var event = new FocusEvent (FocusEvent.MOUSE_FOCUS_CHANGE, true, true, target, false, 0);
+				
+				currentFocus.dispatchEvent(event);
+				
+				if (event.isDefaultPrevented()) {
+					
+					return;
+					
+				}
+				
+			}
+			
+			focus = newFocus;
+			
+		}
 		
 	}
 	
