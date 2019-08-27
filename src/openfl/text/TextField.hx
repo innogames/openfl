@@ -1955,7 +1955,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	private function get_caretIndex ():Int {
 		
-		return __caretIndex;
+		return if (__caretIndex < 0) 0 else __caretIndex;
 		
 	}
 	
@@ -2365,14 +2365,14 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	private function get_selectionBeginIndex ():Int {
 		
-		return Std.int (Math.min (__caretIndex, __selectionIndex));
+		return if (__caretIndex < 0) 0 else Std.int (Math.min (__caretIndex, __selectionIndex));
 		
 	}
 	
 	
 	private function get_selectionEndIndex ():Int {
 		
-		return Std.int (Math.max (__caretIndex, __selectionIndex));
+		return if (__caretIndex < 0) 0 else Std.int (Math.max (__caretIndex, __selectionIndex));
 		
 	}
 	
