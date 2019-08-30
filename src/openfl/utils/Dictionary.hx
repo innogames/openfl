@@ -184,6 +184,14 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 	
 	
 	#if (haxe_ver >= "4.0.0")
+	public function clear () {
+		
+		types.clear ();
+		values.clear ();
+		
+	}
+	
+	
 	public function copy ():ClassMap<K, V> {
 		
 		var copied = new ClassMap<K, V> ();
@@ -279,6 +287,14 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 	
 	
 	#if (haxe_ver >= "4.0.0")
+	public function clear () {
+		
+		floatKeys.resize (0);
+		values.resize (0);
+		
+	}
+	
+
 	public function copy ():FloatMap<K, V> {
 		
 		var copied = new FloatMap<K, V> ();
@@ -489,6 +505,13 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 	
 	
 	#if (haxe_ver >= "4.0.0")
+	public function clear () {
+		
+		map.clear ();
+		
+	}
+	
+	
 	public function copy ():UtilsObjectMap<K, V> {
 		
 		var copied = new UtilsObjectMap<K, V> ();
