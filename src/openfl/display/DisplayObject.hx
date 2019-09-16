@@ -1135,7 +1135,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			//if (!renderSession.lockTransform) __getWorldTransform ();
 			
 			var needRender = (__cacheBitmap == null || __cacheBitmapNeedsRender ());
-			var updateTransform = (needRender || !__cacheBitmap.__renderTransform.equals (__renderTransform));
+			var updateTransform = (needRender || !__cacheBitmap.__worldTransform.equals (__renderTransform));
 			var hasFilters = __hasFilters ();
 			var pixelRatio = renderSession.pixelRatio;
 			
@@ -1209,7 +1209,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 			if (updateTransform || needRender) {
 			
-				__cacheBitmap.__worldTransform.copyFrom (__worldTransform);
+				__cacheBitmap.__worldTransform.copyFrom (__renderTransform);
 				
 				__cacheBitmap.__renderTransform.identity ();
 				__cacheBitmap.__renderTransform.tx = rect.x;
