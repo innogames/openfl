@@ -98,20 +98,9 @@ class Sprite extends DisplayObjectContainer {
 		
 		if (mask != null && !mask.__hitTestMask (x, y)) return __hitTestHitArea (x, y, shapeFlag, stack, interactiveOnly, hitObject, hitTestWhenMouseDisabled);
 		
-		if (__scrollRect != null) {
+		if (!__isPointInScrollRect (x, y)) {
 			
-			var point = Point.__pool.get ();
-			point.setTo (x, y);
-			__getRenderTransform ().__transformInversePoint (point);
-			
-			if (!__scrollRect.containsPoint (point)) {
-				
-				Point.__pool.release (point);
-				return __hitTestHitArea (x, y, shapeFlag, stack, true, hitObject, hitTestWhenMouseDisabled);
-				
-			}
-			
-			Point.__pool.release (point);
+			return __hitTestHitArea (x, y, shapeFlag, stack, true, hitObject, hitTestWhenMouseDisabled);
 			
 		}
 		
