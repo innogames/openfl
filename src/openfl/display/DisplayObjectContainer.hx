@@ -527,20 +527,9 @@ class DisplayObjectContainer extends InteractiveObject {
 		if (!hitObject.visible || __isMask || (!hitTestWhenMouseDisabled && interactiveOnly && !mouseEnabled && !mouseChildren)) return false;
 		if (mask != null && !mask.__hitTestMask (x, y)) return false;
 		
-		if (__scrollRect != null) {
+		if (!__isPointInScrollRect (x, y)) {
 			
-			var point = Point.__pool.get ();
-			point.setTo (x, y);
-			__getRenderTransform ().__transformInversePoint (point);
-			
-			if (!__scrollRect.containsPoint (point)) {
-				
-				Point.__pool.release (point);
-				return false;
-				
-			}
-			
-			Point.__pool.release (point);
+			return false;
 			
 		}
 		
@@ -647,6 +636,36 @@ class DisplayObjectContainer extends InteractiveObject {
 	private override function __mouseThroughAllowed ():Bool {
 		
 		return mouseEnabled || mouseChildren;
+		
+	}
+	
+	
+	/**
+		Check whether given point (x, y) is within `this.scrollRect`.
+		
+		Returns `true` if the `scrollRect` contains given coordinates, `false` otherwise.
+		When `scrollRect` is `null`, also returns `true`.
+	**/
+	function __isPointInScrollRect (x:Float, y:Float):Bool {
+		
+		if (__scrollRect != null) {
+			
+			var point = Point.__pool.get ();
+			point.setTo (x, y);
+			__getRenderTransform ().__transformInversePoint (point);
+			
+			if (!__scrollRect.containsPoint (point)) {
+				
+				Point.__pool.release (point);
+				return false;
+				
+			}
+			
+			Point.__pool.release (point);
+			
+		}
+		
+		return true;
 		
 	}
 	
