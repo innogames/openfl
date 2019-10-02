@@ -8,6 +8,7 @@ class GLStats {
 																	 DrawCallContext.STAGE3D => new Counter()];
 
 	public static var quadCounter = new Counter ();
+	public static var skippedQuadCounter = new Counter ();
 	
 	
 	public static function incrementDrawCall (context: DrawCallContext):Void {

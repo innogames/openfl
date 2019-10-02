@@ -327,6 +327,8 @@ class GLRenderer extends AbstractRenderer {
 		displayWidth = Math.round (displayMatrix.__transformX (w, 0) - offsetX);
 		displayHeight = Math.round (displayMatrix.__transformY (0, h) - offsetY);
 		
+		renderSession.batcher.setViewport(offsetX, offsetY, displayWidth, displayHeight);
+		
 		projection = Matrix4.createOrtho (offsetX, displayWidth + offsetX, offsetY, displayHeight + offsetY, -1000, 1000);
 		projectionFlipped = Matrix4.createOrtho (offsetX, displayWidth + offsetX, displayHeight + offsetY, offsetY, -1000, 1000);
 		

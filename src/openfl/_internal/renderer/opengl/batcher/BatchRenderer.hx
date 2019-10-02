@@ -7,6 +7,7 @@ import lime.utils.UInt16Array;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLTexture;
+import openfl.geom.Rectangle;
 import openfl._internal.renderer.opengl.GLBlendModeManager;
 import openfl._internal.renderer.opengl.GLShaderManager;
 import openfl._internal.renderer.opengl.batcher.BitHacks.*;
@@ -45,6 +46,8 @@ class BatchRenderer {
 	public var projectionMatrix:Float32Array;
 
 	var emptyTexture:GLTexture;
+	
+	final viewport = new Rectangle();
 
 	static inline var floatsPerQuad = MultiTextureShader.floatsPerVertex * 4;
 
@@ -110,9 +113,29 @@ class BatchRenderer {
 	public function unflipVertical() {
 		shader.positionScale[1] = 1;
 	}
+	
+	public inline function setViewport(x, y, w, h) {
+		viewport.setTo(x, y, w, h);
+	}
+	
+	inline function isQuadWithinViewport(quad:Quad):Bool {
+		var x0 = quad.vertexData[0];
+		var y0 = quad.vertexData[1];
+		var x1 = quad.vertexData[2];
+		var y1 = quad.vertexData[5];
+		var rect = viewport;
+		return (x1 >= rect.x && y1 >= rect.y && x0 <= rect.right && y0 <= rect.bottom);
+	}
 
 	/** schedule quad for rendering **/
 	public function render(quad:Quad) {
+		if (!isQuadWithinViewport(quad)) {
+			#if gl_stats
+				GLStats.skippedQuadCounter.increment();
+			#end
+			return;
+		}
+		
 		if (currentQuadIndex >= maxQuads) {
 			flush();
 		}

@@ -906,6 +906,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 		#if gl_stats
 			GLStats.resetDrawCalls();
 			GLStats.quadCounter.reset();
+			GLStats.skippedQuadCounter.reset();
 		#end
 		
 		if (__renderer != null && (Stage3D.__active || stage3Ds[0].__contextRequested)) {
