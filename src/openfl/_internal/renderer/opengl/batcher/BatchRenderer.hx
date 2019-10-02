@@ -7,6 +7,7 @@ import lime.utils.UInt16Array;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLTexture;
+import openfl.geom.Rectangle;
 import openfl._internal.renderer.opengl.GLBlendModeManager;
 import openfl._internal.renderer.opengl.GLShaderManager;
 import openfl._internal.renderer.opengl.batcher.BitHacks.*;
@@ -45,6 +46,8 @@ class BatchRenderer {
 	public var projectionMatrix:Float32Array;
 
 	var emptyTexture:GLTexture;
+
+	final viewport = new Rectangle();
 
 	static inline var floatsPerQuad = MultiTextureShader.floatsPerVertex * 4;
 
@@ -111,8 +114,43 @@ class BatchRenderer {
 		shader.positionScale[1] = 1;
 	}
 
+	public inline function setViewport(x, y, w, h) {
+		viewport.setTo(x, y, w, h);
+	}
+
+	inline function isQuadWithinViewport(quad:Quad):Bool {
+		var x0 = quad.vertexData[0];
+		var y0 = quad.vertexData[1];
+		var x1 = quad.vertexData[4];
+		var y1 = quad.vertexData[5];
+		var left, right, top, bottom;
+		if (x0 > x1) {
+			left = x1;
+			right = x0;
+		} else {
+			left = x0;
+			right = x1;
+		}
+		if (y0 > y1) {
+			top = y1;
+			bottom = y0;
+		} else {
+			top = y0;
+			bottom = y1;
+		}
+		var rect = viewport;
+		return (right >= rect.x && bottom >= rect.y && left <= rect.right && top <= rect.bottom);
+	}
+
 	/** schedule quad for rendering **/
 	public function render(quad:Quad) {
+		if (!isQuadWithinViewport(quad)) {
+			#if gl_stats
+				GLStats.skippedQuadCounter.increment();
+			#end
+			return;
+		}
+
 		if (currentQuadIndex >= maxQuads) {
 			flush();
 		}
@@ -132,7 +170,7 @@ class BatchRenderer {
 		// TODO: we can in WebGL2 using Sampler objects
 		if (nextTexture.enabledTick == tick && nextTexture.lastSmoothing != quad.smoothing) {
 			currentTexture = null;
-			
+
 			finishCurrentGroup();
 			startNextGroup();
 		}
