@@ -1522,6 +1522,15 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 		}
 		
+		__handleMouseOver (target, stack, button, targetPoint, localPoint);
+		
+		Point.__pool.release (targetPoint);
+		Point.__pool.release (localPoint);
+		
+	}
+	
+	private function __handleMouseOver (target:InteractiveObject, stack:Array<DisplayObject>, button:Int, targetPoint:Point, localPoint:Point) {
+		
 		var event;
 		
 		if (target != __mouseOverTarget) {
@@ -1619,9 +1628,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 			__dragObject.dropTarget = dropTarget;
 			
 		}
-		
-		Point.__pool.release (targetPoint);
-		Point.__pool.release (localPoint);
 		
 	}
 	
