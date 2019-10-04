@@ -986,7 +986,38 @@ class Stage extends DisplayObjectContainer implements IModule {
 		
 		__deltaTime = deltaTime;
 		
+		var hadPendingMouseMove = hasPendingMouseMove;
 		dispatchPendingMouseMove ();
+		
+		if (!hadPendingMouseMove && __renderDirty && __mouseOverTarget != null && __mouseOverTarget != this) {
+			// TODO: don't run this code when there was *any* __onMouse call, because everything is handled at this point
+			trace("yep");
+			
+			var localPoint = Point.__pool.get ();
+			var targetPoint = Point.__pool.get ();
+			targetPoint.setTo (__mouseX, __mouseY);
+
+			var stack = [];
+			var target:InteractiveObject;
+			
+			if (__hitTest (__mouseX, __mouseY, true, stack, true, this)) {
+				
+				target = cast stack[stack.length - 1];
+				
+			} else {
+				
+				target = this;
+				stack = [ this ];
+				
+			}
+			
+			if (target == null) target = this;
+			
+			__handleMouseOver (target, stack, 0, targetPoint, localPoint);
+			
+			Point.__pool.release (targetPoint);
+			Point.__pool.release (localPoint);
+		}
 		
 	}
 	
@@ -1454,6 +1485,15 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 		}
 		
+		__handleMouseOver (target, stack, button, targetPoint, localPoint);
+		
+		Point.__pool.release (targetPoint);
+		Point.__pool.release (localPoint);
+		
+	}
+	
+	private function __handleMouseOver (target:InteractiveObject, stack:Array<DisplayObject>, button:Int, targetPoint:Point, localPoint:Point) {
+		
 		if (Mouse.__cursor == MouseCursor.AUTO) {
 			
 			var cursor = null;
@@ -1521,15 +1561,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 			}
 			
 		}
-		
-		__handleMouseOver (target, stack, button, targetPoint, localPoint);
-		
-		Point.__pool.release (targetPoint);
-		Point.__pool.release (localPoint);
-		
-	}
-	
-	private function __handleMouseOver (target:InteractiveObject, stack:Array<DisplayObject>, button:Int, targetPoint:Point, localPoint:Point) {
 		
 		var event;
 		
