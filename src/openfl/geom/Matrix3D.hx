@@ -132,7 +132,21 @@ class Matrix3D {
 	
 	public function appendScale (xScale:Float, yScale:Float, zScale:Float):Void {
 		
-		this.append (new Matrix3D (Vector.ofArray ([ xScale, 0.0, 0.0, 0.0, 0.0, yScale, 0.0, 0.0, 0.0, 0.0, zScale, 0.0, 0.0, 0.0, 0.0, 1.0 ])));
+		rawData[0] *= xScale;
+		rawData[1] *= yScale;
+		rawData[2] *= zScale;
+		
+		rawData[4] *= xScale;
+		rawData[5] *= yScale;
+		rawData[6] *= zScale;
+		
+		rawData[8]  *= xScale;
+		rawData[9]  *= yScale;
+		rawData[10] *= zScale;
+		
+		rawData[12] *= xScale;
+		rawData[13] *= yScale;
+		rawData[14] *= zScale;
 		
 	}
 	
