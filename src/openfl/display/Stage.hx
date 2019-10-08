@@ -1900,6 +1900,18 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 		}
 		
+		if (__contentsScaleFactor != window.scale && __renderer != null) {
+			
+			__contentsScaleFactor = window.scale;
+			
+			#if (js && html5)
+				@:privateAccess (__renderer.renderSession).pixelRatio = window.scale;
+			#end
+			
+			__forceRenderDirty();
+			
+		}
+		
 		for (stage3D in stage3Ds) {
 			
 			stage3D.__resize (stageWidth, stageHeight);
@@ -1915,18 +1927,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 		if (stageWidth != cacheWidth || stageHeight != cacheHeight) {
 			
 			__dispatchEvent (new Event (Event.RESIZE));
-			
-		}
-		
-		if (__contentsScaleFactor != window.scale && __renderer != null) {
-			
-			__contentsScaleFactor = window.scale;
-			
-			#if (js && html5)
-				@:privateAccess (__renderer.renderSession).pixelRatio = window.scale;
-			#end
-			
-			__forceRenderDirty();
 			
 		}
 		
