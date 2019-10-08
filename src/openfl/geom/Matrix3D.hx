@@ -758,7 +758,20 @@ class Matrix3D {
 	
 	public function prependScale (xScale:Float, yScale:Float, zScale:Float):Void {
 		
-		this.prepend (new Matrix3D (Vector.ofArray ([xScale, 0.0, 0.0, 0.0, 0.0, yScale, 0.0, 0.0, 0.0, 0.0, zScale, 0.0, 0.0, 0.0, 0.0, 1.0])));
+		rawData[0] *= xScale;
+		rawData[1] *= xScale;
+		rawData[2] *= xScale;
+		rawData[3] *= xScale;
+		
+		rawData[4] *= yScale;
+		rawData[5] *= yScale;
+		rawData[6] *= yScale;
+		rawData[7] *= yScale;
+		
+		rawData[8]  *= zScale;
+		rawData[9]  *= zScale;
+		rawData[10] *= zScale;
+		rawData[11] *= zScale;
 		
 	}
 	
