@@ -230,6 +230,8 @@ class GLRenderer extends AbstractRenderer {
 		
 		// setup projection matrix for the batcher as it's an uniform value for all the draw calls
 		renderSession.batcher.projectionMatrix = flipped ? projectionFlipped : projection;
+		// also pass the viewport to the batcher because it uses it for the out-of-screen quad culling
+		renderSession.batcher.setViewport(offsetX, offsetY, displayWidth, displayHeight);
 		
 		stage.__renderGL (renderSession);
 		
@@ -326,8 +328,6 @@ class GLRenderer extends AbstractRenderer {
 		offsetY = Math.round (displayMatrix.__transformY (0, 0));
 		displayWidth = Math.round (displayMatrix.__transformX (w, 0) - offsetX);
 		displayHeight = Math.round (displayMatrix.__transformY (0, h) - offsetY);
-		
-		renderSession.batcher.setViewport(offsetX, offsetY, displayWidth, displayHeight);
 		
 		projection = Matrix4.createOrtho (offsetX, displayWidth + offsetX, offsetY, displayHeight + offsetY, -1000, 1000);
 		projectionFlipped = Matrix4.createOrtho (offsetX, displayWidth + offsetX, displayHeight + offsetY, offsetY, -1000, 1000);
