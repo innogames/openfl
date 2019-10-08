@@ -132,7 +132,21 @@ class Matrix3D {
 	
 	public function appendScale (xScale:Float, yScale:Float, zScale:Float):Void {
 		
-		this.append (new Matrix3D (Vector.ofArray ([ xScale, 0.0, 0.0, 0.0, 0.0, yScale, 0.0, 0.0, 0.0, 0.0, zScale, 0.0, 0.0, 0.0, 0.0, 1.0 ])));
+		rawData[0] *= xScale;
+		rawData[1] *= yScale;
+		rawData[2] *= zScale;
+		
+		rawData[4] *= xScale;
+		rawData[5] *= yScale;
+		rawData[6] *= zScale;
+		
+		rawData[8]  *= xScale;
+		rawData[9]  *= yScale;
+		rawData[10] *= zScale;
+		
+		rawData[12] *= xScale;
+		rawData[13] *= yScale;
+		rawData[14] *= zScale;
 		
 	}
 	
@@ -758,16 +772,35 @@ class Matrix3D {
 	
 	public function prependScale (xScale:Float, yScale:Float, zScale:Float):Void {
 		
-		this.prepend (new Matrix3D (Vector.ofArray ([xScale, 0.0, 0.0, 0.0, 0.0, yScale, 0.0, 0.0, 0.0, 0.0, zScale, 0.0, 0.0, 0.0, 0.0, 1.0])));
+		rawData[0] *= xScale;
+		rawData[1] *= xScale;
+		rawData[2] *= xScale;
+		rawData[3] *= xScale;
+		
+		rawData[4] *= yScale;
+		rawData[5] *= yScale;
+		rawData[6] *= yScale;
+		rawData[7] *= yScale;
+		
+		rawData[8]  *= zScale;
+		rawData[9]  *= zScale;
+		rawData[10] *= zScale;
+		rawData[11] *= zScale;
 		
 	}
 	
 	
 	public function prependTranslation (x:Float, y:Float, z:Float):Void {
 		
-		var m = new Matrix3D ();
-		m.position = new Vector3D (x, y, z);
-		this.prepend (m);
+		var m11 = rawData[0], m21 = rawData[4], m31 = rawData[8],  m41 = rawData[12];
+		var m12 = rawData[1], m22 = rawData[5], m32 = rawData[9],  m42 = rawData[13];
+		var m13 = rawData[2], m23 = rawData[6], m33 = rawData[10], m43 = rawData[14];
+		var m14 = rawData[3], m24 = rawData[7], m34 = rawData[11], m44 = rawData[15];
+		
+		rawData[12] = x * m11 + y * m21 + z * m31 + m41;
+		rawData[13] = x * m12 + y * m22 + z * m32 + m42;
+		rawData[14] = x * m13 + y * m23 + z * m33 + m43;
+		rawData[15] = x * m14 + y * m24 + z * m34 + m44;
 		
 	}
 	
