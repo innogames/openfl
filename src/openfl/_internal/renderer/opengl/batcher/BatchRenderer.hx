@@ -19,7 +19,10 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 #end
 
 // inspired by pixi.js SpriteRenderer
+@:expose("batcher")
 class BatchRenderer {
+	static var skipRendering = false;
+	
 	var gl:GLRenderContext;
 	var instancedRendering:InstancedRendering;
 	var blendModeManager:GLBlendModeManager;
@@ -150,6 +153,8 @@ class BatchRenderer {
 
 	/** schedule quad for rendering **/
 	public function render(quad:Quad) {
+		if (skipRendering) return;
+		
 		if (!isQuadWithinViewport(quad)) {
 			#if gl_stats
 				GLStats.skippedQuadCounter.increment();
