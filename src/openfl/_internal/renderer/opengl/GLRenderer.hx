@@ -81,7 +81,7 @@ class GLRenderer extends AbstractRenderer {
 		renderSession.shaderManager = shaderManager;
 		renderSession.maskManager = new GLMaskManager (renderSession);
 		
-		renderSession.batcher = new BatchRenderer (gl, blendModeManager, shaderManager, 4096);
+		renderSession.batcher = new BatchRenderer (gl, renderSession.instancedRendering, blendModeManager, shaderManager, 4096);
 		
 		if (stage.window != null) {
 			

@@ -17,6 +17,7 @@ import lime.graphics.RendererType;
 //import openfl._internal.renderer.opengl.utils.SpriteBatch;
 //import openfl._internal.renderer.opengl.utils.StencilManager;
 import openfl._internal.renderer.opengl.batcher.BatchRenderer;
+import openfl._internal.renderer.opengl.batcher.InstancedRendering;
 import openfl.display.BlendMode;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
@@ -46,6 +47,7 @@ class RenderSession {
 	public var transformOriginProperty:String;
 	public var vendorPrefix:String;
 	public var vaoContext:IVertexArrayObjectContext;
+	public var instancedRendering:InstancedRendering;
 	public var pixelRatio:Float = 1.0;
 	public var projectionMatrix:Matrix;	
 	public var z:Int;
@@ -76,16 +78,22 @@ class RenderSession {
 			if (gl.version == 2) {
 				
 				vaoContext = new VertexArrayObjectContext (gl);
+				instancedRendering = new GLInstancedRendering (gl);
 				
 			} else if (gl.version == 1) {
 				
 				var vertexArrayObjectsExtension = gl.getExtension ("OES_vertex_array_object");
-				
 				if (vertexArrayObjectsExtension != null) {
 					
 					vaoContext = new VertexArrayObjectExtension (vertexArrayObjectsExtension);
 					
 				}
+
+				var instancedRenderingExtension = gl.getExtension ("ANGLE_instanced_arrays");
+				if (instancedRenderingExtension == null) {
+					throw "No instanced rendering support!";
+				}
+				instancedRendering = new WebGLANGLEInstancedRendering (instancedRenderingExtension);
 				
 			}
 			

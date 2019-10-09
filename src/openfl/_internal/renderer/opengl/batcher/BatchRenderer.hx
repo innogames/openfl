@@ -21,6 +21,7 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 // inspired by pixi.js SpriteRenderer
 class BatchRenderer {
 	var gl:GLRenderContext;
+	var instancedRendering:InstancedRendering;
 	var blendModeManager:GLBlendModeManager;
 	var shaderManager:GLShaderManager;
 	var maxQuads:Int;
@@ -49,14 +50,15 @@ class BatchRenderer {
 
 	final viewport = new Rectangle();
 
-	public function new(gl:GLRenderContext, blendModeManager:GLBlendModeManager, shaderManager:GLShaderManager, maxQuads:Int) {
+	public function new(gl:GLRenderContext, instancedRendering:InstancedRendering, blendModeManager:GLBlendModeManager, shaderManager:GLShaderManager, maxQuads:Int) {
 		this.gl = gl;
+		this.instancedRendering = instancedRendering;
 		this.blendModeManager = blendModeManager;
 		this.shaderManager = shaderManager;
 		this.maxQuads = maxQuads;
 
 		// determine amount of textures we can draw at once and generate a shader for that
-		shader = new MultiTextureShader(gl);
+		shader = new MultiTextureShader(gl, instancedRendering);
 		maxTextures = shader.maxTextures;
 
 		emptyTexture = gl.createTexture();
@@ -384,7 +386,7 @@ class BatchRenderer {
 			gl.vertexAttribPointer(shader.aPremultipliedAlpha, 1, gl.FLOAT, false, stride, offset + 25 * Float32Array.BYTES_PER_ELEMENT);
 
 			// draw this group's slice of vertices
-			gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, group.size);
+			instancedRendering.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, group.size);
 			
 			offset += group.size * stride;
 

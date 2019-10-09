@@ -11,6 +11,7 @@ import lime.utils.Log;
 class MultiTextureShader {
 	var program:GLProgram;
 	var gl:GLRenderContext;
+	var instancedRendering:InstancedRendering;
 
 	public var maxTextures(default,null):Int;
 	public var positionScale(default,null): Float32Array;
@@ -35,8 +36,9 @@ class MultiTextureShader {
 	// texId, colorMult, colorOfs, premult
 	public static inline var floatsPerQuad = 4 + 4 + 4 + 4 + 1 + 4 + 4 + 1;
 
-	public function new(gl:GLRenderContext) {
+	public function new(gl:GLRenderContext, instancedRendering:InstancedRendering) {
 		this.gl = gl;
+		this.instancedRendering = instancedRendering;
 
 		var maxTextures = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
 		while (maxTextures >= 1) {
@@ -102,12 +104,12 @@ class MultiTextureShader {
 
 	inline function enableQuadAttribute(id:Int) {
 		gl.enableVertexAttribArray(id);
-		gl.vertexAttribDivisor(id, 1);
+		instancedRendering.vertexAttribDivisor(id, 1);
 	}
 
 	inline function disableQuadAttribute(id:Int) {
 		gl.disableVertexAttribArray(id);
-		gl.vertexAttribDivisor(id, 0);
+		instancedRendering.vertexAttribDivisor(id, 0);
 	}
 
 	static function compileShader(gl:GLRenderContext, source:String, type:Int):Null<GLShader> {
