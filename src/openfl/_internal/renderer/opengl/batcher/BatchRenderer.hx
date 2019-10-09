@@ -27,9 +27,9 @@ class BatchRenderer {
 	var maxTextures:Int;
 
 	var shader:MultiTextureShader;
-	var indexBuffer:GLBuffer;
 	var vertexBuffer:GLBuffer;
-	var vertexBufferData:Float32Array;
+	var quadBuffer:GLBuffer;
+	var quadBufferData:Float32Array;
 
 	var groups:Vector<RenderGroup>;
 	var boundTextures:Vector<TextureData>;
@@ -49,8 +49,6 @@ class BatchRenderer {
 
 	final viewport = new Rectangle();
 
-	static inline var floatsPerQuad = MultiTextureShader.floatsPerVertex * 4;
-
 	public function new(gl:GLRenderContext, blendModeManager:GLBlendModeManager, shaderManager:GLShaderManager, maxQuads:Int) {
 		this.gl = gl;
 		this.blendModeManager = blendModeManager;
@@ -68,20 +66,26 @@ class BatchRenderer {
 		// a singleton vector we use to track texture binding when rendering
 		boundTextures = new Vector(maxTextures);
 
-		// preallocate block of memory for the vertex buffer
-		vertexBufferData = new Float32Array(maxQuads * floatsPerQuad);
+		// preallocate block of memory for the quad data buffer
+		quadBufferData = new Float32Array(maxQuads * MultiTextureShader.floatsPerQuad);
 
-		// create the vertex buffer for further uploading
+		// create the quad buffer for further uploading
+		quadBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, quadBufferData.byteLength, quadBufferData, gl.STREAM_DRAW);
+
+		// preallocate a static vertex buffer for quad instances,
+		// consisting of one vec4 per vertex used to extract actual
+		// position values from the quad buffer
+		var vertices = new Float32Array([
+			1.0, 0.0, 0.0, 0.0,
+			0.0, 1.0, 0.0, 0.0,
+			0.0, 0.0, 1.0, 0.0,
+			0.0, 0.0, 0.0, 1.0
+		]);
 		vertexBuffer = gl.createBuffer();
-
 		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, vertexBufferData.byteLength, vertexBufferData, gl.STREAM_DRAW);
-
-		// preallocate a static index buffer for rendering any number of quads
-		var indices = createIndicesForQuads(maxQuads);
-		indexBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices.byteLength, indices, gl.STATIC_DRAW);
+		gl.bufferData(gl.ARRAY_BUFFER, vertices.byteLength, vertices, gl.STATIC_DRAW);
 
 		// preallocate render group objects for any number of quads (worst case - 1 group per quad)
 		groups = new Vector(maxQuads);
@@ -237,56 +241,59 @@ class BatchRenderer {
 			}
 		}
 
-		// fill the vertex buffer with vertex and texture coordinates, as well as the texture id
+		// fill the quad buffer
 		var vertexData = quad.vertexData;
 		var uvs = quad.texture.uvs;
 		var textureUnitId = nextTexture.textureUnitId;
 		var alpha = quad.alpha;
 		var pma = quad.texture.premultipliedAlpha;
 		var colorTransform = quad.colorTransform;
-		var currentVertexBufferIndex = currentQuadIndex * floatsPerQuad;
 
 		// trace('Group $currentGroupCount uses texture $textureUnitId');
 
-		inline function setVertex(i) {
-			var offset = currentVertexBufferIndex + i * MultiTextureShader.floatsPerVertex;
-			vertexBufferData[offset + 0] = vertexData[i * 2 + 0];
-			vertexBufferData[offset + 1] = vertexData[i * 2 + 1];
+		var quadBufferData = this.quadBufferData;
+		var offset = currentQuadIndex * MultiTextureShader.floatsPerQuad;
+		
+		inline function setVertex(i:Int, target:Int) {
+			// x
+			quadBufferData[offset + target] = vertexData[i * 2];
+			// y
+			quadBufferData[offset + 4 + target] = vertexData[i * 2 + 1];
+			// u
+			quadBufferData[offset + 8 + target] = uvs[i * 2];
+			// v
+			quadBufferData[offset + 12 + target] = uvs[i * 2 + 1];
+		}
+		setVertex(0, 0);
+		setVertex(1, 1);
+		setVertex(2, 3); // the Z order
+		setVertex(3, 2); // for triangle strip
 
-			vertexBufferData[offset + 2] = uvs[i * 2 + 0];
-			vertexBufferData[offset + 3] = uvs[i * 2 + 1];
+		quadBufferData[offset + 16] = textureUnitId;
 
-			vertexBufferData[offset + 4] = textureUnitId;
+		if (colorTransform != null) {
+			quadBufferData[offset + 17] = colorTransform.redOffset / 255;
+			quadBufferData[offset + 18] = colorTransform.greenOffset / 255;
+			quadBufferData[offset + 19] = colorTransform.blueOffset / 255;
+			quadBufferData[offset + 20] = (colorTransform.alphaOffset / 255) * alpha;
 
-			if (colorTransform != null) {
-				vertexBufferData[offset + 5] = colorTransform.redOffset / 255;
-				vertexBufferData[offset + 6] = colorTransform.greenOffset / 255;
-				vertexBufferData[offset + 7] = colorTransform.blueOffset / 255;
-				vertexBufferData[offset + 8] = (colorTransform.alphaOffset / 255) * alpha;
+			quadBufferData[offset + 21] = colorTransform.redMultiplier;
+			quadBufferData[offset + 22] = colorTransform.greenMultiplier;
+			quadBufferData[offset + 23] = colorTransform.blueMultiplier;
+			quadBufferData[offset + 24] = colorTransform.alphaMultiplier * alpha;
+		} else {
+			quadBufferData[offset + 17] = 0;
+			quadBufferData[offset + 18] = 0;
+			quadBufferData[offset + 19] = 0;
+			quadBufferData[offset + 20] = 0;
 
-				vertexBufferData[offset + 9] = colorTransform.redMultiplier;
-				vertexBufferData[offset + 10] = colorTransform.greenMultiplier;
-				vertexBufferData[offset + 11] = colorTransform.blueMultiplier;
-				vertexBufferData[offset + 12] = colorTransform.alphaMultiplier * alpha;
-			} else {
-				vertexBufferData[offset + 5] = 0;
-				vertexBufferData[offset + 6] = 0;
-				vertexBufferData[offset + 7] = 0;
-				vertexBufferData[offset + 8] = 0;
-
-				vertexBufferData[offset + 9] = 1;
-				vertexBufferData[offset + 10] = 1;
-				vertexBufferData[offset + 11] = 1;
-				vertexBufferData[offset + 12] = alpha;
-			}
-
-			vertexBufferData[offset + 13] = pma ? 1 : 0;
+			quadBufferData[offset + 21] = 1;
+			quadBufferData[offset + 22] = 1;
+			quadBufferData[offset + 23] = 1;
+			quadBufferData[offset + 24] = alpha;
 		}
 
-		setVertex(0);
-		setVertex(1);
-		setVertex(2);
-		setVertex(3);
+		quadBufferData[offset + 25] = pma ? 1 : 0;
 
 		currentQuadIndex++;
 		#if gl_stats
@@ -306,27 +313,19 @@ class BatchRenderer {
 		// use local vars to save some field access
 		var gl = this.gl;
 		var blendModeManager = this.blendModeManager;
-		var vertexBufferData = this.vertexBufferData;
 		var boundTextures = this.boundTextures;
 		var groups = this.groups;
 
 		shader.enable(projectionMatrix);
 
-		// bind the index buffer
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-
-		// upload vertex data and setup attribute pointers
+		// setup the vertex buffer
 		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-		var subArray = vertexBufferData.subarray(0, currentQuadIndex * floatsPerQuad);
-		gl.bufferSubData(gl.ARRAY_BUFFER, 0, subArray.byteLength, subArray);
+		gl.vertexAttribPointer(shader.aExtractor, 4, gl.FLOAT, false, 4 * Float32Array.BYTES_PER_ELEMENT, 0);
 
-		var stride = MultiTextureShader.floatsPerVertex * Float32Array.BYTES_PER_ELEMENT;
-		gl.vertexAttribPointer(shader.aVertexPosition, 2, gl.FLOAT, false, stride, 0);
-		gl.vertexAttribPointer(shader.aTextureCoord, 2, gl.FLOAT, false, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer(shader.aTextureId, 1, gl.FLOAT, false, stride, 4 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer(shader.aColorOffset, 4, gl.FLOAT, false, stride, 5 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer(shader.aColorMultiplier, 4, gl.FLOAT, false, stride, 9 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer(shader.aPremultipliedAlpha, 1, gl.FLOAT, false, stride, 13 * Float32Array.BYTES_PER_ELEMENT);
+		// upload quad data
+		gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+		var subArray = quadBufferData.subarray(0, currentQuadIndex * MultiTextureShader.floatsPerQuad);
+		gl.bufferSubData(gl.ARRAY_BUFFER, 0, subArray.byteLength, subArray);
 
 		for (i in 0...maxTextures) {
 			gl.activeTexture(gl.TEXTURE0 + i);
@@ -335,6 +334,9 @@ class BatchRenderer {
 
 		var lastBlendMode = null;
 
+		var stride = MultiTextureShader.floatsPerQuad * Float32Array.BYTES_PER_ELEMENT;
+		var offset = 0;
+		
 		// iterate over groups and render them
 		for (i in 0...currentGroupCount) {
 			var group = groups[i];
@@ -371,14 +373,27 @@ class BatchRenderer {
 				lastBlendMode.apply(gl);
 			}
 
+			// set vertex attribute pointers to the start of the group inside the vertex data
+			gl.vertexAttribPointer(shader.aX,                  4, gl.FLOAT, false, stride, offset);
+			gl.vertexAttribPointer(shader.aY,                  4, gl.FLOAT, false, stride, offset + 4 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer(shader.aU,                  4, gl.FLOAT, false, stride, offset + 8 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer(shader.aV,                  4, gl.FLOAT, false, stride, offset + 12 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer(shader.aTextureId,          1, gl.FLOAT, false, stride, offset + 16 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer(shader.aColorOffset,        4, gl.FLOAT, false, stride, offset + 17 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer(shader.aColorMultiplier,    4, gl.FLOAT, false, stride, offset + 21 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer(shader.aPremultipliedAlpha, 1, gl.FLOAT, false, stride, offset + 25 * Float32Array.BYTES_PER_ELEMENT);
 
 			// draw this group's slice of vertices
-			gl.drawElements(gl.TRIANGLES, group.size * 6, gl.UNSIGNED_SHORT, group.start * 6 * UInt16Array.BYTES_PER_ELEMENT);
+			gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, group.size);
+			
+			offset += group.size * stride;
 
 			#if gl_stats
 				GLStats.incrementDrawCall (DrawCallContext.STAGE);
 			#end
 		}
+		
+		shader.disable();
 
 		// disable the current OpenFL shader so it'll be re-enabled properly on next non-batched openfl render
 		// this is needed because we don't use ShaderManager to set our shader. Ideally we should do that, but
@@ -394,24 +409,6 @@ class BatchRenderer {
 		currentBlendMode = BlendMode.NORMAL;
 		currentGroupCount = 0;
 		startNextGroup();
-	}
-
-	/** creates an pre-filled index buffer data for rendering triangles **/
-	static function createIndicesForQuads(numQuads:Int):UInt16Array {
-		var totalIndices = numQuads * 3 * 2; // 2 triangles of 3 verties per quad
-		var indices = new UInt16Array(totalIndices);
-		var i = 0, j = 0;
-		while (i < totalIndices) {
-			indices[i + 0] = j + 0;
-			indices[i + 1] = j + 1;
-			indices[i + 2] = j + 2;
-			indices[i + 3] = j + 0;
-			indices[i + 4] = j + 2;
-			indices[i + 5] = j + 3;
-			i += 6;
-			j += 4;
-		}
-		return indices;
 	}
 }
 

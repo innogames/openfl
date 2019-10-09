@@ -15,8 +15,11 @@ class MultiTextureShader {
 	public var maxTextures(default,null):Int;
 	public var positionScale(default,null): Float32Array;
 
-	public var aVertexPosition(default,null):Int;
-	public var aTextureCoord(default,null):Int;
+	public var aExtractor(default,null):Int;
+	public var aX(default,null):Int;
+	public var aY(default,null):Int;
+	public var aU(default,null):Int;
+	public var aV(default,null):Int;
 	public var aTextureId(default,null):Int;
 	public var aColorOffset(default,null):Int;
 	public var aColorMultiplier(default,null):Int;
@@ -25,8 +28,12 @@ class MultiTextureShader {
 	var uProjMatrix:GLUniformLocation;
 	var uPositionScale:GLUniformLocation;
 
-	// x, y, u, v, texId, alpha, colorMult, colorOfs
-	public static inline var floatsPerVertex = 2 + 2 + 1 + 4 + 4 + 1;
+	// x0, x1, x2, x3
+	// y0, y1, y2, y3
+	// u0, u1, u2, u3
+	// v0, v1, v2, v3
+	// texId, colorMult, colorOfs, premult
+	public static inline var floatsPerQuad = 4 + 4 + 4 + 4 + 1 + 4 + 4 + 1;
 
 	public function new(gl:GLRenderContext) {
 		this.gl = gl;
@@ -48,8 +55,11 @@ class MultiTextureShader {
 		this.maxTextures = maxTextures;
 		this.positionScale = new Float32Array ([ 1.0, 1.0, 1.0, 1.0 ]);
 		
-		aVertexPosition = gl.getAttribLocation(program, 'aVertexPosition');
-		aTextureCoord = gl.getAttribLocation(program, 'aTextureCoord');
+		aExtractor = gl.getAttribLocation(program, "aExtractor");
+		aX = gl.getAttribLocation(program, "aX");
+		aY = gl.getAttribLocation(program, "aY");
+		aU = gl.getAttribLocation(program, "aU");
+		aV = gl.getAttribLocation(program, "aV");
 		aTextureId = gl.getAttribLocation(program, 'aTextureId');
 		aColorOffset = gl.getAttribLocation(program, 'aColorOffset');
 		aColorMultiplier = gl.getAttribLocation(program, 'aColorMultiplier');
@@ -64,15 +74,40 @@ class MultiTextureShader {
 	public function enable(projectionMatrix:Float32Array) {
 		gl.useProgram(program);
 
-		gl.enableVertexAttribArray(aVertexPosition);
-		gl.enableVertexAttribArray(aTextureCoord);
-		gl.enableVertexAttribArray(aTextureId);
-		gl.enableVertexAttribArray(aColorOffset);
-		gl.enableVertexAttribArray(aColorMultiplier);
-		gl.enableVertexAttribArray(aPremultipliedAlpha);
+		gl.enableVertexAttribArray(aExtractor);
+		enableQuadAttribute(aX);
+		enableQuadAttribute(aY);
+		enableQuadAttribute(aU);
+		enableQuadAttribute(aV);
+		enableQuadAttribute(aTextureId);
+		enableQuadAttribute(aColorOffset);
+		enableQuadAttribute(aColorMultiplier);
+		enableQuadAttribute(aPremultipliedAlpha);
 
 		gl.uniformMatrix4fv(uProjMatrix, 0, false, projectionMatrix);
 		gl.uniform4fv (uPositionScale, 1, positionScale);
+	}
+	
+	public function disable() {
+		gl.disableVertexAttribArray(aExtractor);
+		disableQuadAttribute(aX);
+		disableQuadAttribute(aY);
+		disableQuadAttribute(aU);
+		disableQuadAttribute(aV);
+		disableQuadAttribute(aTextureId);
+		disableQuadAttribute(aColorOffset);
+		disableQuadAttribute(aColorMultiplier);
+		disableQuadAttribute(aPremultipliedAlpha);
+	}
+
+	inline function enableQuadAttribute(id:Int) {
+		gl.enableVertexAttribArray(id);
+		gl.vertexAttribDivisor(id, 1);
+	}
+
+	inline function disableQuadAttribute(id:Int) {
+		gl.disableVertexAttribArray(id);
+		gl.vertexAttribDivisor(id, 0);
 	}
 
 	static function compileShader(gl:GLRenderContext, source:String, type:Int):Null<GLShader> {
@@ -169,8 +204,11 @@ ${select.join("\n")}
 	}
 
 	static inline var vsSource = '
-		attribute vec2 aVertexPosition;
-		attribute vec2 aTextureCoord;
+		attribute vec4 aExtractor;
+		attribute vec4 aX;
+		attribute vec4 aY;
+		attribute vec4 aU;
+		attribute vec4 aV;
 		attribute float aTextureId;
 		attribute vec4 aColorMultiplier;
 		attribute vec4 aColorOffset;
@@ -186,8 +224,12 @@ ${select.join("\n")}
 		varying float vPremultipliedAlpha;
 
 		void main(void) {
-			gl_Position = uProjMatrix * vec4(aVertexPosition, 0, 1) * uPostionScale;
-			vTextureCoord = aTextureCoord;
+			float x = dot(aX, aExtractor);
+			float y = dot(aY, aExtractor);
+			float u = dot(aU, aExtractor);
+			float v = dot(aV, aExtractor);
+			gl_Position = uProjMatrix * vec4(x, y, 0, 1) * uPostionScale;
+			vTextureCoord = vec2(u, v);
 			vTextureId = aTextureId;
 			vColorMultiplier = aColorMultiplier;
 			vColorOffset = aColorOffset;
