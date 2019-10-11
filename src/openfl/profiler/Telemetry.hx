@@ -21,15 +21,6 @@ import openfl._internal.Lib;
 	#end
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperty (Telemetry, "connected", { get: function () { return Telemetry.get_connected (); } });
-		
-	}
-	#end
-	
-	
 	public static function registerCommandHandler (commandName:String, handler:Dynamic):Bool {
 		
 		return false;

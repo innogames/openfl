@@ -30,19 +30,6 @@ class Timer extends EventDispatcher {
 	private var __timerID:Int;
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		var p = untyped Timer.prototype;
-		untyped global.Object.defineProperties (p, {
-			"delay": { get: p.get_delay, set: p.set_delay },
-			"repeatCount": { get: p.get_repeatCount, set: p.set_repeatCount }
-		});
-		
-	}
-	#end
-	
-	
 	public function new (delay:Float, repeatCount:Int = 0):Void {
 		
 		if (Math.isNaN (delay) || delay < 0) {

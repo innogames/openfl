@@ -42,18 +42,6 @@ import js.Browser;
 	private static var __timers = new Map<UInt, Timer> ();
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperties (Lib, {
-			"application": { get: function () { return Lib.get_application (); } },
-			"current": { get: function () { return Lib.get_current (); } }
-		});
-		
-	}
-	#end
-	
-	
 	public static function as<T> (v:Dynamic, c:Class<T>):Null<T> {
 		
 		#if flash

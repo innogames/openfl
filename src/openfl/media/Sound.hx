@@ -33,18 +33,6 @@ class Sound extends EventDispatcher {
 	private var __buffer:AudioBuffer;
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperties (Sound.prototype, {
-			"id3": { get: untyped __js__ ("function () { return this.get_id3 (); }") },
-			"length": { get: untyped __js__ ("function () { return this.get_length (); }") },
-		});
-		
-	}
-	#end
-	
-	
 	public function new (stream:URLRequest = null, context:SoundLoaderContext = null) {
 		
 		super (this);

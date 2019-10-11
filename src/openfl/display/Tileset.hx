@@ -23,15 +23,6 @@ class Tileset {
 	private var __data:Array<TileData>;
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperty (Tileset.prototype, "bitmapData", { get: untyped __js__ ("function () { return this.get_bitmapData (); }"), set: untyped __js__ ("function (v) { return this.set_bitmapData (v); }") });
-		
-	}
-	#end
-	
-	
 	// TODO: Add support for adding uniform tile rectangles (margin, spacing, width, height)
 	
 	public function new (bitmapData:BitmapData, rects:Array<Rectangle> = null) {

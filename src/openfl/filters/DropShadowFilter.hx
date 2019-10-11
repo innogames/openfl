@@ -43,27 +43,6 @@ import openfl.geom.Rectangle;
 	private var __strength:Float;
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperties (DropShadowFilter.prototype, {
-			"alpha": { get: untyped __js__ ("function () { return this.get_alpha (); }"), set: untyped __js__ ("function (v) { return this.set_alpha (v); }") },
-			"angle": { get: untyped __js__ ("function () { return this.get_angle (); }"), set: untyped __js__ ("function (v) { return this.set_angle (v); }") },
-			"blurX": { get: untyped __js__ ("function () { return this.get_blurX (); }"), set: untyped __js__ ("function (v) { return this.set_blurX (v); }") },
-			"blurY": { get: untyped __js__ ("function () { return this.get_blurY (); }"), set: untyped __js__ ("function (v) { return this.set_blurY (v); }") },
-			"color": { get: untyped __js__ ("function () { return this.get_color (); }"), set: untyped __js__ ("function (v) { return this.set_color (v); }") },
-			"distance": { get: untyped __js__ ("function () { return this.get_distance (); }"), set: untyped __js__ ("function (v) { return this.set_distance (v); }") },
-			"hideObject": { get: untyped __js__ ("function () { return this.get_hideObject (); }"), set: untyped __js__ ("function (v) { return this.set_hideObject (v); }") },
-			"inner": { get: untyped __js__ ("function () { return this.get_inner (); }"), set: untyped __js__ ("function (v) { return this.set_inner (v); }") },
-			"knockout": { get: untyped __js__ ("function () { return this.get_knockout (); }"), set: untyped __js__ ("function (v) { return this.set_knockout (v); }") },
-			"quality": { get: untyped __js__ ("function () { return this.get_quality (); }"), set: untyped __js__ ("function (v) { return this.set_quality (v); }") },
-			"strength": { get: untyped __js__ ("function () { return this.get_strength (); }"), set: untyped __js__ ("function (v) { return this.set_strength (v); }") },
-		});
-		
-	}
-	#end
-	
-	
 	public function new (distance:Float = 4, angle:Float = 45, color:Int = 0, alpha:Float = 1, blurX:Float = 4, blurY:Float = 4, strength:Float = 1, quality:Int = 1, inner:Bool = false, knockout:Bool = false, hideObject:Bool = false) {
 		
 		super ();

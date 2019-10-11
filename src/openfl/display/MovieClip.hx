@@ -64,23 +64,6 @@ class MovieClip extends Sprite #if openfl_dynamic implements Dynamic<DisplayObje
 	private var __totalFrames:Int;
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperties (MovieClip.prototype, {
-			"currentFrame": { get: untyped __js__ ("function () { return this.get_currentFrame (); }") },
-			"currentFrameLabel": { get: untyped __js__ ("function () { return this.get_currentFrameLabel (); }") },
-			"currentLabel": { get: untyped __js__ ("function () { return this.get_currentLabel (); }") },
-			"currentLabels": { get: untyped __js__ ("function () { return this.get_currentLabels (); }") },
-			"framesLoaded": { get: untyped __js__ ("function () { return this.get_framesLoaded (); }") },
-			"isPlaying": { get: untyped __js__ ("function () { return this.get_isPlaying (); }") },
-			"totalFrames": { get: untyped __js__ ("function () { return this.get_totalFrames (); }") },
-		});
-		
-	}
-	#end
-	
-	
 	public function new () {
 		
 		super ();

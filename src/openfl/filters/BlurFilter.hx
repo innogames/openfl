@@ -31,19 +31,6 @@ import openfl.geom.Rectangle;
 	private var __verticalPasses:Int;
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperties (BlurFilter.prototype, {
-			"blurX": { get: untyped __js__ ("function () { return this.get_blurX (); }"), set: untyped __js__ ("function (v) { return this.set_blurX (v); }") },
-			"blurY": { get: untyped __js__ ("function () { return this.get_blurY (); }"), set: untyped __js__ ("function (v) { return this.set_blurY (v); }") },
-			"quality": { get: untyped __js__ ("function () { return this.get_quality (); }"), set: untyped __js__ ("function (v) { return this.set_quality (v); }") },
-		});
-		
-	}
-	#end
-	
-	
 	public function new (blurX:Float = 4, blurY:Float = 4, quality:Int = 1) {
 		
 		super ();

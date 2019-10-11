@@ -107,10 +107,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 	public var contentsScaleFactor (get, never):Float;
 	public var displayState (get, set):StageDisplayState;
 	
-	#if commonjs
-	public var element:Element;
-	#end
-	
 	public var focus (get, set):InteractiveObject;
 	public var frameRate (get, set):Float;
 	public var fullScreenHeight (get, never):UInt;
@@ -131,9 +127,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 	private var __colorSplit:Array<Float>;
 	private var __colorString:String;
 	private var __contentsScaleFactor:Float;
-	#if (commonjs && !nodejs)
-	private var __cursor:MouseCursor;
-	#end
 	private var __deltaTime:Int;
 	private var __dirty:Bool;
 	private var __displayMatrix:Matrix;
@@ -167,23 +160,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	private var __wasFullscreen:Bool;
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperties (Stage.prototype, {
-			"color": { get: untyped __js__ ("function () { return this.get_color (); }"), set: untyped __js__ ("function (v) { return this.set_color (v); }") },
-			"contentsScaleFactor": { get: untyped __js__ ("function () { return this.get_contentsScaleFactor (); }") },
-			"displayState": { get: untyped __js__ ("function () { return this.get_displayState (); }"), set: untyped __js__ ("function (v) { return this.set_displayState (v); }") },
-			"focus": { get: untyped __js__ ("function () { return this.get_focus (); }"), set: untyped __js__ ("function (v) { return this.set_focus (v); }") },
-			"frameRate": { get: untyped __js__ ("function () { return this.get_frameRate (); }"), set: untyped __js__ ("function (v) { return this.set_frameRate (v); }") },
-			"fullScreenHeight": { get: untyped __js__ ("function () { return this.get_fullScreenHeight (); }") },
-			"fullScreenWidth": { get: untyped __js__ ("function () { return this.get_fullScreenWidth (); }") },
-		});
-		
-	}
-	#end
-	
-	public function new (#if commonjs width:Dynamic = 0, height:Dynamic = 0, color:Null<Int> = null, documentClass:Class<Dynamic> = null, windowConfig:Dynamic = null #else window:Window, color:Null<Int> = null #end) {
+	public function new (window:Window, color:Null<Int> = null) {
 		
 		#if hxtelemetry
 		Telemetry.__initialize ();
@@ -191,78 +168,9 @@ class Stage extends DisplayObjectContainer implements IModule {
 		
 		super ();
 		
-		#if commonjs
-		
-		if (!Math.isNaN (width)) {
-			
-			// if (Lib.current == null) Lib.current = new MovieClip ();
-			
-			if (Lib.current.__loaderInfo == null) {
-				
-				Lib.current.__loaderInfo = LoaderInfo.create (null);
-				Lib.current.__loaderInfo.content = Lib.current;
-				
-			}
-			
-			var resizable = (width == 0 && width == 0);
-			
-			#if (js && html5)
-			element = Browser.document.createElement ("div");
-			
-			if (resizable) {
-				
-				element.style.width = "100%";
-				element.style.height = "100%";
-				
-			}
-			#else
-			element = null;
-			#end
-			
-			if (windowConfig == null) windowConfig = {};
-			windowConfig.width = width;
-			windowConfig.height = height;
-			windowConfig.element = element;
-			windowConfig.resizable = resizable;
-			if (!Reflect.hasField (windowConfig, "stencilBuffer")) windowConfig.stencilBuffer = true;
-			if (!Reflect.hasField (windowConfig, "depthBuffer")) windowConfig.depthBuffer = true;
-			if (!Reflect.hasField (windowConfig, "background")) windowConfig.background = null;
-			
-			window = new Window (windowConfig);
-			window.stage = this;
-			
-			// if (Application.current == null) {
-				
-				var app = new Application ();
-				app.create ({});
-				app.createWindow (window);
-				app.exec ();
-				
-			// } else {
-				
-			// 	var app = Application.current;
-			// 	app.createWindow (window);
-			// 	app.addModule (this);
-				
-			// }
-			
-			// this.color = 0xFFFFFF;
-			this.color = color;
-			
-		} else {
-			
-			this.window = cast width;
-			this.color = height;
-			
-		}
-		
-		#else
-		
 		this.application = window.application;
 		this.window = window;
 		this.color = color;
-		
-		#end
 		
 		this.name = null;
 		
@@ -317,23 +225,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 		}
 		
-		#if commonjs
-		if (!window.config.resizable) {
-			
-			__setLogicalSize (window.config.width, window.config.height);
-			
-		}
-		
-		if (documentClass != null) {
-			
-			DisplayObject.__initStage = this;
-			var sprite:Sprite = cast Type.createInstance (documentClass, []);
-			addChild (sprite);
-			
-		}
-		
-		Application.current.addModule (this);
-		#end
 		
 	}
 	
@@ -1470,33 +1361,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 					
 					if (cursor != null) {
 						
-						#if (commonjs && !nodejs)
-						// TODO: Formal API
-						if (cursor != __cursor && @:privateAccess !lime._backend.html5.HTML5Mouse.__hidden) {
-							
-							@:privateAccess window.backend.element.style.cursor = switch (cursor) {
-								
-								case ARROW: "default";
-								case CROSSHAIR: "crosshair";
-								case MOVE: "move";
-								case POINTER: "pointer";
-								case RESIZE_NESW: "nesw-resize";
-								case RESIZE_NS: "ns-resize";
-								case RESIZE_NWSE: "nwse-resize";
-								case RESIZE_WE: "ew-resize";
-								case TEXT: "text";
-								case WAIT: "wait";
-								case WAIT_ARROW: "wait";
-								default: "auto";
-								
-							}
-							
-							__cursor = cursor;
-							
-						}
-						#else
 						LimeMouse.cursor = cursor;
-						#end
 						break;
 						
 					}
@@ -1507,16 +1372,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 			if (cursor == null) {
 				
-				#if (commonjs && !nodejs)
-				if (__cursor != null && @:privateAccess !lime._backend.html5.HTML5Mouse.__hidden) {
-					
-					@:privateAccess window.backend.element.style.cursor = "default";
-					__cursor = null;
-					
-				}
-				#else
 				LimeMouse.cursor = ARROW;
-				#end
 				
 			}
 			
