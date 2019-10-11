@@ -1,6 +1,7 @@
 MIT License
 ===========
 
+Copyright (c) 2019 InnoGames
 Copyright (c) 2013-2018 Joshua Granick and other OpenFL contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

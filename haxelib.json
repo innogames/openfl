@@ -1,11 +1,11 @@
 {
 	"name": "openfl",
-	"url": "http://www.openfl.org",
+	"url": "https://github.com/innogames/openfl/",
 	"license": "MIT",
 	"tags": [],
 	"description": "The \"Open Flash Library\" for fast 2D development",
 	"version": "7.1.1",
-	"releasenote": "Minor improvement for use from CI environments, minor canvas render fix",
-	"contributors": [ "singmajesty" ],
+	"releasenote": "Unreleased",
+	"contributors": ["nadako"],
 	"classPath": "src"
 }
