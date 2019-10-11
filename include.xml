@@ -34,10 +34,6 @@
 	
 	<template path="assets/templates" />
 	
-	<source path="src/externs/core/flash" if="flash" />
-	<source path="src/externs/core/openfl" if="display || flash" />
-	<source path="src/externs/extras" if="display" />
-	
 	<include haxelib="${custom-backend}" if="display custom-backend" />
 	<haxelib name="${custom-backend}" if="custom-backend" unless="display" />
 	
