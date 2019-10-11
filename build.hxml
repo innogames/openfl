@@ -5,3 +5,5 @@ openfl.display.Stage
 --no-output
 -D html5
 -D lime_opengl
+-D vertex_array_object
+-D gl_stats
