@@ -12,12 +12,6 @@ class ExtraParams {
 		
 		if (!Context.defined ("tools")) {
 			
-			if (Context.defined ("display")) {
-				
-				includeExterns ();
-				
-			}
-			
 			if (!Context.defined ("flash")) {
 				
 				Compiler.allowPackage ("flash");
@@ -28,23 +22,6 @@ class ExtraParams {
 		}
 		
 	}
-	
-	
-	public static function includeExterns ():Void {
-		
-		var childPath = Context.resolvePath ("externs/core");
-		
-		var parts = StringTools.replace (childPath, "\\", "/").split ("/");
-		parts.pop ();
-		
-		var externsPath = parts.join ("/");
-		
-		Compiler.addClassPath (externsPath + "/core/openfl");
-		Compiler.addClassPath (externsPath + "/core/flash");
-		Compiler.addClassPath (externsPath + "/extras");
-		
-	}
-	
 	
 }
 
