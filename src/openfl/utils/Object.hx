@@ -45,7 +45,7 @@ package openfl.utils;
 	
 	public inline function propertyIsEnumerable (name:String):Bool {
 		
-		return (this != null && Reflect.hasField (this, name) && Std.is (Reflect.field (this, name), Iterable_));
+		return (this != null && Reflect.hasField (this, name));
 		
 	}
 	
@@ -87,28 +87,6 @@ package openfl.utils;
 	
 	
 }
-
-
-#if (!cs || haxe_ver > "3.3.0")
-
-@:keep @:native('haxe.lang.Iterator') private interface Iterator_<T> {
-	
-	public function hasNext ():Bool;
-	public function next ():T;
-	
-}
-
-
-@:keep @:native('haxe.lang.Iterable') private interface Iterable_<T> {
-	
-	public function iterator ():Iterator_<T>;
-	
-}
-
-#else
-typedef Iterator_<T> = cs.internal.Iterator<T>;
-typedef Iterable_<T> = cs.internal.Iterator.Iterable<T>;
-#end
 
 
 #if !flash

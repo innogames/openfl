@@ -1120,9 +1120,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 				}
 			} catch (e2:Dynamic) {}
 			untyped __js__ ("throw e");
-			#elseif cs
-			throw e;
-			//cs.Lib.rethrow (e);
 			#else
 			throw e;
 			#end

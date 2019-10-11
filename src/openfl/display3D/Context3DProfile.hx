@@ -1,9 +1,5 @@
 package openfl.display3D;
 
-
-import openfl._internal.utils.NullUtils;
-
-
 @:enum abstract Context3DProfile(Null<Int>) {
 	
 	public var BASELINE = 0;
@@ -44,21 +40,5 @@ import openfl._internal.utils.NullUtils;
 		}
 		
 	}
-	
-	#if cs
-	@:noCompletion @:op(A == B) private static function equals (a:Context3DProfile, b:Context3DProfile):Bool {
-		
-		return NullUtils.valueEquals (a, b, Int);
-		
-	}
-	#end
-	
-	#if cs
-	@:noCompletion @:op(A != B) private static function notEquals (a:Context3DProfile, b:Context3DProfile):Bool {
-		
-		return !equals (a, b);
-		
-	}
-	#end
 	
 }

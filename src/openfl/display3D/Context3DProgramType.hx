@@ -1,6 +1,4 @@
 package openfl.display3D;
-import openfl._internal.utils.NullUtils;
-
 
 @:enum abstract Context3DProgramType(Null<Int>) {
 	
@@ -30,21 +28,5 @@ import openfl._internal.utils.NullUtils;
 		}
 		
 	}
-	
-	#if cs
-	@:noCompletion @:op(A == B) private static function equals (a:Context3DProgramType, b:Context3DProgramType):Bool {
-		
-		return NullUtils.valueEquals (a, b, Int);
-		
-	}
-	#end
-	
-	#if cs
-	@:noCompletion @:op(A != B) private static function notEquals (a:Context3DProgramType, b:Context3DProgramType):Bool {
-		
-		return !equals (a, b);
-		
-	}
-	#end
 	
 }

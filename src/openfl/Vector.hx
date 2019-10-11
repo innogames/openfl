@@ -207,13 +207,11 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	}
 	
 	
-	#if !cs
 	@:to static #if (!js && !flash) inline #end function toFunctionVector<T:Function> (t:AbstractVector<T>, length:Int, fixed:Bool, array:Array<T>):AbstractVector<T> {
 		
 		return new AbstractVector<T> (cast new FunctionVector (length, fixed), array);
 		
 	}
-	#end
 	
 	
 	@:to static #if (!js && !flash) inline #end function toObjectVector<T> (t:AbstractVector<T>, length:Int, fixed:Bool, array:Array<T>):AbstractVector<T> {
@@ -952,7 +950,6 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 
 
 
-#if !cs
 #if !openfl_debug
 @:fileXml('tags="haxe,release"')
 @:noDebug
@@ -1273,7 +1270,6 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	
 	
 }
-#end
 
 
 
