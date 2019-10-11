@@ -1,0 +1,7 @@
+-cp src
+# --macro include("openfl")
+openfl.display.Stage
+-js openfl.js
+--no-output
+-D html5
+-D lime_opengl
