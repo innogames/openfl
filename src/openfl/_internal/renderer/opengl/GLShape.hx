@@ -2,7 +2,6 @@ package openfl._internal.renderer.opengl;
 
 
 import lime.utils.Float32Array;
-import openfl._internal.renderer.cairo.CairoGraphics;
 import openfl._internal.renderer.canvas.CanvasGraphics;
 import openfl._internal.renderer.RenderSession;
 import openfl.display.DisplayObject;
@@ -39,8 +38,6 @@ class GLShape {
 			
 			#if (js && html5)
 			CanvasGraphics.render (graphics, renderSession);
-			#elseif lime_cairo
-			CairoGraphics.render (graphics, renderSession, shape.__renderTransform);
 			#end
 			
 			var bounds = graphics.__bounds;
@@ -118,8 +115,6 @@ class GLShape {
 			
 			#if (js && html5)
 			CanvasGraphics.render (graphics, renderSession);
-			#elseif lime_cairo
-			CairoGraphics.render (graphics, renderSession, shape.__renderTransform);
 			#end
 			
 			var bounds = graphics.__bounds;

@@ -247,24 +247,6 @@ class SimpleButton extends InteractiveObject {
 	}
 	
 	
-	private override function __renderCairo (renderSession:RenderSession):Void {
-		
-		if (!__renderable || __worldAlpha <= 0 || __currentState == null) return;
-		
-		renderSession.maskManager.pushObject (this);
-		__currentState.__renderCairo (renderSession);
-		renderSession.maskManager.popObject (this);
-		
-	}
-	
-	
-	private override function __renderCairoMask (renderSession:RenderSession):Void {
-		
-		__currentState.__renderCairoMask (renderSession);
-		
-	}
-	
-	
 	private override function __renderCanvas (renderSession:RenderSession):Void {
 		
 		if (!__renderable || __worldAlpha <= 0 || __currentState == null) return;

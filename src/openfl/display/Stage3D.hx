@@ -178,20 +178,6 @@ class Stage3D extends EventDispatcher {
 	}
 	
 	
-	private function __renderCairo (stage:Stage, renderSession:RenderSession):Void {
-		
-		if (!visible) return;
-		
-		if (__contextRequested) {
-			
-			__dispatchError ();
-			__contextRequested = false;
-			
-		}
-		
-	}
-	
-	
 	private function __renderCanvas (stage:Stage, renderSession:RenderSession):Void {
 		
 		if (!visible) return;

@@ -9,7 +9,6 @@ import lime.ui.KeyModifier;
 import lime.ui.MouseCursor;
 import lime.ui.Window.CopyDataProvider;
 import lime.utils.Log;
-import openfl._internal.renderer.cairo.CairoTextField;
 import openfl._internal.renderer.canvas.CanvasTextField;
 import openfl._internal.renderer.canvas.CanvasSmoothing;
 import openfl._internal.renderer.opengl.GLRenderer;
@@ -1364,17 +1363,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	}
 	
 	
-	private override function __renderCairo (renderSession:RenderSession):Void {
-		
-		#if lime_cairo
-		__forceCachedBitmapUpdate = __forceCachedBitmapUpdate || __dirty;
-		CairoTextField.render (this, renderSession, __worldTransform);
-		super.__renderCairo (renderSession);
-		#end
-		
-	}
-	
-	
 	private override function __renderCanvas (renderSession:RenderSession):Void {
 		
 		#if (js && html5)
@@ -1407,8 +1395,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		__forceCachedBitmapUpdate = __forceCachedBitmapUpdate || __dirty;
 		#if (js && html5)
 		CanvasTextField.render (this, renderSession, __worldTransform);
-		#elseif lime_cairo
-		CairoTextField.render (this, renderSession, __worldTransform);
 		#end
 		
 		super.__renderGL (renderSession);
@@ -1420,8 +1406,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 		#if (js && html5)
 		CanvasTextField.render (this, renderSession, __worldTransform);
-		#elseif lime_cairo
-		CairoTextField.render (this, renderSession, __worldTransform);
 		#end
 		
 		super.__renderGLMask (renderSession);

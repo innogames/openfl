@@ -2,12 +2,8 @@ package openfl.display;
 
 
 import lime.graphics.opengl.GLVertexArrayObject;
-import lime.graphics.cairo.Cairo;
 import lime.ui.MouseCursor;
 import lime.utils.ObjectPool;
-import openfl._internal.renderer.cairo.CairoBitmap;
-import openfl._internal.renderer.cairo.CairoDisplayObject;
-import openfl._internal.renderer.cairo.CairoGraphics;
 import openfl._internal.renderer.canvas.CanvasBitmap;
 import openfl._internal.renderer.canvas.CanvasDisplayObject;
 import openfl._internal.renderer.canvas.CanvasGraphics;
@@ -97,7 +93,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __cacheBitmapColorTransform:ColorTransform;
 	private var __cacheBitmapData:BitmapData;
 	private var __cacheBitmapRender:Bool;
-	private var __cairo:Cairo;
 	private var __children:Array<DisplayObject>;
 	private var __filters:Array<BitmapFilter>;
 	private var __graphics:Graphics;
@@ -345,8 +340,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	
 	private function __cleanup ():Void {
-		
-		__cairo = null;
 		
 		#if (js && html5)
 		__canvas = null;
@@ -743,38 +736,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			__graphics.__readGraphicsData (graphicsData);
 			
 		}
-		
-	}
-	
-	
-	private function __renderCairo (renderSession:RenderSession):Void {
-		
-		#if lime_cairo
-		__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
-		
-		if (__cacheBitmap != null && !__cacheBitmapRender) {
-			
-			CairoBitmap.render (__cacheBitmap, renderSession);
-			
-		} else {
-			
-			CairoDisplayObject.render (this, renderSession);
-			
-		}
-		#end
-		
-	}
-	
-	
-	private function __renderCairoMask (renderSession:RenderSession):Void {
-		
-		#if lime_cairo
-		if (__graphics != null) {
-			
-			CairoGraphics.renderMask (__graphics, renderSession);
-			
-		}
-		#end
 		
 	}
 	

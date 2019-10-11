@@ -20,7 +20,6 @@ interface IBitmapDrawable {
 	private var __worldTransform:Matrix;
 	
 	private function __getBounds (rect:Rectangle, matrix:Matrix):Void;
-	private function __renderCairo (renderSession:RenderSession):Void;
 	private function __renderCanvas (renderSession:RenderSession):Void;
 	private function __renderGL (renderSession:RenderSession):Void;
 	private function __updateChildren (transformOnly:Bool):Void;

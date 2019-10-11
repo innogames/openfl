@@ -6,7 +6,6 @@ import lime.graphics.opengl.GLContextType;
 import openfl._internal.renderer.opengl.vao.VertexArrayObjectContext;
 import openfl._internal.renderer.opengl.vao.IVertexArrayObjectContext;
 import lime.graphics.opengl.GLFramebuffer;
-import lime.graphics.CairoRenderContext;
 import lime.graphics.CanvasRenderContext;
 import lime.graphics.GLRenderContext;
 import lime.graphics.RendererType;
@@ -30,7 +29,6 @@ class RenderSession {
 	
 	
 	public var allowSmoothing:Bool;
-	public var cairo:CairoRenderContext;
 	public var clearRenderDirty:Bool;
 	public var context:CanvasRenderContext;
 	#if (js && html5)

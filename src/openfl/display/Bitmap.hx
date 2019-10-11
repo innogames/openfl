@@ -1,7 +1,6 @@
 package openfl.display;
 
 
-import openfl._internal.renderer.cairo.CairoBitmap;
 import openfl._internal.renderer.canvas.CanvasBitmap;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLRenderer;
@@ -159,32 +158,6 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 		}
 		
 		return false;
-		
-	}
-	
-	
-	private override function __renderCairo (renderSession:RenderSession):Void {
-		
-		#if lime_cairo
-		__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
-		
-		if (__cacheBitmap != null && !__cacheBitmapRender) {
-			
-			CairoBitmap.render (__cacheBitmap, renderSession);
-			
-		} else {
-			
-			CairoBitmap.render (this, renderSession);
-			
-		}
-		#end
-		
-	}
-	
-	
-	private override function __renderCairoMask (renderSession:RenderSession):Void {
-		
-		renderSession.cairo.rectangle (0, 0, width, height);
 		
 	}
 	

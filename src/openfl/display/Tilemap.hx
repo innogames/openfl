@@ -9,9 +9,6 @@ import openfl.geom.Rectangle;
 import openfl.Vector;
 
 #if !flash
-import openfl._internal.renderer.cairo.CairoBitmap;
-import openfl._internal.renderer.cairo.CairoDisplayObject;
-import openfl._internal.renderer.cairo.CairoTilemap;
 import openfl._internal.renderer.canvas.CanvasBitmap;
 import openfl._internal.renderer.canvas.CanvasDisplayObject;
 import openfl._internal.renderer.canvas.CanvasTilemap;
@@ -329,26 +326,6 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 	
 	
 	#if !flash
-	private override function __renderCairo (renderSession:RenderSession):Void {
-		
-		#if lime_cairo
-		__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
-		
-		if (__cacheBitmap != null && !__cacheBitmapRender) {
-			
-			CairoBitmap.render (__cacheBitmap, renderSession);
-			
-		} else {
-			
-			CairoDisplayObject.render (this, renderSession);
-			CairoTilemap.render (this, renderSession);
-			
-		}
-		#end
-		
-	}
-	
-	
 	private override function __renderCanvas (renderSession:RenderSession):Void {
 		
 		__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
