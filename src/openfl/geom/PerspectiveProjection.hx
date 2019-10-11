@@ -20,15 +20,6 @@ class PerspectiveProjection {
 	private var matrix3D:Matrix3D;
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperty (PerspectiveProjection.prototype, "fieldOfView", { get: untyped __js__ ("function () { return this.get_fieldOfView (); }"), set: untyped __js__ ("function (v) { return this.set_fieldOfView (v); }") });
-		
-	}
-	#end
-	
-	
 	public function new () {
 		
 		__fieldOfView = 0;

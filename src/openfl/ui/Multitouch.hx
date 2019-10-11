@@ -21,12 +21,6 @@ import openfl.Vector;
 		supportsGestureEvents = false;
 		inputMode = MultitouchInputMode.TOUCH_POINT;
 		
-		#if openfljs
-		untyped Object.defineProperties (Multitouch, {
-			"supportsTouchEvents": { get: function () { return Multitouch.get_supportsTouchEvents (); } }
-		});
-		#end
-		
 	}
 	
 	

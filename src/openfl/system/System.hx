@@ -19,18 +19,6 @@ import cpp.vm.Gc;
 	public static var vmVersion (get, never):String;
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperties (System, {
-			"totalMemory": { get: function () { return System.get_totalMemory (); } },
-			"vmVersion": { get: function () { return System.get_vmVersion (); } },
-		});
-		
-	}
-	#end
-	
-	
 	public static function exit (code:Int):Void {
 		
 		LimeSystem.exit (code);

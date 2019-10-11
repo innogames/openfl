@@ -30,15 +30,6 @@ class Sprite extends DisplayObjectContainer {
 	public var useHandCursor:Bool;
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperty (Sprite.prototype, "graphics", { get: untyped __js__ ("function () { return this.get_graphics (); }") });
-		
-	}
-	#end
-	
-	
 	public function new () {
 		
 		super ();

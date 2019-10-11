@@ -27,17 +27,6 @@ class ConvolutionFilter extends BitmapFilter {
 	private var __matrix:Array<Float>;
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperties (ConvolutionFilter.prototype, {
-			"matrix": { get: untyped __js__ ("function () { return this.get_matrix (); }"), set: untyped __js__ ("function (v) { return this.set_matrix (v); }") },
-		});
-		
-	}
-	#end
-	
-	
 	public function new (matrixX:Int = 0, matrixY:Int = 0, matrix:Array<Float> = null, divisor:Float = 1.0, bias:Float = 0.0, preserveAlpha:Bool = true, clamp:Bool = true, color:Int = 0, alpha:Float = 0.0) {
 		
 		super ();

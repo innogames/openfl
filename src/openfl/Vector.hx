@@ -1,4 +1,4 @@
-package openfl; #if (!flash || display) #if (!openfljs || !js)
+package openfl; #if (!flash || display)
 
 
 import haxe.Constraints.Function;
@@ -2551,7 +2551,6 @@ private class VectorIterator<T> {
 
 
 
-#end
 #else
 
 

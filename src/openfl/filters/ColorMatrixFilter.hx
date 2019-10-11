@@ -22,17 +22,6 @@ import openfl.geom.Rectangle;
 	private var __matrix:Array<Float>;
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperties (ColorMatrixFilter.prototype, {
-			"matrix": { get: untyped __js__ ("function () { return this.get_matrix (); }"), set: untyped __js__ ("function (v) { return this.set_matrix (v); }") },
-		});
-		
-	}
-	#end
-	
-	
 	public function new (matrix:Array<Float> = null) {
 		
 		super ();

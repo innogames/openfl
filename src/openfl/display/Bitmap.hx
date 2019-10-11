@@ -46,14 +46,6 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 	var __batchQuad:Quad;
 	var __batchQuadDirty:Bool = true;
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperty (Bitmap.prototype, "bitmapData", { get: untyped __js__ ("function () { return this.get_bitmapData (); }"), set: untyped __js__ ("function (v) { return this.set_bitmapData (v); }") });
-		
-	}
-	#end
-	
 	
 	public function new (bitmapData:BitmapData = null, pixelSnapping:PixelSnapping = null, smoothing:Bool = false) {
 		

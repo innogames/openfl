@@ -51,25 +51,6 @@ import sys.io.Process;
 	private static var __standardDensities = [ 120, 160, 240, 320, 480, 640, 800, 960 ];
 	
 	
-	#if openfljs
-	private static function __init__ () {
-		
-		untyped Object.defineProperties (Capabilities, {
-			"cpuArchitecture": { get: function () { return Capabilities.get_cpuArchitecture (); } },
-			"language": { get: function () { return Capabilities.get_language (); } },
-			"manufacturer": { get: function () { return Capabilities.get_manufacturer (); } },
-			"os": { get: function () { return Capabilities.get_os (); } },
-			"pixelAspectRatio": { get: function () { return Capabilities.get_pixelAspectRatio (); } },
-			"screenDPI": { get: function () { return Capabilities.get_screenDPI (); } },
-			"screenResolutionX": { get: function () { return Capabilities.get_screenResolutionX (); } },
-			"screenResolutionY": { get: function () { return Capabilities.get_screenResolutionY (); } },
-			"version": { get: function () { return Capabilities.get_version (); } }
-		});
-		
-	}
-	#end
-	
-	
 	public static function hasMultiChannelAudio (type:String):Bool {
 		
 		return false;
