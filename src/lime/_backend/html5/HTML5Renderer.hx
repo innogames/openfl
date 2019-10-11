@@ -53,12 +53,7 @@ class HTML5Renderer {
 	
 	private function createContext ():Void {
 		
-		if (parent.window.backend.div != null) {
-			
-			parent.context = DOM (cast parent.window.backend.div);
-			parent.type = DOM;
-			
-		} else if (parent.window.backend.canvas != null) {
+		if (parent.window.backend.canvas != null) {
 			
 			var webgl:RenderingContext = null;
 			

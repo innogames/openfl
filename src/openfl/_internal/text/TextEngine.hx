@@ -280,11 +280,7 @@ class TextEngine {
 		} else {
 			
 			ascent = format.size;
-			#if dom
-			descent = 3;
-			#else
 			descent = format.size * 0.185;
-			#end
 		}
 		
 		leading = format.leading;
@@ -695,14 +691,6 @@ class TextEngine {
 			
 			currentTextHeight = group.offsetY - GUTTER + group.ascent + group.descent;
 			
-			#if dom
-			if (!this.textField.__renderedOnCanvasWhileOnDOM) {
-				
-				currentTextHeight += group.leading;
-				
-			}
-			#end
-			
 			if (currentTextHeight > textHeight) {
 				
 				textHeight = currentTextHeight;
@@ -1071,11 +1059,7 @@ class TextEngine {
 				} else {
 					
 					ascent = currentFormat.size;
-					#if dom
-					descent = this.textField.__renderedOnCanvasWhileOnDOM ? currentFormat.size * 0.185 : 3;
-					#else
 					descent = currentFormat.size * 0.185;
-					#end
 				}
 				
 				leading = currentFormat.leading;
@@ -1610,19 +1594,7 @@ class TextEngine {
 	#if (js && html5)
 	inline private function measureTextWidth (value:String):Float {
 		
-		#if dom
-		if (this.textField.__renderedOnCanvasWhileOnDOM) {
-			
-			return __context.measureText(value).width;
-			
-		}
-		// This measure for DOM is not perfect but it is close to it. The best would be to measure it on DOM like
-		// hiddenDivElement.innerHTML=value then hiddenDivElement.clientWidth, but this is way too slow compared to
-		// measuring it on canvas
-		return Math.round(__context.measureText(value).width);
-		#else
 		return __context.measureText(value).width;
-		#end
 		
 	}
 	#end

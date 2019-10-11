@@ -8,7 +8,6 @@ import openfl._internal.renderer.opengl.vao.IVertexArrayObjectContext;
 import lime.graphics.opengl.GLFramebuffer;
 import lime.graphics.CairoRenderContext;
 import lime.graphics.CanvasRenderContext;
-import lime.graphics.DOMRenderContext;
 import lime.graphics.GLRenderContext;
 import lime.graphics.RendererType;
 //import openfl._internal.renderer.opengl.utils.BlendModeManager;
@@ -34,7 +33,9 @@ class RenderSession {
 	public var cairo:CairoRenderContext;
 	public var clearRenderDirty:Bool;
 	public var context:CanvasRenderContext;
-	public var element:DOMRenderContext;
+	#if (js && html5)
+	public var element:js.html.DivElement;
+	#end
 	public var forceSmoothing:Bool;
 	public var gl(default, set):GLRenderContext;
 	// public var lockTransform:Bool;

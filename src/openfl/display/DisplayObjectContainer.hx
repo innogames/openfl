@@ -802,57 +802,6 @@ class DisplayObjectContainer extends InteractiveObject {
 	}
 	
 	
-	private override function __renderDOM (renderSession:RenderSession):Void {
-		
-		__cleanupRemovedChildren ();
-		
-		super.__renderDOM (renderSession);
-		
-		if (__cacheBitmap != null && !__cacheBitmapRender) return;
-		
-		renderSession.maskManager.pushObject (this);
-		
-		if (renderSession.clearRenderDirty) {
-			
-			for (child in __children) {
-				
-				child.__renderDOM (renderSession);
-				child.__renderDirty = false;
-				
-			}
-			
-			__renderDirty = false;
-			
-		} else {
-			
-			for (child in __children) {
-				
-				child.__renderDOM (renderSession);
-				
-			}
-			
-		}
-		
-		renderSession.maskManager.popObject (this);
-		
-	}
-	
-	
-	private override function __renderDOMClear (renderSession:RenderSession):Void {
-		
-		for (child in __children) {
-			child.__renderDOMClear (renderSession);
-		}
-		
-		for (orphan in __removedChildren) {
-			if (orphan.stage == null) {
-				orphan.__renderDOMClear (renderSession);
-			}
-		}
-		
-	}
-	
-	
 	private override function __renderGL (renderSession:RenderSession):Void {
 		
 		__cleanupRemovedChildren ();

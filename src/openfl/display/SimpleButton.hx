@@ -44,7 +44,6 @@ class SimpleButton extends InteractiveObject {
 	private var __hitTestState:DisplayObject;
 	private var __ignoreEvent:Bool;
 	private var __overState:DisplayObject;
-	private var __previousStates:Vector<DisplayObject>;
 	private var __soundTransform:SoundTransform;
 	private var __symbol:ButtonSymbol;
 	private var __upState:DisplayObject;
@@ -290,37 +289,6 @@ class SimpleButton extends InteractiveObject {
 		
 		Rectangle.__pool.release (bounds);
 		__currentState.__renderCanvasMask (renderSession);
-		
-	}
-	
-	
-	private override function __renderDOM (renderSession:RenderSession):Void {
-		
-		#if !neko
-		
-		renderSession.maskManager.pushObject (this);
-		
-		for (previousState in __previousStates) {
-			
-			previousState.__renderDOM (renderSession);
-			
-		}
-		
-		__previousStates.length = 0;
-		
-		if (__currentState != null) {
-
-			if (__currentState.stage != stage) {
-				__currentState.__setStageReference(stage);
-			}
-
-			__currentState.__renderDOM (renderSession);
-			
-		}
-		
-		renderSession.maskManager.popObject (this);
-		
-		#end
 		
 	}
 	
@@ -577,38 +545,7 @@ class SimpleButton extends InteractiveObject {
 			
 		}
 		
-		// #if (js && html5 && dom)
-		#if (js && html5)
-		if (DisplayObject.__supportDOM && __previousStates == null) {
-			
-			__previousStates = new Vector<DisplayObject> ();
-			
-		}
-		#end
-		
 		if (value != __currentState) {
-			
-			// #if (js && html5 && dom)
-			#if (js && html5)
-			if (DisplayObject.__supportDOM) {
-				
-				if (__currentState != null) {
-					
-					__currentState.__setStageReference (null);
-					__previousStates.push (__currentState);
-					
-				}
-				
-				var index = __previousStates.indexOf (value);
-				
-				if (index > -1) {
-					
-					__previousStates.splice (index, 1);
-					
-				}
-				
-			}
-			#end
 			
 			if (value != null) {
 				

@@ -12,8 +12,6 @@ import lime.utils.Log;
 import openfl._internal.renderer.cairo.CairoTextField;
 import openfl._internal.renderer.canvas.CanvasTextField;
 import openfl._internal.renderer.canvas.CanvasSmoothing;
-import openfl._internal.renderer.dom.DOMBitmap;
-import openfl._internal.renderer.dom.DOMTextField;
 import openfl._internal.renderer.opengl.GLRenderer;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.swf.SWFLite;
@@ -123,7 +121,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	#if (js && html5)
 	private var __div:DivElement;
-	private var __renderedOnCanvasWhileOnDOM:Bool = false;
 	private var __rawHtmlText:String;
 	#end
 	
@@ -1382,29 +1379,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 		#if (js && html5)
 		
-		// TODO: Better DOM workaround on cacheAsBitmap
-		
-		if (renderSession.renderType == DOM && (!__renderedOnCanvasWhileOnDOM  || __forceCachedBitmapUpdate)) {
-			
-			__renderedOnCanvasWhileOnDOM = true;
-			
-			if (type == TextFieldType.INPUT) {
-				
-				replaceText (0, __text.length, __text);
-				
-			}
-			
-			if (__isHTML) {
-				
-				__updateText (HTMLParser.parse(__rawHtmlText, __textFormat, __textEngine.textFormatRanges));
-				
-			}
-			
-			__dirty = true;
-			__layoutDirty = true;
-			__setRenderDirty ();
-			
-		}
 		__forceCachedBitmapUpdate = __forceCachedBitmapUpdate || __dirty;
 		
 		CanvasTextField.render (this, renderSession, __worldTransform);
@@ -1424,51 +1398,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		}
 		
 		#end
-		
-	}
-	
-	
-	private override function __renderDOM (renderSession:RenderSession):Void {
-		
-		#if (js && html5)
-		
-		__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
-		if (__cacheBitmap != null && !__cacheBitmapRender) {
-			
-			__renderDOMClear (renderSession);
-			__cacheBitmap.stage = stage;
-			
-			DOMBitmap.render (__cacheBitmap, renderSession);
-			
-		} else {
-			
-			if (__renderedOnCanvasWhileOnDOM) {
-				
-				__renderedOnCanvasWhileOnDOM = false;
-				
-				if (__isHTML && __rawHtmlText != null) {
-					
-					__updateText (__text);
-					__dirty = true;
-					__layoutDirty = true;
-					__setRenderDirty ();
-					
-				}
-				
-			}
-			
-			DOMTextField.render (this, renderSession);
-			
-		}
-		
-		#end
-		
-	}
-	
-	
-	private override function __renderDOMClear (renderSession:RenderSession):Void {
-		
-		DOMTextField.clear (this, renderSession);
 		
 	}
 	
@@ -1519,13 +1448,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			
 		}
 		
-		var enableInput = #if (js && html5) (DisplayObject.__supportDOM ? __renderedOnCanvasWhileOnDOM : true) #else true #end;
-		
-		if (enableInput) {
-			
-			__enableInput ();
-			
-		}
+		__enableInput ();
 		
 	}
 
@@ -1552,13 +1475,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	
 	private function __stopTextInput ():Void {
 		
-		var disableInput = #if (js && html5) (DisplayObject.__supportDOM ? __renderedOnCanvasWhileOnDOM : true) #else true #end;
-		
-		if (disableInput) {
-			
-			__disableInput ();
-			
-		}
+		__disableInput ();
 		
 	}
 	
@@ -1691,14 +1608,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 		value = __normalizeNewlines (value);
 		
-		#if (js && html5)
-		if (DisplayObject.__supportDOM && __renderedOnCanvasWhileOnDOM) {
-			
-			__forceCachedBitmapUpdate = __text != value;
-			
-		}
-		#end
-		
 		// applies maxChars and restrict on text
 		
 		__textEngine.text = value;
@@ -1710,7 +1619,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			
 		}
 		
-		if (!__displayAsPassword #if (js && html5) || (DisplayObject.__supportDOM && !__renderedOnCanvasWhileOnDOM) #end) {
+		if (!__displayAsPassword) {
 			
 			__textEngine.text = __text;
 			
@@ -2023,14 +1932,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__setRenderDirty ();
 			
 			__textEngine.height = value;
-			
-			#if (js && html5)
-			if (DisplayObject.__supportDOM && __renderedOnCanvasWhileOnDOM) {
-				
-				__forceCachedBitmapUpdate = true;
-				
-			}
-			#end
 			
 		}
 		
@@ -2419,14 +2320,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__dirty = true;
 			__setRenderDirty ();
 			
-			#if (js && html5)
-			if (DisplayObject.__supportDOM && __renderedOnCanvasWhileOnDOM) {
-				
-				__forceCachedBitmapUpdate = true;
-				
-			}
-			#end
-			
 		}
 		
 		for (range in __textEngine.textFormatRanges) {
@@ -2520,14 +2413,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			
 			__layoutDirty = true;
 			
-			
-			#if (js && html5)
-			if (DisplayObject.__supportDOM && __renderedOnCanvasWhileOnDOM) {
-				
-				__forceCachedBitmapUpdate = true;
-				
-			}
-			#end
 		}
 		
 		return __textEngine.width * Math.abs (__scaleX);
@@ -2549,14 +2434,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 			__dirty = true;
 			__layoutDirty = true;
 			__setRenderDirty ();
-			
-			#if (js && html5)
-			if (DisplayObject.__supportDOM && __renderedOnCanvasWhileOnDOM) {
-				
-				__forceCachedBitmapUpdate = true;
-				
-			}
-			#end
 			
 		}
 		
@@ -2642,18 +2519,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 				
 				__caretIndex = position;
 				
-				#if (js && html5) if (DisplayObject.__supportDOM) {
-					
-					if (__renderedOnCanvasWhileOnDOM) {
-						__forceCachedBitmapUpdate = true;
-					}
-					
-				} else #end {
-					
-					__dirty = true;
-					__setRenderDirty ();
-					
-				}
+				__dirty = true;
+				__setRenderDirty ();
 				
 			}
 			
@@ -2693,12 +2560,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 				
 				__stopCursorTimer ();
 				__startCursorTimer ();
-				
-				#if (js && html5)
-				if (DisplayObject.__supportDOM && __renderedOnCanvasWhileOnDOM) {
-					__forceCachedBitmapUpdate = true;
-				}
-				#end
 				
 			}
 			
@@ -2791,12 +2652,8 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		// because we changed the caret index and it's known to be within the visible area
 		__ensureCaretVisibleNeeded = false;
 		
-		if (!DisplayObject.__supportDOM) {
-			
-			__dirty = true;
-			__setRenderDirty ();
-			
-		}
+		__dirty = true;
+		__setRenderDirty ();
 		
 		stage.addEventListener (MouseEvent.MOUSE_MOVE, stage_onMouseMove);
 		stage.addEventListener (MouseEvent.MOUSE_UP, stage_onMouseUp);

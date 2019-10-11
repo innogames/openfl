@@ -206,30 +206,6 @@ class Stage3D extends EventDispatcher {
 	}
 	
 	
-	private function __renderDOM (stage:Stage, renderSession:RenderSession):Void {
-		
-		if (!visible) return;
-		
-		if (__contextRequested && context3D == null) {
-			
-			__createContext (stage, renderSession);
-			
-		}
-		
-		if (context3D != null) {
-			
-			#if (js && html5)
-			GL.context = __renderContext;
-			#end
-			
-			__resetContext3DStates ();
-			//DOMStage3D.render (this, renderSession);
-			
-		}
-		
-	}
-	
-	
 	private function __renderGL (stage:Stage, renderSession:RenderSession):Void {
 		
 		if (!visible) return;

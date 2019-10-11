@@ -11,7 +11,6 @@ import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GLUniformLocation;
 import lime.graphics.CanvasRenderContext;
 import lime.graphics.ConsoleRenderContext;
-import lime.graphics.DOMRenderContext;
 import lime.graphics.GLRenderContext;
 import lime.graphics.RenderContext;
 import lime.graphics.Renderer;
@@ -33,7 +32,6 @@ import openfl._internal.renderer.AbstractRenderer;
 import openfl._internal.renderer.cairo.CairoRenderer;
 import openfl._internal.renderer.canvas.CanvasRenderer;
 import openfl._internal.renderer.console.ConsoleRenderer;
-import openfl._internal.renderer.dom.DOMRenderer;
 import openfl._internal.renderer.opengl.GLRenderer;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.stage3D.opengl.GLTextureBase;
@@ -128,7 +126,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 	private var __colorString:String;
 	private var __contentsScaleFactor:Float;
 	private var __deltaTime:Int;
-	private var __dirty:Bool;
 	private var __displayMatrix:Matrix;
 	private var __displayState:StageDisplayState;
 	private var __dragBounds:Rectangle;
@@ -156,7 +153,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 	private var __stack:Array<DisplayObject>;
 	private var __touchData:Map<Int, TouchData>;
 	private var __transparent:Bool;
-	private var __wasDirty:Bool;
 	private var __wasFullscreen:Bool;
 	
 	
@@ -927,10 +923,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 			case CANVAS (context):
 				
 				__renderer = new CanvasRenderer (this, context);
-			
-			case DOM (element):
-				
-				__renderer = new DOMRenderer (this, element);
 			
 			case CAIRO (cairo):
 				
@@ -1869,7 +1861,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 				if (updateChildren) {
 					
 					__transformDirty = false;
-					//__dirty = true;
 					
 				}
 				
@@ -1881,35 +1872,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 				
 				super.__update (false, updateChildren, resetUpdateDirty);
 				
-				if (updateChildren) {
-					
-					// #if dom
-					if (DisplayObject.__supportDOM) {
-						
-						__wasDirty = true;
-						
-					}
-					
-					// #end
-					
-					//__dirty = false;
-					
-				}
-				
-			} /*#if dom*/ else if (__wasDirty) {
-				
-				// If we were dirty last time, we need at least one more
-				// update in order to clear "changed" properties
-				
-				super.__update (false, updateChildren, resetUpdateDirty);
-				
-				if (updateChildren) {
-					
-					__wasDirty = false;
-					
-				}
-				
-			} /*#end*/
+			}
 			
 		}
 		

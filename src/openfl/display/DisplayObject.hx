@@ -11,8 +11,6 @@ import openfl._internal.renderer.cairo.CairoGraphics;
 import openfl._internal.renderer.canvas.CanvasBitmap;
 import openfl._internal.renderer.canvas.CanvasDisplayObject;
 import openfl._internal.renderer.canvas.CanvasGraphics;
-import openfl._internal.renderer.dom.DOMBitmap;
-import openfl._internal.renderer.dom.DOMDisplayObject;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLDisplayObject;
 import openfl._internal.renderer.opengl.GLRenderer;
@@ -62,7 +60,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private static var __broadcastEvents = new Map<String, Array<DisplayObject>> ();
 	private static var __initStage:Stage;
 	private static var __instanceCount = 0;
-	private static #if !js inline #end var __supportDOM:Bool #if !js = false #end;
 	private static var __tempStack = new ObjectPool<Vector<DisplayObject>> (function () { return new Vector<DisplayObject> (); }, function (stack) { stack.length = 0; });
 	
 	@:keep public var alpha (get, set):Float;
@@ -115,8 +112,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __renderDirty:Bool;
 	private var __renderParent:DisplayObject;
 	private var __renderTransform:Matrix;
-	private var __renderTransformCache:Matrix;
-	private var __renderTransformChanged:Bool;
 	private var __rotation:Float;
 	private var __rotationCosine:Float;
 	private var __rotationSine:Float;
@@ -129,16 +124,10 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __updateTraverse:Bool;
 	private var __visible:Bool;
 	private var __worldAlpha:Float;
-	private var __worldAlphaChanged:Bool;
 	private var __worldBlendMode:BlendMode;
-	private var __worldClip:Rectangle;
-	private var __worldClipChanged:Bool;
 	private var __worldColorTransform:ColorTransform;
 	private var __worldTransform:Matrix;
-	private var __worldVisible:Bool;
-	private var __worldVisibleChanged:Bool;
 	private var __worldTransformInvalid:Bool;
-	private var __worldZ:Int;
 	private var __pixelSnapping:PixelSnapping;
 	
 	#if (js && html5)
@@ -176,7 +165,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		__worldTransform = new Matrix ();
 		__worldColorTransform = new ColorTransform ();
 		__renderTransform = new Matrix ();		
-		__worldVisible = true;
 		
 		name = "instance" + (++__instanceCount);
 		
@@ -823,33 +811,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	private function __renderDOM (renderSession:RenderSession):Void {
-		
-		__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
-		
-		if (__cacheBitmap != null && !__cacheBitmapRender) {
-			
-			__renderDOMClear (renderSession);
-			__cacheBitmap.stage = stage;
-			
-			DOMBitmap.render (__cacheBitmap, renderSession);
-			
-		} else {
-			
-			DOMDisplayObject.render (this, renderSession);
-			
-		}
-		
-	}
-	
-	
-	private function __renderDOMClear (renderSession:RenderSession):Void {
-		
-		DOMDisplayObject.clear (this, renderSession);
-		
-	}
-	
-	
 	private function __renderGL (renderSession:RenderSession):Void {
 		
 		__updateCacheBitmap (renderSession, false);
@@ -1008,22 +969,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 
 		if (!transformOnly) {
 			
-			if (__supportDOM) {
-				
-				__renderTransformChanged = !__renderTransform.equals (__renderTransformCache);
-				
-				if (__renderTransformCache == null) {
-					
-					__renderTransformCache = __renderTransform.clone ();
-					
-				} else {
-					
-					__renderTransformCache.copyFrom (__renderTransform);
-					
-				}
-				
-			}
-			
 			if (!__worldColorTransform.__equals (transform.colorTransform)) {
 				
 				__worldColorTransform = transform.colorTransform.__clone ();
@@ -1032,21 +977,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			
 			if (renderParent != null) {
 				
-				if (__supportDOM) {
-					
-					var worldVisible = (renderParent.__worldVisible && visible);
-					__worldVisibleChanged = (__worldVisible != worldVisible);
-					__worldVisible = worldVisible;
-					
-					var worldAlpha = alpha * renderParent.__worldAlpha;
-					__worldAlphaChanged = (__worldAlpha != worldAlpha);
-					__worldAlpha = worldAlpha;
-					
-				} else {
-					
-					__worldAlpha = alpha * renderParent.__worldAlpha;
-					
-				}
+				__worldAlpha = alpha * renderParent.__worldAlpha;
 				
 				__worldColorTransform.__combine (renderParent.__worldColorTransform);
 				
@@ -1064,15 +995,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			} else {
 				
 				__worldAlpha = alpha;
-				
-				if (__supportDOM) {
-					
-					__worldVisibleChanged = (__worldVisible != visible);
-					__worldVisible = visible;
-					
-					__worldAlphaChanged = (__worldAlpha != alpha);
-					
-				}
 				
 			}
 			
@@ -1292,12 +1214,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			return updateTransform;
 			
 		} else if (__cacheBitmap != null) {
-			
-			if (renderSession.renderType == DOM) {
-				
-				__cacheBitmap.__renderDOMClear (renderSession);
-				
-			}
 			
 			__cacheBitmap = null;
 			__cacheBitmapData = null;
@@ -1839,12 +1755,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 		if (dirty) {
 			
 			__setTransformDirty ();
-			
-			if (__supportDOM) {
-				
-				__setRenderDirty ();
-				
-			}
 			
 		}
 		
