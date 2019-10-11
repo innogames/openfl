@@ -1158,16 +1158,9 @@ class CanvasGraphics {
 					context.clearRect (0, 0, scaledWidth, scaledHeight);
 					
 				} else {
-				
+					
 					canvas.width = scaledWidth;
 					canvas.height = scaledHeight;
-					
-					if (DisplayObject.__supportDOM && pixelRatio != 1) {
-						
-						canvas.style.width = width + "px";
-						canvas.style.height = height + "px";
-						
-					}
 					
 				}
 				

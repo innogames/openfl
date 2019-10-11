@@ -1,7 +1,6 @@
 package openfl._internal.renderer.canvas;
 
 
-import openfl._internal.renderer.dom.DOMTextField;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.text.TextEngine;
 import openfl.display.BitmapData;
@@ -97,13 +96,6 @@ class CanvasTextField {
 				
 				graphics.__canvas.width = Std.int (width * pixelRatio);
 				graphics.__canvas.height = Std.int (height * pixelRatio);
-				
-				if (DisplayObject.__supportDOM && pixelRatio != 1) {
-					
-					graphics.__canvas.style.width = width + "px";
-					graphics.__canvas.style.height = height + "px";
-					
-				}
 				
 				context.setTransform (transform.a * pixelRatio, transform.b, transform.c, transform.d * pixelRatio, transform.tx * pixelRatio, transform.ty * pixelRatio);
 				

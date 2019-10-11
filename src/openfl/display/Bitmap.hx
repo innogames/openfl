@@ -3,7 +3,6 @@ package openfl.display;
 
 import openfl._internal.renderer.cairo.CairoBitmap;
 import openfl._internal.renderer.canvas.CanvasBitmap;
-import openfl._internal.renderer.dom.DOMBitmap;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLRenderer;
 import openfl._internal.renderer.opengl.batcher.Quad;
@@ -81,9 +80,6 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 	
 	private override function __enterFrame (deltaTime:Int):Void {
 		
-		// TODO: Do not set as dirty for DOM render
-		
-		// #if (!js || !dom)
 		if (__bitmapData != null && __bitmapData.image != null) {
 			
 			var image = __bitmapData.image;
@@ -93,7 +89,6 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 			}
 			
 		}
-		// #end
 		
 	}
 	
@@ -218,26 +213,6 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 	}
 	
 	
-	private override function __renderDOM (renderSession:RenderSession):Void {
-		
-		__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
-		
-		if (__cacheBitmap != null && !__cacheBitmapRender) {
-			
-			__renderDOMClear (renderSession);
-			__cacheBitmap.stage = stage;
-			
-			DOMBitmap.render (__cacheBitmap, renderSession);
-			
-		} else {
-			
-			DOMBitmap.render (this, renderSession);
-			
-		}
-		
-	}
-	
-	
 	function __getBatchQuad (renderSession:RenderSession):Quad {
 		
 		if (__batchQuadDirty) {
@@ -264,11 +239,6 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 		if (overrideTransform == null) {
 			__batchQuadDirty = true;
 		}
-		
-	}
-	private override function __renderDOMClear (renderSession: RenderSession):Void {
-		
-		DOMBitmap.clear (this, renderSession);
 		
 	}
 	

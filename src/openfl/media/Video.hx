@@ -7,7 +7,6 @@ import lime.graphics.opengl.WebGLContext;
 import lime.graphics.GLRenderContext;
 import lime.utils.Float32Array;
 import openfl._internal.renderer.canvas.CanvasVideo;
-import openfl._internal.renderer.dom.DOMVideo;
 import openfl._internal.renderer.opengl.GLVideo;
 import openfl._internal.renderer.RenderSession;
 import openfl.display.DisplayObject;
@@ -350,13 +349,6 @@ class Video extends DisplayObject implements IShaderDrawable {
 	private override function __renderCanvas (renderSession:RenderSession):Void {
 		
 		CanvasVideo.render (this, renderSession);
-		
-	}
-	
-	
-	private override function __renderDOM (renderSession:RenderSession):Void {
-		
-		DOMVideo.render (this, renderSession);
 		
 	}
 	

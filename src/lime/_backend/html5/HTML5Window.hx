@@ -3,7 +3,6 @@ package lime._backend.html5;
 
 import haxe.Timer;
 import js.html.CanvasElement;
-import js.html.DivElement;
 import js.html.Element;
 import js.html.FocusEvent;
 import js.html.InputElement;
@@ -43,7 +42,6 @@ class HTML5Window {
 	private static var scrollLineHeight = getScrollLineHeight();
 	
 	public var canvas:CanvasElement;
-	public var div:DivElement;
 	public var element:Element;
 	#if stats
 	public var stats:Dynamic;
@@ -82,10 +80,6 @@ class HTML5Window {
 			renderType = parent.config.renderer;
 			
 		}
-		
-		#if dom
-		renderType = "dom";
-		#end
 		
 		updateScale ();
 		
@@ -126,15 +120,7 @@ class HTML5Window {
 			
 		} else {
 			
-			if (renderType == "dom") {
-				
-				div = cast Browser.document.createElement ("div");
-				
-			} else {
-				
-				canvas = cast Browser.document.createElement ("canvas");
-				
-			}
+			canvas = cast Browser.document.createElement ("canvas");
 			
 		}
 		
@@ -143,20 +129,6 @@ class HTML5Window {
 			var style = canvas.style;
 			style.setProperty ("-webkit-transform", "translateZ(0)", null);
 			style.setProperty ("transform", "translateZ(0)", null);
-			
-		} else if (div != null) {
-			
-			var style = div.style;
-			style.setProperty ("-webkit-transform", "translate3D(0,0,0)", null);
-			style.setProperty ("transform", "translate3D(0,0,0)", null);
-			//style.setProperty ("-webkit-transform-style", "preserve-3d", null);
-			//style.setProperty ("transform-style", "preserve-3d", null);
-			style.position = "relative";
-			style.overflow = "hidden";
-			style.setProperty ("-webkit-user-select", "none", null);
-			style.setProperty ("-moz-user-select", "none", null);
-			style.setProperty ("-ms-user-select", "none", null);
-			style.setProperty ("-o-user-select", "none", null);
 			
 		}
 		
@@ -189,11 +161,6 @@ class HTML5Window {
 			canvas.style.width = parent.width + "px";
 			canvas.style.height = parent.height + "px";
 			
-		} else {
-			
-			div.style.width = parent.width + "px";
-			div.style.height = parent.height + "px";
-			
 		}
 		
 		updateSize ();
@@ -207,10 +174,6 @@ class HTML5Window {
 					element.appendChild (canvas);
 					
 				}
-				
-			} else {
-				
-				element.appendChild (div);
 				
 			}
 			
@@ -436,14 +399,6 @@ class HTML5Window {
 					x = (event.clientX - rect.left) * (parent.width / rect.width);
 					y = (event.clientY - rect.top) * (parent.height / rect.height);
 					
-				} else if (div != null) {
-					
-					var rect = div.getBoundingClientRect ();
-					//x = (event.clientX - rect.left) * (window.backend.div.style.width / rect.width);
-					x = (event.clientX - rect.left);
-					//y = (event.clientY - rect.top) * (window.backend.div.style.height / rect.height);
-					y = (event.clientY - rect.top);
-					
 				} else {
 					
 					var rect = element.getBoundingClientRect ();
@@ -634,10 +589,6 @@ class HTML5Window {
 			if (canvas != null) {
 				
 				rect = canvas.getBoundingClientRect ();
-				
-			} else if (div != null) {
-				
-				rect = div.getBoundingClientRect ();
 				
 			} else {
 				
@@ -1053,7 +1004,7 @@ class HTML5Window {
 	
 	private function updateScale ():Void {
 		
-		if (parent.config != null && Reflect.hasField (parent.config, "allowHighDPI") && parent.config.allowHighDPI && renderType != "dom") {
+		if (parent.config != null && Reflect.hasField (parent.config, "allowHighDPI") && parent.config.allowHighDPI) {
 			
 			scale = Browser.window.devicePixelRatio;
 			
@@ -1089,7 +1040,7 @@ class HTML5Window {
 			
 			var stretch = resizeElement || (setWidth == 0 && setHeight == 0);
 			
-			if (element != null && (div == null || (div != null && stretch))) {
+			if (element != null) {
 				
 				if (stretch) {
 					
@@ -1109,11 +1060,6 @@ class HTML5Window {
 								canvas.style.height = elementHeight + "px";
 								
 							}
-							
-						} else {
-							
-							div.style.width = elementWidth + "px";
-							div.style.height = elementHeight + "px";
 							
 						}
 						
@@ -1153,13 +1099,6 @@ class HTML5Window {
 							canvas.style.marginTop = marginTop + "px";
 							
 						}
-						
-					} else {
-						
-						div.style.width = targetWidth + "px";
-						div.style.height = targetHeight + "px";
-						div.style.marginLeft = marginLeft + "px";
-						div.style.marginTop = marginTop + "px";
 						
 					}
 					

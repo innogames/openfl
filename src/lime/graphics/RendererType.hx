@@ -5,7 +5,6 @@ enum RendererType {
 	
 	OPENGL;
 	CANVAS;
-	DOM;
 	FLASH;
 	CAIRO;
 	CONSOLE;

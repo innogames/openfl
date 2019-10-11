@@ -15,9 +15,6 @@ import openfl._internal.renderer.cairo.CairoTilemap;
 import openfl._internal.renderer.canvas.CanvasBitmap;
 import openfl._internal.renderer.canvas.CanvasDisplayObject;
 import openfl._internal.renderer.canvas.CanvasTilemap;
-import openfl._internal.renderer.dom.DOMBitmap;
-import openfl._internal.renderer.dom.DOMDisplayObject;
-import openfl._internal.renderer.dom.DOMTilemap;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLDisplayObject;
 import openfl._internal.renderer.opengl.GLTilemap;
@@ -366,34 +363,6 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 			CanvasTilemap.render (this, renderSession);
 			
 		}
-		
-	}
-	
-	
-	private override function __renderDOM (renderSession:RenderSession):Void {
-		
-		__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
-		
-		if (__cacheBitmap != null && !__cacheBitmapRender) {
-			
-			__renderDOMClear (renderSession);
-			__cacheBitmap.stage = stage;
-			
-			DOMBitmap.render (__cacheBitmap, renderSession);
-			
-		} else {
-			
-			DOMDisplayObject.render (this, renderSession);
-			DOMTilemap.render (this, renderSession);
-			
-		}
-		
-	}
-	
-	
-	private override function __renderDOMClear (renderSession:RenderSession):Void {
-		
-		DOMTilemap.clear (this, renderSession);
 		
 	}
 	#end
