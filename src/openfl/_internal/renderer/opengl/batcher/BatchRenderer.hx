@@ -10,7 +10,6 @@ import lime.graphics.opengl.GLTexture;
 import openfl.geom.Rectangle;
 import openfl._internal.renderer.opengl.GLBlendModeManager;
 import openfl._internal.renderer.opengl.GLShaderManager;
-import openfl._internal.renderer.opengl.batcher.BitHacks.*;
 import openfl._internal.renderer.opengl.batcher.Quad;
 
 #if gl_stats
