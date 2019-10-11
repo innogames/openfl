@@ -540,13 +540,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	}
 	
 	
-	private function __enterFrame (deltaTime:Int):Void {
-		
-		
-		
-	}
-	
-	
 	private function __forceRenderDirty ():Void {
 		
 		__renderDirty = true;
@@ -1348,7 +1341,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private function __cacheBitmapNeedsRender ():Bool {
 		return
 			(
-				__renderDirty
+				(__renderDirty || __cacheBitmapDirty ())
 				&& 
 				(
 					(__children != null && __children.length > 0) // TODO: this is the only place we use __children in DisplayObject, we can probably move this check in a DisplayObjectContainer override along with __children
@@ -1360,6 +1353,13 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 			opaqueBackground != __cacheBitmapBackground
 			||
 			!__cacheBitmapColorTransform.__equals (__worldColorTransform);
+	}
+	
+	
+	function __cacheBitmapDirty ():Bool {
+		
+		return false;
+		
 	}
 	
 	

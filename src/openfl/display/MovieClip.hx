@@ -182,7 +182,9 @@ class MovieClip extends Sprite #if openfl_dynamic implements Dynamic<DisplayObje
 	}
 	
 	
-	public override function __enterFrame (deltaTime:Int):Void {
+	// this was an override, now it's just dead code,
+	// but we don't use MovieClip so we don't care if it's broken
+	public function __enterFrame (deltaTime:Int):Void {
 		
 		if (__symbol != null && __playing) {
 			
@@ -376,7 +378,8 @@ class MovieClip extends Sprite #if openfl_dynamic implements Dynamic<DisplayObje
 			
 		}
 		
-		super.__enterFrame (deltaTime);
+		// yep, broken
+		// super.__enterFrame (deltaTime);
 		
 	}
 	

@@ -1397,14 +1397,13 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		
 	}
 	
-	
-	override function __enterFrame(deltaTime:Int) {
+	override function __update (transformOnly:Bool, updateChildren:Bool, ?resetUpdateDirty:Bool) {
 		
 		if (__ensureCaretVisibleNeeded) {
-			
 			__doEnsureCaretVisible ();
-			
 		}
+		
+		super.__update (transformOnly, updateChildren, resetUpdateDirty);
 		
 	}
 	
@@ -1656,6 +1655,7 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	inline function __ensureCaretVisible () {
 		
 		__ensureCaretVisibleNeeded = true;
+		__setUpdateDirty ();
 		
 	}
 	

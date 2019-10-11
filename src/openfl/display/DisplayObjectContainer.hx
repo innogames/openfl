@@ -420,17 +420,6 @@ class DisplayObjectContainer extends InteractiveObject {
 	}
 	
 	
-	private override function __enterFrame (deltaTime:Int):Void {
-		
-		for (child in __children) {
-			
-			child.__enterFrame (deltaTime);
-			
-		}
-		
-	}
-	
-	
 	private override function __forceRenderDirty ():Void {
 		
 		super.__forceRenderDirty();
@@ -987,6 +976,29 @@ class DisplayObjectContainer extends InteractiveObject {
 			child.__stopAllMovieClips ();
 			
 		}
+		
+	}
+	
+	
+	override function __cacheBitmapDirty ():Bool {
+		
+		if (__renderDirty) {
+			
+			return true;
+			
+		}
+		
+		for (child in __children) {
+			
+			if (child.__cacheBitmapDirty ()) {
+				
+				return true;
+				
+			}
+			
+		}
+		
+		return false;
 		
 	}
 	

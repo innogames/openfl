@@ -90,7 +90,9 @@ import js.Browser;
 	
 	
 	#if !flash
-	private override function __enterFrame (deltaTime:Int):Void {
+	// this was an override, now it's just dead code,
+	// but we don't use OpenGLView so we don't care if it's broken
+	private function __enterFrame (deltaTime:Int):Void {
 		
 		if (__render != null) __setRenderDirty ();
 		

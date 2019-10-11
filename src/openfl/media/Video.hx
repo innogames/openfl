@@ -98,7 +98,9 @@ class Video extends DisplayObject implements IShaderDrawable {
 	}
 	
 	
-	private override function __enterFrame (deltaTime:Int):Void {
+	// this was an override, now it's just dead code,
+	// but we don't use Video so we don't care if it's broken
+	private function __enterFrame (deltaTime:Int):Void {
 		
 		#if (js && html5)
 		

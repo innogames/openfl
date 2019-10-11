@@ -935,11 +935,10 @@ class Stage extends DisplayObjectContainer implements IModule {
 		
 		__renderable = true;
 		
-		__enterFrame (__deltaTime);
 		__deltaTime = 0;
 		__traverse ();
 		
-		if (__renderer != null #if !openfl_always_render && __renderDirty #end) {
+		if (__renderer != null/*  #if !openfl_always_render && __renderDirty #end */) {
 			
 			if (!Stage3D.__active) {
 				

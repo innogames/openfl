@@ -87,21 +87,22 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 		
 	}
 	
-	private override function __enterFrame (deltaTime:Int):Void {
+	inline function __isImageModified ():Bool {
+		return (__bitmapData != null && __bitmapData.image != null && __bitmapData.image.version != __imageVersion);
+	}
+	
+	inline function __syncImageVersion () {
+		__imageVersion = __bitmapData.image.version;
+	}
+	
+	override function __cacheBitmapDirty ():Bool {
 		
-		// TODO: Do not set as dirty for DOM render
-		
-		// #if (!js || !dom)
-		if (__bitmapData != null && __bitmapData.image != null) {
-			
-			var image = __bitmapData.image;
-			if (__bitmapData.image.version != __imageVersion) {
-				__setRenderDirty ();
-				__imageVersion = image.version;
-			}
-			
+		if (__isImageModified ()) {
+			__syncImageVersion (); // TODO: this should be done after all rendering
+			return true;
 		}
-		// #end
+		
+		return false;
 		
 	}
 	
@@ -258,6 +259,8 @@ class Bitmap extends DisplayObject implements IShaderDrawable {
 			bitmapData.__fillBatchQuad (transform, __batchQuad.vertexData);
 			__batchQuad.texture = __bitmapData.getTexture (renderSession.gl);
 			__batchQuadDirty = false;
+		} else if (__isImageModified ()) {
+			__batchQuad.texture = __bitmapData.getTexture (renderSession.gl);
 		}
 		
 		__batchQuad.setup(__worldAlpha, __worldColorTransform, BatcherBlendMode.fromOpenFLBlendMode(__worldBlendMode), smoothing);
