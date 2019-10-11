@@ -3,12 +3,6 @@ package openfl.display;
 
 import lime.app.Future;
 import lime.app.Promise;
-import lime.graphics.cairo.CairoExtend;
-import lime.graphics.cairo.CairoFilter;
-import lime.graphics.cairo.CairoImageSurface;
-import lime.graphics.cairo.CairoPattern;
-import lime.graphics.cairo.CairoSurface;
-import lime.graphics.cairo.Cairo;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLFramebuffer;
 import lime.graphics.opengl.GLVertexArrayObject;
@@ -56,12 +50,6 @@ import js.html.ImageData;
 import js.html.ImageElement;
 import js.html.Uint8ClampedArray;
 import js.Browser;
-#end
-
-#if lime_cairo
-import openfl._internal.renderer.cairo.CairoBlendModeManager;
-import openfl._internal.renderer.cairo.CairoRenderer;
-import openfl._internal.renderer.cairo.CairoMaskManager;
 #end
 
 #if gl_stats
@@ -122,7 +110,6 @@ class BitmapData implements IBitmapDrawable {
 	private var __isValid:Bool;
 	private var __renderable:Bool;
 	private var __pixelRatio:Float = 1.0;
-	private var __surface:CairoSurface;
 	private var __textureData:TextureData;
 	private var __quadTextureData:QuadTextureData;
 	private var __textureContext:GLRenderContext;
@@ -449,8 +436,6 @@ class BitmapData implements IBitmapDrawable {
 		__isValid = false;
 		readable = false;
 		
-		__surface = null;
-		
 		if (__buffer != null) {
 			if (__bufferContext.isBuffer (__buffer)) { // prevent the warning when the id becomes invalid after context loss+restore
 				__bufferContext.deleteBuffer (__buffer);
@@ -605,92 +590,6 @@ class BitmapData implements IBitmapDrawable {
 			
 			buffer.__srcImageData = null;
 			buffer.data = null;
-			
-			image.dirty = true;
-			image.version++;
-			
-			#elseif lime_cairo
-			
-			if (source == this) {
-				
-				source = clone ();
-				
-			}
-			
-			if (colorTransform != null && !colorTransform.__isDefault ()) {
-				
-				var bounds = Rectangle.__pool.get ();
-				var boundsMatrix = Matrix.__pool.get ();
-				
-				source.__getBounds (bounds, boundsMatrix);
-				
-				var width:Int = Math.ceil (bounds.width);
-				var height:Int = Math.ceil (bounds.height);
-				
-				var copy = new BitmapData (width, height, true, 0);
-				copy.__pixelRatio = __pixelRatio;
-				copy.draw (source);
-				copy.colorTransform (copy.rect, colorTransform);
-				source = copy;
-				
-				Rectangle.__pool.release (bounds);
-				Matrix.__pool.release (boundsMatrix);
-				
-			}
-			
-			var surface = getSurface ();
-			var cairo = new Cairo (surface);
-			
-			if (!smoothing) {
-				
-				cairo.antialias = NONE;
-				
-			}
-			
-			var renderSession = new RenderSession ();
-			renderSession.renderType = CAIRO;
-			// renderSession.lockTransform = true;
-			renderSession.clearRenderDirty = false;
-			renderSession.cairo = cairo;
-			renderSession.allowSmoothing = smoothing;
-			renderSession.pixelRatio = __pixelRatio;
-			//renderSession.roundPixels = true;
-			renderSession.maskManager = new CairoMaskManager (renderSession);
-			renderSession.blendModeManager = new CairoBlendModeManager (renderSession);
-			renderSession.blendModeManager.setBlendMode(blendMode);
-			
-			if (clipRect != null) {
-				
-				renderSession.maskManager.pushRect (clipRect, new Matrix ());
-				
-			}
-			
-			var matrixCache = Matrix.__pool.get ();
-			matrixCache.copyFrom (source.__worldTransform);
-			var cacheWorldAlpha = source.__worldAlpha;
-			var cacheAlpha = source.__alpha;
-			var cacheVisible = source.__visible;
-			var cacheIsMask = source.__isMask;
-			source.__alpha = 1;
-			source.__visible = true;
-			source.__isMask = false;
-			source.__updateTransforms (matrix);
-			source.__updateChildren (false);
-			source.__renderCairo (renderSession);
-			source.__alpha = cacheAlpha;
-			source.__visible = cacheVisible;
-			source.__isMask = cacheIsMask;
-			source.__updateTransforms (matrixCache);
-			Matrix.__pool.release (matrixCache);
-			source.__updateChildren (true);
- 			source.__worldAlpha = cacheWorldAlpha;
-			if (clipRect != null) {
-				
-				renderSession.maskManager.popRect ();
-				
-			}
-			
-			surface.flush ();
 			
 			image.dirty = true;
 			image.version++;
@@ -1120,23 +1019,6 @@ class BitmapData implements IBitmapDrawable {
 	}
 	
 	
-	public function getSurface ():CairoImageSurface {
-		
-		if (!readable) return null;
-		
-		if (__surface == null) {
-			
-			
-			__surface = CairoImageSurface.fromImage (image);
-			
-		}
-		
-		return __surface;
-		
-		
-	}
-	
-	
 	public function getTexture (gl:GLRenderContext):QuadTextureData {
 		
 		if (!__isValid) return null;
@@ -1160,12 +1042,6 @@ class BitmapData implements IBitmapDrawable {
 		if (image != null && image.version != __textureVersion) {
 			
 			var internalFormat, format;
-			
-			if (__surface != null) {
-				
-				__surface.flush ();
-				
-			}
 			
 			if (image.buffer.bitsPerPixel == 1) {
 				
@@ -1279,7 +1155,6 @@ class BitmapData implements IBitmapDrawable {
 		
 		if (!readable && image != null) {
 			
-			__surface = null;
 			image = null;
 			
 		}
@@ -1872,94 +1747,6 @@ class BitmapData implements IBitmapDrawable {
 			
 			image.dirty = true;
 			image.version++;
-			
-			#elseif lime_cairo
-			
-			if (source == this) {
-				
-				source = clone ();
-				
-			}
-			
-			if (colorTransform != null && !colorTransform.__isDefault ()) {
-				
-				var bounds = Rectangle.__pool.get ();
-				var boundsMatrix = Matrix.__pool.get ();
-				
-				source.__getBounds (bounds, boundsMatrix);
-				
-				var width:Int = Math.ceil (bounds.width);
-				var height:Int = Math.ceil (bounds.height);
-				
-				var copy = new BitmapData (width, height, true, 0);
-				copy.__pixelRatio = __pixelRatio;
-				copy.draw (source);
-				copy.colorTransform (copy.rect, colorTransform);
-				source = copy;
-				
-				Rectangle.__pool.release (bounds);
-				Matrix.__pool.release (boundsMatrix);
-				
-			}
-			
-			var surface = getSurface ();
-			var cairo = new Cairo (surface);
-			
-			if (!smoothing) {
-				
-				cairo.antialias = NONE;
-				
-			}
-			
-			var renderSession = new RenderSession ();
-			renderSession.renderType = CAIRO;
-			// renderSession.lockTransform = true;
-			renderSession.clearRenderDirty = true;
-			renderSession.cairo = cairo;
-			renderSession.allowSmoothing = smoothing;
-			renderSession.pixelRatio = __pixelRatio;
-			//renderSession.roundPixels = true;
-			renderSession.maskManager = new CairoMaskManager (renderSession);
-			renderSession.blendModeManager = new CairoBlendModeManager (renderSession);
-			
-			if (clipRect != null) {
-				
-				renderSession.maskManager.pushRect (clipRect, new Matrix ());
-				
-			}
-			
-			var matrixCache = Matrix.__pool.get ();
-			matrixCache.copyFrom (source.__worldTransform);
-			var cacheWorldAlpha = source.__worldAlpha;
-			var cacheAlpha = source.__alpha;
-			var cacheVisible = source.__visible;
-			var cacheIsMask = source.__isMask;
- 			source.__alpha = 1;
-			source.__visible = true;
-			source.__isMask = false;
-			source.__updateTransforms (matrix);
-			source.__updateChildren (false);
-			
-			source.__renderCairo (renderSession);
-			source.__alpha = cacheAlpha;
-			source.__visible = cacheVisible;
-			source.__isMask = cacheIsMask;
-			
-			source.__updateTransforms (matrixCache);
-			Matrix.__pool.release (matrixCache);
-			source.__updateChildren (true);
-			source.__worldAlpha = cacheWorldAlpha;			
-			if (clipRect != null) {
-				
-				renderSession.maskManager.popRect ();
-				
-			}
-			
-			surface.flush ();
-			
-			image.dirty = true;
-			image.version++;
-			
 			#end
 			
 		}
@@ -2090,55 +1877,6 @@ class BitmapData implements IBitmapDrawable {
 			return Future.withValue (this);
 			
 		});
-		
-	}
-	
-	
-	private function __renderCairo (renderSession:RenderSession):Void {
-		
-		#if lime_cairo
-		if (!readable) return;
-		
-		var cairo = renderSession.cairo;
-		
-		if (__worldTransform == null) __worldTransform = new Matrix ();
-		
-		var transform = __worldTransform;
-		
-		if (renderSession.roundPixels) {
-			
-			var matrix = transform.__toMatrix3 ();
-			matrix.tx = Math.round (matrix.tx);
-			matrix.ty = Math.round (matrix.ty);
-			cairo.matrix = matrix;
-			
-		} else {
-			
-			cairo.matrix = transform.__toMatrix3 ();
-			
-		}
-		
-		var surface = getSurface ();
-		
-		if (surface != null) {
-			
-			var pattern = CairoPattern.createForSurface (surface);
-			
-			if (!renderSession.allowSmoothing || cairo.antialias == NONE) {
-				
-				pattern.filter = CairoFilter.NEAREST;
-				
-			} else {
-				
-				pattern.filter = CairoFilter.GOOD;
-				
-			}
-			
-			cairo.source = pattern;
-			cairo.paint ();
-			
-		}
-		#end
 		
 	}
 	

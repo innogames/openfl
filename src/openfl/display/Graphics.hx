@@ -1,9 +1,7 @@
 package openfl.display;
 
 
-import lime.graphics.cairo.Cairo;
 import lime.graphics.Image;
-import openfl._internal.renderer.cairo.CairoGraphics;
 import openfl._internal.renderer.canvas.CanvasGraphics;
 import openfl._internal.renderer.opengl.GLRenderer;
 import openfl._internal.renderer.RenderSession;
@@ -68,8 +66,6 @@ import js.html.CanvasRenderingContext2D;
 	#if (js && html5)
 	private var __canvas:CanvasElement;
 	private var __context:CanvasRenderingContext2D;
-	#else
-	private var __cairo:Cairo;
 	#end
 	
 	private var __bitmap(default,set):BitmapData;
@@ -717,8 +713,6 @@ import js.html.CanvasRenderingContext2D;
 		#if (js && html5)
 		__canvas = null;
 		__context = null;
-		#else
-		__cairo = null;
 		#end
 		
 	}
@@ -749,8 +743,6 @@ import js.html.CanvasRenderingContext2D;
 				
 				#if (js && html5)
 				return CanvasGraphics.hitTest (this, px, py);
-				#elseif (lime_cffi)
-				return CairoGraphics.hitTest (this, px, py);
 				#end
 				
 			}

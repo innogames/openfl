@@ -2,7 +2,6 @@ package openfl._internal.renderer.opengl;
 
 
 import lime.utils.Float32Array;
-import openfl._internal.renderer.cairo.CairoGraphics;
 import openfl._internal.renderer.canvas.CanvasGraphics;
 import openfl.display.Graphics;
 import openfl.geom.Matrix;
@@ -97,8 +96,6 @@ class GLGraphics {
 			
 			#if (js && html5)
 			CanvasGraphics.render (graphics, renderSession);
-			#elseif lime_cairo
-			CairoGraphics.render (graphics, renderSession, parentTransform);
 			#end
 			
 		} else {
@@ -208,8 +205,6 @@ class GLGraphics {
 		
 		#if (js && html5)
 		CanvasGraphics.render (graphics, renderSession);
-		#elseif lime_cairo
-		CairoGraphics.render (graphics, renderSession, parentTransform);
 		#end
 		
 	}

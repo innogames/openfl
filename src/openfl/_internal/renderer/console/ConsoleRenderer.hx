@@ -23,7 +23,6 @@ import lime.graphics.Image;
 import lime.math.Matrix4;
 import lime.text.Glyph;
 import lime.text.TextLayout;
-import openfl._internal.renderer.cairo.CairoTextField;
 import openfl._internal.renderer.AbstractRenderer;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -647,8 +646,6 @@ class ConsoleRenderer extends AbstractRenderer {
 	
 	private function renderTextField (tf:TextField) {
 		
-		CairoTextField.render (tf, null);
-
 		if (tf.__graphics == null || tf.__graphics.__bitmap == null) {
 			return;
 		}

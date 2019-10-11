@@ -29,7 +29,6 @@ import lime.ui.Window;
 import lime.utils.GLUtils;
 import lime.utils.Log;
 import openfl._internal.renderer.AbstractRenderer;
-import openfl._internal.renderer.cairo.CairoRenderer;
 import openfl._internal.renderer.canvas.CanvasRenderer;
 import openfl._internal.renderer.console.ConsoleRenderer;
 import openfl._internal.renderer.opengl.GLRenderer;
@@ -834,23 +833,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 				
 			}
 			
-			if (renderer.type == CAIRO) {
-				
-				switch (renderer.context) {
-					
-					case CAIRO (cairo):
-						
-						#if lime_cairo
-						cast (__renderer, CairoRenderer).cairo = cairo;
-						@:privateAccess (__renderer.renderSession).cairo = cairo;
-						#end
-					
-					default:
-						
-				}
-				
-			}
-			
 			__renderer.render ();
 			
 		} else {
@@ -923,12 +905,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 			case CANVAS (context):
 				
 				__renderer = new CanvasRenderer (this, context);
-			
-			case CAIRO (cairo):
-				
-				#if lime_cairo
-				__renderer = new CairoRenderer (this, cairo);
-				#end
 			
 			case CONSOLE (ctx):
 				

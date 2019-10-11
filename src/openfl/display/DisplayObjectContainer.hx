@@ -1,8 +1,6 @@
 package openfl.display;
 
 
-import openfl._internal.renderer.cairo.CairoGraphics;
-import openfl._internal.renderer.cairo.CairoRenderer;
 import openfl._internal.renderer.canvas.CanvasGraphics;
 import openfl._internal.renderer.RenderSession;
 import openfl.display.Stage;
@@ -674,65 +672,6 @@ class DisplayObjectContainer extends InteractiveObject {
 			}
 			
 		}
-		
-	}
-	
-	
-	private override function __renderCairo (renderSession:RenderSession):Void {
-		
-		#if lime_cairo
-		__cleanupRemovedChildren ();
-
-		if (!__renderable || __worldAlpha <= 0) return;
-		
-		super.__renderCairo (renderSession);
-		
-		if (__cacheBitmap != null && !__cacheBitmapRender) return;
-		
-		renderSession.maskManager.pushObject (this);
-		
-		if (renderSession.clearRenderDirty) {
-			
-			for (child in __children) {
-				
-				child.__renderCairo (renderSession);
-				child.__renderDirty = false;
-				
-			}
-			
-			__renderDirty = false;
-			
-		} else {
-			
-			for (child in __children) {
-				
-				child.__renderCairo (renderSession);
-				
-			}
-			
-		}
-		
-		renderSession.maskManager.popObject (this);
-		#end
-		
-	}
-	
-	
-	private override function __renderCairoMask (renderSession:RenderSession):Void {
-		
-		#if lime_cairo
-		if (__graphics != null) {
-			
-			CairoGraphics.renderMask (__graphics, renderSession);
-			
-		}
-		
-		for (child in __children) {
-			
-			child.__renderCairoMask (renderSession);
-			
-		}
-		#end
 		
 	}
 	

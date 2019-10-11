@@ -2,11 +2,6 @@ package lime._backend.native;
 
 
 import haxe.io.Bytes;
-import lime.graphics.cairo.Cairo;
-import lime.graphics.cairo.CairoFormat;
-import lime.graphics.cairo.CairoImageSurface;
-import lime.graphics.cairo.CairoSurface;
-import lime.graphics.CairoRenderContext;
 import lime.graphics.ConsoleRenderContext;
 import lime.graphics.GLRenderContext;
 import lime.graphics.Image;
@@ -23,7 +18,6 @@ import lime.utils.UInt8Array;
 
 @:access(lime._backend.native.NativeCFFI)
 @:access(lime._backend.native.NativeGLRenderContext)
-@:access(lime.graphics.cairo.Cairo)
 @:access(lime.graphics.opengl.GL)
 @:access(lime.graphics.GLRenderContext)
 @:access(lime.ui.Window)
@@ -36,12 +30,6 @@ class NativeRenderer {
 	
 	private var parent:Renderer;
 	private var useHardware:Bool;
-	
-	#if lime_cairo
-	private var cacheLock:Dynamic;
-	private var cairo:Cairo;
-	private var primarySurface:CairoSurface;
-	#end
 	
 	
 	public function new (parent:Renderer) {
@@ -88,11 +76,6 @@ class NativeRenderer {
 				
 				useHardware = false;
 				
-				#if lime_cairo
-				render ();
-				parent.context = CAIRO (cairo);
-				#end
-				parent.type = CAIRO;
 			
 		}
 		
@@ -114,13 +97,6 @@ class NativeRenderer {
 		#if (!macro && lime_cffi)
 		if (!useHardware) {
 			
-			#if lime_cairo
-			if (cairo != null) {
-				
-				primarySurface.flush ();
-				
-			}
-			#end
 			NativeCFFI.lime_renderer_unlock (handle);
 			
 		}
@@ -165,29 +141,7 @@ class NativeRenderer {
 		
 		if (!useHardware) {
 			
-			#if lime_cairo
-			var lock:Dynamic = NativeCFFI.lime_renderer_lock (handle);
-			
-			if (lock != null && (cacheLock == null || cacheLock.pixels != lock.pixels || cacheLock.width != lock.width || cacheLock.height != lock.height)) {
-				
-				primarySurface = CairoImageSurface.create (lock.pixels, CairoFormat.ARGB32, lock.width, lock.height, lock.pitch);
-				
-				if (cairo != null) {
-					
-					cairo.recreate (primarySurface);
-					
-				} else {
-					
-					cairo = new Cairo (primarySurface);
-					
-				}
-				
-			}
-			
-			cacheLock = lock;
-			#else
 			parent.context = NONE;
-			#end
 			
 		}
 		#end

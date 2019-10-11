@@ -2,7 +2,6 @@ package openfl._internal.text;
 
 
 import haxe.Timer;
-import lime.graphics.cairo.CairoFontFace;
 import lime.graphics.opengl.GLTexture;
 import lime.system.System;
 import lime.text.GlyphPosition;
@@ -113,7 +112,6 @@ class TextEngine {
 	//@:noCompletion private var __tilesheets:Map<Tilesheet, Bool>;
 	private var __useIntAdvances:Null<Bool>;
 	
-	@:noCompletion @:dox(hide) public var __cairoFont:CairoFontFace;
 	@:noCompletion @:dox(hide) public var __font:Font;
 	
 	

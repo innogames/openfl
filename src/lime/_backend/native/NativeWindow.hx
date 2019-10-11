@@ -114,7 +114,7 @@ class NativeWindow {
 			if (Reflect.hasField (parent.config, "depthBuffer") && parent.config.depthBuffer) flags |= cast WindowFlags.WINDOW_FLAG_DEPTH_BUFFER;
 			//if (Reflect.hasField (parent.config, "fullscreen") && parent.config.fullscreen) flags |= cast WindowFlags.WINDOW_FLAG_FULLSCREEN;
 			if (parent.__fullscreen) flags |= cast WindowFlags.WINDOW_FLAG_FULLSCREEN;
-			#if !cairo if (Reflect.hasField (parent.config, "hardware") && parent.config.hardware) flags |= cast WindowFlags.WINDOW_FLAG_HARDWARE; #end
+			if (Reflect.hasField (parent.config, "hardware") && parent.config.hardware) flags |= cast WindowFlags.WINDOW_FLAG_HARDWARE;
 			if (Reflect.hasField (parent.config, "hidden") && parent.config.hidden) flags |= cast WindowFlags.WINDOW_FLAG_HIDDEN;
 			if (Reflect.hasField (parent.config, "maximized") && parent.config.maximized) flags |= cast WindowFlags.WINDOW_FLAG_MAXIMIZED;
 			if (Reflect.hasField (parent.config, "minimized") && parent.config.minimized) flags |= cast WindowFlags.WINDOW_FLAG_MINIMIZED;
