@@ -70,13 +70,7 @@ import haxe.extern.EitherType;
 import js.html.audio.GainNode;
 import lime.media.WebAudioContext;
 
-#if commonjs
-@:jsRequire("howler")
-#else
 @:native("Howler")
-#end
-
-
 extern class Howler {
 	
 	

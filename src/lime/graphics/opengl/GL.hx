@@ -687,18 +687,6 @@ class GL {
 	#end
 	
 	
-	#if commonjs
-	private static function __init__ () {
-		
-		untyped Object.defineProperties (GL, {
-			"type": { get: function () { return GL.get_type (); } },
-			"version": { get: function () { return GL.get_version (); } }
-		});
-		
-	}
-	#end
-	
-	
 	private static function get_type ():GLContextType { return context.type; }
 	private static function get_version ():Float { return context.version; }
 	

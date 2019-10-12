@@ -80,24 +80,6 @@ class Application extends Module {
 	@:noCompletion private var windowByID:Map<Int, Window>;
 	
 	
-	private static function __init__ () {
-		
-		var init = ApplicationBackend;
-		#if commonjs
-		var p = untyped Application.prototype;
-		untyped Object.defineProperties (p, {
-			"frameRate": { get: p.get_frameRate, set: p.set_frameRate },
-			"preloader": { get: p.get_preloader },
-			"renderer": { get: p.get_renderer },
-			"renderers": { get: p.get_renderers },
-			"window": { get: p.get_window },
-			"windows": { get: p.get_windows }
-		});
-		#end
-		
-	}
-	
-	
 	/**
 	 * Creates a new Application instance
 	**/
