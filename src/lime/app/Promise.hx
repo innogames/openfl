@@ -18,19 +18,6 @@ class Promise<T> {
 	public var isError (get, null):Bool;
 	
 	
-	#if commonjs
-	private static function __init__ () {
-		
-		var p = untyped Promise.prototype;
-		untyped Object.defineProperties (p, {
-			"isComplete": { get: p.get_isComplete },
-			"isError": { get: p.get_isError }
-		});
-		
-	}
-	#end
-	
-	
 	public function new () {
 		
 		future = new Future<T> ();
