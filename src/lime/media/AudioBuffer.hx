@@ -143,35 +143,6 @@ class AudioBuffer {
 	}
 	
 	
-	#if lime_vorbis
-	
-	public static function fromVorbisFile (vorbisFile:VorbisFile):AudioBuffer {
-		
-		if (vorbisFile == null) return null;
-		
-		var info = vorbisFile.info ();
-		
-		var audioBuffer = new AudioBuffer ();
-		audioBuffer.channels = info.channels;
-		audioBuffer.sampleRate = info.rate;
-		audioBuffer.bitsPerSample = 16;
-		audioBuffer.__srcVorbisFile = vorbisFile;
-		
-		return audioBuffer;
-		
-	}
-	
-	#else
-	
-	public static function fromVorbisFile (vorbisFile:Dynamic):AudioBuffer {
-		
-		return null;
-		
-	}
-	
-	#end
-	
-	
 	public static function loadFromFile (path:String):Future<AudioBuffer> {
 		
 		#if (flash || (js && html5))
@@ -332,28 +303,10 @@ class AudioBuffer {
 	
 	private function get_src ():Dynamic {
 		
-		#if (js && html5)
 		#if howlerjs
-		
 		return __srcHowl;
-		
 		#else
-		
 		return __srcAudio;
-		
-		#end
-		#elseif flash
-		
-		return __srcSound;
-		
-		#elseif lime_vorbis
-		
-		return __srcVorbisFile;
-		
-		#else
-		
-		return __srcCustom;
-		
 		#end
 		
 	}
@@ -361,28 +314,10 @@ class AudioBuffer {
 	
 	private function set_src (value:Dynamic):Dynamic {
 		
-		#if (js && html5)
 		#if howlerjs
-		
 		return __srcHowl = value;
-		
 		#else
-		
 		return __srcAudio = value;
-		
-		#end
-		#elseif flash
-		
-		return __srcSound = value;
-		
-		#elseif lime_vorbis
-		
-		return __srcVorbisFile = value;
-		
-		#else
-		
-		return __srcCustom = value;
-		
 		#end
 		
 	}
