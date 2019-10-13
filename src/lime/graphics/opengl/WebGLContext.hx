@@ -110,13 +110,9 @@ abstract WebGLContext(WebGL2Context) from GLRenderContext from WebGL2Context {
 	}
 	
 	
-	@:from private static function fromGL (gl:#if lime_opengl Class<GL> #else Dynamic #end):WebGLContext {
+	@:from private static function fromGL (gl:Class<GL>):WebGLContext {
 		
-		#if lime_opengl
 		return cast GL.context;
-		#else
-		return null;
-		#end
 		
 	}
 	

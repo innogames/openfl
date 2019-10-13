@@ -3145,24 +3145,11 @@ abstract WebGL2Context(GLRenderContext) from GLRenderContext to GLRenderContext 
 	}
 	
 	
-	@:from private static function fromGL (gl:#if lime_opengl Class<GL> #else Dynamic #end):WebGL2Context {
+	@:from private static function fromGL (gl:Class<GL>):WebGL2Context {
 		
-		#if lime_opengl
 		return cast GL.context;
-		#else
-		return null;
-		#end
 		
 	}
-	
-	
-	#if (!(js && html5))
-	@:from private static function fromGLES3Context (gl:GLES3Context):WebGL2Context {
-		
-		return (gl:GLRenderContext);
-		
-	}
-	#end
 	
 	
 	@:from private static function toWebGLContext (gl:WebGLContext):WebGL2Context {
