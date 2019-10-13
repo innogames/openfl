@@ -386,11 +386,7 @@ class Application extends Module {
 }
 
 
-#if air
-@:noCompletion private typedef ApplicationBackend = lime._backend.air.AIRApplication;
-#elseif flash
-@:noCompletion private typedef ApplicationBackend = lime._backend.flash.FlashApplication;
-#elseif (js && html5)
+#if (js && html5)
 @:noCompletion private typedef ApplicationBackend = lime._backend.html5.HTML5Application;
 #else
 @:noCompletion private typedef ApplicationBackend = lime._backend.native.NativeApplication;
