@@ -10,7 +10,6 @@ import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GLUniformLocation;
 import lime.graphics.CanvasRenderContext;
-import lime.graphics.ConsoleRenderContext;
 import lime.graphics.GLRenderContext;
 import lime.graphics.RenderContext;
 import lime.graphics.Renderer;
@@ -30,7 +29,6 @@ import lime.utils.GLUtils;
 import lime.utils.Log;
 import openfl._internal.renderer.AbstractRenderer;
 import openfl._internal.renderer.canvas.CanvasRenderer;
-import openfl._internal.renderer.console.ConsoleRenderer;
 import openfl._internal.renderer.opengl.GLRenderer;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.stage3D.opengl.GLTextureBase;
@@ -905,14 +903,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 			case CANVAS (context):
 				
 				__renderer = new CanvasRenderer (this, context);
-			
-			case CONSOLE (ctx):
-				
-				#if lime_console
-				__renderer = new ConsoleRenderer (this, ctx);
-				#end
-			
-			default:
 			
 		}
 		

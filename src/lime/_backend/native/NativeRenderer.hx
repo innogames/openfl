@@ -2,7 +2,6 @@ package lime._backend.native;
 
 
 import haxe.io.Bytes;
-import lime.graphics.ConsoleRenderContext;
 import lime.graphics.GLRenderContext;
 import lime.graphics.Image;
 import lime.graphics.ImageBuffer;
@@ -46,14 +45,6 @@ class NativeRenderer {
 		
 		parent.window.__scale = NativeCFFI.lime_renderer_get_scale (handle);
 		
-		#if lime_console
-		
-		useHardware = true;
-		parent.context = CONSOLE (ConsoleRenderContext.singleton);
-		parent.type = CONSOLE;
-		
-		#else
-		
 		var type:String = NativeCFFI.lime_renderer_get_type (handle);
 		
 		switch (type) {
@@ -79,7 +70,6 @@ class NativeRenderer {
 			
 		}
 		
-		#end
 		#end
 		
 	}

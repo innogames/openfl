@@ -7,7 +7,6 @@ import lime.app.Application;
 import lime.app.Config;
 import lime.media.AudioManager;
 import lime.graphics.opengl.GL;
-import lime.graphics.ConsoleRenderContext;
 import lime.graphics.GLRenderContext;
 import lime.graphics.RenderContext;
 import lime.graphics.Renderer;
@@ -86,11 +85,6 @@ class NativeApplication {
 		this.parent = parent;
 		frameRate = 60;
 		toggleFullscreen = true;
-		
-		#if (lime_console && final)
-		// suppress traces in final builds
-		haxe.Log.trace = function(v:Dynamic, ?infos:haxe.PosInfos) {};
-		#end
 		
 		AudioManager.init ();
 		
@@ -486,12 +480,8 @@ class NativeApplication {
 					
 					if (renderer.backend.useHardware) {
 						
-						#if lime_console
-						renderer.context = CONSOLE (ConsoleRenderContext.singleton);
-						#else
 						GL.context = new GLRenderContext ();
 						renderer.context = OPENGL (GL.context);
-						#end
 						
 						renderer.onContextRestored.dispatch (renderer.context);
 						
