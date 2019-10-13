@@ -29,7 +29,6 @@ import js.Browser;
 
 @:access(lime.graphics.opengl.GL)
 @:access(lime._backend.html5.HTML5GLRenderContext)
-@:access(lime._backend.native.NativeGLRenderContext)
 @:access(openfl.display3D.Context3D)
 
 

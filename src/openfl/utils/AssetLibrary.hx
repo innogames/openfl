@@ -46,13 +46,6 @@ import openfl.display.MovieClip;
 	}
 	
 	
-	public static function fromFile (path:String, rootPath:String = null):AssetLibrary {
-		
-		return cast fromManifest (AssetManifest.fromFile (path, rootPath));
-		
-	}
-	
-	
 	public static function fromManifest (manifest:AssetManifest):#if java LimeAssetLibrary #else AssetLibrary #end {
 		
 		var library = LimeAssetLibrary.fromManifest (manifest);

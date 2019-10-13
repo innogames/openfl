@@ -108,13 +108,6 @@ abstract BytePointer(BytePointerData) from BytePointerData to BytePointerData {
 	}
 	
 	
-	public static function fromFile (path:String):BytePointer {
-		
-		return new BytePointerData (LimeBytes.fromFile (path), 0);
-		
-	}
-	
-	
 	@:from @:noCompletion public static function fromLimeBytes (bytes:LimeBytes):BytePointer {
 		
 		return new BytePointerData (bytes, 0);

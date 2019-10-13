@@ -1,11 +1,6 @@
 package lime.media;
 
 
-import lime.media.openal.AL;
-import lime.media.openal.ALC;
-import lime.media.openal.ALContext;
-import lime.media.openal.ALDevice;
-
 #if (js && html5)
 import js.Browser;
 #end
@@ -41,19 +36,6 @@ class AudioManager {
 						
 					}
 					
-				#elseif flash
-					
-					AudioManager.context = FLASH (new FlashAudioContext ());
-					
-				#else
-					
-					AudioManager.context = OPENAL (new ALCAudioContext (), new ALAudioContext ());
-					
-					var device = ALC.openDevice ();
-					var ctx = ALC.createContext (device);
-					ALC.makeContextCurrent (ctx);
-					ALC.processContext (ctx);
-					
 				#end
 				
 			} else {
@@ -69,89 +51,17 @@ class AudioManager {
 	
 	public static function resume ():Void {
 		
-		if (context != null) {
-			
-			switch (context) {
-				
-				case OPENAL (alc, al):
-					
-					var currentContext = alc.getCurrentContext ();
-					
-					if (currentContext != null) {
-						
-						var device = alc.getContextsDevice (currentContext);
-						alc.resumeDevice (device);
-						alc.processContext (currentContext);
-						
-					}
-				
-				default:
-				
-			}
-			
-		}
-		
 	}
 	
 	
 	public static function shutdown ():Void {
 		
-		if (context != null) {
-			
-			switch (context) {
-				
-				case OPENAL (alc, al):
-					
-					var currentContext = alc.getCurrentContext ();
-					
-					if (currentContext != null) {
-						
-						var device = alc.getContextsDevice (currentContext);
-						alc.makeContextCurrent (null);
-						alc.destroyContext (currentContext);
-						
-						if (device != null) {
-							
-							alc.closeDevice (device);
-							
-						}
-						
-					}
-				
-				default:
-				
-			}
-			
-			context = null;
-			
-		}
+		context = null;
 		
 	}
 	
 	
 	public static function suspend ():Void {
-		
-		if (context != null) {
-			
-			switch (context) {
-				
-				case OPENAL (alc, al):
-					
-					var currentContext = alc.getCurrentContext ();
-					
-					if (currentContext != null) {
-						
-						alc.suspendContext (currentContext);
-						var device = alc.getContextsDevice (currentContext);
-						alc.pauseDevice (device);
-						
-					}
-				
-				default:
-				
-			}
-			
-		}
 		
 	}
 	

@@ -70,7 +70,7 @@ class GLGraphics {
 							
 						}
 					
-					case MOVE_TO, END_FILL, DRAW_RECT:
+					case MOVE_TO:
 						
 						data.skip (type);
 					
@@ -154,7 +154,7 @@ class GLGraphics {
 								
 								gl.uniform1i (shader.data.uColorTransform.index, 0);
 								
-								gl.bindTexture (gl.TEXTURE_2D, bitmap.getTexture (gl));
+								gl.bindTexture (gl.TEXTURE_2D, bitmap.getTexture (gl).data.glTexture);
 								
 								//if (renderSession.allowSmoothing && (smooth || renderSession.forceSmoothing)) {
 									

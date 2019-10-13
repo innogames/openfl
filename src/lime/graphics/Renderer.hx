@@ -68,6 +68,4 @@ class Renderer {
 
 #if (js && html5)
 @:noCompletion private typedef RendererBackend = lime._backend.html5.HTML5Renderer;
-#else
-@:noCompletion private typedef RendererBackend = lime._backend.native.NativeRenderer;
 #end

@@ -1,16 +1,12 @@
 package lime.ui;
 
 
-import lime._backend.native.NativeCFFI;
 import lime.app.Event;
 
 #if !lime_debug
 @:fileXml('tags="haxe,release"')
 @:noDebug
 #end
-
-@:access(lime._backend.native.NativeCFFI)
-
 
 class Joystick {
 	
@@ -83,9 +79,7 @@ class Joystick {
 	
 	@:noCompletion private inline function get_guid ():String {
 		
-		#if (lime_cffi && !macro)
-		return NativeCFFI.lime_joystick_get_device_guid (this.id);
-		#elseif (js && html5)
+		#if (js && html5)
 		var devices = __getDeviceData ();
 		return devices[this.id].id;
 		#else
@@ -97,9 +91,7 @@ class Joystick {
 	
 	@:noCompletion private inline function get_name ():String {
 		
-		#if (lime_cffi && !macro)
-		return NativeCFFI.lime_joystick_get_device_name (this.id);
-		#elseif (js && html5)
+		#if (js && html5)
 		var devices = __getDeviceData ();
 		return devices[this.id].id;
 		#else
@@ -111,9 +103,7 @@ class Joystick {
 	
 	@:noCompletion private inline function get_numAxes ():Int {
 		
-		#if (lime_cffi && !macro)
-		return NativeCFFI.lime_joystick_get_num_axes (this.id);
-		#elseif (js && html5)
+		#if (js && html5)
 		var devices = __getDeviceData ();
 		return devices[this.id].axes.length;
 		#else
@@ -125,9 +115,7 @@ class Joystick {
 	
 	@:noCompletion private inline function get_numButtons ():Int {
 		
-		#if (lime_cffi && !macro)
-		return NativeCFFI.lime_joystick_get_num_buttons (this.id);
-		#elseif (js && html5)
+		#if (js && html5)
 		var devices = __getDeviceData ();
 		return devices[this.id].buttons.length;
 		#else
@@ -139,22 +127,14 @@ class Joystick {
 	
 	@:noCompletion private inline function get_numHats ():Int {
 		
-		#if (lime_cffi && !macro)
-		return NativeCFFI.lime_joystick_get_num_hats (this.id);
-		#else
 		return 0;
-		#end
 		
 	}
 	
 	
 	@:noCompletion private inline function get_numTrackballs ():Int {
 		
-		#if (lime_cffi && !macro)
-		return NativeCFFI.lime_joystick_get_num_trackballs (this.id);
-		#else
 		return 0;
-		#end
 		
 	}
 	

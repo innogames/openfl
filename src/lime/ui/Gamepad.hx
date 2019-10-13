@@ -1,7 +1,6 @@
 package lime.ui;
 
 
-import lime._backend.native.NativeCFFI;
 import lime.app.Event;
 
 #if !lime_debug
@@ -9,7 +8,6 @@ import lime.app.Event;
 @:noDebug
 #end
 
-@:access(lime._backend.native.NativeCFFI)
 @:access(lime.ui.Joystick)
 
 
@@ -33,15 +31,6 @@ class Gamepad {
 		
 		this.id = id;
 		connected = true;
-		
-	}
-	
-	
-	public static function addMappings (mappings:Array<String>):Void {
-		
-		#if (lime_cffi && !macro)
-		NativeCFFI.lime_gamepad_add_mappings (mappings);
-		#end
 		
 	}
 	
@@ -78,9 +67,7 @@ class Gamepad {
 	
 	@:noCompletion private inline function get_guid ():String {
 		
-		#if (lime_cffi && !macro)
-		return NativeCFFI.lime_gamepad_get_device_guid (this.id);
-		#elseif (js && html5)
+		#if (js && html5)
 		var devices = Joystick.__getDeviceData ();
 		return devices[this.id].id;
 		#else
@@ -92,9 +79,7 @@ class Gamepad {
 	
 	@:noCompletion private inline function get_name ():String {
 		
-		#if (lime_cffi && !macro)
-		return NativeCFFI.lime_gamepad_get_device_name (this.id);
-		#elseif (js && html5)
+		#if (js && html5)
 		var devices = Joystick.__getDeviceData ();
 		return devices[this.id].id;
 		#else

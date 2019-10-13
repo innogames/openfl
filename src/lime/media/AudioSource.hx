@@ -2,8 +2,6 @@ package lime.media;
 
 
 import lime.app.Event;
-import lime.media.openal.AL;
-import lime.media.openal.ALSource;
 import lime.math.Vector4;
 
 #if !lime_debug
@@ -169,6 +167,4 @@ class AudioSource {
 
 #if (js && html5)
 @:noCompletion private typedef AudioSourceBackend = lime._backend.html5.HTML5AudioSource;
-#else
-@:noCompletion private typedef AudioSourceBackend = lime._backend.native.NativeAudioSource;
 #end

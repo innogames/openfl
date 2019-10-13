@@ -64,14 +64,6 @@ class GLTextureBase {
 				__supportsBGRA = true;
 				__textureFormat = bgraExtension.BGRA_EXT;
 				
-				#if (!ios && !tvos)
-				if (gl.type == GLES) {
-					
-					__textureInternalFormat = bgraExtension.BGRA_EXT;
-					
-				}
-				#end
-				
 			} else {
 				
 				__supportsBGRA = false;

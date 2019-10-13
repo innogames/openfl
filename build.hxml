@@ -1,6 +1,6 @@
 -cp src
-# --macro include("openfl")
-openfl.display.Stage
+--macro include("openfl")
+--macro include("lime")
 -js openfl.js
 --no-output
 -D html5
@@ -10,3 +10,4 @@ openfl.display.Stage
 -D gl_stats
 
 -D no-deprecation-warnings
+-debug

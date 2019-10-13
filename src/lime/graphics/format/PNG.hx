@@ -2,10 +2,8 @@ package lime.graphics.format;
 
 
 import haxe.io.Bytes;
-import lime._backend.native.NativeCFFI;
 import lime.graphics.utils.ImageCanvasUtil;
 import lime.graphics.Image;
-import lime.system.CFFI;
 import lime.utils.compress.Zlib;
 import lime.utils.UInt8Array;
 
@@ -26,62 +24,8 @@ import haxe.io.BytesOutput;
 @:noDebug
 #end
 
-@:access(lime._backend.native.NativeCFFI)
 @:access(lime.graphics.ImageBuffer)
-
-
 class PNG {
-	
-	
-	public static function decodeBytes (bytes:Bytes, decodeData:Bool = true):Image {
-		
-		#if (lime_cffi && !macro)
-		
-		#if !cs
-		return NativeCFFI.lime_png_decode_bytes (bytes, decodeData, new ImageBuffer (new UInt8Array (Bytes.alloc (0))));
-		#else
-		var bufferData:Dynamic = NativeCFFI.lime_png_decode_bytes (bytes, decodeData, null);
-		
-		if (bufferData != null) {
-			
-			var buffer = new ImageBuffer (bufferData.data, bufferData.width, bufferData.height, bufferData.bpp, bufferData.format);
-			buffer.transparent = bufferData.transparent;
-			return new Image (buffer);
-			
-		}
-		#end
-		
-		#end
-		
-		return null;
-		
-	}
-	
-	
-	public static function decodeFile (path:String, decodeData:Bool = true):Image {
-		
-		#if (lime_cffi && !macro)
-		
-		#if !cs
-		return NativeCFFI.lime_png_decode_file (path, decodeData, new ImageBuffer (new UInt8Array (Bytes.alloc (0))));
-		#else
-		var bufferData:Dynamic = NativeCFFI.lime_png_decode_file (path, decodeData, null);
-		
-		if (bufferData != null) {
-			
-			var buffer = new ImageBuffer (bufferData.data, bufferData.width, bufferData.height, bufferData.bpp, bufferData.format);
-			buffer.transparent = bufferData.transparent;
-			return new Image (buffer);
-			
-		}
-		#end
-		
-		#end
-		
-		return null;
-		
-	}
-	
 	
 	public static function encode (image:Image):Bytes {
 		
@@ -95,59 +39,7 @@ class PNG {
 			
 		}
 		
-		#if java
-		
-		#elseif (sys && (!disable_cffi || !format) && !macro)
-		
-		if (CFFI.enabled) {
-			
-			#if !cs
-			return NativeCFFI.lime_image_encode (image.buffer, 0, 0, Bytes.alloc (0));
-			#else
-			var data:Dynamic = NativeCFFI.lime_image_encode (image.buffer, 0, 0, null);
-			return @:privateAccess new Bytes (data.length, data.b);
-			#end
-			
-		}
-		#end
-		
-		#if ((!js || !html5) && format)
-		
-		#if (sys && (!disable_cffi || !format) && !macro) else #end {
-			
-			try {
-				
-				var bytes = Bytes.alloc (image.width * image.height * 4 + image.height);
-				var sourceBytes = image.buffer.data.toBytes ();
-				
-				var sourceIndex:Int, index:Int;
-				
-				for (y in 0...image.height) {
-					
-					sourceIndex = y * image.width * 4;
-					index = y * image.width * 4 + y;
-					
-					bytes.set (index, 0);
-					bytes.blit (index + 1, sourceBytes, sourceIndex, image.width * 4);
-					
-				}
-				
-				var data = new List ();
-				data.add (CHeader ({ width: image.width, height: image.height, colbits: 8, color: ColTrue (true), interlaced: false }));
-				data.add (CData (Zlib.compress (bytes)));
-				data.add (CEnd);
-				
-				var output = new BytesOutput ();
-				var png = new Writer (output);
-				png.write (data);
-				
-				return output.getBytes ();
-				
-			} catch (e:Dynamic) { }
-			
-		}
-		
-		#elseif js
+		#if js
 		
 		image.type = CANVAS;
 		ImageCanvasUtil.sync (image, false);

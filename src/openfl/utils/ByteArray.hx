@@ -130,13 +130,6 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	}
 	
 	
-	public static function fromFile (path:String):ByteArray {
-		
-		return LimeBytes.fromFile (path);
-		
-	}
-	
-	
 	public static function loadFromBytes (bytes:Bytes):Future<ByteArray> {
 		
 		return LimeBytes.loadFromBytes (bytes).then (function (limeBytes:LimeBytes) {

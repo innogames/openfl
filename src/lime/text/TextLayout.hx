@@ -2,7 +2,6 @@ package lime.text;
 
 
 import haxe.io.Bytes;
-import lime._backend.native.NativeCFFI;
 import lime.math.Vector2;
 import lime.system.System;
 
@@ -11,7 +10,6 @@ import lime.system.System;
 @:noDebug
 #end
 
-@:access(lime._backend.native.NativeCFFI)
 @:access(lime.text.Font)
 
 
@@ -31,7 +29,6 @@ class TextLayout {
 	
 	@:noCompletion private var __buffer:Bytes;
 	@:noCompletion private var __direction:TextDirection;
-	@:noCompletion private var __handle:Dynamic;
 	@:noCompletion private var __language:String;
 	@:noCompletion private var __script:TextScript;
 	
@@ -47,67 +44,8 @@ class TextLayout {
 		
 		positions = [];
 		__dirty = true;
-		
-		#if (lime_cffi && !macro)
-		__handle = NativeCFFI.lime_text_layout_create (__direction, __script, __language);
-		#end
+
 	}
-	
-	
-	@:noCompletion private function __position ():Void {
-		
-		positions = [];
-		
-		#if (lime_cffi && !macro)
-		
-		if (__handle != null && text != null && text != "" && font != null && font.src != null) {
-			
-			if (__buffer == null) {
-				
-				__buffer = Bytes.alloc (text.length * 5);
-				//__buffer.endian = (System.endianness == BIG_ENDIAN ? "bigEndian" : "littleEndian");
-				
-			}
-			
-			var data = NativeCFFI.lime_text_layout_position (__handle, font.src, size, text, #if cs null #else __buffer #end);
-			var position = 0;
-			
-			if (__buffer.length > 4) {
-				
-				var count = __buffer.getInt32 (position); position += 4;
-				var codepoint, index, advanceX, advanceY, offsetX, offsetY;
-				var lastIndex = -1;
-				
-				for (i in 0...count) {
-					
-					codepoint = __buffer.getInt32 (position); position += 4;
-					index = __buffer.getInt32 (position); position += 4;
-					advanceX = __buffer.getFloat (position); position += 4;
-					advanceY = __buffer.getFloat (position); position += 4;
-					offsetX = __buffer.getFloat (position); position += 4;
-					offsetY = __buffer.getFloat (position); position += 4;
-					
-					for (j in lastIndex + 1...index) {
-						
-						// TODO: Handle differently?
-						
-						positions.push (new GlyphPosition (0, new Vector2 (0, 0), new Vector2 (0, 0)));
-						
-					}
-					
-					positions.push (new GlyphPosition (codepoint, new Vector2 (advanceX, advanceY), new Vector2 (offsetX, offsetY)));
-					lastIndex = index;
-					
-				}
-				
-			}
-		}
-		
-		#end
-		
-	}
-	
-	
 	
 	
 	// Get & Set Methods
@@ -120,7 +58,7 @@ class TextLayout {
 		if (__dirty) {
 			
 			__dirty = false;
-			__position ();
+			positions = [];
 			
 		}
 		
@@ -141,11 +79,6 @@ class TextLayout {
 		if (value == __direction) return value;
 		
 		__direction = value;
-		
-		#if (lime_cffi && !macro)
-		NativeCFFI.lime_text_layout_set_direction (__handle, value);
-		#end
-		
 		__dirty = true;
 		
 		return value;
@@ -191,11 +124,6 @@ class TextLayout {
 		if (value == __language) return value;
 		
 		__language = value;
-		
-		#if (lime_cffi && !macro)
-		NativeCFFI.lime_text_layout_set_language (__handle, value);
-		#end
-		
 		__dirty = true;
 		
 		return value;
@@ -215,11 +143,6 @@ class TextLayout {
 		if (value == __script) return value;
 		
 		__script = value;
-		
-		#if (lime_cffi && !macro)
-		NativeCFFI.lime_text_layout_set_script (__handle, value);
-		#end
-		
 		__dirty = true;
 		
 		return value;

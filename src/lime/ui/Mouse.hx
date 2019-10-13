@@ -75,6 +75,4 @@ class Mouse {
 
 #if (js && html5)
 @:noCompletion private typedef MouseBackend = lime._backend.html5.HTML5Mouse;
-#else
-@:noCompletion private typedef MouseBackend = lime._backend.native.NativeMouse;
 #end

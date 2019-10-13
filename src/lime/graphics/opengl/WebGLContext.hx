@@ -121,20 +121,4 @@ abstract WebGLContext(WebGL2Context) from GLRenderContext from WebGL2Context {
 	}
 	
 	
-	#if (!(js && html5))
-	@:from private static function fromGLES2Context (gl:GLES2Context):WebGLContext {
-		
-		return cast gl;
-		
-	}
-	
-	
-	@:from private static function fromGLES3Context (gl:GLES3Context):WebGLContext {
-		
-		return cast gl;
-		
-	}
-	#end
-	
-	
 }

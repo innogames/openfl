@@ -305,18 +305,14 @@ class AssetsMacro {
 		
 		if (fields != null) {
 			
-			#if (!html5) // CFFILoader.h(248) : NOT Implemented:api_buffer_data
+			#if !html5
 			
 			var constructor = macro { 
 				
 				super();
 				
-				#if lime_console
-				throw "not implemented";
-				#else
 				var byteArray = openfl.utils.ByteArray.fromBytes (haxe.Resource.getBytes (resourceName));
 				loadCompressedDataFromByteArray (byteArray, byteArray.length);
-				#end
 
 			};
 			

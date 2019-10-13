@@ -1,20 +1,6 @@
 package lime.graphics.opengl;
 
 
-import haxe.io.Bytes;
-import haxe.Int64;
-import lime.utils.ArrayBufferView;
-import lime.utils.ArrayBuffer;
-import lime.utils.BytePointer;
-import lime.utils.DataPointer;
-import lime.utils.Float32Array;
-import lime.utils.Int32Array;
-
-#if (lime_cffi && lime_opengl && !macro)
-import lime._backend.native.NativeCFFI;
-#end
-
-@:allow(lime.ui.Window)
 
 #if !lime_debug
 @:fileXml('tags="haxe,release"')
@@ -691,18 +677,10 @@ class GL {
 	private static function get_version ():Float { return context.version; }
 	
 	
-	private static inline function __getObjectID (object:#if (!js || !html5 || display) GLObject #else Dynamic #end):Int {
-		
-		return (object == null) ? 0 : @:privateAccess object.id;
-		
-	}
-	
-	
 }
 
 
 #if (!js || !html5 || display)
-@:access(lime._backend.native.NativeCFFI)
 @:dox(hide) @:noCompletion class GLObject {
 	
 	
@@ -721,21 +699,7 @@ class GL {
 		
 		if (id == 0) return null;
 		
-		#if (lime_cffi && lime_opengl && !macro)
-		var object = NativeCFFI.lime_gl_object_from_id (id, type);
-		
-		if (object != null) {
-			
-			return object;
-			
-		}
-		
-		object = new GLObject (id);
-		NativeCFFI.lime_gl_object_register (id, type, object);
-		return object;
-		#else
 		return null;
-		#end
 		
 	}
 	

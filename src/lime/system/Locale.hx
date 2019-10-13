@@ -1,18 +1,6 @@
 package lime.system;
 
 
-#if flash
-import flash.system.Capabilities;
-#end
-
-#if lime_cffi
-import lime.system.CFFI;
-#if android
-import lime.system.JNI;
-#end
-#end
-
-
 abstract Locale(String) from String to String {
 	
 	
@@ -66,24 +54,9 @@ abstract Locale(String) from String to String {
 			
 			var locale = null;
 			
-			#if flash
-			
-			locale = Capabilities.language;
-			
-			#elseif (js && html5)
+			#if (js && html5)
 			
 			locale = untyped navigator.language;
-			
-			#elseif (android)
-			
-			var getDefault:Void->Dynamic = JNI.createStaticMethod ("java/util/Locale", "getDefault", "()Ljava/util/Locale;");
-			var toString:Dynamic->String = JNI.createMemberMethod ("java/util/Locale", "toString", "()Ljava/lang/String;");
-			
-			locale = toString (getDefault ());
-			
-			#elseif (lime_cffi && !macro)
-			
-			locale = CFFI.load ("lime", "lime_locale_get_system_locale", 0) ();
 			
 			#end
 			

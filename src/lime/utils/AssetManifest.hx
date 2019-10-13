@@ -52,18 +52,6 @@ class AssetManifest {
 	}
 	
 	
-	public static function fromFile (path:String, rootPath:String = null):AssetManifest {
-		
-		path = __resolvePath (path);
-		rootPath = __resolveRootPath (rootPath, path);
-		
-		if (path == null) return null;
-		
-		return fromBytes (Bytes.fromFile (path), rootPath);
-		
-	}
-	
-	
 	public static function loadFromBytes (bytes:Bytes, rootPath:String = null):Future<AssetManifest> {
 		
 		return Future.withValue (fromBytes (bytes, rootPath));

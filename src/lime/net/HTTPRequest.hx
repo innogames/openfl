@@ -200,7 +200,5 @@ interface _IHTTPRequest {
 
 #if (js && html5)
 private typedef HTTPRequestBackend = lime._backend.html5.HTML5HTTPRequest;
-#else
-private typedef HTTPRequestBackend = lime._backend.native.NativeHTTPRequest;
 #end
 #end
