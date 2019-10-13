@@ -11,7 +11,6 @@ import haxe.Int64;
 import lime.graphics.opengl.GLActiveInfo;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLContextAttributes;
-import lime.graphics.opengl.GLContextType;
 import lime.graphics.opengl.GLFramebuffer;
 import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GLQuery;
@@ -621,7 +620,6 @@ class GLRenderContext {
 	private function get_drawingBufferWidth () { return 0; }
 	#end
 	
-	public var type (default, null):GLContextType;
 	public var version (default, null):Float;
 	
 	private function new () {}

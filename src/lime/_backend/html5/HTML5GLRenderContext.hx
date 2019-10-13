@@ -650,7 +650,6 @@ class HTML5GLRenderContext {
 	public var drawingBufferWidth (get, never):Int;
 	#end
 	
-	public var type:GLContextType;
 	public var version (default, null):Int;
 	
 	private var __context:WebGL2RenderingContext;
@@ -661,7 +660,6 @@ class HTML5GLRenderContext {
 		
 		__context = context;
 		version = 1;
-		type = WEBGL;
 		
 		if (context != null) {
 			

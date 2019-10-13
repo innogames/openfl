@@ -211,12 +211,6 @@ class Shader {
 		gl.bindBuffer (gl.ARRAY_BUFFER, null);
 		gl.bindTexture (gl.TEXTURE_2D, null);
 		
-		if (gl.type == OPENGL) {
-			
-			gl.disable (gl.TEXTURE_2D);
-			
-		}
-		
 	}
 	
 	
@@ -238,12 +232,6 @@ class Shader {
 		for (input in __inputBitmapData) {
 			
 			input.enable (gl);
-			
-		}
-		
-		if (gl.type == OPENGL && __inputBitmapData.length > 0) {
-			
-			gl.enable (gl.TEXTURE_2D);
 			
 		}
 		
