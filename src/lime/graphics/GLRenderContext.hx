@@ -1,9 +1,7 @@
 package lime.graphics;
 
 
-#if (lime_cffi && lime_opengl && !display)
-typedef GLRenderContext = lime._backend.native.NativeGLRenderContext;
-#elseif (js && html5 && lime_opengl && !display)
+#if (js && html5 && lime_opengl && !display)
 typedef GLRenderContext = lime._backend.html5.HTML5GLRenderContext;
 #else
 

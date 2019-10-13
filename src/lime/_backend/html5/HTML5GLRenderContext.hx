@@ -7,13 +7,10 @@ import js.html.webgl.RenderingContext in WebGLRenderingContext;
 import js.html.CanvasElement;
 import js.Browser;
 import lime.graphics.opengl.*;
-import lime.utils.ArrayBuffer;
 import lime.utils.ArrayBufferView;
-import lime.utils.BytePointer;
 import lime.utils.DataPointer;
 import lime.utils.Float32Array;
 import lime.utils.Int32Array;
-import lime.utils.UInt8Array;
 import lime.utils.UInt32Array;
 
 @:allow(lime.ui.Window)

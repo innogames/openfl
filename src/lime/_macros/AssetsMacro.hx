@@ -380,26 +380,6 @@ class AssetsMacro {
 		
 		var fields = embedData (":sound");
 		
-		if (fields != null) {
-			
-			#if (openfl && !html5 && !display) // CFFILoader.h(248) : NOT Implemented:api_buffer_data
-			
-			var constructor = macro { 
-				
-				super();
-				
-				var byteArray = openfl.utils.ByteArray.fromBytes (haxe.Resource.getBytes(resourceName));
-				loadCompressedDataFromByteArray(byteArray, byteArray.length, forcePlayAsMusic);
-				
-			};
-			
-			var args = [ { name: "stream", opt: true, type: macro :openfl.net.URLRequest, value: null }, { name: "context", opt: true, type: macro :openfl.media.SoundLoaderContext, value: null }, { name: "forcePlayAsMusic", opt: true, type: macro :Bool, value: macro false } ];
-			fields.push ({ name: "new", access: [ APublic ], kind: FFun({ args: args, expr: constructor, params: [], ret: null }), pos: Context.currentPos() });
-			
-			#end
-			
-		}
-		
 		return fields;
 		
 	}

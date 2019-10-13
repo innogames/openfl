@@ -50,8 +50,6 @@ class TextEngine {
 	private static inline var UTF8_SPACE = 32;
 	private static inline var UTF8_HYPHEN = 0x2D;
 	
-	private static var __defaultFonts = new Map<String, Font> ();
-	
 	#if (js && html5)
 	private static var __context:CanvasRenderingContext2D;
 	#end
@@ -189,69 +187,6 @@ class TextEngine {
 	}
 	
 	
-	private static function findFont (name:String):Font {
-		
-		#if (lime_cffi)
-		
-		for (registeredFont in Font.__registeredFonts) {
-			
-			if (registeredFont == null) continue;
-			
-			if (registeredFont.fontName == name || (registeredFont.__fontPath != null && (registeredFont.__fontPath == name || registeredFont.__fontPathWithoutDirectory == name))) {
-				
-				if (registeredFont.__initialize ()) {
-					
-					return registeredFont;
-					
-				}
-				
-			}
-			
-		}
-		
-		var font = Font.fromFile (name);
-		
-		if (font != null) {
-			
-			Font.__registeredFonts.push (font);
-			return font;
-			
-		}
-		
-		#end
-		
-		return null;
-		
-	}
-	
-	
-	private static function findFontVariant (format:TextFormat):Font {
-		
-		var fontName = format.font;
-		var bold = format.bold;
-		var italic = format.italic;
-		
-		var fontNamePrefix = StringTools.replace (StringTools.replace (fontName, " Normal", ""), " Regular", "");
-		
-		if (bold && italic && Font.__fontByName.exists (fontNamePrefix + " Bold Italic")) {
-			
-			return findFont (fontNamePrefix + " Bold Italic");
-			
-		} else if (bold && Font.__fontByName.exists (fontNamePrefix + " Bold")) {
-			
-			return findFont (fontNamePrefix + " Bold");
-			
-		} else if (italic && Font.__fontByName.exists (fontNamePrefix + " Italic")) {
-			
-			return findFont (fontNamePrefix + " Italic");
-			
-		}
-		
-		return findFont (fontName);
-		
-	}
-	
-	
 	private function getBounds ():Void {
 		
 		var padding = border ? 1 : 0;
@@ -279,29 +214,6 @@ class TextEngine {
 			
 			ascent = format.size;
 			descent = format.size * 0.185;
-		}
-		
-		leading = format.leading;
-		
-		#elseif (lime_cffi)
-		
-		var font = getFontInstance (format);
-		
-		if (format.__ascent != null) {
-
-			ascent = format.size * format.__ascent;
-			descent = format.size * format.__descent;
-
-		} else if (font != null) {
-
-			ascent = (font.ascender / font.unitsPerEM) * format.size;
-			descent = Math.abs ((font.descender / font.unitsPerEM) * format.size);
-
-		} else {
-			
-			ascent = format.size;
-			descent = format.size * 0.185;
-			
 		}
 		
 		leading = format.leading;
@@ -379,212 +291,7 @@ class TextEngine {
 		
 	}
 	
-	
-	public static function getFontInstance (format:TextFormat):Font {
-		
-		#if (lime_cffi)
-		
-		var instance = null;
-		var fontList = null;
-		
-		if (format != null && format.font != null) {
-			
-			if (__defaultFonts.exists (format.font)) {
-				
-				return __defaultFonts.get (format.font);
-				
-			}
-			
-			instance = findFontVariant (format);
-			if (instance != null) return instance;
-			
-			var systemFontDirectory = System.fontsDirectory;
-			
-			switch (format.font) {
-				
-				case "_sans":
-					
-					#if windows
-					if (format.bold) {
-						
-						if (format.italic) {
-							
-							fontList = [ systemFontDirectory + "/arialbi.ttf" ];
-							
-						} else {
-							
-							fontList = [ systemFontDirectory + "/arialbd.ttf" ];
-							
-						}
-						
-					} else {
-						
-						if (format.italic) {
-							
-							fontList = [ systemFontDirectory + "/ariali.ttf" ];
-							
-						} else {
-							
-							fontList = [ systemFontDirectory + "/arial.ttf" ];
-							
-						}
-						
-					}
-					#elseif (mac || ios || tvos)
-					fontList = [ systemFontDirectory + "/Arial.ttf", systemFontDirectory + "/Helvetica.ttf", systemFontDirectory + "/Cache/Arial.ttf", systemFontDirectory + "/Cache/Helvetica.ttf", systemFontDirectory + "/Core/Arial.ttf", systemFontDirectory + "/Core/Helvetica.ttf", systemFontDirectory + "/CoreAddition/Arial.ttf", systemFontDirectory + "/CoreAddition/Helvetica.ttf" ];
-					#elseif linux
-					fontList = [ new sys.io.Process('fc-match', ['sans', '-f%{file}']).stdout.readLine() ];
-					#elseif android
-					fontList = [ systemFontDirectory + "/DroidSans.ttf" ];
-					#elseif blackberry
-					fontList = [ systemFontDirectory + "/arial.ttf" ];
-					#end
-				
-				case "_serif":
-					
-					// pass through
-				
-				case "_typewriter":
-					
-					#if windows
-					if (format.bold) {
-						
-						if (format.italic) {
-							
-							fontList = [ systemFontDirectory + "/courbi.ttf" ];
-							
-						} else {
-							
-							fontList = [ systemFontDirectory + "/courbd.ttf" ];
-							
-						}
-						
-					} else {
-						
-						if (format.italic) {
-							
-							fontList = [ systemFontDirectory + "/couri.ttf" ];
-							
-						} else {
-							
-							fontList = [ systemFontDirectory + "/cour.ttf" ];
-							
-						}
-						
-					}
-					#elseif (mac || ios || tvos)
-					fontList = [ systemFontDirectory + "/Courier New.ttf", systemFontDirectory + "/Courier.ttf", systemFontDirectory + "/Cache/Courier New.ttf", systemFontDirectory + "/Cache/Courier.ttf", systemFontDirectory + "/Core/Courier New.ttf", systemFontDirectory + "/Core/Courier.ttf", systemFontDirectory + "/CoreAddition/Courier New.ttf", systemFontDirectory + "/CoreAddition/Courier.ttf" ];
-					#elseif linux
-					fontList = [ new sys.io.Process('fc-match', ['mono', '-f%{file}']).stdout.readLine() ];
-					#elseif android
-					fontList = [ systemFontDirectory + "/DroidSansMono.ttf" ];
-					#elseif blackberry
-					fontList = [ systemFontDirectory + "/cour.ttf" ];
-					#end
-				
-				default:
-					
-					fontList = [ systemFontDirectory + "/" + format.font ];
-				
-			}
-			
-			#if lime_console
-				
-				// TODO(james4k): until we figure out our story for the above switch
-				// statement, always load arial unless a file is specified.
-				if (format == null
-					|| StringTools.startsWith (format.font,  "_")
-					|| format.font.indexOf(".") == -1
-				) {
-					fontList = [ "arial.ttf" ];
-				}
-				
-			#end
-			
-			if (fontList != null) {
-				
-				for (font in fontList) {
-					
-					instance = findFont (font);
-					
-					if (instance != null) {
-						
-						__defaultFonts.set (format.font, instance);
-						return instance;
-						
-					}
-					
-				}
-				
-			}
-			
-			instance = findFont ("_serif");
-			if (instance != null) return instance;
-			
-		}
-		
-		var systemFontDirectory = System.fontsDirectory;
-		
-		#if windows
-		if (format.bold) {
-			
-			if (format.italic) {
-				
-				fontList = [ systemFontDirectory + "/timesbi.ttf" ];
-				
-			} else {
-				
-				fontList = [ systemFontDirectory + "/timesbd.ttf" ];
-				
-			}
-			
-		} else {
-			
-			if (format.italic) {
-				
-				fontList = [ systemFontDirectory + "/timesi.ttf" ];
-				
-			} else {
-				
-				fontList = [ systemFontDirectory + "/times.ttf" ];
-				
-			}
-			
-		}
-		#elseif (mac || ios || tvos)
-		fontList = [ systemFontDirectory + "/Georgia.ttf", systemFontDirectory + "/Times.ttf", systemFontDirectory + "/Times New Roman.ttf", systemFontDirectory + "/Cache/Georgia.ttf", systemFontDirectory + "/Cache/Times.ttf", systemFontDirectory + "/Cache/Times New Roman.ttf", systemFontDirectory + "/Core/Georgia.ttf", systemFontDirectory + "/Core/Times.ttf", systemFontDirectory + "/Core/Times New Roman.ttf", systemFontDirectory + "/CoreAddition/Georgia.ttf", systemFontDirectory + "/CoreAddition/Times.ttf", systemFontDirectory + "/CoreAddition/Times New Roman.ttf" ];
-		#elseif linux
-		fontList = [ new sys.io.Process('fc-match', ['serif', '-f%{file}']).stdout.readLine() ];
-		#elseif android
-		fontList = [ systemFontDirectory + "/DroidSerif-Regular.ttf", systemFontDirectory + "/NotoSerif-Regular.ttf" ];
-		#elseif blackberry
-		fontList = [ systemFontDirectory + "/georgia.ttf" ];
-		#else
-		fontList = [];
-		#end
-		
-		for (font in fontList) {
-			
-			instance = findFont (font);
-			
-			if (instance != null) {
-				
-				__defaultFonts.set (format.font, instance);
-				return instance;
-				
-			}
-			
-		}
-		
-		__defaultFonts.set (format.font, null);
-		
-		#end
-		
-		return null;
-		
-	}
-	
-	
+
 	public function getLine (index:Int):String {
 		
 		if (index < 0 || index > lineBreaks.length + 1) {
@@ -710,31 +417,6 @@ class TextEngine {
 				
 				ascent = currentFormat.size * currentFormat.__ascent;
 				descent = currentFormat.size * currentFormat.__descent;
-				
-			} else {
-				
-				ascent = currentFormat.size;
-				descent = currentFormat.size * 0.185;
-				
-			}
-			
-			leading = currentFormat.leading;
-			
-			heightValue = ascent + descent + leading;
-			
-			#elseif (lime_cffi)
-			
-			var font = getFontInstance (currentFormat);
-			
-			if (currentFormat.__ascent != null) {
-				
-				ascent = currentFormat.size * currentFormat.__ascent;
-				descent = currentFormat.size * currentFormat.__descent;
-				
-			} else if (font != null) {
-				
-				ascent = (font.ascender / font.unitsPerEM) * currentFormat.size;
-				descent = Math.abs ((font.descender / font.unitsPerEM) * currentFormat.size);
 				
 			} else {
 				
@@ -1058,31 +740,6 @@ class TextEngine {
 					
 					ascent = currentFormat.size;
 					descent = currentFormat.size * 0.185;
-				}
-				
-				leading = currentFormat.leading;
-				
-				heightValue = ascent + descent + leading;
-				
-				#elseif (lime_cffi)
-				
-				font = getFontInstance (currentFormat);
-				
-				if (currentFormat.__ascent != null) {
-					
-					ascent = currentFormat.size * currentFormat.__ascent;
-					descent = currentFormat.size * currentFormat.__descent;
-					
-				} else if (font != null) {
-					
-					ascent = (font.ascender / font.unitsPerEM) * currentFormat.size;
-					descent = Math.abs ((font.descender / font.unitsPerEM) * currentFormat.size);
-					
-				} else {
-					
-					ascent = currentFormat.size;
-					descent = currentFormat.size * 0.185;
-					
 				}
 				
 				leading = currentFormat.leading;

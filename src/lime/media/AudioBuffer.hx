@@ -4,12 +4,8 @@ package lime.media;
 import haxe.crypto.Base64;
 import haxe.io.Bytes;
 import haxe.io.Path;
-import lime._backend.native.NativeCFFI;
 import lime.app.Future;
 import lime.app.Promise;
-import lime.media.codecs.vorbis.VorbisFile;
-import lime.media.openal.AL;
-import lime.media.openal.ALBuffer;
 import lime.net.HTTPRequest;
 import lime.utils.Log;
 import lime.utils.UInt8Array;
@@ -19,12 +15,8 @@ import lime.media.howlerjs.Howl;
 #end
 #if (js && html5)
 import js.html.Audio;
-#elseif flash
-import flash.media.Sound;
-import flash.net.URLRequest;
 #end
 
-@:access(lime._backend.native.NativeCFFI)
 @:access(lime.Assets)
 
 #if !lime_debug
@@ -43,11 +35,7 @@ class AudioBuffer {
 	public var src (get, set):Dynamic;
 	
 	@:noCompletion private var __srcAudio:#if (js && html5) Audio #else Dynamic #end;
-	@:noCompletion private var __srcBuffer:#if lime_cffi ALBuffer #else Dynamic #end;
-	@:noCompletion private var __srcCustom:Dynamic;
 	@:noCompletion private var __srcHowl:#if howlerjs Howl #else Dynamic #end;
-	@:noCompletion private var __srcSound:#if flash Sound #else Dynamic #end;
-	@:noCompletion private var __srcVorbisFile:#if lime_vorbis VorbisFile #else Dynamic #end;
 	
 	
 	public function new () {
@@ -85,38 +73,6 @@ class AudioBuffer {
 		audioBuffer.src = new Howl ({ src: [ base64String ], html5: true, preload: false });
 		return audioBuffer;
 		
-		#elseif (lime_cffi && !macro)
-		#if !cs
-		
-		// if base64String contains codec data, strip it then decode it.
-		var base64StringSplit = base64String.split (",");
-		var base64StringNoEncoding = base64StringSplit[base64StringSplit.length - 1];
-		var bytes: Bytes = Base64.decode (base64StringNoEncoding);
-		var audioBuffer = new AudioBuffer ();
-		audioBuffer.data = new UInt8Array (Bytes.alloc (0));
-		
-		return NativeCFFI.lime_audio_load (bytes, audioBuffer);
-		
-		#else
-		
-		// if base64String contains codec data, strip it then decode it.
-		var base64StringSplit = base64String.split (",");
-		var base64StringNoEncoding = base64StringSplit[base64StringSplit.length - 1];
-		var bytes: Bytes = Base64.decode (base64StringNoEncoding);
-		var data:Dynamic = NativeCFFI.lime_audio_load (bytes, null);
-		
-		if (data != null) {
-			
-			var audioBuffer = new AudioBuffer ();
-			audioBuffer.bitsPerSample = data.bitsPerSample;
-			audioBuffer.channels = data.channels;
-			audioBuffer.data = new UInt8Array (@:privateAccess new Bytes (data.data.length, data.data.b));
-			audioBuffer.sampleRate = data.sampleRate;
-			return audioBuffer;
-			
-		}
-		
-		#end
 		#end
 		
 		return null;
@@ -135,30 +91,6 @@ class AudioBuffer {
 		
 		return audioBuffer;
 		
-		#elseif (lime_cffi && !macro)
-		#if !cs
-		
-		var audioBuffer = new AudioBuffer ();
-		audioBuffer.data = new UInt8Array (Bytes.alloc (0));
-		
-		return NativeCFFI.lime_audio_load (bytes, audioBuffer);
-		
-		#else
-		
-		var data:Dynamic = NativeCFFI.lime_audio_load (bytes, null);
-		
-		if (data != null) {
-			
-			var audioBuffer = new AudioBuffer ();
-			audioBuffer.bitsPerSample = data.bitsPerSample;
-			audioBuffer.channels = data.channels;
-			audioBuffer.data = new UInt8Array (@:privateAccess new Bytes (data.data.length, data.data.b));
-			audioBuffer.sampleRate = data.sampleRate;
-			return audioBuffer;
-			
-		}
-		
-		#end
 		#end
 		
 		return null;
@@ -176,45 +108,6 @@ class AudioBuffer {
 		audioBuffer.__srcHowl = new Howl ({ src: [ path ], preload: false });
 		return audioBuffer;
 		
-		#elseif flash
-		
-		switch (Path.extension (path)) {
-			
-			case "ogg", "wav": return null;
-			default:
-			
-		}
-		
-		var audioBuffer = new AudioBuffer ();
-		audioBuffer.__srcSound = new Sound (new URLRequest (path));
-		return audioBuffer;
-		
-		#elseif (lime_cffi && !macro)
-		#if !cs
-		
-		var audioBuffer = new AudioBuffer ();
-		audioBuffer.data = new UInt8Array (Bytes.alloc (0));
-		
-		return NativeCFFI.lime_audio_load (path, audioBuffer);
-		
-		#else
-		
-		var data:Dynamic = NativeCFFI.lime_audio_load (path, null);
-		
-		if (data != null) {
-			
-			var audioBuffer = new AudioBuffer ();
-			audioBuffer.bitsPerSample = data.bitsPerSample;
-			audioBuffer.channels = data.channels;
-			audioBuffer.data = new UInt8Array (@:privateAccess new Bytes (data.data.length, data.data.b));
-			audioBuffer.sampleRate = data.sampleRate;
-			return audioBuffer;
-			
-		}
-		
-		return null;
-		
-		#end
 		#else
 		
 		return null;

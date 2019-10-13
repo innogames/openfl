@@ -108,13 +108,6 @@ class AssetLibrary {
 	}
 	
 	
-	public static function fromFile (path:String, rootPath:String = null):AssetLibrary {
-		
-		return fromManifest (AssetManifest.fromFile (path, rootPath));
-		
-	}
-	
-	
 	public static function fromManifest (manifest:AssetManifest):AssetLibrary {
 		
 		if (manifest == null) return null;
@@ -239,7 +232,7 @@ class AssetLibrary {
 			
 		} else {
 			
-			return Bytes.fromFile (paths.get (id));
+			return null;
 			
 		}
 		
@@ -254,23 +247,11 @@ class AssetLibrary {
 			
 		} else if (classTypes.exists (id)) {
 			
-			#if flash
-			
-			var src = Type.createInstance (classTypes.get (id), []);
-			
-			var font = new Font (src.fontName);
-			font.src = src;
-			return font;
-			
-			#else
-			
 			return cast (Type.createInstance (classTypes.get (id), []), Font);
-			
-			#end
 			
 		} else {
 			
-			return Font.fromFile (paths.get (id));
+			return null;
 			
 		}
 		

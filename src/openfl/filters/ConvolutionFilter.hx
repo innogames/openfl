@@ -208,16 +208,17 @@ private class ConvolutionShader extends Shader {
 		
 		super ();
 		
-		data.uDivisor.value = [ 1 ];
-		data.uBias.value = [ 0 ];
-		data.uPreserveAlpha.value = [ true ];
+		get_data().uDivisor.value = 1;
+		get_data().uBias.value = 0;
+		get_data().uPreserveAlpha.value = true;
 		
 	}
 	
 	
 	private override function __update ():Void {
 		
-		data.uTextureSize.value = [ data.uImage0.input.width, data.uImage0.input.height ];
+		get_data().uTextureSize.value0 = data.uImage0.input.width;
+		get_data().uTextureSize.value1 = data.uImage0.input.height;
 		
 		super.__update ();
 		

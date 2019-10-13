@@ -52,13 +52,6 @@ import flash.media.Sound;
 	}
 	
 	
-	public static function fromFile (path:String, rootPath:String = null):PackedAssetLibrary {
-		
-		return cast fromManifest (AssetManifest.fromFile (path, rootPath));
-		
-	}
-	
-	
 	public static function fromManifest (manifest:AssetManifest):PackedAssetLibrary {
 		
 		return cast AssetLibrary.fromManifest (manifest);

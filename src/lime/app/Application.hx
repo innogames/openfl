@@ -182,7 +182,7 @@ class Application extends Module {
 					var window = new Window (windowConfig);
 					createWindow (window);
 					
-					#if ((flash && !air) || html5)
+					#if html5
 					break;
 					#end
 					
@@ -388,6 +388,4 @@ class Application extends Module {
 
 #if (js && html5)
 @:noCompletion private typedef ApplicationBackend = lime._backend.html5.HTML5Application;
-#else
-@:noCompletion private typedef ApplicationBackend = lime._backend.native.NativeApplication;
 #end

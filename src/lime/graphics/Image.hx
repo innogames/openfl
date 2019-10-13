@@ -6,7 +6,6 @@ import haxe.io.Bytes;
 import haxe.io.BytesData;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-import lime._backend.native.NativeCFFI;
 import lime.app.Application;
 import lime.app.Future;
 import lime.app.Promise;
@@ -22,7 +21,6 @@ import lime.math.ColorMatrix;
 import lime.math.Rectangle;
 import lime.math.Vector2;
 import lime.net.HTTPRequest;
-import lime.system.CFFI;
 import lime.system.Endian;
 import lime.system.System;
 import lime.utils.ArrayBuffer;
@@ -70,7 +68,6 @@ import sys.io.File;
 @:autoBuild(lime._macros.AssetsMacro.embedImage())
 @:allow(lime.graphics.util.ImageCanvasUtil)
 @:allow(lime.graphics.util.ImageDataUtil)
-@:access(lime._backend.native.NativeCFFI)
 @:access(lime.app.Application)
 @:access(lime.math.ColorMatrix)
 @:access(lime.math.Rectangle)
@@ -1332,31 +1329,6 @@ class Image {
 			
 			__fromBase64 (__base64Encode (bytes), type, onload);
 			
-		#elseif (lime_cffi && !macro)
-			
-			var imageBuffer:ImageBuffer = null;
-			
-			#if !cs
-			imageBuffer = NativeCFFI.lime_image_load (bytes, new ImageBuffer (new UInt8Array (Bytes.alloc (0))));
-			#else
-			var data = NativeCFFI.lime_image_load (bytes, null);
-			if (data != null) {
-				imageBuffer = new ImageBuffer (new UInt8Array (@:privateAccess new Bytes (data.data.buffer.length, data.data.buffer.b)), data.width, data.height, data.bitsPerPixel);
-			}
-			#end
-			
-			if (imageBuffer != null) {
-				
-				__fromImageBuffer (imageBuffer);
-				
-				if (onload != null) {
-					
-					onload (this);
-					
-				}
-				
-			}
-			
 		#else
 			
 			Log.warn ("Image.fromBytes not supported on this target");
@@ -1412,77 +1384,6 @@ class Image {
 			// (issue #1019768)
 			if (image.complete) { }
 			
-		#elseif (lime_cffi || java)
-			
-			var buffer:ImageBuffer = null;
-			
-			#if (!sys || disable_cffi || java || macro)
-			if (false) {}
-			#else
-			if (CFFI.enabled) {
-				
-				#if !cs
-				buffer = NativeCFFI.lime_image_load (path, new ImageBuffer (new UInt8Array (Bytes.alloc (0))));
-				#else
-				var data = NativeCFFI.lime_image_load (path, null);
-				if (data != null) {
-					buffer = new ImageBuffer (new UInt8Array (@:privateAccess new Bytes (data.data.buffer.length, data.data.buffer.b)), data.width, data.height, data.bitsPerPixel);
-				}
-				#end
-				
-			}
-			#end
-			
-			#if (sys && format)
-			
-			else {
-				
-				try {
-					
-					var bytes = File.getBytes (path);
-					var input = new BytesInput (bytes, 0, bytes.length);
-					var png = new Reader (input).read ();
-					var data = Tools.extract32 (png);
-					var header = Tools.getHeader (png);
-					
-					var data = new UInt8Array (Bytes.ofData (data.getData ()));
-					var length = header.width * header.height;
-					var b, g, r, a;
-					
-					for (i in 0...length) {
-						
-						var b = data[i * 4];
-						var g = data[i * 4 + 1];
-						var r = data[i * 4 + 2];
-						var a = data[i * 4 + 3];
-						
-						data[i * 4] = r;
-						data[i * 4 + 1] = g;
-						data[i * 4 + 2] = b;
-						data[i * 4 + 3] = a;
-						
-					}
-					
-					buffer = new ImageBuffer (data, header.width, header.height);
-					
-				} catch (e:Dynamic) {}
-				
-			}
-			
-			#end
-			
-			if (buffer != null) {
-				
-				__fromImageBuffer (buffer);
-				
-				if (onload != null) {
-					
-					onload (this);
-					
-				}
-				
-			}
-		
 		#else
 			
 			Log.warn ("Image.fromFile not supported on this target");

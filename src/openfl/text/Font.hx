@@ -39,55 +39,6 @@ class Font extends LimeFont {
 	}
 	
 	
-	public static function fromBytes (bytes:ByteArray):Font {
-		
-		var font = new Font ();
-		font.__fromBytes (bytes);
-		
-		#if lime_cffi
-		return (font.src != null) ? font : null;
-		#else
-		return font;
-		#end
-		
-	}
-	
-	
-	public static function fromFile (path:String):Font {
-		
-		var font = new Font ();
-		font.__fromFile (path);
-		
-		#if lime_cffi
-		return (font.src != null) ? font : null;
-		#else
-		return font;
-		#end
-		
-	}
-	
-	
-	public static function loadFromBytes (bytes:ByteArray):Future<Font> {
-		
-		return LimeFont.loadFromBytes (bytes).then (function (font) {
-			
-			return Future.withValue (Font.__fromLimeFont (font));
-			
-		});
-		
-	}
-	
-	
-	public static function loadFromFile (path:String):Future<Font> {
-		
-		return LimeFont.loadFromFile (path).then (function (font) {
-			
-			return Future.withValue (Font.__fromLimeFont (font));
-			
-		});
-		
-	}
-	
 	
 	public static function loadFromName (path:String):Future<Font> {
 		
