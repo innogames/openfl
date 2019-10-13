@@ -22,9 +22,6 @@ import js.html.Audio;
 #elseif flash
 import flash.media.Sound;
 import flash.net.URLRequest;
-#elseif lime_console
-import lime.media.fmod.FMODMode;
-import lime.media.fmod.FMODSound;
 #end
 
 @:access(lime._backend.native.NativeCFFI)
@@ -48,7 +45,6 @@ class AudioBuffer {
 	@:noCompletion private var __srcAudio:#if (js && html5) Audio #else Dynamic #end;
 	@:noCompletion private var __srcBuffer:#if lime_cffi ALBuffer #else Dynamic #end;
 	@:noCompletion private var __srcCustom:Dynamic;
-	@:noCompletion private var __srcFMODSound:#if lime_console FMODSound #else Dynamic #end;
 	@:noCompletion private var __srcHowl:#if howlerjs Howl #else Dynamic #end;
 	@:noCompletion private var __srcSound:#if flash Sound #else Dynamic #end;
 	@:noCompletion private var __srcVorbisFile:#if lime_vorbis VorbisFile #else Dynamic #end;
@@ -67,26 +63,9 @@ class AudioBuffer {
 		
 		__srcHowl.unload ();
 		
-		#elseif lime_console
-		if (channels > 0) {
-			
-			src.release ();
-			channels = 0;
-			
-		}
 		#end
 		
 	}
-	
-	
-	#if lime_console
-	@:void
-	private static function finalize (a:AudioBuffer):Void {
-		
-		a.dispose ();
-		
-	}
-	#end
 	
 	
 	public static function fromBase64 (base64String:String):AudioBuffer {
@@ -105,10 +84,6 @@ class AudioBuffer {
 		var	audioBuffer = new AudioBuffer ();
 		audioBuffer.src = new Howl ({ src: [ base64String ], html5: true, preload: false });
 		return audioBuffer;
-		
-		#elseif lime_console
-		
-		lime.Lib.notImplemented ("AudioBuffer.fromBase64");
 		
 		#elseif (lime_cffi && !macro)
 		#if !cs
@@ -159,10 +134,6 @@ class AudioBuffer {
 		audioBuffer.src = new Howl ({ src: [ "data:" + __getCodec (bytes) + ";base64," + Base64.encode (bytes) ], html5: true, preload: false });
 		
 		return audioBuffer;
-		
-		#elseif lime_console
-		
-		lime.Lib.notImplemented ("AudioBuffer.fromBytes");
 		
 		#elseif (lime_cffi && !macro)
 		#if !cs
@@ -217,31 +188,6 @@ class AudioBuffer {
 		var audioBuffer = new AudioBuffer ();
 		audioBuffer.__srcSound = new Sound (new URLRequest (path));
 		return audioBuffer;
-		
-		#elseif lime_console
-		
-		var mode = StringTools.endsWith(path, ".wav") ? FMODMode.LOOP_OFF : FMODMode.LOOP_NORMAL;
-		var sound:FMODSound = FMODSound.fromFile (path, mode);
-		
-		if (sound.valid) {
-			
-			// TODO(james4k): AudioBuffer needs sound info filled in
-			// TODO(james4k): probably move fmod.Sound creation to AudioSource,
-			// and keep AudioBuffer as raw data. not as efficient for typical
-			// use, but probably less efficient to do complex copy-on-read
-			// mechanisms and such. also, what do we do for compressed sounds?
-			// usually don't want to decompress large music files. I suppose we
-			// can specialize for those and not allow data access.
-			var audioBuffer = new AudioBuffer ();
-			audioBuffer.bitsPerSample = 0;
-			audioBuffer.channels = 1;
-			audioBuffer.data = null;
-			audioBuffer.sampleRate = 0;
-			audioBuffer.__srcFMODSound = sound;
-			cpp.vm.Gc.setFinalizer (audioBuffer, cpp.Function.fromStaticFunction (finalize));
-			return audioBuffer;
-			
-		}
 		
 		#elseif (lime_cffi && !macro)
 		#if !cs
@@ -507,10 +453,6 @@ class AudioBuffer {
 		
 		return __srcSound;
 		
-		#elseif lime_console
-		
-		return __srcFMODSound;
-		
 		#elseif lime_vorbis
 		
 		return __srcVorbisFile;
@@ -539,10 +481,6 @@ class AudioBuffer {
 		#elseif flash
 		
 		return __srcSound = value;
-		
-		#elseif lime_console
-		
-		return __srcFMODSound = value;
 		
 		#elseif lime_vorbis
 		

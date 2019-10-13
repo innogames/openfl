@@ -62,10 +62,6 @@ import sys.io.File;
 #end
 #end
 
-#if lime_console
-import lime.graphics.console.TextureData;
-#end
-
 #if !lime_debug
 @:fileXml('tags="haxe,release"')
 @:noDebug
@@ -1336,10 +1332,6 @@ class Image {
 			
 			__fromBase64 (__base64Encode (bytes), type, onload);
 			
-		#elseif lime_console
-			
-			Log.warn ("Image.fromBytes not implemented for console target");
-			
 		#elseif (lime_cffi && !macro)
 			
 			var imageBuffer:ImageBuffer = null;
@@ -1424,55 +1416,6 @@ class Image {
 			
 			var buffer:ImageBuffer = null;
 			
-			#if lime_console
-			
-			var td = TextureData.fromFile (path);
-			
-			if (td.valid) {
-				
-				var w = td.width;
-				var h = td.height;
-				var data = new Array<cpp.UInt8> ();
-				
-				#if 1
-				
-				var size = w * h * 4;
-				cpp.NativeArray.setSize (data, size);
-				
-				td.decode (cpp.Pointer.arrayElem (data, 0), size);
-				/*
-				{
-					var dest:cpp.Pointer<cpp.UInt32> = cast cpp.Pointer.arrayElem (data, 0);	
-					var src:cpp.Pointer<cpp.UInt32> = cast td.pointer;	
-					var n = w * h;
-					for (i in 0...n) {
-						dest[i] = src[i];
-					}
-				}
-				*/
-				td.release ();
-				
-				#else
-				
-				// TODO(james4k): caveats here with every image
-				// pointing to the same piece of memory, and things may
-				// change with compressed textures. but, may be worth
-				// considering if game is hitting memory constraints.
-				// can we do this safely somehow? copy on write?
-				// probably too many people writing directly to the
-				// buffer...
-				cpp.NativeArray.setUnmanagedData (data, td.pointer, w*h*4);
-				
-				#end
-				
-				var array = new UInt8Array (Bytes.ofData (cast data));
-				buffer = new ImageBuffer (array, w, h);
-				buffer.format = BGRA32;
-				
-			}
-			
-			#else
-			
 			#if (!sys || disable_cffi || java || macro)
 			if (false) {}
 			#else
@@ -1525,8 +1468,6 @@ class Image {
 				} catch (e:Dynamic) {}
 				
 			}
-			
-			#end
 			
 			#end
 			

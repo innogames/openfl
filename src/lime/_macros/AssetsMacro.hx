@@ -69,15 +69,11 @@ class AssetsMacro {
 			
 			var constructor = macro {
 				
-				#if lime_console
-				throw "not implemented";
-				#else
 				var bytes = haxe.Resource.getBytes (resourceName);
 				#if html5
 				super (bytes.b.buffer);
 				#else
 				super (bytes.length, bytes.b);
-				#end
 				#end
 				
 			};
@@ -106,12 +102,8 @@ class AssetsMacro {
 				
 				super ();
 				
-				#if lime_console
-				throw "not implemented";
-				#else
 				var bytes = haxe.Resource.getBytes (resourceName);
 				__fromBytes (bytes);
-				#end
 				
 			};
 			
@@ -145,21 +137,6 @@ class AssetsMacro {
 					switch (meta.params[0].expr) {
 						
 						case EConst(CString(filePath)):
-							
-							#if lime_console
-							
-							var fieldValue = {
-								pos: position,
-								expr: EConst(CString(filePath))
-							};
-							fields.push ({
-								kind: FVar(macro :String, fieldValue),
-								name: "filePath",
-								access: [ APrivate, AStatic ],
-								pos: position
-							});
-							
-							#else
 							
 							var path = filePath;
 							
@@ -215,8 +192,6 @@ class AssetsMacro {
 							
 							var fieldValue = { pos: position, expr: EConst(CString(resourceName)) };
 							fields.push ({ kind: FVar(macro :String, fieldValue), name: "resourceName", access: [ APrivate, AStatic ], pos: position });
-							
-							#end
 							
 							return fields;
 							
@@ -280,10 +255,6 @@ class AssetsMacro {
 		}
 		
 		if (path != null && path != "") {
-			
-			#if lime_console
-			throw "not implemented";
-			#end
 			
 			#if html5
 			Sys.command ("haxelib", [ "run", "lime", "generate", "-font-hash", sys.FileSystem.fullPath(path) ]);
@@ -381,11 +352,7 @@ class AssetsMacro {
 				
 				super ();
 				
-				#if lime_console
-				throw "not implemented";
-				#else
 				__fromBytes (haxe.Resource.getBytes (resourceName), null);
-				#end
 				
 				#end
 				
@@ -421,12 +388,8 @@ class AssetsMacro {
 				
 				super();
 				
-				#if lime_console
-				throw "not implemented";
-				#else
 				var byteArray = openfl.utils.ByteArray.fromBytes (haxe.Resource.getBytes(resourceName));
 				loadCompressedDataFromByteArray(byteArray, byteArray.length, forcePlayAsMusic);
-				#end
 				
 			};
 			
