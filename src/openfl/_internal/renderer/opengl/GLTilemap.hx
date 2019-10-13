@@ -2,6 +2,7 @@ package openfl._internal.renderer.opengl;
 
 
 import lime.utils.Float32Array;
+import lime.graphics.opengl.GL;
 import openfl._internal.renderer.RenderSession;
 import openfl.display.Tilemap;
 import openfl.display.Tileset;
@@ -72,17 +73,17 @@ class GLTilemap {
 		
 		tileArray.__updateGLBuffer (gl, defaultTileset, tilemap.__worldAlpha, tilemap.__worldColorTransform);
 		
-		gl.vertexAttribPointer (shader.data.aPosition.index, 2, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 0);
-		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer (shader.data.aAlpha.index, 1, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT);
+		gl.vertexAttribPointer (shader.data.aPosition.index, 2, GL.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 0);
+		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, GL.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
+		gl.vertexAttribPointer (shader.data.aAlpha.index, 1, GL.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT);
 			
 		if (true || useColorTransform) {
 			
-			gl.vertexAttribPointer (shader.data.aColorMultipliers0.index, 4, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
-			gl.vertexAttribPointer (shader.data.aColorMultipliers1.index, 4, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 9 * Float32Array.BYTES_PER_ELEMENT);
-			gl.vertexAttribPointer (shader.data.aColorMultipliers2.index, 4, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 13 * Float32Array.BYTES_PER_ELEMENT);
-			gl.vertexAttribPointer (shader.data.aColorMultipliers3.index, 4, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 17 * Float32Array.BYTES_PER_ELEMENT);
-			gl.vertexAttribPointer (shader.data.aColorOffsets.index, 4, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 21 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer (shader.data.aColorMultipliers0.index, 4, GL.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer (shader.data.aColorMultipliers1.index, 4, GL.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 9 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer (shader.data.aColorMultipliers2.index, 4, GL.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 13 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer (shader.data.aColorMultipliers3.index, 4, GL.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 17 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer (shader.data.aColorOffsets.index, 4, GL.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 21 * Float32Array.BYTES_PER_ELEMENT);
 			
 		}
 		
@@ -130,7 +131,7 @@ class GLTilemap {
 				cacheShader.data.uImage0.input = cacheBitmapData;
 				renderSession.shaderManager.updateShader (cacheShader);
 				
-				gl.drawArrays (gl.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
+				gl.drawArrays (GL.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
 				
 				#if gl_stats
 					GLStats.incrementDrawCall (DrawCallContext.STAGE);
@@ -150,11 +151,11 @@ class GLTilemap {
 				
 				shader.data.uColorTransform.value = useColorTransform;
 				
-				// gl.bindBuffer (gl.ARRAY_BUFFER, tileArray.__buffer);
+				// gl.bindBuffer (GL.ARRAY_BUFFER, tileArray.__buffer);
 				
-				// gl.vertexAttribPointer (shader.data.aPosition.index, 2, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
-				// gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
-				// gl.vertexAttribPointer (shader.data.aAlpha.index, 1, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT);
+				// gl.vertexAttribPointer (shader.data.aPosition.index, 2, GL.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
+				// gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, GL.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
+				// gl.vertexAttribPointer (shader.data.aAlpha.index, 1, GL.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 4 * Float32Array.BYTES_PER_ELEMENT);
 				
 				cacheShader = shader;
 				
@@ -166,7 +167,7 @@ class GLTilemap {
 				
 				shader.data.uImage0.input = tileset.__bitmapData;
 				renderSession.shaderManager.updateShader (shader);
-				gl.drawArrays (gl.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
+				gl.drawArrays (GL.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
 				
 				#if gl_stats
 					GLStats.incrementDrawCall (DrawCallContext.STAGE);
@@ -207,8 +208,8 @@ class GLTilemap {
 		
 		tileArray.__updateGLBuffer (gl, defaultTileset, tilemap.__worldAlpha, tilemap.__worldColorTransform);
 		
-		gl.vertexAttribPointer (shader.data.aPosition.index, 2, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 0);
-		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
+		gl.vertexAttribPointer (shader.data.aPosition.index, 2, GL.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 0);
+		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, GL.FLOAT, false, 25 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
 		
 		var cacheBitmapData = null;
 		var lastIndex = 0;
@@ -244,7 +245,7 @@ class GLTilemap {
 				shader.data.uImage0.input = cacheBitmapData;
 				renderSession.shaderManager.updateShader (shader);
 				
-				gl.drawArrays (gl.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
+				gl.drawArrays (GL.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
 				
 				#if gl_stats
 					GLStats.incrementDrawCall (DrawCallContext.STAGE);
@@ -261,7 +262,7 @@ class GLTilemap {
 				
 				shader.data.uImage0.input = tileset.__bitmapData;
 				renderSession.shaderManager.updateShader (shader);
-				gl.drawArrays (gl.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
+				gl.drawArrays (GL.TRIANGLES, lastIndex * 6, (i - lastIndex) * 6);
 				
 				#if gl_stats
 					GLStats.incrementDrawCall (DrawCallContext.STAGE);

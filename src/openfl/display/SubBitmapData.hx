@@ -364,11 +364,11 @@ class SubBitmapData extends BitmapData {
 			__bufferContext = gl;
 			__buffer = gl.createBuffer ();
 
-			gl.bindBuffer (gl.ARRAY_BUFFER, __buffer);
+			gl.bindBuffer (GL.ARRAY_BUFFER, __buffer);
 			#if (js && html5)
-			(gl.__context:WebGLContext).bufferData (gl.ARRAY_BUFFER, __bufferData, gl.STATIC_DRAW);
+			(gl.__context:WebGLContext).bufferData (GL.ARRAY_BUFFER, __bufferData, GL.STATIC_DRAW);
 			#else
-			gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.STATIC_DRAW);
+			gl.bufferData (GL.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, GL.STATIC_DRAW);
 			#end
 
 		} else {
@@ -437,11 +437,11 @@ class SubBitmapData extends BitmapData {
 
 			}
 
-			gl.bindBuffer (gl.ARRAY_BUFFER, __buffer);
+			gl.bindBuffer (GL.ARRAY_BUFFER, __buffer);
 
 			if (dirty) {
 				
-				gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.STATIC_DRAW);
+				gl.bufferData (GL.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, GL.STATIC_DRAW);
 			
 			}
 			

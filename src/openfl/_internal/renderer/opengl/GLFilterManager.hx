@@ -2,6 +2,7 @@ package openfl._internal.renderer.opengl;
 
 
 import lime.graphics.GLRenderContext;
+import lime.graphics.opengl.GL;
 import lime.utils.Float32Array;
 import openfl._internal.renderer.AbstractFilterManager;
 import openfl.display.BitmapData;
@@ -163,13 +164,13 @@ class GLFilterManager extends AbstractFilterManager {
 		
 		renderSession.shaderManager.setShader (shader);
 		
-		gl.bindBuffer (gl.ARRAY_BUFFER, target.getBuffer (gl, 1, null));
+		gl.bindBuffer (GL.ARRAY_BUFFER, target.getBuffer (gl, 1, null));
 		
-		gl.vertexAttribPointer (shader.data.aPosition.index, 3, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 0);
-		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer (shader.data.aAlpha.index, 1, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
+		gl.vertexAttribPointer (shader.data.aPosition.index, 3, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 0);
+		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+		gl.vertexAttribPointer (shader.data.aAlpha.index, 1, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
 		
-		gl.drawArrays (gl.TRIANGLE_STRIP, 0, 4);
+		gl.drawArrays (GL.TRIANGLE_STRIP, 0, 4);
 		
 		#if gl_stats
 			GLStats.incrementDrawCall (DrawCallContext.STAGE);

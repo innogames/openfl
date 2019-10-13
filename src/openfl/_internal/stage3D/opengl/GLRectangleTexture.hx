@@ -3,6 +3,7 @@ package openfl._internal.stage3D.opengl;
 
 import lime.utils.ArrayBufferView;
 import lime.utils.UInt8Array;
+import lime.graphics.opengl.GL;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.stage3D.GLUtils;
 import openfl._internal.stage3D.SamplerState;
@@ -28,7 +29,7 @@ class GLRectangleTexture {
 		
 		var gl = renderSession.gl;
 		
-		rectangleTexture.__textureTarget = gl.TEXTURE_2D;
+		rectangleTexture.__textureTarget = GL.TEXTURE_2D;
 		uploadFromTypedArray (rectangleTexture, renderSession, null);
 		
 	}
@@ -76,7 +77,7 @@ class GLRectangleTexture {
 		gl.bindTexture (rectangleTexture.__textureTarget, rectangleTexture.__textureData.glTexture);
 		GLUtils.CheckGLError ();
 		
-		gl.texImage2D (rectangleTexture.__textureTarget, 0, rectangleTexture.__internalFormat, rectangleTexture.__width, rectangleTexture.__height, 0, rectangleTexture.__format, gl.UNSIGNED_BYTE, data);
+		gl.texImage2D (rectangleTexture.__textureTarget, 0, rectangleTexture.__internalFormat, rectangleTexture.__width, rectangleTexture.__height, 0, rectangleTexture.__format, GL.UNSIGNED_BYTE, data);
 		GLUtils.CheckGLError ();
 		
 		gl.bindTexture (rectangleTexture.__textureTarget, null);
@@ -96,7 +97,7 @@ class GLRectangleTexture {
 			
 			if (state.maxAniso != 0.0) {
 				
-				gl.texParameterf (gl.TEXTURE_2D, Context3D.TEXTURE_MAX_ANISOTROPY_EXT, state.maxAniso);
+				gl.texParameterf (GL.TEXTURE_2D, Context3D.TEXTURE_MAX_ANISOTROPY_EXT, state.maxAniso);
 				GLUtils.CheckGLError ();
 				
 			}

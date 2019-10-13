@@ -7,6 +7,7 @@ import lime.utils.UInt16Array;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLTexture;
+import lime.graphics.opengl.GL;
 import openfl.geom.Rectangle;
 import openfl._internal.renderer.opengl.GLBlendModeManager;
 import openfl._internal.renderer.opengl.GLShaderManager;
@@ -61,8 +62,8 @@ class BatchRenderer {
 		maxTextures = shader.maxTextures;
 
 		emptyTexture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_2D, emptyTexture);
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+		gl.bindTexture(GL.TEXTURE_2D, emptyTexture);
+		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, 1, 1, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
 
 		// a singleton vector we use to track texture binding when rendering
 		boundTextures = new Vector(maxTextures);
@@ -73,14 +74,14 @@ class BatchRenderer {
 		// create the vertex buffer for further uploading
 		vertexBuffer = gl.createBuffer();
 
-		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, vertexBufferData.byteLength, vertexBufferData, gl.STREAM_DRAW);
+		gl.bindBuffer(GL.ARRAY_BUFFER, vertexBuffer);
+		gl.bufferData(GL.ARRAY_BUFFER, vertexBufferData.byteLength, vertexBufferData, GL.STREAM_DRAW);
 
 		// preallocate a static index buffer for rendering any number of quads
 		var indices = createIndicesForQuads(maxQuads);
 		indexBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices.byteLength, indices, gl.STATIC_DRAW);
+		gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, indexBuffer);
+		gl.bufferData(GL.ELEMENT_ARRAY_BUFFER, indices.byteLength, indices, GL.STATIC_DRAW);
 
 		// preallocate render group objects for any number of quads (worst case - 1 group per quad)
 		groups = new Vector(maxQuads);
@@ -312,24 +313,24 @@ class BatchRenderer {
 		shader.enable(projectionMatrix);
 
 		// bind the index buffer
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+		gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
 		// upload vertex data and setup attribute pointers
-		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+		gl.bindBuffer(GL.ARRAY_BUFFER, vertexBuffer);
 		var subArray = vertexBufferData.subarray(0, currentQuadIndex * floatsPerQuad);
-		gl.bufferSubData(gl.ARRAY_BUFFER, 0, subArray.byteLength, subArray);
+		gl.bufferSubData(GL.ARRAY_BUFFER, 0, subArray.byteLength, subArray);
 
 		var stride = MultiTextureShader.floatsPerVertex * Float32Array.BYTES_PER_ELEMENT;
-		gl.vertexAttribPointer(shader.aVertexPosition, 2, gl.FLOAT, false, stride, 0);
-		gl.vertexAttribPointer(shader.aTextureCoord, 2, gl.FLOAT, false, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer(shader.aTextureId, 1, gl.FLOAT, false, stride, 4 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer(shader.aColorOffset, 4, gl.FLOAT, false, stride, 5 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer(shader.aColorMultiplier, 4, gl.FLOAT, false, stride, 9 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer(shader.aPremultipliedAlpha, 1, gl.FLOAT, false, stride, 13 * Float32Array.BYTES_PER_ELEMENT);
+		gl.vertexAttribPointer(shader.aVertexPosition, 2, GL.FLOAT, false, stride, 0);
+		gl.vertexAttribPointer(shader.aTextureCoord, 2, GL.FLOAT, false, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
+		gl.vertexAttribPointer(shader.aTextureId, 1, GL.FLOAT, false, stride, 4 * Float32Array.BYTES_PER_ELEMENT);
+		gl.vertexAttribPointer(shader.aColorOffset, 4, GL.FLOAT, false, stride, 5 * Float32Array.BYTES_PER_ELEMENT);
+		gl.vertexAttribPointer(shader.aColorMultiplier, 4, GL.FLOAT, false, stride, 9 * Float32Array.BYTES_PER_ELEMENT);
+		gl.vertexAttribPointer(shader.aPremultipliedAlpha, 1, GL.FLOAT, false, stride, 13 * Float32Array.BYTES_PER_ELEMENT);
 
 		for (i in 0...maxTextures) {
-			gl.activeTexture(gl.TEXTURE0 + i);
-			gl.bindTexture(gl.TEXTURE_2D, emptyTexture);
+			gl.activeTexture(GL.TEXTURE0 + i);
+			gl.bindTexture(GL.TEXTURE_2D, emptyTexture);
 		}
 
 		var lastBlendMode = null;
@@ -347,19 +348,19 @@ class BatchRenderer {
 			for (i in 0...group.textureCount) {
 				var currentTexture = group.textures[i];
 				// trace('Activating texture at ${group.textureUnits[i]}: ${currentTexture.glTexture}');
-				gl.activeTexture(gl.TEXTURE0 + group.textureUnits[i]);
-				gl.bindTexture(gl.TEXTURE_2D, currentTexture.glTexture);
+				gl.activeTexture(GL.TEXTURE0 + group.textureUnits[i]);
+				gl.bindTexture(GL.TEXTURE_2D, currentTexture.glTexture);
 
 				if (group.textureSmoothing[i]) {
-					gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-					gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+					gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
+					gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
 				} else {
-					gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-					gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+					gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+					gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
 				}
 
-				gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-				gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
 
 				currentTexture.textureUnitId = -1; // clear the binding for subsequent flush calls
 			}
@@ -372,7 +373,7 @@ class BatchRenderer {
 
 
 			// draw this group's slice of vertices
-			gl.drawElements(gl.TRIANGLES, group.size * 6, gl.UNSIGNED_SHORT, group.start * 6 * UInt16Array.BYTES_PER_ELEMENT);
+			gl.drawElements(GL.TRIANGLES, group.size * 6, GL.UNSIGNED_SHORT, group.start * 6 * UInt16Array.BYTES_PER_ELEMENT);
 
 			#if gl_stats
 				GLStats.incrementDrawCall (DrawCallContext.STAGE);

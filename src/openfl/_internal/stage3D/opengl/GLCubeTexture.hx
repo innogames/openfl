@@ -4,6 +4,7 @@ package openfl._internal.stage3D.opengl;
 import lime.utils.ArrayBufferView;
 import lime.utils.UInt8Array;
 import lime.graphics.GLRenderContext;
+import lime.graphics.opengl.GL;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.stage3D.atf.ATFReader;
 import openfl._internal.stage3D.atf.ATFGPUFormat;
@@ -32,7 +33,7 @@ class GLCubeTexture {
 		
 		var gl = renderSession.gl;
 		
-		cubeTexture.__textureTarget = gl.TEXTURE_CUBE_MAP;
+		cubeTexture.__textureTarget = GL.TEXTURE_CUBE_MAP;
 		cubeTexture.__uploadedSides = 0;
 		
 	}
@@ -72,7 +73,7 @@ class GLCubeTexture {
 			for (side in 0...6) {
 				
 				var data = new UInt8Array (cubeTexture.__size * cubeTexture.__size * 4);
-				gl.texImage2D (__sideToTarget (gl, side), 0, cubeTexture.__internalFormat, cubeTexture.__size, cubeTexture.__size, 0, cubeTexture.__format, gl.UNSIGNED_BYTE, data);
+				gl.texImage2D (__sideToTarget (gl, side), 0, cubeTexture.__internalFormat, cubeTexture.__size, cubeTexture.__size, 0, cubeTexture.__format, GL.UNSIGNED_BYTE, data);
 				GLUtils.CheckGLError ();
 				
 			}
@@ -131,10 +132,10 @@ class GLCubeTexture {
 		
 		var target = __sideToTarget (gl, side);
 		
-		gl.bindTexture (gl.TEXTURE_CUBE_MAP, cubeTexture.__textureData.glTexture);
+		gl.bindTexture (GL.TEXTURE_CUBE_MAP, cubeTexture.__textureData.glTexture);
 		GLUtils.CheckGLError ();
 		
-		gl.texImage2D (target, miplevel, cubeTexture.__internalFormat, size, size, 0, cubeTexture.__format, gl.UNSIGNED_BYTE, data);
+		gl.texImage2D (target, miplevel, cubeTexture.__internalFormat, size, size, 0, cubeTexture.__format, GL.UNSIGNED_BYTE, data);
 		GLUtils.CheckGLError ();
 		
 		gl.bindTexture (cubeTexture.__textureTarget, null);
@@ -154,9 +155,9 @@ class GLCubeTexture {
 			
 			var gl = renderSession.gl;
 			
-			if (state.minFilter != gl.NEAREST && state.minFilter != gl.LINEAR && !state.mipmapGenerated) {
+			if (state.minFilter != GL.NEAREST && state.minFilter != GL.LINEAR && !state.mipmapGenerated) {
 				
-				gl.generateMipmap (gl.TEXTURE_CUBE_MAP);
+				gl.generateMipmap (GL.TEXTURE_CUBE_MAP);
 				GLUtils.CheckGLError ();
 				
 				state.mipmapGenerated = true;
@@ -165,7 +166,7 @@ class GLCubeTexture {
 			
 			if (state.maxAniso != 0.0) {
 				
-				gl.texParameterf (gl.TEXTURE_CUBE_MAP, Context3D.TEXTURE_MAX_ANISOTROPY_EXT, state.maxAniso);
+				gl.texParameterf (GL.TEXTURE_CUBE_MAP, Context3D.TEXTURE_MAX_ANISOTROPY_EXT, state.maxAniso);
 				GLUtils.CheckGLError ();
 				
 			}
@@ -181,12 +182,12 @@ class GLCubeTexture {
 		
 		return switch (side) {
 			
-			case 0: gl.TEXTURE_CUBE_MAP_NEGATIVE_X;
-			case 1: gl.TEXTURE_CUBE_MAP_POSITIVE_X;
-			case 2: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y;
-			case 3: gl.TEXTURE_CUBE_MAP_POSITIVE_Y;
-			case 4: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z;
-			case 5: gl.TEXTURE_CUBE_MAP_POSITIVE_Z;
+			case 0: GL.TEXTURE_CUBE_MAP_NEGATIVE_X;
+			case 1: GL.TEXTURE_CUBE_MAP_POSITIVE_X;
+			case 2: GL.TEXTURE_CUBE_MAP_NEGATIVE_Y;
+			case 3: GL.TEXTURE_CUBE_MAP_POSITIVE_Y;
+			case 4: GL.TEXTURE_CUBE_MAP_NEGATIVE_Z;
+			case 5: GL.TEXTURE_CUBE_MAP_POSITIVE_Z;
 			default: throw new IllegalOperationError ();
 			
 		}

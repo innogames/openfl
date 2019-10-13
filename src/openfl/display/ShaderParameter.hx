@@ -3,6 +3,7 @@ package openfl.display;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GLUniformLocation;
+import lime.graphics.opengl.GL;
 import lime.utils.Float32Array;
 
 #if !openfl_debug
@@ -66,15 +67,15 @@ class ShaderParameterSampler extends ShaderParameterUniform {
 		if (input == null)
 			return;
 			
-		gl.activeTexture (gl.TEXTURE0 + textureIndex);
-		gl.bindTexture (gl.TEXTURE_2D, input.getTexture (gl).data.glTexture);
+		gl.activeTexture (GL.TEXTURE0 + textureIndex);
+		gl.bindTexture (GL.TEXTURE_2D, input.getTexture (gl).data.glTexture);
 		
 		if (smoothing) {
-			gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-			gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+			gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
+			gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
 		} else {
-			gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-			gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+			gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+			gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
 		}
 	}
 }

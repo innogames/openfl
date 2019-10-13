@@ -2,6 +2,7 @@ package openfl._internal.stage3D.opengl;
 
 
 import lime.graphics.utils.ImageCanvasUtil;
+import lime.graphics.opengl.GL;
 import lime.graphics.Image;
 import openfl._internal.renderer.opengl.batcher.TextureData;
 import openfl._internal.renderer.RenderSession;
@@ -48,7 +49,7 @@ class GLTextureBase {
 		
 		if (__supportsBGRA == null) {
 			
-			__textureInternalFormat = gl.RGBA;
+			__textureInternalFormat = GL.RGBA;
 			
 			var bgraExtension = null;
 			#if (!js || !html5)
@@ -67,7 +68,7 @@ class GLTextureBase {
 			} else {
 				
 				__supportsBGRA = false;
-				__textureFormat = gl.RGBA;
+				__textureFormat = GL.RGBA;
 				
 			}
 			
@@ -176,11 +177,11 @@ class GLTextureBase {
 		
 		if (image.type != DATA && !image.premultiplied) {
 			
-			gl.pixelStorei (gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1);
+			gl.pixelStorei (GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1);
 			
 		} else if (!image.premultiplied && image.transparent) {
 			
-			gl.pixelStorei (gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
+			gl.pixelStorei (GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
 			image = image.clone ();
 			image.premultiplied = true;
 			
@@ -226,13 +227,13 @@ class GLTextureBase {
 			
 			gl.bindTexture (textureBase.__textureTarget, textureBase.__textureData.glTexture);
 			GLUtils.CheckGLError ();
-			gl.texParameteri (textureBase.__textureTarget, gl.TEXTURE_MIN_FILTER, state.minFilter);
+			gl.texParameteri (textureBase.__textureTarget, GL.TEXTURE_MIN_FILTER, state.minFilter);
 			GLUtils.CheckGLError ();
-			gl.texParameteri (textureBase.__textureTarget, gl.TEXTURE_MAG_FILTER, state.magFilter);
+			gl.texParameteri (textureBase.__textureTarget, GL.TEXTURE_MAG_FILTER, state.magFilter);
 			GLUtils.CheckGLError ();
-			gl.texParameteri (textureBase.__textureTarget, gl.TEXTURE_WRAP_S, state.wrapModeS);
+			gl.texParameteri (textureBase.__textureTarget, GL.TEXTURE_WRAP_S, state.wrapModeS);
 			GLUtils.CheckGLError ();
-			gl.texParameteri (textureBase.__textureTarget, gl.TEXTURE_WRAP_T, state.wrapModeT);
+			gl.texParameteri (textureBase.__textureTarget, GL.TEXTURE_WRAP_T, state.wrapModeT);
 			GLUtils.CheckGLError ();
 			
 			if (state.lodBias != 0.0) {

@@ -488,7 +488,7 @@ class BitmapData implements IBitmapDrawable {
 				
 				var gl = GL.context;
 				
-				gl.bindFramebuffer (gl.FRAMEBUFFER, __getFramebuffer (gl));
+				gl.bindFramebuffer (GL.FRAMEBUFFER, __getFramebuffer (gl));
 				gl.viewport (0, 0, width, height);
 				
 				var renderer = new GLRenderer (null, gl, this);
@@ -506,7 +506,7 @@ class BitmapData implements IBitmapDrawable {
 				Matrix.__pool.release (matrixCache);
 				source.__updateChildren (true);
 				
-				gl.bindFramebuffer (gl.FRAMEBUFFER, null);
+				gl.bindFramebuffer (GL.FRAMEBUFFER, null);
 				
 			}
 			
@@ -667,25 +667,25 @@ class BitmapData implements IBitmapDrawable {
 			var color:ARGB = (color:ARGB);
 			var useScissor = !this.rect.equals (rect);
 			
-			gl.bindFramebuffer (gl.FRAMEBUFFER, __framebuffer);
+			gl.bindFramebuffer (GL.FRAMEBUFFER, __framebuffer);
 			
 			if (useScissor) {
 				
-				gl.enable (gl.SCISSOR_TEST);
+				gl.enable (GL.SCISSOR_TEST);
 				gl.scissor (Math.round (rect.x), Math.round (rect.y), Math.round (rect.width), Math.round (rect.height));
 				
 			}
 			
 			gl.clearColor (color.r / 0xFF, color.g / 0xFF, color.b / 0xFF, color.a / 0xFF);
-			gl.clear (gl.COLOR_BUFFER_BIT);
+			gl.clear (GL.COLOR_BUFFER_BIT);
 			
 			if (useScissor) {
 				
-				gl.disable (gl.SCISSOR_TEST);
+				gl.disable (GL.SCISSOR_TEST);
 				
 			}
 			
-			gl.bindFramebuffer (gl.FRAMEBUFFER, null);
+			gl.bindFramebuffer (GL.FRAMEBUFFER, null);
 			
 		}
 		
@@ -870,13 +870,13 @@ class BitmapData implements IBitmapDrawable {
 			__bufferContext = gl;
 			__buffer = gl.createBuffer ();
 			
-			gl.bindBuffer (gl.ARRAY_BUFFER, __buffer);
+			gl.bindBuffer (GL.ARRAY_BUFFER, __buffer);
 			#if (js && html5)
-			(gl.__context:WebGLContext).bufferData (gl.ARRAY_BUFFER, __bufferData, gl.STATIC_DRAW);
+			(gl.__context:WebGLContext).bufferData (GL.ARRAY_BUFFER, __bufferData, GL.STATIC_DRAW);
 			#else
-			gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.STATIC_DRAW);
+			gl.bufferData (GL.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, GL.STATIC_DRAW);
 			#end
-			//gl.bindBuffer (gl.ARRAY_BUFFER, null);
+			//gl.bindBuffer (GL.ARRAY_BUFFER, null);
 			
 		} else {
 			
@@ -940,11 +940,11 @@ class BitmapData implements IBitmapDrawable {
 				
 			}
 			
-			gl.bindBuffer (gl.ARRAY_BUFFER, __buffer);
+			gl.bindBuffer (GL.ARRAY_BUFFER, __buffer);
 			
 			if (dirty) {
 			
-				gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.STATIC_DRAW);
+				gl.bufferData (GL.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, GL.STATIC_DRAW);
 			
 			}
 			
@@ -1030,11 +1030,11 @@ class BitmapData implements IBitmapDrawable {
 			__quadTextureData = null;
 			__ownsTexture = true;
 			
-			gl.bindTexture (gl.TEXTURE_2D, __textureData.glTexture);
-			gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-			gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-			gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-			gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+			gl.bindTexture (GL.TEXTURE_2D, __textureData.glTexture);
+			gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+			gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
+			gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+			gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
 			__textureVersion = -1;
 			
 		}
@@ -1045,14 +1045,14 @@ class BitmapData implements IBitmapDrawable {
 			
 			if (image.buffer.bitsPerPixel == 1) {
 				
-				internalFormat = gl.ALPHA;
-				format = gl.ALPHA;
+				internalFormat = GL.ALPHA;
+				format = GL.ALPHA;
 				
 			} else {
 				
 				if (__supportsBGRA == null) {
 					
-					__textureInternalFormat = gl.RGBA;
+					__textureInternalFormat = GL.RGBA;
 					
 					var bgraExtension = null;
 					#if (!js || !html5)
@@ -1071,7 +1071,7 @@ class BitmapData implements IBitmapDrawable {
 					} else {
 						
 						__supportsBGRA = false;
-						__textureFormat = gl.RGBA;
+						__textureFormat = GL.RGBA;
 						
 					}
 					
@@ -1082,7 +1082,7 @@ class BitmapData implements IBitmapDrawable {
 				
 			}
 			
-			gl.bindTexture (gl.TEXTURE_2D, __textureData.glTexture);
+			gl.bindTexture (GL.TEXTURE_2D, __textureData.glTexture);
 			
 			var textureImage = image;
 			
@@ -1090,12 +1090,12 @@ class BitmapData implements IBitmapDrawable {
 			
 			if (textureImage.type != DATA && !textureImage.premultiplied) {
 				
-				gl.pixelStorei (gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1);
+				gl.pixelStorei (GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1);
 				
 			} else if (!textureImage.premultiplied && textureImage.transparent) {
 				
-				gl.pixelStorei (gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1);
-				//gl.pixelStorei (gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
+				gl.pixelStorei (GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1);
+				//gl.pixelStorei (GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
 				//textureImage = textureImage.clone ();
 				//textureImage.premultiplied = true;
 				
@@ -1116,11 +1116,11 @@ class BitmapData implements IBitmapDrawable {
 			
 			if (textureImage.type == DATA) {
 				
-				gl.texImage2D (gl.TEXTURE_2D, 0, internalFormat, textureImage.buffer.width, textureImage.buffer.height, 0, format, gl.UNSIGNED_BYTE, textureImage.data);
+				gl.texImage2D (GL.TEXTURE_2D, 0, internalFormat, textureImage.buffer.width, textureImage.buffer.height, 0, format, GL.UNSIGNED_BYTE, textureImage.data);
 				
 			} else {
 				
-				(gl.__context:WebGLContext).texImage2D (gl.TEXTURE_2D, 0, internalFormat, format, gl.UNSIGNED_BYTE, textureImage.src);
+				(gl.__context:WebGLContext).texImage2D (GL.TEXTURE_2D, 0, internalFormat, format, GL.UNSIGNED_BYTE, textureImage.src);
 				
 			}
 			
@@ -1136,11 +1136,11 @@ class BitmapData implements IBitmapDrawable {
 				
 			}
 			
-			gl.texImage2D (gl.TEXTURE_2D, 0, internalFormat, textureImage.buffer.width, textureImage.buffer.height, 0, format, gl.UNSIGNED_BYTE, textureImage.data);
+			gl.texImage2D (GL.TEXTURE_2D, 0, internalFormat, textureImage.buffer.width, textureImage.buffer.height, 0, format, GL.UNSIGNED_BYTE, textureImage.data);
 			
 			#end
 			
-			gl.bindTexture (gl.TEXTURE_2D, null);
+			gl.bindTexture (GL.TEXTURE_2D, null);
 			__textureVersion = image.version;
 			
 		}
@@ -1633,7 +1633,7 @@ class BitmapData implements IBitmapDrawable {
 				
 				var gl = GL.context;
 				
-				gl.bindFramebuffer (gl.FRAMEBUFFER, __getFramebuffer (gl));
+				gl.bindFramebuffer (GL.FRAMEBUFFER, __getFramebuffer (gl));
 				gl.viewport (0, 0, width, height);
 				
 				var renderer = new GLRenderer (null, gl, this);
@@ -1651,7 +1651,7 @@ class BitmapData implements IBitmapDrawable {
 				Matrix.__pool.release (matrixCache);
 				source.__updateChildren (true);
 				
-				gl.bindFramebuffer (gl.FRAMEBUFFER, null);
+				gl.bindFramebuffer (GL.FRAMEBUFFER, null);
 				
 			}
 			
@@ -1818,8 +1818,8 @@ class BitmapData implements IBitmapDrawable {
 			__framebufferContext = gl;
 			__framebuffer = gl.createFramebuffer ();
 			
-			gl.bindFramebuffer (gl.FRAMEBUFFER, __framebuffer);
-			gl.framebufferTexture2D (gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, __textureData.glTexture, 0);
+			gl.bindFramebuffer (GL.FRAMEBUFFER, __framebuffer);
+			gl.framebufferTexture2D (GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, __textureData.glTexture, 0);
 			
 		}
 		
@@ -1950,12 +1950,12 @@ class BitmapData implements IBitmapDrawable {
 		
 		renderSession.shaderManager.setShader (shader);
 		
-		gl.bindBuffer (gl.ARRAY_BUFFER, getBuffer (gl, 1, __worldColorTransform));
-		gl.vertexAttribPointer (shader.data.aPosition.index, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
-		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer (shader.data.aAlpha.index, 1, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
+		gl.bindBuffer (GL.ARRAY_BUFFER, getBuffer (gl, 1, __worldColorTransform));
+		gl.vertexAttribPointer (shader.data.aPosition.index, 3, GL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
+		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, GL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+		gl.vertexAttribPointer (shader.data.aAlpha.index, 1, GL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
 		
-		gl.drawArrays (gl.TRIANGLE_STRIP, 0, 4);
+		gl.drawArrays (GL.TRIANGLE_STRIP, 0, 4);
 		
 		#if gl_stats
 			GLStats.incrementDrawCall (DrawCallContext.STAGE);

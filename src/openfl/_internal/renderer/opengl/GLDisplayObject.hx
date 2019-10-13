@@ -2,6 +2,7 @@ package openfl._internal.renderer.opengl;
 
 
 import lime.math.color.ARGB;
+import lime.graphics.opengl.GL;
 import openfl._internal.renderer.RenderSession;
 import openfl.display.DisplayObject;
 import openfl.geom.Rectangle;
@@ -37,7 +38,7 @@ class GLDisplayObject {
 			
 			var color:ARGB = (displayObject.opaqueBackground:ARGB);
 			gl.clearColor (color.r / 0xFF, color.g / 0xFF, color.b / 0xFF, 1);
-			gl.clear (gl.COLOR_BUFFER_BIT);
+			gl.clear (GL.COLOR_BUFFER_BIT);
 			
 			renderSession.maskManager.popRect ();
 			renderSession.maskManager.popObject (displayObject);
@@ -71,7 +72,7 @@ class GLDisplayObject {
 			
 			// var color:ARGB = (displayObject.opaqueBackground:ARGB);
 			// gl.clearColor (color.r / 0xFF, color.g / 0xFF, color.b / 0xFF, 1);
-			// gl.clear (gl.COLOR_BUFFER_BIT);
+			// gl.clear (GL.COLOR_BUFFER_BIT);
 			
 			// renderSession.maskManager.popRect ();
 			// renderSession.maskManager.popObject (displayObject);

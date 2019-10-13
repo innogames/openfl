@@ -2,6 +2,7 @@ package openfl._internal.renderer.opengl;
 
 
 import lime.graphics.GLRenderContext;
+import lime.graphics.opengl.GL;
 import openfl._internal.renderer.AbstractMaskManager;
 import openfl.display.DisplayObject;
 import openfl.display.Shader;
@@ -56,14 +57,14 @@ class GLMaskManager extends AbstractMaskManager {
 
 		if (stencilReference == 0) {
 			
-			gl.enable (gl.STENCIL_TEST);
+			gl.enable (GL.STENCIL_TEST);
 			gl.stencilMask (0xFF);
-			gl.clear (gl.STENCIL_BUFFER_BIT);
+			gl.clear (GL.STENCIL_BUFFER_BIT);
 			
 		}
 		
-		gl.stencilOp (gl.KEEP, gl.KEEP, gl.INCR);
-		gl.stencilFunc (gl.EQUAL, stencilReference, 0xFF);
+		gl.stencilOp (GL.KEEP, GL.KEEP, GL.INCR);
+		gl.stencilFunc (GL.EQUAL, stencilReference, 0xFF);
 		gl.colorMask (false, false, false, false);
 		
 		mask.__renderGLMask (renderSession);
@@ -74,8 +75,8 @@ class GLMaskManager extends AbstractMaskManager {
 		maskObjects.push (mask);
 		stencilReference++;
 		
-		gl.stencilOp (gl.KEEP, gl.KEEP, gl.KEEP);
-		gl.stencilFunc (gl.EQUAL, stencilReference, 0xFF);
+		gl.stencilOp (GL.KEEP, GL.KEEP, GL.KEEP);
+		gl.stencilFunc (GL.EQUAL, stencilReference, 0xFF);
 		gl.colorMask (true, true, true, true);
 		
 	}
@@ -146,8 +147,8 @@ class GLMaskManager extends AbstractMaskManager {
 		var mask = maskObjects.pop ();
 		if (stencilReference > 1) {
 			
-			gl.stencilOp (gl.KEEP, gl.KEEP, gl.DECR);
-			gl.stencilFunc (gl.EQUAL, stencilReference, 0xFF);
+			gl.stencilOp (GL.KEEP, GL.KEEP, GL.DECR);
+			gl.stencilFunc (GL.EQUAL, stencilReference, 0xFF);
 			gl.colorMask (false, false, false, false);
 			
 			mask.__renderGLMask (renderSession);
@@ -157,14 +158,14 @@ class GLMaskManager extends AbstractMaskManager {
 
 			stencilReference--;
 			
-			gl.stencilOp (gl.KEEP, gl.KEEP, gl.KEEP);
-			gl.stencilFunc (gl.EQUAL, stencilReference, 0xFF);
+			gl.stencilOp (GL.KEEP, GL.KEEP, GL.KEEP);
+			gl.stencilFunc (GL.EQUAL, stencilReference, 0xFF);
 			gl.colorMask (true, true, true, true);
 			
 		} else {
 			
 			stencilReference = 0;
-			gl.disable (gl.STENCIL_TEST);
+			gl.disable (GL.STENCIL_TEST);
 			
 		}
 		
@@ -218,7 +219,7 @@ class GLMaskManager extends AbstractMaskManager {
 			
 			var renderer:GLRenderer = cast renderSession.renderer;
 			
-			gl.enable (gl.SCISSOR_TEST);
+			gl.enable (GL.SCISSOR_TEST);
 			
 			var clipRect = tempRect;
 			rect.__transform (clipRect, renderer.displayMatrix);
@@ -235,7 +236,7 @@ class GLMaskManager extends AbstractMaskManager {
 			
 		} else {
 			
-			gl.disable (gl.SCISSOR_TEST);
+			gl.disable (GL.SCISSOR_TEST);
 			
 		}
 		

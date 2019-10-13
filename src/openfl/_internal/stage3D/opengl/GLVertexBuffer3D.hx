@@ -3,6 +3,7 @@ package openfl._internal.stage3D.opengl;
 
 import haxe.io.Bytes;
 import js.html.webgl.RenderingContext as WebGLContext;
+import lime.graphics.opengl.GL;
 import lime.utils.ArrayBufferView;
 import lime.utils.Float32Array;
 import openfl._internal.renderer.RenderSession;
@@ -33,7 +34,7 @@ class GLVertexBuffer3D {
 		vertexBuffer.__stride = vertexBuffer.__vertexSize * 4;
 		// __memoryUsage = 0;
 		
-		vertexBuffer.__usage = (bufferUsage == Context3DBufferUsage.DYNAMIC_DRAW) ? gl.DYNAMIC_DRAW : gl.STATIC_DRAW;
+		vertexBuffer.__usage = (bufferUsage == Context3DBufferUsage.DYNAMIC_DRAW) ? GL.DYNAMIC_DRAW : GL.STATIC_DRAW;
 		
 		// __context.__statsIncrement (Context3D.Context3DTelemetry.COUNT_VERTEX_BUFFER);
 		
@@ -72,13 +73,13 @@ class GLVertexBuffer3D {
 		if (data == null) return;
 		var gl = renderSession.gl;
 		
-		gl.bindBuffer (gl.ARRAY_BUFFER, vertexBuffer.__id);
+		gl.bindBuffer (GL.ARRAY_BUFFER, vertexBuffer.__id);
 		GLUtils.CheckGLError ();
 		
 		#if (js && html5)
-		(gl.__context:WebGLContext).bufferData (gl.ARRAY_BUFFER, data, vertexBuffer.__usage);
+		(gl.__context:WebGLContext).bufferData (GL.ARRAY_BUFFER, data, vertexBuffer.__usage);
 		#else
-		gl.bufferData (gl.ARRAY_BUFFER, data.byteLength, data, vertexBuffer.__usage);
+		gl.bufferData (GL.ARRAY_BUFFER, data.byteLength, data, vertexBuffer.__usage);
 		#end
 		GLUtils.CheckGLError ();
 		

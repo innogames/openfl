@@ -164,7 +164,7 @@ class GLProgram3D {
 		program.__samplerUsageMask = 0;
 		
 		var numActive = 0;
-		numActive = gl.getProgramParameter (program.__programID, gl.ACTIVE_UNIFORMS);
+		numActive = gl.getProgramParameter (program.__programID, GL.ACTIVE_UNIFORMS);
 		GLUtils.CheckGLError ();
 		
 		var vertexUniforms = new List<Uniform> ();
@@ -327,14 +327,14 @@ class GLProgram3D {
 		program.__vertexSource = vertexShaderSource;
 		program.__fragmentSource = fragmentShaderSource;
 		
-		program.__vertexShaderID = gl.createShader (gl.VERTEX_SHADER);
+		program.__vertexShaderID = gl.createShader (GL.VERTEX_SHADER);
 		gl.shaderSource (program.__vertexShaderID, vertexShaderSource);
 		GLUtils.CheckGLError ();
 		
 		gl.compileShader (program.__vertexShaderID);
 		GLUtils.CheckGLError ();
 		
-		var shaderCompiled = gl.getShaderParameter (program.__vertexShaderID, gl.COMPILE_STATUS);
+		var shaderCompiled = gl.getShaderParameter (program.__vertexShaderID, GL.COMPILE_STATUS);
 		
 		GLUtils.CheckGLError ();
 		
@@ -352,14 +352,14 @@ class GLProgram3D {
 			
 		}
 		
-		program.__fragmentShaderID = gl.createShader (gl.FRAGMENT_SHADER);
+		program.__fragmentShaderID = gl.createShader (GL.FRAGMENT_SHADER);
 		gl.shaderSource (program.__fragmentShaderID, fragmentShaderSource);
 		GLUtils.CheckGLError ();
 		
 		gl.compileShader (program.__fragmentShaderID);
 		GLUtils.CheckGLError ();
 		
-		var fragmentCompiled = gl.getShaderParameter (program.__fragmentShaderID, gl.COMPILE_STATUS);
+		var fragmentCompiled = gl.getShaderParameter (program.__fragmentShaderID, GL.COMPILE_STATUS);
 		
 		if (fragmentCompiled == 0) {
 			
