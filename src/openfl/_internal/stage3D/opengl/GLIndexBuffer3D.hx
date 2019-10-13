@@ -1,7 +1,7 @@
 package openfl._internal.stage3D.opengl;
 
 
-import lime.graphics.opengl.WebGLContext;
+import js.html.webgl.RenderingContext as WebGLContext;
 import lime.utils.ArrayBufferView;
 import lime.utils.Int16Array;
 import openfl._internal.renderer.RenderSession;
@@ -74,7 +74,7 @@ class GLIndexBuffer3D {
 		GLUtils.CheckGLError ();
 		
 		#if (js && html5)
-		(gl:WebGLContext).bufferData (gl.ELEMENT_ARRAY_BUFFER, data, indexBuffer.__usage);
+		(gl.__context:WebGLContext).bufferData (gl.ELEMENT_ARRAY_BUFFER, data, indexBuffer.__usage);
 		#else
 		gl.bufferData (gl.ELEMENT_ARRAY_BUFFER, data.byteLength, data, indexBuffer.__usage);
 		#end

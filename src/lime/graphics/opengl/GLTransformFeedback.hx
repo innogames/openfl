@@ -1,4 +1,3 @@
 package lime.graphics.opengl;
 
-@:native("WebGLTransformFeedback")
-extern class GLTransformFeedback {}
+typedef GLTransformFeedback = js.html.webgl.TransformFeedback;

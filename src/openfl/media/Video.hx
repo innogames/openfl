@@ -3,7 +3,7 @@ package openfl.media;
 
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLTexture;
-import lime.graphics.opengl.WebGLContext;
+import js.html.webgl.RenderingContext as WebGLContext;
 import lime.graphics.GLRenderContext;
 import lime.utils.Float32Array;
 import openfl._internal.renderer.canvas.CanvasVideo;
@@ -40,7 +40,7 @@ class Video extends DisplayObject implements IShaderDrawable {
 	private var __buffer:GLBuffer;
 	private var __bufferAlpha:Float;
 	private var __bufferColorTransform:ColorTransform;
-	private var __bufferContext:WebGLContext;
+	private var __bufferContext:GLRenderContext;
 	private var __bufferData:Float32Array;
 	private var __dirty:Bool;
 	private var __height:Float;

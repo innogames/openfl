@@ -2,7 +2,7 @@ package openfl._internal.stage3D.opengl;
 
 
 import lime.graphics.opengl.GLTexture;
-import lime.graphics.opengl.WebGLContext;
+import js.html.webgl.RenderingContext as WebGLContext;
 import openfl._internal.renderer.opengl.batcher.TextureData;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.stage3D.GLUtils;
@@ -39,7 +39,7 @@ class GLVideoTexture {
 			gl.bindTexture (videoTexture.__textureTarget, videoTexture.__textureData.glTexture);
 			GLUtils.CheckGLError ();
 			
-			(gl:WebGLContext).texImage2D (gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, videoTexture.__netStream.__video);
+			(gl.__context:WebGLContext).texImage2D (gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, videoTexture.__netStream.__video);
 			GLUtils.CheckGLError ();
 			
 		}

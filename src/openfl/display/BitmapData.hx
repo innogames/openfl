@@ -7,7 +7,6 @@ import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLFramebuffer;
 import lime.graphics.opengl.GLVertexArrayObject;
 import lime.graphics.opengl.GL;
-import lime.graphics.opengl.WebGLContext;
 import lime.graphics.GLRenderContext;
 import lime.graphics.Image;
 import lime.graphics.ImageChannel;
@@ -50,6 +49,7 @@ import js.html.ImageData;
 import js.html.ImageElement;
 import js.html.Uint8ClampedArray;
 import js.Browser;
+import js.html.webgl.RenderingContext as WebGLContext;
 #end
 
 #if gl_stats
@@ -872,7 +872,7 @@ class BitmapData implements IBitmapDrawable {
 			
 			gl.bindBuffer (gl.ARRAY_BUFFER, __buffer);
 			#if (js && html5)
-			(gl:WebGLContext).bufferData (gl.ARRAY_BUFFER, __bufferData, gl.STATIC_DRAW);
+			(gl.__context:WebGLContext).bufferData (gl.ARRAY_BUFFER, __bufferData, gl.STATIC_DRAW);
 			#else
 			gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.STATIC_DRAW);
 			#end
@@ -1120,7 +1120,7 @@ class BitmapData implements IBitmapDrawable {
 				
 			} else {
 				
-				(gl:WebGLContext).texImage2D (gl.TEXTURE_2D, 0, internalFormat, format, gl.UNSIGNED_BYTE, textureImage.src);
+				(gl.__context:WebGLContext).texImage2D (gl.TEXTURE_2D, 0, internalFormat, format, gl.UNSIGNED_BYTE, textureImage.src);
 				
 			}
 			

@@ -1,4 +1,3 @@
 package lime.graphics.opengl;
 
-@:native("WebGLVertexArrayObject")
-extern class GLVertexArrayObject {}
+typedef GLVertexArrayObject = js.html.webgl.VertexArrayObject;

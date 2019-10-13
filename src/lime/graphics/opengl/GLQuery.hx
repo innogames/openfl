@@ -1,4 +1,3 @@
 package lime.graphics.opengl;
 
-@:native("WebGLQuery")
-extern class GLQuery {}
+typedef GLQuery = js.html.webgl.Query;

@@ -1,4 +1,3 @@
 package lime.graphics.opengl;
 
-@:native("WebGLSampler")
-extern class GLSampler {}
+typedef GLSampler = js.html.webgl.Sampler;

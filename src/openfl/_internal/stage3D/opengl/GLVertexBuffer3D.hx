@@ -2,7 +2,7 @@ package openfl._internal.stage3D.opengl;
 
 
 import haxe.io.Bytes;
-import lime.graphics.opengl.WebGLContext;
+import js.html.webgl.RenderingContext as WebGLContext;
 import lime.utils.ArrayBufferView;
 import lime.utils.Float32Array;
 import openfl._internal.renderer.RenderSession;
@@ -76,7 +76,7 @@ class GLVertexBuffer3D {
 		GLUtils.CheckGLError ();
 		
 		#if (js && html5)
-		(gl:WebGLContext).bufferData (gl.ARRAY_BUFFER, data, vertexBuffer.__usage);
+		(gl.__context:WebGLContext).bufferData (gl.ARRAY_BUFFER, data, vertexBuffer.__usage);
 		#else
 		gl.bufferData (gl.ARRAY_BUFFER, data.byteLength, data, vertexBuffer.__usage);
 		#end
