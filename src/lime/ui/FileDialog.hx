@@ -5,7 +5,6 @@ import haxe.io.Bytes;
 import haxe.io.Path;
 import lime.app.Event;
 import lime.graphics.Image;
-import lime.system.BackgroundWorker;
 import lime.utils.ArrayBuffer;
 import lime.utils.Resource;
 
