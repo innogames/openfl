@@ -4,7 +4,6 @@ package openfl.display;
 import haxe.io.Path;
 import lime.utils.AssetLibrary in LimeAssetLibrary;
 import lime.utils.AssetManifest;
-import openfl._internal.swf.SWFLiteLibrary;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.events.ProgressEvent;
