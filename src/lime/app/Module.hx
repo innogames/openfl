@@ -28,7 +28,6 @@ class Module implements IModule {
 	public var onExit = new Event<Int->Void> ();
 	
 	@:noCompletion private var __application:Application;
-	@:noCompletion private var __preloader:Preloader;
 	@:noCompletion private var __renderers:Array<Renderer>;
 	@:noCompletion private var __windows:Array<Window>;
 	
@@ -136,31 +135,6 @@ class Module implements IModule {
 		if (window != null && __windows.indexOf (window) > -1) {
 			
 			__windows.remove (window);
-			
-		}
-		
-	}
-	
-	
-	@:noCompletion public function setPreloader (preloader:Preloader):Void {
-		
-		if (__preloader != null) {
-			
-			__preloader.onProgress.remove (onPreloadProgress);
-			__preloader.onComplete.remove (onPreloadComplete);
-			
-		}
-		
-		__preloader = preloader;
-		
-		if (preloader == null || preloader.complete) {
-			
-			onPreloadComplete ();
-			
-		} else {
-			
-			preloader.onProgress.add (onPreloadProgress);
-			preloader.onComplete.add (onPreloadComplete);
 			
 		}
 		
@@ -351,20 +325,6 @@ class Module implements IModule {
 	 * @param	delta	The amount of lines scrolled
 	 */
 	public function onMouseWheel (window:Window, delta:Int):Void { }
-	
-	
-	/**
-	 * Called when a preload complete event is fired
-	 */
-	public function onPreloadComplete ():Void { }
-	
-	
-	/**
-	 * Called when a preload progress event is fired
-	 * @param	loaded	The number of items that are loaded
-	 * @param	total	The total number of items will be loaded
-	 */
-	public function onPreloadProgress (loaded:Int, total:Int):Void { }
 	
 	
 	/**

@@ -5,7 +5,6 @@ import haxe.CallStack;
 import haxe.EnumFlags;
 import lime.app.Application;
 import lime.app.IModule;
-import lime.app.Preloader;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GLUniformLocation;
@@ -282,7 +281,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 	
 	@:noCompletion public function removeRenderer (renderer:Renderer):Void { }
 	@:noCompletion public function removeWindow (window:Window):Void { }
-	@:noCompletion public function setPreloader (preloader:Preloader):Void { }
 	
 	
 	@:noCompletion public function unregisterModule (application:Application):Void {
@@ -539,20 +537,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 		dispatchPendingMouseMove ();
 		
 		__onMouseWheel (delta);
-		
-	}
-	
-	
-	public function onPreloadComplete ():Void {
-		
-		
-		
-	}
-	
-	
-	public function onPreloadProgress (loaded:Int, total:Int):Void {
-		
-		
 		
 	}
 	

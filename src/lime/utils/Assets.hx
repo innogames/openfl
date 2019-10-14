@@ -616,15 +616,7 @@ class Assets {
 			
 		}
 		
-		if (Application.current != null && Application.current.preloader != null && !Application.current.preloader.complete) {
-			
-			return "There is no asset library named \"" + name + "\", or it is not yet preloaded";
-			
-		} else {
-			
-			return "There is no asset library named \"" + name + "\"";
-			
-		}
+		return "There is no asset library named \"" + name + "\"";
 		
 	}
 	
