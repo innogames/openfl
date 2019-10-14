@@ -1,7 +1,8 @@
 package openfl._internal.stage3D.opengl;
 
 
-import lime.graphics.opengl.WebGLContext;
+import js.html.webgl.RenderingContext as WebGLContext;
+import lime.graphics.opengl.GL;
 import lime.utils.ArrayBufferView;
 import lime.utils.Int16Array;
 import openfl._internal.renderer.RenderSession;
@@ -26,12 +27,12 @@ class GLIndexBuffer3D {
 		
 		var gl = renderSession.gl;
 		
-		indexBuffer.__elementType = gl.UNSIGNED_SHORT;
+		indexBuffer.__elementType = GL.UNSIGNED_SHORT;
 		
 		indexBuffer.__id = gl.createBuffer ();
 		GLUtils.CheckGLError ();
 		
-		indexBuffer.__usage = (bufferUsage == Context3DBufferUsage.DYNAMIC_DRAW) ? gl.DYNAMIC_DRAW : gl.STATIC_DRAW;
+		indexBuffer.__usage = (bufferUsage == Context3DBufferUsage.DYNAMIC_DRAW) ? GL.DYNAMIC_DRAW : GL.STATIC_DRAW;
 		
 		// __context.__statsIncrement (Context3D.Context3DTelemetry.COUNT_INDEX_BUFFER);
 		// __memoryUsage = 0;
@@ -70,14 +71,10 @@ class GLIndexBuffer3D {
 		if (data == null) return;
 		var gl = renderSession.gl;
 		
-		gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, indexBuffer.__id);
+		gl.bindBuffer (GL.ELEMENT_ARRAY_BUFFER, indexBuffer.__id);
 		GLUtils.CheckGLError ();
 		
-		#if (js && html5)
-		(gl:WebGLContext).bufferData (gl.ELEMENT_ARRAY_BUFFER, data, indexBuffer.__usage);
-		#else
-		gl.bufferData (gl.ELEMENT_ARRAY_BUFFER, data.byteLength, data, indexBuffer.__usage);
-		#end
+		gl.bufferData (GL.ELEMENT_ARRAY_BUFFER, data, indexBuffer.__usage);
 		GLUtils.CheckGLError ();
 		
 		// if (data.byteLength != __memoryUsage) {

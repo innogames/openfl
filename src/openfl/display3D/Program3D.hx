@@ -5,7 +5,6 @@ import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GLShader;
 import lime.graphics.opengl.GLUniformLocation;
 import lime.graphics.GLRenderContext;
-import lime.utils.BytePointer;
 import lime.utils.Float32Array;
 import openfl._internal.stage3D.opengl.GLProgram3D;
 import openfl._internal.stage3D.SamplerState;
@@ -147,7 +146,6 @@ import openfl.Vector;
 	public var isDirty:Bool;
 	
 	public var gl:GLRenderContext;
-	public var regDataPointer:BytePointer;
 	
 	
 	public function new (gl:GLRenderContext) {
@@ -155,7 +153,6 @@ import openfl.Vector;
 		this.gl = gl;
 		
 		isDirty = true;
-		regDataPointer = new BytePointer ();
 		
 	}
 	

@@ -4,6 +4,7 @@ package lime.utils;
 import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GLShader;
 import lime.graphics.opengl.GL;
+import lime._backend.html5.HTML5Renderer.context;
 import lime.utils.Log;
 
 #if !lime_debug
@@ -16,12 +17,11 @@ class GLUtils {
 	
 	
 	public static function compileShader (source:String, type:Int):GLShader {
+		var shader = context.createShader (type);
+		context.shaderSource (shader, source);
+		context.compileShader (shader);
 		
-		var shader = GL.context.createShader (type);
-		GL.context.shaderSource (shader, source);
-		GL.context.compileShader (shader);
-		
-		if (GL.context.getShaderParameter (shader, GL.COMPILE_STATUS) == 0) {
+		if (context.getShaderParameter (shader, GL.COMPILE_STATUS) == 0) {
 			
 			var message = switch (type) {
 				
@@ -31,7 +31,7 @@ class GLUtils {
 				
 			}
 			
-			message += "\n" + GL.context.getShaderInfoLog (shader);
+			message += "\n" + context.getShaderInfoLog (shader);
 			Log.error (message);
 			
 		}
@@ -46,15 +46,15 @@ class GLUtils {
 		var vertexShader = compileShader (vertexSource, GL.VERTEX_SHADER);
 		var fragmentShader = compileShader (fragmentSource, GL.FRAGMENT_SHADER);
 		
-		var program = GL.context.createProgram ();
-		GL.context.attachShader (program, vertexShader);
-		GL.context.attachShader (program, fragmentShader);
-		GL.context.linkProgram (program);
+		var program = context.createProgram ();
+		context.attachShader (program, vertexShader);
+		context.attachShader (program, fragmentShader);
+		context.linkProgram (program);
 		
-		if (GL.context.getProgramParameter (program, GL.LINK_STATUS) == 0) {
+		if (context.getProgramParameter (program, GL.LINK_STATUS) == 0) {
 			
 			var message = "Unable to initialize the shader program";
-			message += "\n" + GL.context.getProgramInfoLog (program);
+			message += "\n" + context.getProgramInfoLog (program);
 			Log.error (message);
 			
 		}

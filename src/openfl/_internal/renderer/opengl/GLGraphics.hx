@@ -2,6 +2,7 @@ package openfl._internal.renderer.opengl;
 
 
 import lime.utils.Float32Array;
+import lime.graphics.opengl.GL;
 import openfl._internal.renderer.canvas.CanvasGraphics;
 import openfl.display.Graphics;
 import openfl.geom.Matrix;
@@ -150,31 +151,31 @@ class GLGraphics {
 							if (bitmap != null) {
 								
 								gl.enableVertexAttribArray (shader.data.aAlpha.index);
-								gl.uniformMatrix4fv (shader.data.uMatrix.index, 1, false, renderer.getMatrix (parentTransform));
+								gl.uniformMatrix4fv (shader.data.uMatrix.index, false, renderer.getMatrix (parentTransform));
 								
 								gl.uniform1i (shader.data.uColorTransform.index, 0);
 								
-								gl.bindTexture (gl.TEXTURE_2D, bitmap.getTexture (gl).data.glTexture);
+								gl.bindTexture (GL.TEXTURE_2D, bitmap.getTexture (gl).data.glTexture);
 								
 								//if (renderSession.allowSmoothing && (smooth || renderSession.forceSmoothing)) {
 									
-									gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-									gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+									gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
+									gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
 									
 								//} else {
 									//
-									//gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-									//gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+									//gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+									//gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
 									//
 								//}
 								
-								gl.bindBuffer (gl.ARRAY_BUFFER, bitmap.getBuffer (gl, worldAlpha, null));
+								gl.bindBuffer (GL.ARRAY_BUFFER, bitmap.getBuffer (gl, worldAlpha, null));
 								
-								gl.vertexAttribPointer (shader.data.aPosition.index, 3, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 0);
-			gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
-			gl.vertexAttribPointer (shader.data.aAlpha.index, 1, gl.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
+								gl.vertexAttribPointer (shader.data.aPosition.index, 3, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 0);
+			gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+			gl.vertexAttribPointer (shader.data.aAlpha.index, 1, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
 			
-								gl.drawArrays (gl.TRIANGLE_STRIP, 0, 4);
+								gl.drawArrays (GL.TRIANGLE_STRIP, 0, 4);
 								
 								#if gl_stats
 									GLStats.incrementDrawCall (DrawCallContext.STAGE);

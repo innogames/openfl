@@ -2,10 +2,10 @@ package openfl._internal.renderer; #if (!display && !flash)
 
 
 import openfl._internal.renderer.opengl.vao.VertexArrayObjectExtension;
-import lime.graphics.opengl.GLContextType;
 import openfl._internal.renderer.opengl.vao.VertexArrayObjectContext;
 import openfl._internal.renderer.opengl.vao.IVertexArrayObjectContext;
 import lime.graphics.opengl.GLFramebuffer;
+import lime._backend.html5.HTML5Renderer;
 import lime.graphics.CanvasRenderContext;
 import lime.graphics.GLRenderContext;
 import lime.graphics.RendererType;
@@ -70,21 +70,17 @@ class RenderSession {
 		gl = glContext;
 		
 		#if vertex_array_object
-		if (gl.type == GLContextType.WEBGL) { 
+		if (HTML5Renderer.getWebGLVersion(gl) == 2) {
 			
-			if (gl.version == 2) {
+			vaoContext = new VertexArrayObjectContext (gl);
+			
+		} else {
+			
+			var vertexArrayObjectsExtension = gl.getExtension ("OES_vertex_array_object");
+			
+			if (vertexArrayObjectsExtension != null) {
 				
-				vaoContext = new VertexArrayObjectContext (gl);
-				
-			} else if (gl.version == 1) {
-				
-				var vertexArrayObjectsExtension = gl.getExtension ("OES_vertex_array_object");
-				
-				if (vertexArrayObjectsExtension != null) {
-					
-					vaoContext = new VertexArrayObjectExtension (vertexArrayObjectsExtension);
-					
-				}
+				vaoContext = new VertexArrayObjectExtension (vertexArrayObjectsExtension);
 				
 			}
 			

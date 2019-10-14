@@ -5,6 +5,7 @@ import openfl._internal.renderer.canvas.CanvasRenderer;
 import openfl._internal.renderer.opengl.batcher.BatchRenderer;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GLFramebuffer;
+import lime.graphics.opengl.GL;
 import lime.math.Matrix4;
 import openfl._internal.renderer.AbstractRenderer;
 import openfl.display.BitmapData;
@@ -59,7 +60,7 @@ class GLRenderer extends AbstractRenderer {
 		
 		if (Graphics.maxTextureWidth == null) {
 			
-			Graphics.maxTextureWidth = Graphics.maxTextureHeight = gl.getInteger (gl.MAX_TEXTURE_SIZE);
+			Graphics.maxTextureWidth = Graphics.maxTextureHeight = gl.getParameter (GL.MAX_TEXTURE_SIZE);
 			
 		}
 		
@@ -113,17 +114,17 @@ class GLRenderer extends AbstractRenderer {
 			
 		}
 		
-		gl.clear (gl.COLOR_BUFFER_BIT);
+		gl.clear (GL.COLOR_BUFFER_BIT);
 		
 	}
 	
 	
 	public function getCacheObject ():Void {
 		
-		// gl.bindFramebuffer (gl.FRAMEBUFFER, cacheObject.__getFramebuffer (gl));
+		// gl.bindFramebuffer (GL.FRAMEBUFFER, cacheObject.__getFramebuffer (gl));
 		// gl.viewport (0, 0, width, height);
 		// gl.clearColor (0, 0, 0, 0);
-		// gl.clear (gl.COLOR_BUFFER_BIT);
+		// gl.clear (GL.COLOR_BUFFER_BIT);
 		
 		// flipped = false;
 		
@@ -175,9 +176,9 @@ class GLRenderer extends AbstractRenderer {
 				
 				renderTargetA = BitmapData.fromTexture (stage.stage3Ds[0].context3D.createRectangleTexture (width, height, BGRA, true));
 				
-				gl.bindTexture (gl.TEXTURE_2D, renderTargetA.getTexture (gl).data.glTexture);
-				gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-				gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+				gl.bindTexture (GL.TEXTURE_2D, renderTargetA.getTexture (gl).data.glTexture);
+				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
 				
 			}
 			
@@ -185,9 +186,9 @@ class GLRenderer extends AbstractRenderer {
 				
 				renderTargetB = BitmapData.fromTexture (stage.stage3Ds[0].context3D.createRectangleTexture (width, height, BGRA, true));
 				
-				gl.bindTexture (gl.TEXTURE_2D, renderTargetB.getTexture (gl).data.glTexture);
-				gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-				gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+				gl.bindTexture (GL.TEXTURE_2D, renderTargetB.getTexture (gl).data.glTexture);
+				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
 				
 			}
 			
@@ -201,10 +202,10 @@ class GLRenderer extends AbstractRenderer {
 				
 			}
 			
-			gl.bindFramebuffer (gl.FRAMEBUFFER, currentRenderTarget.__getFramebuffer (gl));
+			gl.bindFramebuffer (GL.FRAMEBUFFER, currentRenderTarget.__getFramebuffer (gl));
 			gl.viewport (0, 0, width, height);
 			gl.clearColor (0, 0, 0, 0);
-			gl.clear (gl.COLOR_BUFFER_BIT);
+			gl.clear (GL.COLOR_BUFFER_BIT);
 			
 			flipped = false;
 			
@@ -213,7 +214,7 @@ class GLRenderer extends AbstractRenderer {
 			currentRenderTarget = defaultRenderTarget;
 			var frameBuffer:GLFramebuffer = (currentRenderTarget != null) ? currentRenderTarget.__getFramebuffer (gl) : null;
 			
-			gl.bindFramebuffer (gl.FRAMEBUFFER, frameBuffer);
+			gl.bindFramebuffer (GL.FRAMEBUFFER, frameBuffer);
 			
 			flipped = (currentRenderTarget == null);
 		}
@@ -241,29 +242,29 @@ class GLRenderer extends AbstractRenderer {
 		if (offsetX > 0 || offsetY > 0) {
 			
 			gl.clearColor (0, 0, 0, 1);
-			gl.enable (gl.SCISSOR_TEST);
+			gl.enable (GL.SCISSOR_TEST);
 			
 			if (offsetX > 0) {
 				
 				gl.scissor (0, 0, offsetX, height);
-				gl.clear (gl.COLOR_BUFFER_BIT);
+				gl.clear (GL.COLOR_BUFFER_BIT);
 				
 				gl.scissor (offsetX + displayWidth, 0, width, height);
-				gl.clear (gl.COLOR_BUFFER_BIT);
+				gl.clear (GL.COLOR_BUFFER_BIT);
 				
 			}
 			
 			if (offsetY > 0) {
 				
 				gl.scissor (0, 0, width, offsetY);
-				gl.clear (gl.COLOR_BUFFER_BIT);
+				gl.clear (GL.COLOR_BUFFER_BIT);
 				
 				gl.scissor (0, offsetY + displayHeight, width, height);
-				gl.clear (gl.COLOR_BUFFER_BIT);
+				gl.clear (GL.COLOR_BUFFER_BIT);
 				
 			}
 			
-			gl.disable (gl.SCISSOR_TEST);
+			gl.disable (GL.SCISSOR_TEST);
 			
 		}
 		
@@ -289,9 +290,9 @@ class GLRenderer extends AbstractRenderer {
 			
 		// 	cacheObject = BitmapData.fromTexture (stage.stage3Ds[0].context3D.createRectangleTexture (width, height, BGRA, true));
 			
-		// 	gl.bindTexture (gl.TEXTURE_2D, cacheObject.getTexture (gl).data.glTexture);
-		// 	gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-		// 	gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		// 	gl.bindTexture (GL.TEXTURE_2D, cacheObject.getTexture (gl).data.glTexture);
+		// 	gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+		// 	gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
 			
 		// }
 		
@@ -301,9 +302,9 @@ class GLRenderer extends AbstractRenderer {
 				
 				renderTargetA = BitmapData.fromTexture (stage.stage3Ds[0].context3D.createRectangleTexture (width, height, BGRA, true));
 				
-				gl.bindTexture (gl.TEXTURE_2D, renderTargetA.getTexture (gl).data.glTexture);
-				gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-				gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+				gl.bindTexture (GL.TEXTURE_2D, renderTargetA.getTexture (gl).data.glTexture);
+				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
 				
 			}
 			
@@ -311,9 +312,9 @@ class GLRenderer extends AbstractRenderer {
 				
 				renderTargetB = BitmapData.fromTexture (stage.stage3Ds[0].context3D.createRectangleTexture (width, height, BGRA, true));
 				
-				gl.bindTexture (gl.TEXTURE_2D, renderTargetB.getTexture (gl).data.glTexture);
-				gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-				gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+				gl.bindTexture (GL.TEXTURE_2D, renderTargetB.getTexture (gl).data.glTexture);
+				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
 				
 			}
 			

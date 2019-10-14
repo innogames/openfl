@@ -46,7 +46,7 @@ class AGALConverter {
 	}
 	
 	
-	public static function convertToGLSL (agal:ByteArray, samplerState:Array<SamplerState>):String {
+	public static function convertToGLSL (gl:GL, agal:ByteArray, samplerState:Array<SamplerState>):String {
 		
 		agal.position = 0;
 		agal.endian = Endian.LITTLE_ENDIAN;
@@ -458,7 +458,7 @@ class AGALConverter {
 		
 		if (limitedProfile == null) {
 			
-			var version:String = GL.context.getParameter (GL.VERSION);
+			var version:String = gl.getParameter (GL.VERSION);
 			limitedProfile = (version.indexOf ("OpenGL ES") > -1 || version.indexOf ("WebGL") > -1);
 			
 		}

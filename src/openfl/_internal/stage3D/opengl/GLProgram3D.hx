@@ -3,7 +3,6 @@ package openfl._internal.stage3D.opengl;
 
 import lime.graphics.opengl.GL;
 import lime.graphics.GLRenderContext;
-import lime.utils.BytePointer;
 import lime.utils.Float32Array;
 import lime.utils.Log;
 import openfl._internal.renderer.RenderSession;
@@ -47,13 +46,13 @@ class GLProgram3D {
 		var index:Int = uniform.regIndex * 4;
 		switch (uniform.type) {
 			
-			case GL.FLOAT_MAT2: gl.uniformMatrix2fv (uniform.location, uniform.size, false, __getUniformRegisters (uniform, index, uniform.size * 2 * 2));
-			case GL.FLOAT_MAT3: gl.uniformMatrix3fv (uniform.location, uniform.size, false, __getUniformRegisters (uniform, index, uniform.size * 3 * 3));
-			case GL.FLOAT_MAT4: gl.uniformMatrix4fv (uniform.location, uniform.size, false, __getUniformRegisters (uniform, index, uniform.size * 4 * 4));
-			case GL.FLOAT_VEC2: gl.uniform2fv (uniform.location, uniform.regCount, __getUniformRegisters (uniform, index, uniform.regCount * 2));
-			case GL.FLOAT_VEC3: gl.uniform3fv (uniform.location, uniform.regCount, __getUniformRegisters (uniform, index, uniform.regCount * 3));
-			case GL.FLOAT_VEC4: gl.uniform4fv (uniform.location, uniform.regCount, __getUniformRegisters (uniform, index, uniform.regCount * 4));
-			default: gl.uniform4fv (uniform.location, uniform.regCount, __getUniformRegisters (uniform, index, uniform.regCount * 4));
+			case GL.FLOAT_MAT2: gl.uniformMatrix2fv (uniform.location, false, __getUniformRegisters (uniform, index, uniform.size * 2 * 2));
+			case GL.FLOAT_MAT3: gl.uniformMatrix3fv (uniform.location, false, __getUniformRegisters (uniform, index, uniform.size * 3 * 3));
+			case GL.FLOAT_MAT4: gl.uniformMatrix4fv (uniform.location, false, __getUniformRegisters (uniform, index, uniform.size * 4 * 4));
+			case GL.FLOAT_VEC2: gl.uniform2fv (uniform.location, __getUniformRegisters (uniform, index, uniform.regCount * 2));
+			case GL.FLOAT_VEC3: gl.uniform3fv (uniform.location, __getUniformRegisters (uniform, index, uniform.regCount * 3));
+			case GL.FLOAT_VEC4: gl.uniform4fv (uniform.location, __getUniformRegisters (uniform, index, uniform.regCount * 4));
+			default: gl.uniform4fv (uniform.location, __getUniformRegisters (uniform, index, uniform.regCount * 4));
 			
 		}
 		
@@ -65,7 +64,7 @@ class GLProgram3D {
 	public static function setPositionScale (program:Program3D, renderSession:RenderSession, positionScale:Float32Array):Void {
 		
 		var gl = renderSession.gl;
-		gl.uniform4fv (program.__positionScale.location, 1, positionScale);
+		gl.uniform4fv (program.__positionScale.location, positionScale);
 		GLUtils.CheckGLError ();
 		
 	}
@@ -79,8 +78,8 @@ class GLProgram3D {
 		//var samplerStates = new Vector<SamplerState> (Context3D.MAX_SAMPLERS);
 		var samplerStates = new Array<SamplerState> ();
 		
-		var glslVertex = AGALConverter.convertToGLSL (vertexProgram, null);
-		var glslFragment = AGALConverter.convertToGLSL (fragmentProgram, samplerStates);
+		var glslVertex = AGALConverter.convertToGLSL (renderSession.gl, vertexProgram, null);
+		var glslFragment = AGALConverter.convertToGLSL (renderSession.gl, fragmentProgram, samplerStates);
 		
 		__uploadFromGLSL (glslVertex, glslFragment);
 		
@@ -164,7 +163,7 @@ class GLProgram3D {
 		program.__samplerUsageMask = 0;
 		
 		var numActive = 0;
-		numActive = gl.getProgramParameter (program.__programID, gl.ACTIVE_UNIFORMS);
+		numActive = gl.getProgramParameter (program.__programID, GL.ACTIVE_UNIFORMS);
 		GLUtils.CheckGLError ();
 		
 		var vertexUniforms = new List<Uniform> ();
@@ -295,20 +294,11 @@ class GLProgram3D {
 	}
 	
 	
-	#if (js && html5)
 	private static inline function __getUniformRegisters (uniform:Uniform, index:Int, size:Int):Float32Array {
 		
 		return uniform.regData.subarray (index, index + size);
 		
 	}
-	#else
-	private static inline function __getUniformRegisters (uniform:Uniform, index:Int, size:Int):BytePointer {
-		
-		uniform.regDataPointer.set (uniform.regData, index * 4);
-		return uniform.regDataPointer;
-		
-	}
-	#end
 	
 	
 	private static function __uploadFromGLSL (vertexShaderSource:String, fragmentShaderSource:String):Void {
@@ -327,14 +317,14 @@ class GLProgram3D {
 		program.__vertexSource = vertexShaderSource;
 		program.__fragmentSource = fragmentShaderSource;
 		
-		program.__vertexShaderID = gl.createShader (gl.VERTEX_SHADER);
+		program.__vertexShaderID = gl.createShader (GL.VERTEX_SHADER);
 		gl.shaderSource (program.__vertexShaderID, vertexShaderSource);
 		GLUtils.CheckGLError ();
 		
 		gl.compileShader (program.__vertexShaderID);
 		GLUtils.CheckGLError ();
 		
-		var shaderCompiled = gl.getShaderParameter (program.__vertexShaderID, gl.COMPILE_STATUS);
+		var shaderCompiled = gl.getShaderParameter (program.__vertexShaderID, GL.COMPILE_STATUS);
 		
 		GLUtils.CheckGLError ();
 		
@@ -352,14 +342,14 @@ class GLProgram3D {
 			
 		}
 		
-		program.__fragmentShaderID = gl.createShader (gl.FRAGMENT_SHADER);
+		program.__fragmentShaderID = gl.createShader (GL.FRAGMENT_SHADER);
 		gl.shaderSource (program.__fragmentShaderID, fragmentShaderSource);
 		GLUtils.CheckGLError ();
 		
 		gl.compileShader (program.__fragmentShaderID);
 		GLUtils.CheckGLError ();
 		
-		var fragmentCompiled = gl.getShaderParameter (program.__fragmentShaderID, gl.COMPILE_STATUS);
+		var fragmentCompiled = gl.getShaderParameter (program.__fragmentShaderID, GL.COMPILE_STATUS);
 		
 		if (fragmentCompiled == 0) {
 			

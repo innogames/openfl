@@ -4,6 +4,7 @@ package openfl._internal.stage3D.opengl;
 import haxe.io.Bytes;
 import lime.utils.ArrayBufferView;
 import lime.utils.UInt8Array;
+import lime.graphics.opengl.GL;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.stage3D.atf.ATFReader;
 import openfl._internal.stage3D.GLUtils;
@@ -32,12 +33,12 @@ class GLTexture {
 		
 		var gl = renderSession.gl;
 		
-		texture.__textureTarget = gl.TEXTURE_2D;
+		texture.__textureTarget = GL.TEXTURE_2D;
 		
 		gl.bindTexture (texture.__textureTarget, texture.__textureData.glTexture);
 		GLUtils.CheckGLError ();
 		
-		gl.texImage2D (texture.__textureTarget, 0, texture.__internalFormat, texture.__width, texture.__height, 0, texture.__format, gl.UNSIGNED_BYTE, null);
+		gl.texImage2D (texture.__textureTarget, 0, texture.__internalFormat, texture.__width, texture.__height, 0, texture.__format, GL.UNSIGNED_BYTE, null);
 		GLUtils.CheckGLError ();
 		
 		gl.bindTexture (texture.__textureTarget, null);
@@ -68,7 +69,7 @@ class GLTexture {
 			texture.__format = format;
 			texture.__internalFormat = format;
 			
-			gl.compressedTexImage2D (texture.__textureTarget, level, texture.__internalFormat, width, height, 0, blockLength, bytes);
+			gl.compressedTexImage2D (texture.__textureTarget, level, texture.__internalFormat, width, height, 0, bytes, 0, blockLength);
 			GLUtils.CheckGLError ();
 			
 			// __trackCompressedMemoryUsage (blockLength);
@@ -78,7 +79,7 @@ class GLTexture {
 		if (!hasTexture) {
 			
 			var data = new UInt8Array (texture.__width * texture.__height * 4);
-			gl.texImage2D (texture.__textureTarget, 0, texture.__internalFormat, texture.__width, texture.__height, 0, texture.__format, gl.UNSIGNED_BYTE, data);
+			gl.texImage2D (texture.__textureTarget, 0, texture.__internalFormat, texture.__width, texture.__height, 0, texture.__format, GL.UNSIGNED_BYTE, data);
 			GLUtils.CheckGLError ();
 			
 		}
@@ -158,7 +159,7 @@ class GLTexture {
 		gl.bindTexture (texture.__textureTarget, texture.__textureData.glTexture);
 		GLUtils.CheckGLError ();
 		
-		gl.texImage2D (texture.__textureTarget, miplevel, texture.__internalFormat, width, height, 0, texture.__format, gl.UNSIGNED_BYTE, data);
+		gl.texImage2D (texture.__textureTarget, miplevel, texture.__internalFormat, width, height, 0, texture.__format, GL.UNSIGNED_BYTE, data);
 		GLUtils.CheckGLError ();
 		
 		gl.bindTexture (texture.__textureTarget, null);
@@ -176,9 +177,9 @@ class GLTexture {
 			
 			var gl = renderSession.gl;
 			
-			if (state.minFilter != gl.NEAREST && state.minFilter != gl.LINEAR && !state.mipmapGenerated) {
+			if (state.minFilter != GL.NEAREST && state.minFilter != GL.LINEAR && !state.mipmapGenerated) {
 				
-				gl.generateMipmap (gl.TEXTURE_2D);
+				gl.generateMipmap (GL.TEXTURE_2D);
 				GLUtils.CheckGLError ();
 				
 				state.mipmapGenerated = true;
@@ -187,7 +188,7 @@ class GLTexture {
 			
 			if (state.maxAniso != 0.0) {
 				
-				gl.texParameterf (gl.TEXTURE_2D, Context3D.TEXTURE_MAX_ANISOTROPY_EXT, state.maxAniso);
+				gl.texParameterf (GL.TEXTURE_2D, Context3D.TEXTURE_MAX_ANISOTROPY_EXT, state.maxAniso);
 				GLUtils.CheckGLError ();
 				
 			}

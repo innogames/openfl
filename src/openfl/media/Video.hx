@@ -3,8 +3,9 @@ package openfl.media;
 
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLTexture;
-import lime.graphics.opengl.WebGLContext;
+import js.html.webgl.RenderingContext as WebGLContext;
 import lime.graphics.GLRenderContext;
+import lime.graphics.opengl.GL;
 import lime.utils.Float32Array;
 import openfl._internal.renderer.canvas.CanvasVideo;
 import openfl._internal.renderer.opengl.GLVideo;
@@ -40,7 +41,7 @@ class Video extends DisplayObject implements IShaderDrawable {
 	private var __buffer:GLBuffer;
 	private var __bufferAlpha:Float;
 	private var __bufferColorTransform:ColorTransform;
-	private var __bufferContext:WebGLContext;
+	private var __bufferContext:GLRenderContext;
 	private var __bufferData:Float32Array;
 	private var __dirty:Bool;
 	private var __height:Float;
@@ -199,9 +200,9 @@ class Video extends DisplayObject implements IShaderDrawable {
 			__bufferContext = gl;
 			__buffer = gl.createBuffer ();
 			
-			gl.bindBuffer (gl.ARRAY_BUFFER, __buffer);
-			gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.STATIC_DRAW);
-			//gl.bindBuffer (gl.ARRAY_BUFFER, null);
+			gl.bindBuffer (GL.ARRAY_BUFFER, __buffer);
+			gl.bufferData (GL.ARRAY_BUFFER, __bufferData, GL.STATIC_DRAW);
+			//gl.bindBuffer (GL.ARRAY_BUFFER, null);
 			
 		} else {
 			
@@ -253,8 +254,8 @@ class Video extends DisplayObject implements IShaderDrawable {
 				
 			}
 			
-			gl.bindBuffer (gl.ARRAY_BUFFER, __buffer);
-			gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.STATIC_DRAW);
+			gl.bindBuffer (GL.ARRAY_BUFFER, __buffer);
+			gl.bufferData (GL.ARRAY_BUFFER, __bufferData, GL.STATIC_DRAW);
 			
 		}
 		
@@ -272,22 +273,22 @@ class Video extends DisplayObject implements IShaderDrawable {
 		if (__texture == null) {
 			
 			__texture = gl.createTexture ();
-			gl.bindTexture (gl.TEXTURE_2D, __texture);
-			gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-			gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-			gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-			gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+			gl.bindTexture (GL.TEXTURE_2D, __texture);
+			gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+			gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
+			gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+			gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
 			__textureTime = -1;
 			
 		}
 		
 		if (__stream.__video.currentTime != __textureTime) {
 			
-			var internalFormat = gl.RGBA;
-			var format = gl.RGBA;
+			var internalFormat = GL.RGBA;
+			var format = GL.RGBA;
 			
-			gl.bindTexture (gl.TEXTURE_2D, __texture);
-			gl.texImage2DWEBGL (gl.TEXTURE_2D, 0, internalFormat, format, gl.UNSIGNED_BYTE, __stream.__video);
+			gl.bindTexture (GL.TEXTURE_2D, __texture);
+			gl.texImage2D (GL.TEXTURE_2D, 0, internalFormat, format, GL.UNSIGNED_BYTE, __stream.__video);
 			
 			__textureTime = __stream.__video.currentTime;
 			

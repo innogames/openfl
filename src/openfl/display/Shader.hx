@@ -3,6 +3,7 @@ package openfl.display;
 
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GLProgram;
+import lime.graphics.opengl.GL;
 import lime.utils.Float32Array;
 import lime.utils.GLUtils;
 import openfl.utils.ByteArray;
@@ -208,14 +209,8 @@ class Shader {
 			
 		}
 		
-		gl.bindBuffer (gl.ARRAY_BUFFER, null);
-		gl.bindTexture (gl.TEXTURE_2D, null);
-		
-		if (gl.type == OPENGL) {
-			
-			gl.disable (gl.TEXTURE_2D);
-			
-		}
+		gl.bindBuffer (GL.ARRAY_BUFFER, null);
+		gl.bindTexture (GL.TEXTURE_2D, null);
 		
 	}
 	
@@ -238,12 +233,6 @@ class Shader {
 		for (input in __inputBitmapData) {
 			
 			input.enable (gl);
-			
-		}
-		
-		if (gl.type == OPENGL && __inputBitmapData.length > 0) {
-			
-			gl.enable (gl.TEXTURE_2D);
 			
 		}
 		

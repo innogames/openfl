@@ -2,6 +2,7 @@ package openfl._internal.stage3D;
 
 
 import lime.graphics.opengl.GL;
+import lime._backend.html5.HTML5Renderer;
 import openfl.errors.IllegalOperationError;
 
 #if !openfl_debug
@@ -20,7 +21,7 @@ class GLUtils {
     public static function CheckGLError ():Void {
         if (!debug) return;
 
-        var error = GL.context.getError ();
+        var error = HTML5Renderer.context.getError ();
 		
         if (error != GL.NO_ERROR) {
 			

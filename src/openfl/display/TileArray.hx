@@ -3,6 +3,7 @@ package openfl.display;
 
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.GLRenderContext;
+import lime.graphics.opengl.GL;
 import lime.utils.Float32Array;
 import openfl.geom.ColorTransform;
 import openfl.geom.Matrix;
@@ -156,7 +157,7 @@ import openfl.Vector;
 			
 		}
 		
-		gl.bindBuffer (gl.ARRAY_BUFFER, __buffer);
+		gl.bindBuffer (GL.ARRAY_BUFFER, __buffer);
 		
 		// TODO: Handle __dirty flags, copy only changed values
 		
@@ -389,7 +390,7 @@ import openfl.Vector;
 				
 			}
 			
-			gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.DYNAMIC_DRAW);
+			gl.bufferData (GL.ARRAY_BUFFER, __bufferData, GL.DYNAMIC_DRAW);
 			
 			__cacheAlpha = worldAlpha;
 			__cacheDefaultTileset = defaultTileset;

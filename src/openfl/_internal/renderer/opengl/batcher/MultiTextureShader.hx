@@ -4,6 +4,7 @@ import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GLShader;
 import lime.graphics.opengl.GLUniformLocation;
+import lime.graphics.opengl.GL;
 import lime.utils.Float32Array;
 import lime.utils.Int32Array;
 import lime.utils.Log;
@@ -31,7 +32,7 @@ class MultiTextureShader {
 	public function new(gl:GLRenderContext) {
 		this.gl = gl;
 
-		var maxTextures = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
+		var maxTextures = gl.getParameter(GL.MAX_TEXTURE_IMAGE_UNITS);
 		while (maxTextures >= 1) {
 			var fsSource = generateMultiTextureFragmentShaderSource(maxTextures);
 			program = createProgram(gl, vsSource, fsSource);
@@ -58,7 +59,7 @@ class MultiTextureShader {
 		uPositionScale = gl.getUniformLocation(program, "uPostionScale");
 
 		gl.useProgram(program);
-		gl.uniform1iv(gl.getUniformLocation(program, 'uSamplers'), maxTextures, new Int32Array([for (i in 0...maxTextures) i]));
+		gl.uniform1iv(gl.getUniformLocation(program, 'uSamplers'), new Int32Array([for (i in 0...maxTextures) i]));
 	}
 
 	public function enable(projectionMatrix:Float32Array) {
@@ -71,8 +72,8 @@ class MultiTextureShader {
 		gl.enableVertexAttribArray(aColorMultiplier);
 		gl.enableVertexAttribArray(aPremultipliedAlpha);
 
-		gl.uniformMatrix4fv(uProjMatrix, 0, false, projectionMatrix);
-		gl.uniform4fv (uPositionScale, 1, positionScale);
+		gl.uniformMatrix4fv(uProjMatrix, false, projectionMatrix);
+		gl.uniform4fv (uPositionScale, positionScale);
 	}
 
 	static function compileShader(gl:GLRenderContext, source:String, type:Int):Null<GLShader> {
@@ -80,7 +81,7 @@ class MultiTextureShader {
 		gl.shaderSource(shader, source);
 		gl.compileShader(shader);
 		
-		if (gl.getShaderParameter(shader, gl.COMPILE_STATUS) == 0) {
+		if (gl.getShaderParameter(shader, GL.COMPILE_STATUS) == 0) {
 			var message = gl.getShaderInfoLog(shader);
 			gl.deleteShader(shader);
 			Log.warn(message);
@@ -91,12 +92,12 @@ class MultiTextureShader {
 	}
 	
 	static function createProgram(gl:GLRenderContext, vertexSource:String, fragmentSource:String):Null<GLProgram> {
-		var vertexShader = compileShader(gl, vertexSource, gl.VERTEX_SHADER);
+		var vertexShader = compileShader(gl, vertexSource, GL.VERTEX_SHADER);
 		if (vertexShader == null) {
 			return null;
 		}
 
-		var fragmentShader = compileShader(gl, fragmentSource, gl.FRAGMENT_SHADER);
+		var fragmentShader = compileShader(gl, fragmentSource, GL.FRAGMENT_SHADER);
 		if (fragmentShader == null) {
 			gl.deleteShader(vertexShader);
 			return null;
@@ -107,7 +108,7 @@ class MultiTextureShader {
 		gl.attachShader(program, fragmentShader);
 		gl.linkProgram(program);
 		
-		if (gl.getProgramParameter(program, gl.LINK_STATUS) == 0) {
+		if (gl.getProgramParameter(program, GL.LINK_STATUS) == 0) {
 			var message = gl.getProgramInfoLog(program);
 			Log.warn(message);
 			gl.deleteProgram(program);

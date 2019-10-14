@@ -19,10 +19,10 @@ import lime.graphics.CanvasRenderContext;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLBuffer;
-import lime.graphics.opengl.WebGLContext;
 import lime.graphics.utils.ImageCanvasUtil;
 import lime.utils.Float32Array;
 #if (js && html5)
+import js.html.webgl.RenderingContext as WebGLContext;
 import js.html.CanvasRenderingContext2D;
 #end
 #end
@@ -364,12 +364,8 @@ class SubBitmapData extends BitmapData {
 			__bufferContext = gl;
 			__buffer = gl.createBuffer ();
 
-			gl.bindBuffer (gl.ARRAY_BUFFER, __buffer);
-			#if (js && html5)
-			(gl:WebGLContext).bufferData (gl.ARRAY_BUFFER, __bufferData, gl.STATIC_DRAW);
-			#else
-			gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.STATIC_DRAW);
-			#end
+			gl.bindBuffer (GL.ARRAY_BUFFER, __buffer);
+			gl.bufferData (GL.ARRAY_BUFFER, __bufferData, GL.STATIC_DRAW);
 
 		} else {
 
@@ -437,11 +433,11 @@ class SubBitmapData extends BitmapData {
 
 			}
 
-			gl.bindBuffer (gl.ARRAY_BUFFER, __buffer);
+			gl.bindBuffer (GL.ARRAY_BUFFER, __buffer);
 
 			if (dirty) {
 				
-				gl.bufferData (gl.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, gl.STATIC_DRAW);
+				gl.bufferData (GL.ARRAY_BUFFER, __bufferData, GL.STATIC_DRAW);
 			
 			}
 			
