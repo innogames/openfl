@@ -2,7 +2,6 @@ package lime.app;
 
 
 import lime.system.System;
-import lime.system.ThreadPool;
 import lime.utils.Log;
 
 #if !lime_debug
@@ -26,30 +25,19 @@ import lime.utils.Log;
 	private var __progressListeners:Array<Int->Int->Void>;
 	
 	
-	public function new (work:Void->T = null, async:Bool = false) {
+	public function new (work:Void->T = null) {
 		
 		if (work != null) {
 			
-			if (async) {
+			try {
 				
-				var promise = new Promise<T> ();
-				promise.future = this;
+				value = work ();
+				isComplete = true;
 				
-				FutureWork.queue ({ promise: promise, work: work });
+			} catch (e:Dynamic) {
 				
-			} else {
-				
-				try {
-					
-					value = work ();
-					isComplete = true;
-					
-				} catch (e:Dynamic) {
-					
-					error = e;
-					isError = true;
-					
-				}
+				error = e;
+				isError = true;
 				
 			}
 			
@@ -256,74 +244,6 @@ import lime.utils.Log;
 		future.isComplete = true;
 		future.value = value;
 		return future;
-		
-	}
-	
-	
-}
-
-
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
-@:dox(hide) private class FutureWork {
-	
-	
-	private static var threadPool:ThreadPool;
-	
-	
-	public static function queue (state:Dynamic = null):Void {
-		
-		if (threadPool == null) {
-			
-			threadPool = new ThreadPool ();
-			threadPool.doWork.add (threadPool_doWork);
-			threadPool.onComplete.add (threadPool_onComplete);
-			threadPool.onError.add (threadPool_onError);
-			
-		}
-		
-		threadPool.queue (state);
-		
-	}
-	
-	
-	
-	
-	// Event Handlers
-	
-	
-	
-	
-	private static function threadPool_doWork (state:Dynamic):Void {
-		
-		try {
-			
-			var result = state.work ();
-			threadPool.sendComplete ({ promise: state.promise, result: result } );
-			
-		} catch (e:Dynamic) {
-			
-			threadPool.sendError ({ promise: state.promise, error: e } );
-			
-		}
-		
-	}
-	
-	
-	private static function threadPool_onComplete (state:Dynamic):Void {
-		
-		state.promise.complete (state.result);
-		
-	}
-	
-	
-	private static function threadPool_onError (state:Dynamic):Void {
-		
-		state.promise.error (state.error);
 		
 	}
 	
