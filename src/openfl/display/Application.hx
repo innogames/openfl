@@ -66,12 +66,6 @@ class Application extends LimeApplication {
 				
 			}
 			
-			if (preloader == null || preloader.complete) {
-				
-				onPreloadComplete ();
-				
-			}
-			
 		}
 		
 	}

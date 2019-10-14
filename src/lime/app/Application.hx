@@ -45,11 +45,6 @@ class Application extends Module {
 	public var modules (default, null):Array<IModule>;
 	
 	/**
-	 * The Preloader for the current Application
-	**/
-	public var preloader (get, null):Preloader;
-	
-	/**
 	 * Update events are dispatched each frame (usually just before rendering)
 	 */
 	public var onUpdate = new Event<Int->Void> ();
@@ -132,8 +127,6 @@ class Application extends Module {
 			
 		}
 		
-		module.setPreloader (__preloader);
-		
 	}
 	
 	
@@ -185,18 +178,6 @@ class Application extends Module {
 					#if html5
 					break;
 					#end
-					
-				}
-				
-			}
-			
-			if (__preloader == null || __preloader.complete) {
-				
-				setPreloader (__preloader);
-				
-				for (module in modules) {
-					
-					setPreloader (__preloader);
 					
 				}
 				
@@ -314,19 +295,6 @@ class Application extends Module {
 	}
 	
 	
-	@:noCompletion public override function setPreloader (preloader:Preloader):Void {
-		
-		super.setPreloader (preloader);
-		
-		for (module in modules) {
-			
-			module.setPreloader (preloader);
-			
-		}
-		
-	}
-	
-	
 	
 	
 	// Get & Set Methods
@@ -344,13 +312,6 @@ class Application extends Module {
 	@:noCompletion private inline function set_frameRate (value:Float):Float {
 		
 		return backend.setFrameRate (value);
-		
-	}
-	
-	
-	@:noCompletion private inline function get_preloader ():Preloader {
-		
-		return __preloader;
 		
 	}
 	
