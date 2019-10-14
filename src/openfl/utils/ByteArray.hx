@@ -10,7 +10,6 @@ import lime.utils.compress.Deflate;
 import lime.utils.compress.LZMA;
 import lime.utils.compress.Zlib;
 import lime.utils.ArrayBuffer;
-import lime.utils.BytePointer;
 import lime.utils.Bytes in LimeBytes;
 import openfl.errors.EOFError;
 
@@ -23,8 +22,6 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	
 	
 	public static var defaultObjectEncoding:UInt;
-	
-	private static var __bytePointer = new BytePointer ();
 	
 	public var length (get, set):Int;
 	
@@ -171,16 +168,6 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 		#else
 		return (byteArray:ByteArrayData);
 		#end
-		
-	}
-	
-	
-	@:to @:noCompletion private static function toBytePointer (byteArray:ByteArray):BytePointer {
-		
-		#if !display
-		__bytePointer.set (#if flash byteArray #else (byteArray:ByteArrayData) #end, byteArray.position);
-		#end
-		return __bytePointer;
 		
 	}
 	

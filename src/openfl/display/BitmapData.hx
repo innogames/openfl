@@ -1528,7 +1528,7 @@ class BitmapData implements IBitmapDrawable {
 		var length = (rect.width * rect.height * 4);
 		if (byteArray.bytesAvailable < length) throw new Error ("End of file was encountered.", 2030);
 		
-		image.setPixels (rect.__toLimeRectangle (), byteArray, ARGB32, byteArray.endian);
+		image.setPixels (rect.__toLimeRectangle (), byteArray, byteArray.position, ARGB32, byteArray.endian);
 		
 	}
 	
