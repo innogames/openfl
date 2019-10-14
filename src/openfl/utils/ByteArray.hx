@@ -218,8 +218,6 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 		
 		#if display
 		return 0;
-		#elseif lime_bytes_length_getter
-		return this == null ? 0 : this.l;
 		#else
 		return this == null ? 0 : this.length;
 		#end
@@ -231,8 +229,6 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 		
 		#if display
 		#elseif flash
-		this.length = value;
-		#elseif lime_bytes_length_getter
 		this.length = value;
 		#else
 		if (value > 0) {
@@ -272,19 +268,6 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	
 	private var __endian:Endian;
 	private var __length:Int;
-	
-	
-	#if lime_bytes_length_getter
-	private static function __init__ () {
-		
-		untyped global.Object.defineProperties (ByteArrayData.prototype, {
-			"bytesAvailable": { get: untyped __js__ ("function () { return this.get_bytesAvailable (); }") },
-			"endian": { get: untyped __js__ ("function () { return this.get_endian (); }"), set: untyped __js__ ("function (v) { return this.set_endian (v); }") },
-			"length": { get: untyped __js__ ("function () { return this.get_length (); }"), set: untyped __js__ ("function (v) { return this.set_length (v); }") },
-		});
-		
-	}
-	#end
 	
 	
 	public function new (length:Int = 0) {
@@ -343,22 +326,14 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	public function compress (algorithm:CompressionAlgorithm = ZLIB):Void {
 		
 		#if js
-		if (__length > #if lime_bytes_length_getter l #else length #end) {
+		if (__length > length) {
 			
-			var cacheLength = #if lime_bytes_length_getter l #else length #end;
-			#if lime_bytes_length_getter
-			this.l = __length;
-			#else
+			var cacheLength = length;
 			this.length = __length;
-			#end
 			var data = Bytes.alloc (cacheLength);
 			data.blit (0, this, 0, cacheLength);
 			__setData (data);
-			#if lime_bytes_length_getter
-			this.l = cacheLength;
-			#else
 			this.length = cacheLength;
-			#end
 			
 		}
 		#end
@@ -375,8 +350,8 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 			
 			__setData (bytes);
 			
-			#if lime_bytes_length_getter l #else length #end = __length;
-			position = #if lime_bytes_length_getter l #else length #end;
+			length = __length;
+			position = length;
 			
 		}
 		
@@ -408,7 +383,7 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	
 	public function readBoolean ():Bool {
 		
-		if (position < #if lime_bytes_length_getter l #else length #end) {
+		if (position < length) {
 			
 			return (get (position++) != 0);
 			
@@ -441,9 +416,9 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	
 	public function readBytes (bytes:ByteArray, offset:Int = 0, length:Int = 0):Void {
 		
-		if (length == 0) length = #if lime_bytes_length_getter l #else this.length #end - position;
+		if (length == 0) length = this.length - position;
 		
-		if (position + length > #if lime_bytes_length_getter l #else this.length #end) {
+		if (position + length > this.length) {
 			
 			throw new EOFError ();
 			
@@ -545,7 +520,7 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	
 	public function readUnsignedByte ():Int {
 		
-		if (position < #if lime_bytes_length_getter l #else length #end) {
+		if (position < length) {
 			
 			return get (position++);
 			
@@ -607,7 +582,7 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	
 	public function readUTFBytes (length:Int):String {
 		
-		if (position + length > #if lime_bytes_length_getter l #else this.length #end) {
+		if (position + length > this.length) {
 			
 			throw new EOFError ();
 			
@@ -624,22 +599,14 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	public function uncompress (algorithm:CompressionAlgorithm = ZLIB):Void {
 		
 		#if js
-		if (__length > #if lime_bytes_length_getter l #else length #end) {
+		if (__length > length) {
 			
-			var cacheLength = #if lime_bytes_length_getter l #else length #end;
-			#if lime_bytes_length_getter
-			this.l = __length;
-			#else
+			var cacheLength = length;
 			this.length = __length;
-			#end
 			var data = Bytes.alloc (cacheLength);
 			data.blit (0, this, 0, cacheLength);
 			__setData (data);
-			#if lime_bytes_length_getter
-			this.l = cacheLength;
-			#else
 			this.length = cacheLength;
-			#end
 			
 		}
 		#end
@@ -656,7 +623,7 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 			
 			__setData (bytes);
 			
-			#if lime_bytes_length_getter l #else length #end = __length;
+			length = __length;
 			
 		}
 		
@@ -790,7 +757,7 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 		
 		var bytes = Bytes.ofString (value);
 		
-		writeShort (#if lime_bytes_length_getter bytes.l #else bytes.length #end);
+		writeShort (bytes.length);
 		writeBytes (bytes);
 		
 	}
@@ -807,7 +774,7 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	private function __fromBytes (bytes:Bytes):Void {
 		
 		__setData (bytes);
-		#if lime_bytes_length_getter l = bytes.l #else length = bytes.length #end;
+		length = bytes.length;
 		
 	}
 	
@@ -823,10 +790,10 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 			
 			if (__length > 0) {
 				
-				var cacheLength = #if lime_bytes_length_getter l #else length #end;
-				#if lime_bytes_length_getter l #else length #end = __length;
+				var cacheLength = length;
+				length = __length;
 				bytes.blit (0, this, 0, __length);
-				#if lime_bytes_length_getter l #else length #end = cacheLength;
+				length = cacheLength;
 				
 			}
 			
@@ -834,9 +801,9 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 			
 		}
 		
-		if (#if lime_bytes_length_getter l #else length #end < size) {
+		if (length < size) {
 			
-			#if lime_bytes_length_getter l #else length #end = size;
+			length = size;
 			
 		}
 		
@@ -854,7 +821,7 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 		b = bytes.b;
 		#end
 		
-		__length = #if lime_bytes_length_getter bytes.l #else bytes.length #end;
+		__length = bytes.length;
 		
 		#if js
 		data = bytes.data;
@@ -872,7 +839,7 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	
 	@:noCompletion private inline function get_bytesAvailable ():Int {
 		
-		return #if lime_bytes_length_getter l #else length #end - position;
+		return length - position;
 		
 	}
 	
@@ -889,27 +856,6 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 		return __endian = value;
 		
 	}
-	
-	
-	#if lime_bytes_length_getter
-	@:noCompletion private override function set_length (value:Int):Int {
-		
-		#if display
-		#else
-		if (value > 0) {
-			
-			this.__resize (value);
-			if (value < this.position) this.position = value;
-			
-		}
-		
-		this.l = value;
-		#end
-		
-		return value;
-		
-	}
-	#end
 	
 	
 }
