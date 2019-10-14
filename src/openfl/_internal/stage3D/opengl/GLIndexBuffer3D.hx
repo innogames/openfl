@@ -74,11 +74,7 @@ class GLIndexBuffer3D {
 		gl.bindBuffer (GL.ELEMENT_ARRAY_BUFFER, indexBuffer.__id);
 		GLUtils.CheckGLError ();
 		
-		#if (js && html5)
-		(gl.__context:WebGLContext).bufferData (GL.ELEMENT_ARRAY_BUFFER, data, indexBuffer.__usage);
-		#else
-		gl.bufferData (GL.ELEMENT_ARRAY_BUFFER, data.byteLength, data, indexBuffer.__usage);
-		#end
+		gl.bufferData (GL.ELEMENT_ARRAY_BUFFER, data, indexBuffer.__usage);
 		GLUtils.CheckGLError ();
 		
 		// if (data.byteLength != __memoryUsage) {

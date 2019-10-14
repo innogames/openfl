@@ -69,7 +69,7 @@ class GLTexture {
 			texture.__format = format;
 			texture.__internalFormat = format;
 			
-			gl.compressedTexImage2D (texture.__textureTarget, level, texture.__internalFormat, width, height, 0, blockLength, bytes);
+			gl.compressedTexImage2D (texture.__textureTarget, level, texture.__internalFormat, width, height, 0, bytes, 0, blockLength);
 			GLUtils.CheckGLError ();
 			
 			// __trackCompressedMemoryUsage (blockLength);

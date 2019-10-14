@@ -151,7 +151,7 @@ class GLGraphics {
 							if (bitmap != null) {
 								
 								gl.enableVertexAttribArray (shader.data.aAlpha.index);
-								gl.uniformMatrix4fv (shader.data.uMatrix.index, 1, false, renderer.getMatrix (parentTransform));
+								gl.uniformMatrix4fv (shader.data.uMatrix.index, false, renderer.getMatrix (parentTransform));
 								
 								gl.uniform1i (shader.data.uColorTransform.index, 0);
 								

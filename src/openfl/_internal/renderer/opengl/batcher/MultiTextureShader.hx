@@ -59,7 +59,7 @@ class MultiTextureShader {
 		uPositionScale = gl.getUniformLocation(program, "uPostionScale");
 
 		gl.useProgram(program);
-		gl.uniform1iv(gl.getUniformLocation(program, 'uSamplers'), maxTextures, new Int32Array([for (i in 0...maxTextures) i]));
+		gl.uniform1iv(gl.getUniformLocation(program, 'uSamplers'), new Int32Array([for (i in 0...maxTextures) i]));
 	}
 
 	public function enable(projectionMatrix:Float32Array) {
@@ -72,8 +72,8 @@ class MultiTextureShader {
 		gl.enableVertexAttribArray(aColorMultiplier);
 		gl.enableVertexAttribArray(aPremultipliedAlpha);
 
-		gl.uniformMatrix4fv(uProjMatrix, 0, false, projectionMatrix);
-		gl.uniform4fv (uPositionScale, 1, positionScale);
+		gl.uniformMatrix4fv(uProjMatrix, false, projectionMatrix);
+		gl.uniform4fv (uPositionScale, positionScale);
 	}
 
 	static function compileShader(gl:GLRenderContext, source:String, type:Int):Null<GLShader> {

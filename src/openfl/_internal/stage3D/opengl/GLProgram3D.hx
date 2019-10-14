@@ -3,7 +3,6 @@ package openfl._internal.stage3D.opengl;
 
 import lime.graphics.opengl.GL;
 import lime.graphics.GLRenderContext;
-import lime.utils.BytePointer;
 import lime.utils.Float32Array;
 import lime.utils.Log;
 import openfl._internal.renderer.RenderSession;
@@ -47,13 +46,13 @@ class GLProgram3D {
 		var index:Int = uniform.regIndex * 4;
 		switch (uniform.type) {
 			
-			case GL.FLOAT_MAT2: gl.uniformMatrix2fv (uniform.location, uniform.size, false, __getUniformRegisters (uniform, index, uniform.size * 2 * 2));
-			case GL.FLOAT_MAT3: gl.uniformMatrix3fv (uniform.location, uniform.size, false, __getUniformRegisters (uniform, index, uniform.size * 3 * 3));
-			case GL.FLOAT_MAT4: gl.uniformMatrix4fv (uniform.location, uniform.size, false, __getUniformRegisters (uniform, index, uniform.size * 4 * 4));
-			case GL.FLOAT_VEC2: gl.uniform2fv (uniform.location, uniform.regCount, __getUniformRegisters (uniform, index, uniform.regCount * 2));
-			case GL.FLOAT_VEC3: gl.uniform3fv (uniform.location, uniform.regCount, __getUniformRegisters (uniform, index, uniform.regCount * 3));
-			case GL.FLOAT_VEC4: gl.uniform4fv (uniform.location, uniform.regCount, __getUniformRegisters (uniform, index, uniform.regCount * 4));
-			default: gl.uniform4fv (uniform.location, uniform.regCount, __getUniformRegisters (uniform, index, uniform.regCount * 4));
+			case GL.FLOAT_MAT2: gl.uniformMatrix2fv (uniform.location, false, __getUniformRegisters (uniform, index, uniform.size * 2 * 2));
+			case GL.FLOAT_MAT3: gl.uniformMatrix3fv (uniform.location, false, __getUniformRegisters (uniform, index, uniform.size * 3 * 3));
+			case GL.FLOAT_MAT4: gl.uniformMatrix4fv (uniform.location, false, __getUniformRegisters (uniform, index, uniform.size * 4 * 4));
+			case GL.FLOAT_VEC2: gl.uniform2fv (uniform.location, __getUniformRegisters (uniform, index, uniform.regCount * 2));
+			case GL.FLOAT_VEC3: gl.uniform3fv (uniform.location, __getUniformRegisters (uniform, index, uniform.regCount * 3));
+			case GL.FLOAT_VEC4: gl.uniform4fv (uniform.location, __getUniformRegisters (uniform, index, uniform.regCount * 4));
+			default: gl.uniform4fv (uniform.location, __getUniformRegisters (uniform, index, uniform.regCount * 4));
 			
 		}
 		
@@ -65,7 +64,7 @@ class GLProgram3D {
 	public static function setPositionScale (program:Program3D, renderSession:RenderSession, positionScale:Float32Array):Void {
 		
 		var gl = renderSession.gl;
-		gl.uniform4fv (program.__positionScale.location, 1, positionScale);
+		gl.uniform4fv (program.__positionScale.location, positionScale);
 		GLUtils.CheckGLError ();
 		
 	}
@@ -295,20 +294,11 @@ class GLProgram3D {
 	}
 	
 	
-	#if (js && html5)
 	private static inline function __getUniformRegisters (uniform:Uniform, index:Int, size:Int):Float32Array {
 		
 		return uniform.regData.subarray (index, index + size);
 		
 	}
-	#else
-	private static inline function __getUniformRegisters (uniform:Uniform, index:Int, size:Int):BytePointer {
-		
-		uniform.regDataPointer.set (uniform.regData, index * 4);
-		return uniform.regDataPointer;
-		
-	}
-	#end
 	
 	
 	private static function __uploadFromGLSL (vertexShaderSource:String, fragmentShaderSource:String):Void {

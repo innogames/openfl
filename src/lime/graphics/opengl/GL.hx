@@ -641,10 +641,15 @@ class GL {
 	public static inline var MAX_CLIENT_WAIT_TIMEOUT_WEBGL = 0x9247;
 	
 	public static var context (default, null):GLRenderContext;
-	public static var version (get, null):Float;
-	
-	private static var __currentProgram:GLProgram;
-	
+
+	#if (js && html5)
+	public static function getWebGLVersion(gl:GLRenderContext):Int {
+		if (Reflect.hasField(js.Browser.window, "WebGL2RenderingContext") && Std.is(gl, js.html.webgl.WebGL2RenderingContext)) {
+			return 2;
+		}
+		return 1;
+	}
+	#end
 	
 	#if ((js && html5) && debug)
 	static var __lastLoseContextExtension:Dynamic;
@@ -670,9 +675,6 @@ class GL {
 		}
 	}
 	#end
-	
-	
-	private static function get_version ():Float { return context.version; }
 	
 	
 }

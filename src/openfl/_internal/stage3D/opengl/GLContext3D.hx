@@ -215,7 +215,7 @@ class GLContext3D {
 			
 			clearMask |= GL.DEPTH_BUFFER_BIT;
 			
-			gl.clearDepthf (depth);
+			gl.clearDepth (depth);
 			GLUtils.CheckGLError ();
 			
 		}

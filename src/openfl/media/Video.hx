@@ -201,7 +201,7 @@ class Video extends DisplayObject implements IShaderDrawable {
 			__buffer = gl.createBuffer ();
 			
 			gl.bindBuffer (GL.ARRAY_BUFFER, __buffer);
-			gl.bufferData (GL.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, GL.STATIC_DRAW);
+			gl.bufferData (GL.ARRAY_BUFFER, __bufferData, GL.STATIC_DRAW);
 			//gl.bindBuffer (GL.ARRAY_BUFFER, null);
 			
 		} else {
@@ -255,7 +255,7 @@ class Video extends DisplayObject implements IShaderDrawable {
 			}
 			
 			gl.bindBuffer (GL.ARRAY_BUFFER, __buffer);
-			gl.bufferData (GL.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, GL.STATIC_DRAW);
+			gl.bufferData (GL.ARRAY_BUFFER, __bufferData, GL.STATIC_DRAW);
 			
 		}
 		
@@ -288,7 +288,7 @@ class Video extends DisplayObject implements IShaderDrawable {
 			var format = GL.RGBA;
 			
 			gl.bindTexture (GL.TEXTURE_2D, __texture);
-			gl.texImage2DWEBGL (GL.TEXTURE_2D, 0, internalFormat, format, GL.UNSIGNED_BYTE, __stream.__video);
+			gl.texImage2D (GL.TEXTURE_2D, 0, internalFormat, format, GL.UNSIGNED_BYTE, __stream.__video);
 			
 			__textureTime = __stream.__video.currentTime;
 			

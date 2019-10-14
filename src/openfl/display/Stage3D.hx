@@ -28,7 +28,6 @@ import js.Browser;
 #end
 
 @:access(lime.graphics.opengl.GL)
-@:access(lime._backend.html5.HTML5GLRenderContext)
 @:access(openfl.display3D.Context3D)
 
 
@@ -118,7 +117,7 @@ class Stage3D extends EventDispatcher {
 				
 			};
 			
-			__webgl = cast __canvas.getContextWebGL (options);
+			__webgl = __canvas.getContextWebGL (options);
 			
 			if (__webgl != null) {
 				
@@ -128,7 +127,7 @@ class Stage3D extends EventDispatcher {
 				
 				// TODO: Need to handle renderSession/context better
 				
-				__renderContext = new GLRenderContext (cast __webgl);
+				__renderContext = cast __webgl;
 				GL.context = __renderContext;
 				renderSession.gl = __renderContext;
 				context3D = new Context3D (this, renderSession);

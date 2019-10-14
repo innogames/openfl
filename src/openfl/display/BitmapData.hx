@@ -871,11 +871,7 @@ class BitmapData implements IBitmapDrawable {
 			__buffer = gl.createBuffer ();
 			
 			gl.bindBuffer (GL.ARRAY_BUFFER, __buffer);
-			#if (js && html5)
-			(gl.__context:WebGLContext).bufferData (GL.ARRAY_BUFFER, __bufferData, GL.STATIC_DRAW);
-			#else
-			gl.bufferData (GL.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, GL.STATIC_DRAW);
-			#end
+			gl.bufferData (GL.ARRAY_BUFFER, __bufferData, GL.STATIC_DRAW);
 			//gl.bindBuffer (GL.ARRAY_BUFFER, null);
 			
 		} else {
@@ -944,7 +940,7 @@ class BitmapData implements IBitmapDrawable {
 			
 			if (dirty) {
 			
-				gl.bufferData (GL.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, GL.STATIC_DRAW);
+				gl.bufferData (GL.ARRAY_BUFFER, __bufferData, GL.STATIC_DRAW);
 			
 			}
 			
@@ -1120,7 +1116,7 @@ class BitmapData implements IBitmapDrawable {
 				
 			} else {
 				
-				(gl.__context:WebGLContext).texImage2D (GL.TEXTURE_2D, 0, internalFormat, format, GL.UNSIGNED_BYTE, textureImage.src);
+				gl.texImage2D (GL.TEXTURE_2D, 0, internalFormat, format, GL.UNSIGNED_BYTE, textureImage.src);
 				
 			}
 			

@@ -390,7 +390,7 @@ import openfl.Vector;
 				
 			}
 			
-			gl.bufferData (GL.ARRAY_BUFFER, __bufferData.byteLength, __bufferData, GL.DYNAMIC_DRAW);
+			gl.bufferData (GL.ARRAY_BUFFER, __bufferData, GL.DYNAMIC_DRAW);
 			
 			__cacheAlpha = worldAlpha;
 			__cacheDefaultTileset = defaultTileset;

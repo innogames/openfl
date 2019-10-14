@@ -5,6 +5,7 @@ import openfl._internal.renderer.opengl.vao.VertexArrayObjectExtension;
 import openfl._internal.renderer.opengl.vao.VertexArrayObjectContext;
 import openfl._internal.renderer.opengl.vao.IVertexArrayObjectContext;
 import lime.graphics.opengl.GLFramebuffer;
+import lime.graphics.opengl.GL;
 import lime.graphics.CanvasRenderContext;
 import lime.graphics.GLRenderContext;
 import lime.graphics.RendererType;
@@ -69,11 +70,11 @@ class RenderSession {
 		gl = glContext;
 		
 		#if vertex_array_object
-		if (gl.version == 2) {
+		if (GL.getWebGLVersion(gl) == 2) {
 			
 			vaoContext = new VertexArrayObjectContext (gl);
 			
-		} else if (gl.version == 1) {
+		} else {
 			
 			var vertexArrayObjectsExtension = gl.getExtension ("OES_vertex_array_object");
 			

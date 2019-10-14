@@ -12,7 +12,6 @@ import lime.utils.compress.Zlib;
 import lime.utils.ArrayBuffer;
 import lime.utils.BytePointer;
 import lime.utils.Bytes in LimeBytes;
-import lime.utils.DataPointer;
 import openfl.errors.EOFError;
 
 @:access(haxe.io.Bytes)
@@ -184,18 +183,6 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 		return __bytePointer;
 		
 	}
-	
-	
-	#if (sys || display)
-	@:to @:noCompletion private static function toDataPointer (byteArray:ByteArray):DataPointer {
-		
-		#if !display
-		__bytePointer.set ((byteArray:ByteArrayData), byteArray.position);
-		#end
-		return __bytePointer;
-		
-	}
-	#end
 	
 	
 	@:to @:noCompletion private static function toBytes (byteArray:ByteArray):Bytes {

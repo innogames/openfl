@@ -188,20 +188,20 @@ class ShaderParameterInt4 extends ShaderParameterUniform {
 class ShaderParameterMatrix2 extends ShaderParameterUniform {
 	public var value:Float32Array;
 	override function update (gl:GLRenderContext, _) {
-		gl.uniformMatrix2fv (index, 1, false, value);
+		gl.uniformMatrix2fv (index, false, value);
 	}
 }
 
 class ShaderParameterMatrix3 extends ShaderParameterUniform {
 	public var value:Float32Array;
 	override function update (gl:GLRenderContext, _) {
-		gl.uniformMatrix3fv (index, 1, false, value);
+		gl.uniformMatrix3fv (index, false, value);
 	}
 }
 
 class ShaderParameterMatrix4 extends ShaderParameterUniform {
 	public var value:Float32Array;
 	override function update (gl:GLRenderContext, _) {
-		gl.uniformMatrix4fv (index, 1, false, value);
+		gl.uniformMatrix4fv (index, false, value);
 	}
 }

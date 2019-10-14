@@ -75,13 +75,13 @@ class BatchRenderer {
 		vertexBuffer = gl.createBuffer();
 
 		gl.bindBuffer(GL.ARRAY_BUFFER, vertexBuffer);
-		gl.bufferData(GL.ARRAY_BUFFER, vertexBufferData.byteLength, vertexBufferData, GL.STREAM_DRAW);
+		gl.bufferData(GL.ARRAY_BUFFER, vertexBufferData, GL.STREAM_DRAW);
 
 		// preallocate a static index buffer for rendering any number of quads
 		var indices = createIndicesForQuads(maxQuads);
 		indexBuffer = gl.createBuffer();
 		gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, indexBuffer);
-		gl.bufferData(GL.ELEMENT_ARRAY_BUFFER, indices.byteLength, indices, GL.STATIC_DRAW);
+		gl.bufferData(GL.ELEMENT_ARRAY_BUFFER, indices, GL.STATIC_DRAW);
 
 		// preallocate render group objects for any number of quads (worst case - 1 group per quad)
 		groups = new Vector(maxQuads);
@@ -317,8 +317,7 @@ class BatchRenderer {
 
 		// upload vertex data and setup attribute pointers
 		gl.bindBuffer(GL.ARRAY_BUFFER, vertexBuffer);
-		var subArray = vertexBufferData.subarray(0, currentQuadIndex * floatsPerQuad);
-		gl.bufferSubData(GL.ARRAY_BUFFER, 0, subArray.byteLength, subArray);
+		gl.bufferSubData(GL.ARRAY_BUFFER, 0, vertexBufferData, 0, currentQuadIndex * floatsPerQuad);
 
 		var stride = MultiTextureShader.floatsPerVertex * Float32Array.BYTES_PER_ELEMENT;
 		gl.vertexAttribPointer(shader.aVertexPosition, 2, GL.FLOAT, false, stride, 0);

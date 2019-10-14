@@ -61,7 +61,7 @@ class GLCubeTexture {
 			
 			cubeTexture.__format = format;
 			
-			gl.compressedTexImage2D (target, level, cubeTexture.__internalFormat, width, height, 0, blockLength, bytes);
+			gl.compressedTexImage2D (target, level, cubeTexture.__internalFormat, width, height, 0, bytes, 0, blockLength);
 			GLUtils.CheckGLError ();
 			
 			// __trackCompressedMemoryUsage (blockLength);

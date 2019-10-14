@@ -76,11 +76,7 @@ class GLVertexBuffer3D {
 		gl.bindBuffer (GL.ARRAY_BUFFER, vertexBuffer.__id);
 		GLUtils.CheckGLError ();
 		
-		#if (js && html5)
-		(gl.__context:WebGLContext).bufferData (GL.ARRAY_BUFFER, data, vertexBuffer.__usage);
-		#else
-		gl.bufferData (GL.ARRAY_BUFFER, data.byteLength, data, vertexBuffer.__usage);
-		#end
+		gl.bufferData (GL.ARRAY_BUFFER, data, vertexBuffer.__usage);
 		GLUtils.CheckGLError ();
 		
 		// if (data.byteLength != __memoryUsage) {

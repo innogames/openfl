@@ -60,7 +60,7 @@ class GLRenderer extends AbstractRenderer {
 		
 		if (Graphics.maxTextureWidth == null) {
 			
-			Graphics.maxTextureWidth = Graphics.maxTextureHeight = gl.getInteger (GL.MAX_TEXTURE_SIZE);
+			Graphics.maxTextureWidth = Graphics.maxTextureHeight = gl.getParameter (GL.MAX_TEXTURE_SIZE);
 			
 		}
 		

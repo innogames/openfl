@@ -40,7 +40,7 @@ class GLVideoTexture {
 			gl.bindTexture (videoTexture.__textureTarget, videoTexture.__textureData.glTexture);
 			GLUtils.CheckGLError ();
 			
-			(gl.__context:WebGLContext).texImage2D (GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, videoTexture.__netStream.__video);
+			gl.texImage2D (GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, videoTexture.__netStream.__video);
 			GLUtils.CheckGLError ();
 			
 		}
