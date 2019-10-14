@@ -1,0 +1,7 @@
+language: haxe
+
+haxe:
+ - 4.0.0-rc.5
+
+script:
+ - haxe build.hxml
