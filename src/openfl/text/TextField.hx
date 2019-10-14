@@ -13,9 +13,6 @@ import openfl._internal.renderer.canvas.CanvasTextField;
 import openfl._internal.renderer.canvas.CanvasSmoothing;
 import openfl._internal.renderer.opengl.GLRenderer;
 import openfl._internal.renderer.RenderSession;
-import openfl._internal.swf.SWFLite;
-import openfl._internal.symbols.DynamicTextSymbol;
-import openfl._internal.symbols.FontSymbol;
 import openfl._internal.text.HTMLParser;
 import openfl._internal.text.TextEngine;
 import openfl._internal.text.TextFormatRange;
@@ -110,7 +107,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 	private var __offsetY:Float;
 	private var __selectionIndex:Int;
 	private var __showCursor:Bool;
-	private var __symbol:DynamicTextSymbol;
 	private var __text:UTF8String;
 	private var __htmlText:UTF8String;
 	private var __textEngine:TextEngine;
@@ -948,144 +944,6 @@ class TextField extends InteractiveObject implements IShaderDrawable {
 		super.__forceRenderDirty ();
 		
 		__dirty = true;
-		
-	}
-	
-	
-	private function __fromSymbol (swf:SWFLite, symbol:DynamicTextSymbol):Void {
-		
-		__symbol = symbol;
-		
-		width = symbol.width;
-		height = symbol.height;
-		
-		__offsetX = symbol.x;
-		__offsetY = symbol.y;
-		
-		multiline = symbol.multiline;
-		wordWrap = symbol.wordWrap;
-		displayAsPassword = symbol.password;
-		
-		if (symbol.border) {
-			
-			border = true;
-			background = true;
-			
-		}
-		
-		selectable = symbol.selectable;
-		
-		if (symbol.input) {
-			
-			type = INPUT;
-			
-		}
-		
-		var format = new TextFormat ();
-		if (symbol.color != null) format.color = (symbol.color & 0x00FFFFFF);
-		format.size = Math.round (symbol.fontHeight / 20);
-		
-		var font:FontSymbol = cast swf.symbols.get (symbol.fontID);
-		
-		if (font != null) {
-			
-			// TODO: Bold and italic are handled in the font already
-			// Setting this can cause "extra" bold in HTML5
-			
-			//format.bold = font.bold;
-			//format.italic = font.italic;
-			//format.leading = Std.int (font.leading / 20 + (format.size * 0.2) #if flash + 2 #end);
-			//embedFonts = true;
-			
-			format.__ascent = ((font.ascent / 20) / 1024);
-			format.__descent = ((font.descent / 20) / 1024);
-			
-		}
-		
-		format.font = symbol.fontName;
-		
-		var found = false;
-		
-		switch (format.font) {
-			
-			case "_sans", "_serif", "_typewriter", "", null:
-				
-				found = true;
-			
-			default:
-				
-				for (font in Font.enumerateFonts ()) {
-					
-					if (font.fontName == format.font) {
-						
-						found = true;
-						break;
-						
-					}
-					
-				}
-			
-		}
-		
-		if (!found) {
-			
-			var alpha = ~/[^a-zA-Z]+/g;
-			
-			for (font in Font.enumerateFonts ()) {
-				
-				if (alpha.replace (font.fontName, "").substr (0, symbol.fontName.length) == symbol.fontName) {
-					
-					format.font = font.fontName;
-					found = true;
-					break;
-					
-				}
-				
-			}
-			
-		}
-		
-		if (found) {
-			
-			embedFonts = true;
-			
-		} else if (!__missingFontWarning.exists (format.font)) {
-			
-			__missingFontWarning[format.font] = true;
-			Log.warn ("Could not find required font \"" + format.font + "\", it has not been embedded");
-			
-		}
-		
-		if (symbol.align != null) {
-			
-			if (symbol.align == "center") format.align = TextFormatAlign.CENTER;
-			else if (symbol.align == "right") format.align = TextFormatAlign.RIGHT;
-			else if (symbol.align == "justify") format.align = TextFormatAlign.JUSTIFY;
-			
-			format.leftMargin = Std.int (symbol.leftMargin / 20);
-			format.rightMargin = Std.int (symbol.rightMargin / 20);
-			format.indent = Std.int (symbol.indent / 20);
-			format.leading = Std.int (symbol.leading / 20);
-			
-		}
-		
-		defaultTextFormat = format;
-		
-		if (symbol.text != null) {
-			
-			if (symbol.html) {
-				
-				htmlText = symbol.text;
-				
-			} else {
-				
-				text = symbol.text;
-				
-			}
-			
-		}
-		
-		//autoSize = (tag.autoSize) ? TextFieldAutoSize.LEFT : TextFieldAutoSize.NONE;
 		
 	}
 	
