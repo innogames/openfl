@@ -27,8 +27,8 @@ class AudioManager {
 					
 					try {
 						
-						untyped __js__ ("window.AudioContext = window.AudioContext || window.webkitAudioContext;");
-						AudioManager.context = WEB (cast untyped __js__ ("new AudioContext ()"));
+						js.Syntax.code ("window.AudioContext = window.AudioContext || window.webkitAudioContext;");
+						AudioManager.context = WEB (new js.html.audio.AudioContext ());
 						
 					} catch (e:Dynamic) {
 						

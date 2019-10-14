@@ -143,13 +143,6 @@ class HTML5Application {
 		Browser.window.addEventListener ("resize", handleWindowEvent, false);
 		Browser.window.addEventListener ("beforeunload", handleWindowEvent, false);
 		
-		#if stats
-		stats = untyped __js__("new Stats ()");
-		stats.domElement.style.position = "absolute";
-		stats.domElement.style.top = "0px";
-		Browser.document.body.appendChild (stats.domElement);
-		#end
-		
 		untyped __js__ ("
 			if (!CanvasRenderingContext2D.prototype.isPointInStroke) {
 				CanvasRenderingContext2D.prototype.isPointInStroke = function (path, x, y) {

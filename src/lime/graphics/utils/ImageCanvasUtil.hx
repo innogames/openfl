@@ -205,7 +205,7 @@ class ImageCanvasUtil {
 			if (!image.transparent) {
 				
 				if (!image.transparent) buffer.__srcCanvas.setAttribute ("moz-opaque", "true");
-				buffer.__srcContext = untyped __js__ ('buffer.__srcCanvas.getContext ("2d", { alpha: false })');
+				buffer.__srcContext = buffer.__srcCanvas.getContext ("2d", { alpha: false });
 				
 			} else {
 				
@@ -213,10 +213,7 @@ class ImageCanvasUtil {
 				
 			}
 			
-			untyped (buffer.__srcContext).mozImageSmoothingEnabled = false;
-			//untyped (buffer.__srcContext).webkitImageSmoothingEnabled = false;
-			untyped (buffer.__srcContext).msImageSmoothingEnabled = false;
-			untyped (buffer.__srcContext).imageSmoothingEnabled = false;
+			openfl._internal.renderer.canvas.CanvasSmoothing.setEnabled (buffer.__srcContext, false);
 			
 		}
 		#end

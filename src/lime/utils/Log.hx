@@ -1,7 +1,9 @@
 package lime.utils;
 
-
 import haxe.PosInfos;
+#if js
+import js.Browser.console;
+#end
 
 #if !lime_debug
 @:fileXml('tags="haxe,release"')
@@ -21,7 +23,7 @@ class Log {
 		if (level >= LogLevel.DEBUG) {
 			
 			#if js
-				untyped __js__("console").debug ("[" + info.className + "] " + message);
+				console.debug ("[" + info.className + "] " + message);
 			#else
 				println ("[" + info.className + "] " + message);
 			#end
@@ -44,7 +46,7 @@ class Log {
 			} else {
 				
 				#if js
-					untyped __js__("console").error (message);
+					console.error (message);
 				#else
 					println (message);
 				#end
@@ -61,7 +63,7 @@ class Log {
 		if (level >= LogLevel.INFO) {
 			
 			#if js
-				untyped __js__("console").info ("[" + info.className + "] " + message);
+				console.info ("[" + info.className + "] " + message);
 			#else
 				println ("[" + info.className + "] " + message);
 			#end
@@ -78,7 +80,7 @@ class Log {
 		#elseif flash
 		untyped __global__["trace"] (message);
 		#elseif js
-		untyped __js__("console").log (message);
+		console.log (message);
 		#else
 		trace (message);
 		#end
@@ -93,7 +95,7 @@ class Log {
 		#elseif flash
 		untyped __global__["trace"] (message);
 		#elseif js
-		untyped __js__("console").log (message);
+		console.log (message);
 		#else
 		trace (message);
 		#end
@@ -117,7 +119,7 @@ class Log {
 		if (level >= LogLevel.WARN) {
 			
 			#if js
-				untyped __js__("console").warn ("[" + info.className + "] WARNING: " + message);
+				console.warn ("[" + info.className + "] WARNING: " + message);
 			#else
 				println ("[" + info.className + "] WARNING: " + message);
 			#end
@@ -146,15 +148,6 @@ class Log {
 			#else
 			level = INFO;
 			#end
-		}
-		#end
-		
-		#if js
-		if (untyped __js__("typeof console") == "undefined") {
-			untyped __js__("console = {}");
-		}
-		if (untyped __js__("console").log == null) {
-			untyped __js__("console").log = function () {};
 		}
 		#end
 		

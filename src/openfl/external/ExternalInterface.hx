@@ -1,7 +1,10 @@
 package openfl.external;
 
 
+import haxe.Constraints.Function;
 import openfl._internal.Lib;
+
+private typedef CallbackCollection = haxe.DynamicAccess<Function>;
 
 @:access(openfl.display.Stage)
 @:access(lime.ui.Window)
@@ -15,12 +18,12 @@ import openfl._internal.Lib;
 	public static var objectID (default, null):String;
 	
 	
-	public static function addCallback (functionName:String, closure:Dynamic):Void {
+	public static function addCallback (functionName:String, closure:Function):Void {
 		
 		#if (js && html5)
 		if (Lib.application.window.backend.element != null) {
 			
-			untyped Lib.application.window.backend.element[functionName] = closure;
+			(cast Lib.application.window.backend.element : CallbackCollection)[functionName] = closure;
 			
 		}
 		#end

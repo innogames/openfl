@@ -44,7 +44,7 @@ class HTML5AudioSource {
 		
 	}
 	
-	
+	@:access(lime.media.howlerjs.Howl._volume)
 	public function play ():Void {
 		
 		#if howlerjs
@@ -61,12 +61,12 @@ class HTML5AudioSource {
 		
 		completed = false;
 		
-		var cacheVolume = untyped parent.buffer.__srcHowl._volume;
-		untyped parent.buffer.__srcHowl._volume = parent.gain;
+		var cacheVolume = parent.buffer.__srcHowl._volume;
+		parent.buffer.__srcHowl._volume = parent.gain;
 		
 		id = parent.buffer.__srcHowl.play ();
 		
-		untyped parent.buffer.__srcHowl._volume = cacheVolume;
+		parent.buffer.__srcHowl._volume = cacheVolume;
 		//setGain (parent.gain);
 		
 		setPosition (parent.position);

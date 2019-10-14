@@ -1084,14 +1084,14 @@ class Stage extends DisplayObjectContainer implements IModule {
 			try {
 				var exc = @:privateAccess haxe.CallStack.lastException;
 				if (exc != null && Reflect.hasField (exc, "stack") && exc.stack != null && exc.stack != "") {
-					untyped __js__ ("console.log") (exc.stack);
+					js.Browser.console.log(exc.stack);
 					e.stack = exc.stack;
 				} else {
 					var msg = CallStack.toString (CallStack.callStack ());
-					untyped __js__ ("console.log") (msg);
+					js.Browser.console.log(msg);
 				}
 			} catch (e2:Dynamic) {}
-			untyped __js__ ("throw e");
+			js.Syntax.code("throw {0}", e); // TODO: rethrow at the place of __handleError call instead
 			#else
 			throw e;
 			#end
