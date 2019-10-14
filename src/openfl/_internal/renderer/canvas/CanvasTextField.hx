@@ -34,7 +34,6 @@ class CanvasTextField {
 	
 	#if (js && html5)
 	private static var context:CanvasRenderingContext2D;
-	private static var clearRect:Null<Bool>;
 	#end
 	
 	
@@ -98,18 +97,6 @@ class CanvasTextField {
 				graphics.__canvas.height = Std.int (height * pixelRatio);
 				
 				context.setTransform (transform.a * pixelRatio, transform.b, transform.c, transform.d * pixelRatio, transform.tx * pixelRatio, transform.ty * pixelRatio);
-				
-				if (clearRect == null) {
-					
-					clearRect = untyped __js__ ("(typeof navigator !== 'undefined' && typeof navigator['isCocoonJS'] !== 'undefined')");
-					
-				}
-				
-				if (clearRect) {
-					
-					context.clearRect (0, 0, graphics.__canvas.width, graphics.__canvas.height);
-					
-				}
 				
 				if ((textEngine.text != null && textEngine.text != "") || textEngine.__hasFocus) {
 					

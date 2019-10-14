@@ -15,7 +15,7 @@ class GZip {
 		
 		#if js
 		
-		var data = untyped __js__ ("pako.gzip") (bytes.getData ());
+		var data = Pako.gzip (bytes.getData ());
 		return Bytes.ofData (data);
 		
 		#else
@@ -31,7 +31,7 @@ class GZip {
 		
 		#if js
 		
-		var data = untyped __js__ ("pako.ungzip") (bytes.getData ());
+		var data = Pako.ungzip (bytes.getData ());
 		return Bytes.ofData (data);
 		
 		#else

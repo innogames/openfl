@@ -19,7 +19,7 @@ class Deflate {
 		
 		#if js
 		
-		var data = untyped __js__ ("pako.deflateRaw") (bytes.getData ());
+		var data = Pako.deflateRaw (bytes.getData ());
 		return Bytes.ofData (data);
 		
 		#elseif flash
@@ -45,7 +45,7 @@ class Deflate {
 		
 		#if js
 		
-		var data = untyped __js__ ("pako.inflateRaw") (bytes.getData ());
+		var data = Pako.inflateRaw (bytes.getData ());
 		return Bytes.ofData (data);
 		
 		#elseif flash

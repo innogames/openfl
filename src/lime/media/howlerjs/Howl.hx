@@ -293,7 +293,8 @@ extern class Howl {
 	@:overload(function(vol:Float, id:Int):Howl {})
 	public function volume ():Float;
 	
-	
+	// internals used in HTML5AudioSource
+	private var _volume:Float;
 }
 
 

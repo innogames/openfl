@@ -75,9 +75,9 @@ class Font {
 		var ua = Browser.navigator.userAgent.toLowerCase();
 		var isSafari = (ua.indexOf(" safari/") >= 0 && ua.indexOf(" chrome/") < 0);
 		
-		if (!isSafari && untyped (Browser.document).fonts && untyped (Browser.document).fonts.load) {
+		if (!isSafari && Browser.document.fonts != null && Browser.document.fonts.load != null) {
 			
-			untyped (Browser.document).fonts.load ("1em '" + name + "'").then (function (_) {
+			Browser.document.fonts.load ("1em '" + name + "'").then (function (_) {
 				
 				promise.complete (this);
 				

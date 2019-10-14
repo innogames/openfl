@@ -19,7 +19,7 @@ class Zlib {
 		
 		#if js
 		
-		var data = untyped __js__ ("pako.deflate") (bytes.getData ());
+		var data = Pako.deflate (bytes.getData ());
 		return Bytes.ofData (data);
 		
 		#elseif flash
@@ -45,7 +45,7 @@ class Zlib {
 		
 		#if js
 		
-		var data = untyped __js__ ("pako.inflate") (bytes.getData ());
+		var data = Pako.inflate (bytes.getData ());
 		return Bytes.ofData (data);
 		
 		#elseif flash

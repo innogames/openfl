@@ -812,8 +812,8 @@ class HTML5Window {
 				textInput.style.color = "transparent";
 				textInput.value = dummyCharacter; // See: handleInputEvent()
 				
-				untyped textInput.autocapitalize = "off";
-				untyped textInput.autocorrect = "off";
+				(cast textInput).autocapitalize = "off";
+				(cast textInput).autocorrect = "off";
 				textInput.autocomplete = "off";
 				
 				// TODO: Position for mobile browsers better
@@ -834,7 +834,7 @@ class HTML5Window {
 					
 				}
 				
-				untyped (textInput.style).pointerEvents = 'none';
+				textInput.style.pointerEvents = 'none';
 				textInput.style.zIndex = "-10000000";
 				
 				
