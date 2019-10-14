@@ -14,7 +14,6 @@ import lime.math.ColorMatrix;
 import lime.math.Rectangle;
 import lime.math.Vector2;
 import lime.system.Endian;
-import lime.utils.BytePointer;
 import lime.utils.UInt8Array;
 
 #if !lime_debug
@@ -1215,7 +1214,7 @@ class ImageDataUtil {
 	}
 	
 	
-	public static function setPixels (image:Image, rect:Rectangle, bytePointer:BytePointer, format:PixelFormat, endian:Endian):Void {
+	public static function setPixels (image:Image, rect:Rectangle, bytes:Bytes, dataPosition:Int, format:PixelFormat, endian:Endian):Void {
 		
 		if (image.buffer.data == null) return;
 		
@@ -1225,8 +1224,6 @@ class ImageDataUtil {
 		var dataView = new ImageDataView (image, rect);
 		var row, color, pixel:RGBA;
 		var transparent = image.transparent;
-		var bytes = bytePointer.bytes;
-		var dataPosition = bytePointer.offset;
 		var littleEndian = (endian != BIG_ENDIAN);
 		
 		for (y in 0...dataView.height) {

@@ -24,7 +24,6 @@ import lime.net.HTTPRequest;
 import lime.system.Endian;
 import lime.system.System;
 import lime.utils.ArrayBuffer;
-import lime.utils.BytePointer;
 import lime.utils.Log;
 import lime.utils.UInt8Array;
 
@@ -1067,7 +1066,7 @@ class Image {
 	}
 	
 	
-	public function setPixels (rect:Rectangle, bytePointer:BytePointer, format:PixelFormat = null, endian:Endian = null):Void {
+	public function setPixels (rect:Rectangle, bytes:Bytes, dataPosition:Int, format:PixelFormat = null, endian:Endian = null):Void {
 		
 		rect = __clipRect (rect);
 		if (buffer == null || rect == null) return;
@@ -1078,7 +1077,7 @@ class Image {
 			
 			case CANVAS:
 				
-				ImageCanvasUtil.setPixels (this, rect, bytePointer, format, endian);
+				ImageCanvasUtil.setPixels (this, rect, bytes, dataPosition, format, endian);
 			
 			case DATA:
 				
@@ -1086,7 +1085,7 @@ class Image {
 				ImageCanvasUtil.convertToData (this);
 				#end
 				
-				ImageDataUtil.setPixels (this, rect, bytePointer, format, endian);
+				ImageDataUtil.setPixels (this, rect, bytes, dataPosition, format, endian);
 			
 			case FLASH:
 				

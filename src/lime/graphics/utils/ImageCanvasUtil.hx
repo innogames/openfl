@@ -1,7 +1,6 @@
 package lime.graphics.utils;
 
 
-import haxe.format.JsonParser;
 import haxe.io.Bytes;
 import lime.graphics.Image;
 import lime.graphics.ImageBuffer;
@@ -10,7 +9,6 @@ import lime.math.ColorMatrix;
 import lime.math.Rectangle;
 import lime.math.Vector2;
 import lime.system.Endian;
-import lime.utils.BytePointer;
 import lime.utils.UInt8Array;
 
 #if (js && html5)
@@ -415,11 +413,11 @@ class ImageCanvasUtil {
 	}
 	
 	
-	public static function setPixels (image:Image, rect:Rectangle, bytePointer:BytePointer, format:PixelFormat, endian:Endian):Void {
+	public static function setPixels (image:Image, rect:Rectangle, bytes:Bytes, dataPosition:Int, format:PixelFormat, endian:Endian):Void {
 		
 		convertToData (image);
 		
-		ImageDataUtil.setPixels (image, rect, bytePointer, format, endian);
+		ImageDataUtil.setPixels (image, rect, bytes, dataPosition, format, endian);
 		
 	}
 	

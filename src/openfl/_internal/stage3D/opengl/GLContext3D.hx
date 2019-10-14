@@ -449,7 +449,7 @@ class GLContext3D {
 		var isVertex = (programType == Context3DProgramType.VERTEX);
 		var dest = isVertex ? context.__vertexConstants : context.__fragmentConstants;
 		
-		var floatData = Float32Array.fromBytes (data, 0, data.length);
+		var floatData = new Float32Array(data);
 		var outOffset = firstRegister * 4;
 		var inOffset = Std.int (byteArrayOffset / 4);
 		
