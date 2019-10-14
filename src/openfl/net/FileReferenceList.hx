@@ -2,7 +2,6 @@ package openfl.net;
 
 
 import haxe.io.Path;
-import lime.system.BackgroundWorker;
 import lime.ui.FileDialog;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;

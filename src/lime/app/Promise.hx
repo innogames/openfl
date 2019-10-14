@@ -10,6 +10,7 @@ package lime.app;
 #if !js @:generic #end
 
 
+// TODO: this should be an abstract over Future
 class Promise<T> {
 	
 	
