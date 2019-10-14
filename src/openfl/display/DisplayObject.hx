@@ -27,13 +27,6 @@ import openfl.geom.Rectangle;
 import openfl.geom.Transform;
 import openfl.Vector;
 
-#if (js && html5)
-import js.html.CanvasElement;
-import js.html.CanvasRenderingContext2D;
-import js.html.CSSStyleDeclaration;
-import js.html.Element;
-#end
-
 #if !openfl_debug
 @:fileXml('tags="haxe,release"')
 @:noDebug
@@ -124,13 +117,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	private var __worldTransform:Matrix;
 	private var __worldTransformInvalid:Bool;
 	private var __pixelSnapping:PixelSnapping;
-	
-	#if (js && html5)
-	private var __canvas:CanvasElement;
-	private var __context:CanvasRenderingContext2D;
-	private var __style:CSSStyleDeclaration;
-	#end
-	
 	
 	private function new () {
 		
@@ -340,11 +326,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if openf
 	
 	
 	private function __cleanup ():Void {
-		
-		#if (js && html5)
-		__canvas = null;
-		__context = null;
-		#end
 		
 		if (__graphics != null) {
 			
