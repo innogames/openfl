@@ -2,7 +2,7 @@ package openfl.display;
 
 
 import haxe.Timer;
-import lime.graphics.opengl.GL;
+import lime._backend.html5.HTML5Renderer;
 import lime.graphics.GLRenderContext;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.stage3D.opengl.GLStage3D;
@@ -27,7 +27,6 @@ import js.Browser;
 @:noDebug
 #end
 
-@:access(lime.graphics.opengl.GL)
 @:access(openfl.display3D.Context3D)
 
 
@@ -121,14 +120,10 @@ class Stage3D extends EventDispatcher {
 			
 			if (__webgl != null) {
 				
-				#if webgl_debug
-				__webgl = untyped WebGLDebugUtils.makeDebugContext (__webgl);
-				#end
-				
 				// TODO: Need to handle renderSession/context better
 				
 				__renderContext = cast __webgl;
-				GL.context = __renderContext;
+				@:privateAccess HTML5Renderer.context = __renderContext;
 				renderSession.gl = __renderContext;
 				context3D = new Context3D (this, renderSession);
 				

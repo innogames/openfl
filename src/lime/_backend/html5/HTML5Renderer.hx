@@ -6,14 +6,12 @@ import js.html.CanvasElement;
 import js.Browser;
 import lime.app.Application;
 import lime.graphics.Image;
-import lime.graphics.opengl.GL;
 import lime.graphics.GLRenderContext;
 import lime.graphics.Renderer;
 import lime.math.Rectangle;
 
 @:access(lime._backend.html5.HTML5Window)
 @:access(lime.app.Application)
-@:access(lime.graphics.opengl.GL)
 @:access(lime.graphics.GLRenderContext)
 @:access(lime.graphics.Renderer)
 @:access(lime.ui.Window)
@@ -21,6 +19,39 @@ import lime.math.Rectangle;
 
 class HTML5Renderer {
 	
+	public static var context (default, null):GLRenderContext;
+
+	public static function getWebGLVersion(gl:GLRenderContext):Int {
+		if (Reflect.hasField(js.Browser.window, "WebGL2RenderingContext") && Std.is(gl, js.html.webgl.WebGL2RenderingContext)) {
+			return 2;
+		}
+		return 1;
+	}
+
+	#if debug
+	static var __lastLoseContextExtension:Dynamic;
+	
+	@:expose("loseGLContext")
+	static function loseContext() {
+		var extension = context.getExtension('WEBGL_lose_context');
+		if (extension == null) {
+			js.Browser.console.warn("Context already lost");
+		} else {
+			extension.loseContext();
+			__lastLoseContextExtension = extension;
+		}
+	}
+	
+	@:expose("restoreGLContext")
+	static function restoreContext() {
+		if (__lastLoseContextExtension == null) {
+			js.Browser.console.warn("No lost context found"); // yeah
+		} else {
+			__lastLoseContextExtension.restoreContext();
+			__lastLoseContextExtension = null;
+		}
+	}
+	#end
 	
 	private var parent:Renderer;
 	
@@ -101,13 +132,9 @@ class HTML5Renderer {
 				
 			} else {
 				
-				#if webgl_debug
-				webgl = untyped WebGLDebugUtils.makeDebugContext (webgl);
-				#end
-				
 				#if ((js && html5) && !display)
-				GL.context = cast webgl;
-				parent.context = OPENGL (GL.context);
+				context = cast webgl;
+				parent.context = OPENGL (context);
 				#end
 				
 				parent.type = OPENGL;

@@ -8,6 +8,7 @@ import lime.graphics.opengl.GLFramebuffer;
 import lime.graphics.opengl.GLVertexArrayObject;
 import lime.graphics.opengl.GL;
 import lime.graphics.GLRenderContext;
+import lime._backend.html5.HTML5Renderer;
 import lime.graphics.Image;
 import lime.graphics.ImageChannel;
 import lime.graphics.ImageBuffer;
@@ -484,9 +485,9 @@ class BitmapData implements IBitmapDrawable {
 		
 		if (!readable /*|| !source.readable*/) {
 			
-			if (GL.context != null) {
+			if (HTML5Renderer.context != null) {
 				
-				var gl = GL.context;
+				var gl = HTML5Renderer.context;
 				
 				gl.bindFramebuffer (GL.FRAMEBUFFER, __getFramebuffer (gl));
 				gl.viewport (0, 0, width, height);
@@ -663,7 +664,7 @@ class BitmapData implements IBitmapDrawable {
 			
 		} else if (__framebuffer != null) {
 			
-			var gl = GL.context;
+			var gl = HTML5Renderer.context;
 			var color:ARGB = (color:ARGB);
 			var useScissor = !this.rect.equals (rect);
 			
@@ -1625,9 +1626,9 @@ class BitmapData implements IBitmapDrawable {
 		
 		if (!readable /*|| !source.readable*/) {
 			
-			if (GL.context != null) {
+			if (HTML5Renderer.context != null) {
 				
-				var gl = GL.context;
+				var gl = HTML5Renderer.context;
 				
 				gl.bindFramebuffer (GL.FRAMEBUFFER, __getFramebuffer (gl));
 				gl.viewport (0, 0, width, height);
