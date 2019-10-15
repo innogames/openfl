@@ -1,13 +1,11 @@
 package openfl._internal.renderer.opengl;
 
 
-import openfl._internal.renderer.canvas.CanvasRenderer;
 import openfl._internal.renderer.opengl.batcher.BatchRenderer;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GLFramebuffer;
 import lime.graphics.opengl.GL;
 import lime.math.Matrix4;
-import openfl._internal.renderer.AbstractRenderer;
 import openfl.display.BitmapData;
 import openfl.display.Graphics;
 import openfl.display.Stage;
@@ -18,7 +16,6 @@ import openfl.geom.Matrix;
 @:noDebug
 #end
 
-@:access(openfl._internal.renderer.canvas.CanvasRenderer)
 @:access(openfl.display.BitmapData)
 @:access(openfl.display.Graphics)
 @:access(openfl.display.Stage)
@@ -28,15 +25,18 @@ import openfl.geom.Matrix;
 @:access(openfl.geom.Matrix)
 
 
-class GLRenderer extends AbstractRenderer {
+class GLRenderer {
 	
+	public var height:Int;
+	public var width:Int;
 	
 	public var projection:Matrix4;
 	public var projectionFlipped:Matrix4;
 	
 	public var defaultRenderTarget:BitmapData;
 	
-	// private var cacheObject:BitmapData;
+	private var stage:Stage;
+	private var renderSession:RenderSession;
 	private var currentRenderTarget:BitmapData;
 	private var displayHeight:Int;
 	private var displayMatrix:Matrix;
@@ -52,7 +52,10 @@ class GLRenderer extends AbstractRenderer {
 	
 	public function new (stage:Stage, gl:GLRenderContext, ?defaultRenderTarget:BitmapData) {
 		
-		super (stage);
+		this.stage = stage;
+		
+		width = stage.stageWidth;
+		height = stage.stageHeight;
 		
 		this.gl = gl;
 		this.defaultRenderTarget = defaultRenderTarget;
@@ -71,13 +74,11 @@ class GLRenderer extends AbstractRenderer {
 		renderSession.gl = gl;
 		//renderSession.roundPixels = true;
 		renderSession.renderer = this;
-		renderSession.renderType = OPENGL;
 		#if (js && html5)
 		renderSession.pixelRatio = stage.window.scale;
 		#end
 		var blendModeManager = new GLBlendModeManager (gl);
 		renderSession.blendModeManager = blendModeManager;
-		renderSession.filterManager = new GLFilterManager (this, renderSession);
 		var shaderManager = new GLShaderManager (gl);
 		renderSession.shaderManager = shaderManager;
 		renderSession.maskManager = new GLMaskManager (renderSession);
@@ -102,7 +103,7 @@ class GLRenderer extends AbstractRenderer {
 	}
 	
 	
-	public override function clear ():Void {
+	public function clear ():Void {
 		
 		if (stage.__transparent) {
 			
@@ -222,7 +223,7 @@ class GLRenderer extends AbstractRenderer {
 	}
 	
 	
-	public override function render ():Void {
+	public function render ():Void {
 		
 		gl.viewport (offsetX, offsetY, displayWidth, displayHeight);
 		
@@ -271,7 +272,7 @@ class GLRenderer extends AbstractRenderer {
 	}
 	
 	
-	public override function renderStage3D ():Void {
+	public function renderStage3D ():Void {
 		
 		for (stage3D in stage.stage3Ds) {
 			
@@ -282,9 +283,10 @@ class GLRenderer extends AbstractRenderer {
 	}
 	
 	
-	public override function resize (width:Int, height:Int):Void {
+	public function resize (width:Int, height:Int):Void {
 		
-		super.resize (width, height);
+		this.width = width;
+		this.height = height;
 		
 		// if (cacheObject == null || cacheObject.width != width || cacheObject.height != height) {
 			

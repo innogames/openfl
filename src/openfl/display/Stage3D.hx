@@ -1,13 +1,9 @@
 package openfl.display;
 
-
 import haxe.Timer;
-import lime._backend.html5.HTML5Renderer;
-import lime.graphics.GLRenderContext;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.stage3D.opengl.GLStage3D;
 import openfl.display3D.Context3D;
-import openfl.display3D.Context3DBlendFactor;
 import openfl.display3D.Context3DProfile;
 import openfl.display3D.Context3DRenderMode;
 import openfl.events.ErrorEvent;
@@ -15,21 +11,8 @@ import openfl.events.Event;
 import openfl.events.EventDispatcher;
 import openfl.Vector;
 
-#if (js && html5)
-import js.html.webgl.RenderingContext;
-import js.html.CanvasElement;
-import js.html.CSSStyleDeclaration;
-import js.Browser;
-#end
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 @:access(openfl.display3D.Context3D)
-
-
 class Stage3D extends EventDispatcher {
 	
 	
@@ -44,13 +27,6 @@ class Stage3D extends EventDispatcher {
 	private var __stage:Stage;
 	private var __x:Float;
 	private var __y:Float;
-	
-	#if (js && html5)
-	private var __canvas:CanvasElement;
-	private var __renderContext:GLRenderContext;
-	private var __style:CSSStyleDeclaration;
-	private var __webgl:RenderingContext;
-	#end
 	
 	
 	private function new () {
@@ -88,65 +64,8 @@ class Stage3D extends EventDispatcher {
 	private function __createContext (stage:Stage, renderSession:RenderSession):Void {
 		
 		__stage = stage;
-		
-		if (renderSession.gl != null) {
-			
-			context3D = new Context3D (this, renderSession);
-			__dispatchCreate ();
-			
-		} else {
-			
-			#if (js && html5)
-			__canvas = cast Browser.document.createElement ("canvas");
-			__canvas.width = stage.stageWidth;
-			__canvas.height = stage.stageHeight;
-			
-			var window = stage.window;
-			var transparentBackground = Reflect.hasField (window.config, "background") && window.config.background == null;
-			var colorDepth = Reflect.hasField (window.config, "colorDepth") ? window.config.colorDepth : 16;
-			
-			var options = {
-				
-				alpha: (transparentBackground || colorDepth > 16) ? true : false,
-				antialias: Reflect.hasField (window.config, "antialiasing") ? window.config.antialiasing > 0 : false,
-				depth: Reflect.hasField (window.config, "depthBuffer") ? window.config.depthBuffer : true,
-				premultipliedAlpha: true,
-				stencil: Reflect.hasField (window.config, "stencilBuffer") ? window.config.stencilBuffer : false,
-				preserveDrawingBuffer: false
-				
-			};
-			
-			__webgl = __canvas.getContextWebGL (options);
-			
-			if (__webgl != null) {
-				
-				// TODO: Need to handle renderSession/context better
-				
-				__renderContext = cast __webgl;
-				@:privateAccess HTML5Renderer.context = __renderContext;
-				renderSession.gl = __renderContext;
-				context3D = new Context3D (this, renderSession);
-				
-				renderSession.element.appendChild (__canvas);
-				
-				__style = __canvas.style;
-				__style.setProperty ("position", "absolute", null);
-				__style.setProperty ("top", "0", null);
-				__style.setProperty ("left", "0", null);
-				__style.setProperty (renderSession.transformOriginProperty, "0 0 0", null);
-				__style.setProperty ("z-index", "-1", null);
-				
-				__dispatchCreate ();
-				
-			} else {
-				
-				__dispatchError ();
-				
-			}
-			
-			#end
-			
-		}
+		context3D = new Context3D (this, renderSession);
+		__dispatchCreate ();
 		
 	}
 	
@@ -171,20 +90,6 @@ class Stage3D extends EventDispatcher {
 	}
 	
 	
-	private function __renderCanvas (stage:Stage, renderSession:RenderSession):Void {
-		
-		if (!visible) return;
-		
-		if (__contextRequested) {
-			
-			__dispatchError ();
-			__contextRequested = false;
-			
-		}
-		
-	}
-	
-	
 	private function __renderGL (stage:Stage, renderSession:RenderSession):Void {
 		
 		if (!visible) return;
@@ -201,20 +106,6 @@ class Stage3D extends EventDispatcher {
 			GLStage3D.render (this, renderSession);
 			
 		}
-		
-	}
-	
-	
-	public function __resize (width:Int, height:Int):Void {
-		
-		#if (js && html5)
-		if (__canvas != null) {
-			
-			__canvas.width = width;
-			__canvas.height = height;
-			
-		}
-		#end
 		
 	}
 	

@@ -2,18 +2,10 @@ package openfl.display;
 
 
 import haxe.CallStack;
-import haxe.EnumFlags;
 import lime.app.Application;
 import lime.app.IModule;
-import lime.graphics.opengl.GL;
-import lime.graphics.opengl.GLProgram;
-import lime.graphics.opengl.GLUniformLocation;
-import lime.graphics.CanvasRenderContext;
 import lime.graphics.GLRenderContext;
-import lime.graphics.RenderContext;
 import lime.graphics.Renderer;
-import lime.math.Matrix4;
-import lime.system.System;
 import lime.ui.Touch;
 import lime.ui.Gamepad;
 import lime.ui.GamepadAxis;
@@ -24,18 +16,10 @@ import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 import lime.ui.Mouse in LimeMouse;
 import lime.ui.Window;
-import lime.utils.GLUtils;
-import lime.utils.Log;
-import openfl._internal.renderer.AbstractRenderer;
-import openfl._internal.renderer.canvas.CanvasRenderer;
 import openfl._internal.renderer.opengl.GLRenderer;
-import openfl._internal.renderer.RenderSession;
 import openfl._internal.stage3D.opengl.GLTextureBase;
 import openfl._internal.TouchData;
-import openfl.display.Application in OpenFLApplication;
 import openfl.display.DisplayObjectContainer;
-import openfl.display.Window in OpenFLWindow;
-import openfl.errors.Error;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
 import openfl.events.EventPhase;
@@ -43,17 +27,14 @@ import openfl.events.FocusEvent;
 import openfl.events.FullScreenEvent;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
-import openfl.events.TextEvent;
 import openfl.events.TouchEvent;
 import openfl.events.UncaughtErrorEvent;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.geom.Transform;
-import openfl.text.TextField;
 import openfl.ui.GameInput;
 import openfl.ui.Keyboard;
-import openfl.ui.KeyLocation;
 import openfl.ui.Mouse;
 import openfl.ui.MouseCursor;
 
@@ -63,15 +44,6 @@ import openfl.profiler.Telemetry;
 
 #if gl_stats
 import openfl._internal.renderer.opengl.stats.GLStats;
-#end
-
-#if (js && html5)
-import js.html.CanvasElement;
-import js.html.DivElement;
-import js.html.Element;
-import js.Browser;
-#elseif js
-typedef Element = Dynamic;
 #end
 
 #if !openfl_debug
@@ -142,7 +114,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	private var __mouseX:Float;
 	private var __mouseY:Float;
 	private var __primaryTouch:Touch;
-	private var __renderer:AbstractRenderer;
+	private var __renderer:GLRenderer;
 	private var __rendering:Bool;
 	private var __rollOutStack:Array<DisplayObject>;
 	private var __mouseOutStack:Array<DisplayObject>;
@@ -554,7 +526,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onRenderContextRestored (renderer:Renderer, context:RenderContext):Void {
+	public function onRenderContextRestored (renderer:Renderer, context:GLRenderContext):Void {
 		
 		GLTextureBase.reset();
 		__createRenderer ();
@@ -876,17 +848,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	
 	private function __createRenderer ():Void {
 		
-		switch (window.renderer.context) {
-			
-			case OPENGL (gl):
-				
-				__renderer = new GLRenderer (this, gl);
-			
-			case CANVAS (context):
-				
-				__renderer = new CanvasRenderer (this, context);
-			
-		}
+		__renderer = new GLRenderer (this, window.renderer.context);
 		
 	}
 	
@@ -1702,12 +1664,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 			#end
 			
 			__forceRenderDirty();
-			
-		}
-		
-		for (stage3D in stage3Ds) {
-			
-			stage3D.__resize (stageWidth, stageHeight);
 			
 		}
 		

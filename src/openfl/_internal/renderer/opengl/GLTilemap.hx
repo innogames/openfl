@@ -54,8 +54,6 @@ class GLTilemap {
 		renderSession.blendModeManager.setBlendMode (tilemap.__worldBlendMode);
 		renderSession.maskManager.pushObject (tilemap);
 		
-		renderSession.filterManager.pushObject (tilemap);
-		
 		var shader = renderSession.shaderManager.initShader (tilemap.shader);
 		
 		var uMatrix = renderer.getMatrix (tilemap.__renderTransform, tilemap.__snapToPixel ());
@@ -177,7 +175,6 @@ class GLTilemap {
 			
 		}
 		
-		renderSession.filterManager.popObject (tilemap);
 		renderSession.maskManager.popRect ();
 		renderSession.maskManager.popObject (tilemap);
 		

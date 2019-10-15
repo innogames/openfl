@@ -1,21 +1,16 @@
 package openfl.display;
 
 
-import openfl._internal.renderer.flash.FlashRenderer;
-import openfl._internal.renderer.flash.FlashTilemap;
 import openfl._internal.renderer.RenderSession;
-import openfl.geom.Matrix;
-import openfl.geom.Rectangle;
-import openfl.Vector;
-
-#if !flash
 import openfl._internal.renderer.canvas.CanvasBitmap;
 import openfl._internal.renderer.canvas.CanvasDisplayObject;
 import openfl._internal.renderer.canvas.CanvasTilemap;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLDisplayObject;
 import openfl._internal.renderer.opengl.GLTilemap;
-#end
+import openfl.geom.Matrix;
+import openfl.geom.Rectangle;
+import openfl.Vector;
 
 #if !openfl_debug
 @:fileXml('tags="haxe,release"')
@@ -28,27 +23,22 @@ import openfl._internal.renderer.opengl.GLTilemap;
 @:access(openfl.geom.Rectangle)
 
 
-class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayObject #end implements IShaderDrawable {
+class Tilemap extends DisplayObject {
 	
 	
 	public var numTiles (default, null):Int;
 	@:beta public var shader:Shader;
 	public var tileset (get, set):Tileset;
 	
-	#if !flash
 	public var pixelSnapping (get, set):PixelSnapping;
 	public var smoothing:Bool;
-	#end
 	
 	private var __tiles:Vector<Tile>;
 	private var __tileset:Tileset;
 	private var __tileArray:TileArray;
 	private var __tileArrayDirty:Bool;
-	
-	#if !flash
 	private var __height:Int;
 	private var __width:Int;
-	#end
 	
 	
 	public function new (width:Int, height:Int, tileset:Tileset = null, pixelSnapping:PixelSnapping = null, smoothing:Bool = true) {
@@ -65,23 +55,12 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 		__tiles = new Vector ();
 		numTiles = 0;
 		
-		#if !flash
 		__width = width;
 		__height = height;
-		#else
-		bitmapData = new BitmapData (width, height, true, 0);
-		FlashRenderer.register (this);
-		#end
 		
 	}
 	
 	public function dispose() {
-		#if flash
-		if (bitmapData != null) {
-			bitmapData.dispose();
-			bitmapData = null;
-		}
-		#end
 	}	
 	
 	public function addTile (tile:Tile):Tile {
@@ -97,9 +76,7 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 		__tiles[numTiles] = tile;
 		numTiles++;
 		tile.parent = this;
-		#if !flash
 		__setRenderDirty ();
-		#end
 		
 		return tile;
 		
@@ -127,9 +104,7 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 		__tileArrayDirty = true;
 		numTiles++;
 		
-		#if !flash
 		__setRenderDirty ();
-		#end
 		
 		return tile;
 		
@@ -226,9 +201,7 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 				__tileArray.length = 0;
 			}
 
-			#if !flash
 			__setRenderDirty ();
-			#end
 		}
 		return tile;
 		
@@ -262,9 +235,7 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 			__tileArray.length = 0;
 		}
 		
-		#if !flash
 		__setRenderDirty ();
-		#end
 		
 	}
 	
@@ -276,14 +247,11 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 		__tileArray.__bufferDirty = true;
 		__tileArrayDirty = false;
 		__tiles.length = 0;
-		#if !flash
 		__setRenderDirty ();
-		#end
 		
 	}
 	
 	
-	#if !flash
 	private override function __getBounds (rect:Rectangle, matrix:Matrix):Void {
 		
 		var bounds = DisplayObject.__tempBoundsRectangle;
@@ -293,10 +261,8 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 		rect.__expand (bounds.x, bounds.y, bounds.width, bounds.height);
 		
 	}
-	#end
 	
 	
-	#if !flash
 	private override function __hitTest (x:Float, y:Float, shapeFlag:Bool, stack:Array<DisplayObject>, interactiveOnly:Bool, hitObject:DisplayObject, hitTestWhenMouseDisabled:Bool = false):Bool {
 		
 		if (!hitObject.visible || __isMask) return false;
@@ -320,10 +286,8 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 		return false;
 		
 	}
-	#end
 	
 	
-	#if !flash
 	private override function __renderCanvas (renderSession:RenderSession):Void {
 		
 		__updateCacheBitmap (renderSession, !__worldColorTransform.__isDefault ());
@@ -340,17 +304,8 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 		}
 		
 	}
-	#end
 	
 	
-	private function __renderFlash ():Void {
-		
-		FlashTilemap.render (this);
-		
-	}
-	
-	
-	#if !flash
 	private override function __renderGL (renderSession:RenderSession):Void {
 		
 		__updateCacheBitmap (renderSession, false);
@@ -385,7 +340,6 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 		}
 		
 	}
-	#end
 	
 	
 	private function __updateTileArray ():Void {
@@ -425,35 +379,19 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 	
 	
 	
-	#if !flash
 	private override function get_height ():Float {
 		
 		return __height * Math.abs (scaleY);
 		
 	}
-	#end
 	
 	
-	#if !flash
 	private override function set_height (value:Float):Float {
 		
 		__height = Std.int (value);
 		return __height * Math.abs (scaleY);
 		
 	}
-	#else
-	@:setter(height) private function set_height (value:Float):Void {
-		
-		if (value != bitmapData.height) {
-			
-			var cacheSmoothing = smoothing;
-			bitmapData = new BitmapData (bitmapData.width, Std.int (value), true, 0);
-			smoothing = cacheSmoothing;
-			
-		}
-		
-	}
-	#end
 	
 	
 	private function get_tileset ():Tileset {
@@ -471,35 +409,19 @@ class Tilemap extends #if !flash DisplayObject #else Bitmap implements IDisplayO
 	}
 	
 	
-	#if !flash
 	private override function get_width ():Float {
 		
 		return __width * Math.abs (__scaleX);
 		
 	}
-	#end
-	
-	
-	#if !flash
+
+
 	private override function set_width (value:Float):Float {
 		
 		__width = Std.int (value);
 		return __width * Math.abs (__scaleX);
 		
 	}
-	#else
-	@:setter(width) private function set_width (value:Float):Void {
-		
-		if (value != bitmapData.width) {
-			
-			var cacheSmoothing = smoothing;
-			bitmapData = new BitmapData (Std.int (value), bitmapData.height, true, 0);
-			smoothing = cacheSmoothing;
-			
-		}
-		
-	}
-	#end
 	
 	
 }

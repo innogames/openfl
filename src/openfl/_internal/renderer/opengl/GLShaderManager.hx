@@ -2,7 +2,6 @@ package openfl._internal.renderer.opengl;
 
 
 import lime.graphics.GLRenderContext;
-import openfl._internal.renderer.AbstractShaderManager;
 import openfl.display.Shader;
 
 #if !openfl_debug
@@ -13,16 +12,15 @@ import openfl.display.Shader;
 @:access(openfl.display.Shader)
 
 
-class GLShaderManager extends AbstractShaderManager {
+class GLShaderManager {
 	
+	public var currentShader (default, null):Shader;
+	public var defaultShader:Shader;
 	
 	private var gl:GLRenderContext;
 	
 	
 	public function new (gl:GLRenderContext) {
-		
-		super ();
-		
 		this.gl = gl;
 		
 		defaultShader = new Shader ();
@@ -31,7 +29,7 @@ class GLShaderManager extends AbstractShaderManager {
 	}
 	
 	
-	public override function initShader (shader:Shader):Shader {
+	public function initShader (shader:Shader):Shader {
 		
 		if (shader != null) {
 			
@@ -54,7 +52,7 @@ class GLShaderManager extends AbstractShaderManager {
 	}
 	
 	
-	public override function setShader (shader:Shader):Void {
+	public function setShader (shader:Shader):Void {
 		
 		if (currentShader == shader) return;
 		
@@ -82,7 +80,7 @@ class GLShaderManager extends AbstractShaderManager {
 	}
 	
 	
-	public override function updateShader (shader:Shader):Void {
+	public function updateShader (shader:Shader):Void {
 		
 		if (currentShader != null) {
 			

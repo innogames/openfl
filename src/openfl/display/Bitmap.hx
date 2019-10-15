@@ -26,7 +26,7 @@ import js.html.ImageElement;
 @:access(openfl.geom.Rectangle)
 
 
-class Bitmap extends DisplayObject implements IShaderDrawable {
+class Bitmap extends DisplayObject {
 	
 	
 	public var bitmapData (get, set):BitmapData;

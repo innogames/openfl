@@ -1,7 +1,7 @@
 package lime.app;
 
 
-import lime.graphics.RenderContext;
+import lime.graphics.GLRenderContext;
 import lime.graphics.Renderer;
 import lime.ui.Gamepad;
 import lime.ui.GamepadAxis;
@@ -339,7 +339,7 @@ class Module implements IModule {
 	 * @param	renderer	The renderer dispatching the event
 	 * @param	context	The current render context
 	 */
-	public function onRenderContextRestored (renderer:Renderer, context:RenderContext):Void { }
+	public function onRenderContextRestored (renderer:Renderer, context:GLRenderContext):Void { }
 	
 	
 	/**

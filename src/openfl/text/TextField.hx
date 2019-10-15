@@ -20,7 +20,6 @@ import openfl._internal.text.TextLayoutGroup;
 import openfl.display.DisplayObject;
 import openfl.display.Graphics;
 import openfl.display.InteractiveObject;
-import openfl.display.IShaderDrawable;
 import openfl.display.Shader;
 import openfl.events.Event;
 import openfl.events.FocusEvent;
@@ -49,7 +48,7 @@ import js.html.DivElement;
 @:access(openfl.text.TextFormat)
 
 
-class TextField extends InteractiveObject implements IShaderDrawable {
+class TextField extends InteractiveObject {
 	
 	
 	private static var __defaultTextFormat:TextFormat;
