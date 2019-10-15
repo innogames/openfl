@@ -64,7 +64,6 @@ import sys.io.File;
 @:noDebug
 #end
 
-@:autoBuild(lime._macros.AssetsMacro.embedImage())
 @:allow(lime.graphics.util.ImageCanvasUtil)
 @:allow(lime.graphics.util.ImageDataUtil)
 @:access(lime.app.Application)

@@ -2,8 +2,6 @@ package openfl.display;
 
 
 import haxe.io.Path;
-import lime.utils.AssetLibrary in LimeAssetLibrary;
-import lime.utils.AssetManifest;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.events.ProgressEvent;
@@ -13,8 +11,6 @@ import openfl.net.URLLoaderDataFormat;
 import openfl.net.URLRequest;
 import openfl.net.URLRequestMethod;
 import openfl.system.LoaderContext;
-import openfl.utils.Assets;
-import openfl.utils.AssetLibrary;
 import openfl.utils.ByteArray;
 
 #if (js && html5)
@@ -38,7 +34,6 @@ class Loader extends DisplayObjectContainer {
 	public var contentLoaderInfo (default, null):LoaderInfo;
 	public var uncaughtErrorEvents (default, null):UncaughtErrorEvents;
 	
-	private var __library:AssetLibrary;
 	private var __path:String;
 	private var __unloaded:Bool;
 	
@@ -168,13 +163,6 @@ class Loader extends DisplayObjectContainer {
 				
 			}
 			
-			if (__library != null) {
-				
-				Assets.unloadLibrary (contentLoaderInfo.url);
-				__library = null;
-				
-			}
-			
 			content = null;
 			contentLoaderInfo.url = null;
 			contentLoaderInfo.contentType = null;
@@ -275,54 +263,8 @@ class Loader extends DisplayObjectContainer {
 		
 		var loader:URLLoader = cast event.target;
 		
-		if (contentLoaderInfo.contentType != null && contentLoaderInfo.contentType.indexOf ("/json") > -1) {
-			
-			var manifest = AssetManifest.parse (loader.data, Path.directory (__path));
-			
-			if (manifest == null) {
-				
-				__dispatchError ("Cannot parse asset manifest");
-				return;
-				
-			}
-			
-			var library = LimeAssetLibrary.fromManifest (manifest);
-			
-			if (library == null) {
-				
-				__dispatchError ("Cannot open library");
-				return;
-				
-			}
-			
-			if (Std.is (library, AssetLibrary)) {
-				
-				library.load ().onComplete (function (_) {
-					
-					__library = cast library;
-					Assets.registerLibrary (contentLoaderInfo.url, __library);
-					
-					if (manifest.name != null && !Assets.hasLibrary (manifest.name)) {
-						
-						Assets.registerLibrary (manifest.name, __library);
-						
-					}
-					
-					content = __library.getMovieClip ("");
-					contentLoaderInfo.content = content;
-					addChild (content);
-					
-					contentLoaderInfo.dispatchEvent (new Event (Event.COMPLETE));
-					
-				}).onError (function (e) {
-					
-					__dispatchError (e);
-					
-				});
-				
-			}
-			
-		} else if (contentLoaderInfo.contentType != null && (contentLoaderInfo.contentType.indexOf ("/javascript") > -1 || contentLoaderInfo.contentType.indexOf ("/ecmascript") > -1)) {
+		// TODO: do we want this?
+		if (contentLoaderInfo.contentType != null && (contentLoaderInfo.contentType.indexOf ("/javascript") > -1 || contentLoaderInfo.contentType.indexOf ("/ecmascript") > -1)) {
 			
 			content = new Sprite ();
 			contentLoaderInfo.content = content;

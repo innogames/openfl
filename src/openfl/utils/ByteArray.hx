@@ -252,10 +252,6 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 #if (!display && !flash)
 
 
-// TODO: Export as "ByteArray" in OpenFL-JS
-
-@:autoBuild(lime._macros.AssetsMacro.embedByteArray())
-
 @:noCompletion @:dox(hide) class ByteArrayData extends Bytes implements IDataInput implements IDataOutput {
 	
 	

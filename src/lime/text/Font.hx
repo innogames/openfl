@@ -24,13 +24,7 @@ import js.Browser;
 @:noDebug
 #end
 
-#if (!display && !flash && !nodejs && !macro)
-@:autoBuild(lime._macros.AssetsMacro.embedFont())
-#end
-
 @:access(lime.text.Glyph)
-
-
 class Font {
 	
 	

@@ -16,7 +16,6 @@ import lime.graphics.Image;
 import lime.graphics.ImageBuffer;
 import lime.net.HTTPRequest;
 import lime.net.HTTPRequestHeader;
-import lime.utils.AssetType;
 
 @:access(lime.graphics.ImageBuffer)
 @:access(lime.graphics.Image)
@@ -194,7 +193,7 @@ class HTML5HTTPRequest {
 			
 		} else {
 			
-			requestQueue.add ({ instance: this, uri: uri, promise: promise, type: AssetType.BINARY });
+			requestQueue.add ({ instance: this, uri: uri, promise: promise, type: BINARY });
 			
 		}
 		
@@ -214,7 +213,7 @@ class HTML5HTTPRequest {
 			
 		} else {
 			
-			requestQueue.add ({ instance: null, uri: uri, promise: promise, type: AssetType.IMAGE });
+			requestQueue.add ({ instance: null, uri: uri, promise: promise, type: IMAGE });
 			
 		}
 		
@@ -234,7 +233,7 @@ class HTML5HTTPRequest {
 			
 		} else {
 			
-			requestQueue.add ({ instance: this, uri: uri, promise: promise, type: AssetType.TEXT });
+			requestQueue.add ({ instance: this, uri: uri, promise: promise, type: TEXT });
 			
 		}
 		
@@ -562,5 +561,19 @@ class HTML5HTTPRequest {
 	var type:AssetType;
 	var promise:Dynamic;
 	var uri:String;
+	
+}
+
+
+@:enum abstract AssetType(String) to String {
+	
+	var BINARY = "BINARY";
+	var FONT = "FONT";
+	var IMAGE = "IMAGE";
+	var MANIFEST = "MANIFEST";
+	var MUSIC = "MUSIC";
+	var SOUND = "SOUND";
+	var TEMPLATE = "TEMPLATE";
+	var TEXT = "TEXT";
 	
 }
