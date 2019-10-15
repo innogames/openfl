@@ -2,8 +2,6 @@ package openfl.net;
 
 
 import haxe.io.Bytes;
-import lime.app.Event;
-import lime.app.Future;
 import lime.net.HTTPRequest;
 import lime.net.HTTPRequestHeader;
 import openfl.events.Event;
@@ -24,7 +22,7 @@ class URLLoader extends EventDispatcher {
 	public var data:Dynamic;
 	public var dataFormat:URLLoaderDataFormat;
 	
-	private var __httpRequest:#if (display || macro) Dynamic #else _IHTTPRequest #end; // TODO: Better (non-private) solution
+	private var __httpRequest:HTTPRequest;
 	
 	
 	public function new (request:URLRequest = null) {
@@ -58,15 +56,16 @@ class URLLoader extends EventDispatcher {
 	public function load (request:URLRequest):Void {
 		
 		#if !macro
+		var httpRequest = new HTTPRequest ();
+		__prepareRequest (httpRequest, request);
+
 		if (dataFormat == BINARY) {
 			
-			var httpRequest = new HTTPRequest<ByteArray> ();
-			__prepareRequest (httpRequest, request);
-			
-			httpRequest.load ()
+			httpRequest.loadBytes ()
 				.onProgress (httpRequest_onProgress)
 				.onError (httpRequest_onError)
-				.onComplete (function (data:ByteArray):Void {
+				.onComplete (function (bytes) {
+					var data = ByteArray.fromBytes(bytes);
 					
 					__dispatchStatus ();
 					this.data = data;
@@ -78,16 +77,13 @@ class URLLoader extends EventDispatcher {
 			
 		} else {
 			
-			var httpRequest = new HTTPRequest<String> ();
-			__prepareRequest (httpRequest, request);
-			
-			httpRequest.load ()
+			httpRequest.loadString ()
 				.onProgress (httpRequest_onProgress)
 				.onError (httpRequest_onError)
-				.onComplete (function (data:String):Void {
+				.onComplete (function (string) {
 					
 					__dispatchStatus ();
-					this.data = data;
+					this.data = string;
 					
 					var event = new Event (Event.COMPLETE);
 					dispatchEvent (event);
@@ -125,7 +121,7 @@ class URLLoader extends EventDispatcher {
 	}
 	
 	
-	private function __prepareRequest (httpRequest:#if (display || macro) Dynamic #else _IHTTPRequest #end, request:URLRequest):Void {
+	private function __prepareRequest (httpRequest:HTTPRequest, request:URLRequest):Void {
 		
 		__httpRequest = httpRequest;
 		__httpRequest.uri = request.url;

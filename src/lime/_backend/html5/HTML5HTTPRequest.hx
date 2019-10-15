@@ -33,7 +33,7 @@ class HTML5HTTPRequest {
 	private static var supportsImageProgress:Null<Bool>;
 	
 	private var binary:Bool;
-	private var parent:_IHTTPRequest;
+	private var parent:HTTPRequest;
 	private var request:XMLHttpRequest;
 	private var validStatus0:Bool;
 		
@@ -55,7 +55,7 @@ class HTML5HTTPRequest {
 	}
 	
 	
-	public function init (parent:_IHTTPRequest):Void {
+	public function init (parent:HTTPRequest):Void {
 		
 		this.parent = parent;
 		

@@ -4,7 +4,6 @@ package openfl.net;
 import haxe.io.Path;
 import lime.system.System;
 import lime.ui.FileDialog;
-import lime.utils.Bytes;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
 import openfl.events.IOErrorEvent;
@@ -108,17 +107,6 @@ class FileReference extends EventDispatcher {
 	
 	
 	public function load ():Void {
-		
-		#if sys
-		
-		if (__path != null) {
-			
-			data = Bytes.fromFile (__path);
-			openFileDialog_onComplete();
-			
-		}
-		
-		#end
 		
 	}
 	

@@ -7,7 +7,6 @@ import lime.app.Promise;
 import lime.graphics.Image;
 import lime.graphics.ImageBuffer;
 import lime.math.Vector2;
-import lime.net.HTTPRequest;
 import lime.system.System;
 import lime.utils.Log;
 import lime.utils.UInt8Array;
