@@ -722,10 +722,9 @@ import js.html.CanvasRenderingContext2D;
 		
 		if (__bounds == null) return;
 		
-		var bounds = Rectangle.__pool.get ();
+		var bounds = DisplayObject.__tempBoundsRectangle;
 		__bounds.__transform (bounds, matrix);
 		rect.__expand (bounds.x, bounds.y, bounds.width, bounds.height);
-		Rectangle.__pool.release (bounds);
 		
 	}
 	

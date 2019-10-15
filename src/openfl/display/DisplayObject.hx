@@ -50,6 +50,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	private static var __initStage:Stage;
 	private static var __instanceCount = 0;
 	private static var __tempStack = new ObjectPool<Vector<DisplayObject>> (function () { return new Vector<DisplayObject> (); }, function (stack) { stack.length = 0; });
+	private static var __tempBoundsRectangle = new Rectangle ();
 	
 	@:keep public var alpha (get, set):Float;
 	public var blendMode (get, set):BlendMode;
@@ -522,7 +523,8 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		
 		if (__hasFilters ()) {
 			
-			var extension = Rectangle.__pool.get ();
+			var extension = DisplayObject.__tempBoundsRectangle;
+			extension.setEmpty ();
 			
 			for (filter in __filters) {
 				extension.__expand (-filter.__leftExtension, -filter.__topExtension, filter.__leftExtension + filter.__rightExtension, filter.__topExtension + filter.__bottomExtension);
@@ -532,8 +534,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 			rect.height += extension.height;
 			rect.x += extension.x;
 			rect.y += extension.y;
-			
-			Rectangle.__pool.release (extension);
 			
 		}
 		
@@ -572,11 +572,10 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 			
 		} else {
 			
-			var r = Rectangle.__pool.get ();
+			var r = DisplayObject.__tempBoundsRectangle;
 			r.copyFrom (__scrollRect);
 			r.__transform (r, matrix);
 			rect.__expand (matrix.tx, matrix.ty, r.width, r.height);
-			Rectangle.__pool.release (r);
 			
 		}
 		
