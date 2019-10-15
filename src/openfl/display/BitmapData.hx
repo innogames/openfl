@@ -1795,10 +1795,9 @@ class BitmapData implements IBitmapDrawable {
 	
 	private function __getBounds (rect:Rectangle, matrix:Matrix):Void {
 		
-		var bounds = Rectangle.__pool.get ();
+		var bounds = DisplayObject.__tempBoundsRectangle;
 		this.rect.__transform (bounds, matrix);
 		rect.__expand (bounds.x, bounds.y, bounds.width, bounds.height);
-		Rectangle.__pool.release (bounds);
 		
 	}
 	

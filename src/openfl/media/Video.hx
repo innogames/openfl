@@ -103,13 +103,11 @@ class Video extends DisplayObject implements IShaderDrawable {
 	
 	private override function __getBounds (rect:Rectangle, matrix:Matrix):Void {
 		
-		var bounds = Rectangle.__pool.get ();
+		var bounds = DisplayObject.__tempBoundsRectangle;
 		bounds.setTo (0, 0, __width, __height);
 		bounds.__transform (bounds, matrix);
 		
 		rect.__expand (bounds.x, bounds.y, bounds.width, bounds.height);
-		
-		Rectangle.__pool.release (bounds);
 		
 	}
 	
