@@ -56,7 +56,6 @@ class HTML5Window {
 	private var isFullscreen:Bool;
 	private var parent:Window;
 	private var primaryTouch:Touch;
-	private var renderType:String;
 	private var requestedFullscreen:Bool;
 	private var resizeElement:Bool;
 	private var scale = 1.0;
@@ -72,12 +71,6 @@ class HTML5Window {
 		if (parent.config != null && Reflect.hasField (parent.config, "element")) {
 			
 			element = parent.config.element;
-			
-		}
-		
-		if (parent.config != null && Reflect.hasField (parent.config, "renderer")) {
-			
-			renderType = parent.config.renderer;
 			
 		}
 		

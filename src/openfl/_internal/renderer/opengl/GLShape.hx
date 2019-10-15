@@ -6,7 +6,6 @@ import lime.graphics.opengl.GL;
 import openfl._internal.renderer.canvas.CanvasGraphics;
 import openfl._internal.renderer.RenderSession;
 import openfl.display.DisplayObject;
-import openfl.geom.Matrix;
 
 #if gl_stats
 import openfl._internal.renderer.opengl.stats.GLStats;
@@ -23,7 +22,6 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 @:access(openfl.display.Graphics)
 @:access(openfl.filters.BitmapFilter)
 @:access(openfl.geom.ColorTransform)
-@:access(openfl.geom.Matrix)
 
 
 class GLShape {
@@ -41,62 +39,10 @@ class GLShape {
 			CanvasGraphics.render (graphics, renderSession);
 			#end
 			
-			var bounds = graphics.__bounds;
-			
 			if (graphics.__bitmap != null && graphics.__visible) {
 				
 				renderSession.maskManager.pushObject (shape);
 				renderSession.batcher.render(graphics.__getBatchQuad(renderSession, shape.__worldAlpha, shape.__worldColorTransform, shape.__worldBlendMode));
-				renderSession.maskManager.popObject (shape);
-				return;
-				
-				var renderer:GLRenderer = cast renderSession.renderer;
-				var gl = renderSession.gl;
-				
-				renderSession.blendModeManager.setBlendMode (shape.__worldBlendMode);
-				renderSession.maskManager.pushObject (shape);
-				
-				var shader = renderSession.filterManager.pushObject (shape);
-				
-				//var shader = renderSession.shaderManager.initShader (shape.shader);
-				renderSession.shaderManager.setShader (shader);
-				
-				shader.data.uImage0.input = graphics.__bitmap;
-				shader.data.uImage0.smoothing = false;
-				shader.data.uMatrix.value = renderer.getMatrix (graphics.__worldTransform);
-				
-				var useColorTransform = !shape.__worldColorTransform.__isDefault ();
-				shader.data.uColorTransform.value = useColorTransform;
-				
-				var vaoRendered = GLVAORenderHelper.renderDO (shape, renderSession, shader, graphics.__bitmap);
-				
-				if (vaoRendered) return;
-				
-				renderSession.shaderManager.updateShader (shader);
-				
-				gl.bindBuffer (GL.ARRAY_BUFFER, graphics.__bitmap.getBuffer (gl, shape.__worldAlpha, shape.__worldColorTransform));
-				
-				gl.vertexAttribPointer (shader.data.aPosition.index, 3, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 0);
-				gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
-				gl.vertexAttribPointer (shader.data.aAlpha.index, 1, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
-				
-				if (true || useColorTransform) {
-					
-					gl.vertexAttribPointer (shader.data.aColorMultipliers0.index, 4, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 6 * Float32Array.BYTES_PER_ELEMENT);
-					gl.vertexAttribPointer (shader.data.aColorMultipliers1.index, 4, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 10 * Float32Array.BYTES_PER_ELEMENT);
-					gl.vertexAttribPointer (shader.data.aColorMultipliers2.index, 4, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 14 * Float32Array.BYTES_PER_ELEMENT);
-					gl.vertexAttribPointer (shader.data.aColorMultipliers3.index, 4, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 18 * Float32Array.BYTES_PER_ELEMENT);
-					gl.vertexAttribPointer (shader.data.aColorOffsets.index, 4, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 22 * Float32Array.BYTES_PER_ELEMENT);
-					
-				}
-				
-				gl.drawArrays (GL.TRIANGLE_STRIP, 0, 4);
-				
-				#if gl_stats
-					GLStats.incrementDrawCall (DrawCallContext.STAGE);
-				#end
-				
-				renderSession.filterManager.popObject (shape);
 				renderSession.maskManager.popObject (shape);
 				
 			}

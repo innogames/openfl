@@ -3,7 +3,6 @@ package openfl.media;
 
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLTexture;
-import js.html.webgl.RenderingContext as WebGLContext;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.utils.Float32Array;
@@ -11,8 +10,6 @@ import openfl._internal.renderer.canvas.CanvasVideo;
 import openfl._internal.renderer.opengl.GLVideo;
 import openfl._internal.renderer.RenderSession;
 import openfl.display.DisplayObject;
-import openfl.display.Graphics;
-import openfl.display.IShaderDrawable;
 import openfl.display.Shader;
 import openfl.geom.ColorTransform;
 import openfl.geom.Matrix;
@@ -26,7 +23,7 @@ import openfl.net.NetStream;
 @:access(openfl.geom.Point)
 
 
-class Video extends DisplayObject implements IShaderDrawable {
+class Video extends DisplayObject {
 	
 	
 	private static inline var __bufferStride = 26;

@@ -67,16 +67,8 @@ class HTML5Renderer {
 		
 		createContext ();
 		
-		switch (parent.context) {
-			
-			case OPENGL (_):
-				
-				parent.window.backend.canvas.addEventListener ("webglcontextlost", handleEvent, false);
-				parent.window.backend.canvas.addEventListener ("webglcontextrestored", handleEvent, false);
-			
-			default:
-			
-		}
+		parent.window.backend.canvas.addEventListener ("webglcontextlost", handleEvent, false);
+		parent.window.backend.canvas.addEventListener ("webglcontextrestored", handleEvent, false);
 		
 	}
 	
@@ -85,59 +77,27 @@ class HTML5Renderer {
 		
 		if (parent.window.backend.canvas != null) {
 			
-			var webgl:RenderingContext = null;
+			var transparentBackground = Reflect.hasField (parent.window.config, "background") && parent.window.config.background == null;
+			var colorDepth = Reflect.hasField (parent.window.config, "colorDepth") ? parent.window.config.colorDepth : 16;
 			
-			var renderType = parent.window.backend.renderType;
-			var forceCanvas = #if (canvas || munit) true #else (renderType == "canvas") #end;
-			var forceWebGL = #if webgl true #else (renderType == "opengl" || renderType == "webgl" || renderType == "webgl1" || renderType == "webgl2") #end;
-			var allowWebGL2 = #if webgl1 false #else (renderType != "webgl1") #end;
+			var options = {
+				
+				alpha: (transparentBackground || colorDepth > 16) ? true : false,
+				antialias: Reflect.hasField (parent.window.config, "antialiasing") ? parent.window.config.antialiasing > 0 : false,
+				depth: Reflect.hasField (parent.window.config, "depthBuffer") ? parent.window.config.depthBuffer : true,
+				premultipliedAlpha: true,
+				stencil: Reflect.hasField (parent.window.config, "stencilBuffer") ? parent.window.config.stencilBuffer : false,
+				preserveDrawingBuffer: false
+				
+			};
 			
-			if (forceWebGL || (!forceCanvas && (!Reflect.hasField (parent.window.config, "hardware") || parent.window.config.hardware))) {
-				
-				var transparentBackground = Reflect.hasField (parent.window.config, "background") && parent.window.config.background == null;
-				var colorDepth = Reflect.hasField (parent.window.config, "colorDepth") ? parent.window.config.colorDepth : 16;
-				
-				var options = {
-					
-					alpha: (transparentBackground || colorDepth > 16) ? true : false,
-					antialias: Reflect.hasField (parent.window.config, "antialiasing") ? parent.window.config.antialiasing > 0 : false,
-					depth: Reflect.hasField (parent.window.config, "depthBuffer") ? parent.window.config.depthBuffer : true,
-					premultipliedAlpha: true,
-					stencil: Reflect.hasField (parent.window.config, "stencilBuffer") ? parent.window.config.stencilBuffer : false,
-					preserveDrawingBuffer: false
-					
-				};
-				
-				var glContextType = [ "webgl", "experimental-webgl" ];
-				
-				if (allowWebGL2) {
-					
-					glContextType.unshift ("webgl2");
-					
+			for (name in [ "webgl2", "webgl", "experimental-webgl" ]) {
+
+				var webgl = parent.window.backend.canvas.getContext (name, options);
+				if (webgl != null) {
+					context = parent.context = webgl;
+					break;
 				}
-				
-				for (name in glContextType) {
-					
-					webgl = cast parent.window.backend.canvas.getContext (name, options);
-					if (webgl != null) break;
-					
-				}
-				
-			}
-			
-			if (webgl == null) {
-				
-				parent.context = CANVAS (cast parent.window.backend.canvas.getContext ("2d"));
-				parent.type = CANVAS;
-				
-			} else {
-				
-				#if ((js && html5) && !display)
-				context = cast webgl;
-				parent.context = OPENGL (context);
-				#end
-				
-				parent.type = OPENGL;
 				
 			}
 			

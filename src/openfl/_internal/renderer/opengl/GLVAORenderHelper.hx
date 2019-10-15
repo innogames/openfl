@@ -74,7 +74,6 @@ class GLVAORenderHelper {
 				GLStats.incrementDrawCall (DrawCallContext.STAGE);
 			#end
 			
-			renderSession.filterManager.popObject (displayObject);
 			renderSession.maskManager.popObject (displayObject);
 			
 			vaoContext.bindVertexArray (null);

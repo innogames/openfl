@@ -754,7 +754,6 @@ class DisplayObjectContainer extends InteractiveObject {
 		if (__children.length > 0) {
 			
 			renderSession.maskManager.pushObject (this);
-			renderSession.filterManager.pushObject (this);
 			
 			if (renderSession.clearRenderDirty) {
 				
@@ -781,7 +780,6 @@ class DisplayObjectContainer extends InteractiveObject {
 		
 		if (__children.length > 0) {
 			
-			renderSession.filterManager.popObject (this);
 			renderSession.maskManager.popObject (this);
 			
 		}

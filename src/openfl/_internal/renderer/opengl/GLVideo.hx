@@ -38,8 +38,6 @@ class GLVideo {
 			renderSession.blendModeManager.setBlendMode (video.__worldBlendMode);
 			renderSession.maskManager.pushObject (video);
 			
-			renderSession.filterManager.pushObject (video);
-			
 			var shader = renderSession.shaderManager.initShader (video.shader);
 			renderSession.shaderManager.setShader (shader);
 			
@@ -88,7 +86,6 @@ class GLVideo {
 				GLStats.incrementDrawCall (DrawCallContext.STAGE);
 			#end
 			
-			renderSession.filterManager.popObject (video);
 			renderSession.maskManager.popObject (video);
 			
 		}
