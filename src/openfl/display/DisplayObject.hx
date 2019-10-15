@@ -573,8 +573,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		} else {
 			
 			var r = DisplayObject.__tempBoundsRectangle;
-			r.copyFrom (__scrollRect);
-			r.__transform (r, matrix);
+			__scrollRect.__transform (r, matrix);
 			rect.__expand (matrix.tx, matrix.ty, r.width, r.height);
 			
 		}
