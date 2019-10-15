@@ -12,13 +12,8 @@ import openfl.events.IOErrorEvent;
 import openfl.net.URLRequest;
 import openfl.utils.ByteArray;
 
-@:access(lime.utils.AssetLibrary)
 @:access(openfl.media.SoundMixer)
 @:access(openfl.media.SoundChannel.new)
-
-@:autoBuild(openfl._internal.macros.AssetsMacro.embedSound())
-
-
 class Sound extends EventDispatcher {
 	
 	
@@ -81,25 +76,7 @@ class Sound extends EventDispatcher {
 		
 		url = stream.url;
 		
-		#if (js && html5)
-		
-		var defaultLibrary = lime.utils.Assets.getLibrary ("default"); // TODO: Improve this
-		
-		if (defaultLibrary != null && defaultLibrary.cachedAudioBuffers.exists (url)) {
-			
-			AudioBuffer_onURLLoad (defaultLibrary.cachedAudioBuffers.get (url));
-			
-		} else {
-			
-			AudioBuffer.loadFromFile (url).onComplete (AudioBuffer_onURLLoad).onError (function (_) AudioBuffer_onURLLoad (null));
-			
-		}
-		
-		#else
-		
 		AudioBuffer.loadFromFile (url).onComplete (AudioBuffer_onURLLoad).onError (function (_) AudioBuffer_onURLLoad (null));
-		
-		#end
 		
 	}
 	

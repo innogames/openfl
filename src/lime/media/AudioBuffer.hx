@@ -17,8 +17,6 @@ import lime.media.howlerjs.Howl;
 import js.html.Audio;
 #end
 
-@:access(lime.Assets)
-
 #if !lime_debug
 @:fileXml('tags="haxe,release"')
 @:noDebug

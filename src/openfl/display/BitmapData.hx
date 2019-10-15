@@ -78,9 +78,6 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 @:noDebug
 #end
 
-@:autoBuild(openfl._internal.macros.AssetsMacro.embedBitmap())
-
-
 class BitmapData implements IBitmapDrawable {
 	
 	
