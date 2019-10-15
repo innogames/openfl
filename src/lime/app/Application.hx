@@ -98,12 +98,6 @@ class Application extends Module {
 		
 		registerModule (this);
 
-		if (Lib.application == null) {
-			
-			Lib.application = this;
-			
-		}
-
 	}
 	
 	

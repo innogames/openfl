@@ -1,15 +1,10 @@
 package openfl.system;
 
-
 import haxe.macro.Compiler;
+import lime.app.Application;
 import lime.system.Locale;
 import lime.system.System;
 import openfl._internal.Lib;
-
-#if linux
-import sys.io.Process;
-#end
-
 
 @:final class Capabilities {
 	
@@ -170,7 +165,7 @@ import sys.io.Process;
 	
 	private static function get_screenDPI ():Float {
 		
-		var window = Lib.application != null ? Lib.application.window : null;
+		var window = Application.current != null ? Application.current.window : null;
 		var screenDPI:Float;
 		
 		#if (desktop || web)
