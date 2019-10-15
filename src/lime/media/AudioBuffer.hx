@@ -6,7 +6,6 @@ import haxe.io.Bytes;
 import haxe.io.Path;
 import lime.app.Future;
 import lime.app.Promise;
-import lime.net.HTTPRequest;
 import lime.utils.Log;
 import lime.utils.UInt8Array;
 
@@ -143,31 +142,13 @@ class AudioBuffer {
 	
 	public static function loadFromFile (path:String):Future<AudioBuffer> {
 		
-		#if (flash || (js && html5))
-		
 		var promise = new Promise<AudioBuffer> ();
 		
 		var audioBuffer = AudioBuffer.fromFile (path);
 		
 		if (audioBuffer != null) {
 			
-			#if flash
-			
-			audioBuffer.__srcSound.addEventListener (flash.events.Event.COMPLETE, function (event) {
-				
-				promise.complete (audioBuffer);
-				
-			});
-			
-			audioBuffer.__srcSound.addEventListener (flash.events.ProgressEvent.PROGRESS, function (event) {
-				
-				promise.progress (event.bytesLoaded, event.bytesTotal);
-				
-			});
-			
-			audioBuffer.__srcSound.addEventListener (flash.events.IOErrorEvent.IO_ERROR, promise.error);
-			
-			#elseif (js && html5 && howlerjs)
+			#if howlerjs
 			
 			if (audioBuffer != null) {
 				
@@ -200,27 +181,6 @@ class AudioBuffer {
 		}
 		
 		return promise.future;
-		
-		#else
-		
-		// TODO: Streaming
-		
-		var request = new HTTPRequest<AudioBuffer> ();
-		return request.load (path).then (function (buffer) {
-			
-			if (buffer != null) {
-				
-				return Future.withValue (buffer);
-				
-			} else {
-				
-				return cast Future.withError ("");
-				
-			}
-			
-		});
-		
-		#end
 		
 	}
 	

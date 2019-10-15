@@ -20,7 +20,6 @@ import lime.math.color.RGBA;
 import lime.math.ColorMatrix;
 import lime.math.Rectangle;
 import lime.math.Vector2;
-import lime.net.HTTPRequest;
 import lime.system.Endian;
 import lime.system.System;
 import lime.utils.ArrayBuffer;
@@ -841,54 +840,9 @@ class Image {
 		
 		if (path == null) return Future.withValue (null);
 		
-		#if (js && html5 && !display)
+		#if !display
 		
 		return HTML5HTTPRequest.loadImage (path);
-		
-		#elseif flash
-		
-		var promise = new Promise<Image> ();
-		
-		var loader = new Loader ();
-		
-		loader.contentLoaderInfo.addEventListener (Event.COMPLETE, function (event) {
-			
-			promise.complete (Image.fromBitmapData (cast (loader.content, Bitmap).bitmapData));
-			
-		});
-		
-		loader.contentLoaderInfo.addEventListener (ProgressEvent.PROGRESS, function (event) {
-			
-			promise.progress (event.bytesLoaded, event.bytesTotal);
-			
-		});
-		
-		loader.contentLoaderInfo.addEventListener (IOErrorEvent.IO_ERROR, function (event) {
-			
-			promise.error (event.error);
-			
-		});
-		
-		loader.load (new URLRequest (path), new LoaderContext (true));
-		
-		return promise.future;
-		
-		#else
-		
-		var request = new HTTPRequest<Image> ();
-		return request.load (path).then (function (image) {
-			
-			if (image != null) {
-				
-				return Future.withValue (image);
-				
-			} else {
-				
-				return cast Future.withError ("");
-				
-			}
-			
-		});
 		
 		#end
 		

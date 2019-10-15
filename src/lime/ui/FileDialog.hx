@@ -6,7 +6,6 @@ import haxe.io.Path;
 import lime.app.Event;
 import lime.graphics.Image;
 import lime.utils.ArrayBuffer;
-import lime.utils.Resource;
 
 #if sys
 import sys.io.File;
@@ -28,7 +27,7 @@ class FileDialog {
 	
 	
 	public var onCancel = new Event<Void->Void> ();
-	public var onOpen = new Event<Resource->Void> ();
+	public var onOpen = new Event<Bytes->Void> ();
 	public var onSave = new Event<String->Void> ();
 	public var onSelect = new Event<String->Void> ();
 	public var onSelectMultiple = new Event<Array<String>->Void> ();
@@ -59,7 +58,7 @@ class FileDialog {
 	}
 	
 	
-	public function save (data:Resource, filter:String = null, defaultPath:String = null, title:String = null):Bool {
+	public function save (data:Bytes, filter:String = null, defaultPath:String = null, title:String = null):Bool {
 		
 		if (data == null) {
 			
@@ -98,7 +97,7 @@ class FileDialog {
 		}
 		
 		var path = defaultPath != null ? Path.withoutDirectory (defaultPath) : "download" + defaultExtension;
-		var buffer = (data:Bytes).getData ();
+		var buffer = data.getData ();
 		
 		untyped window.saveAs (new Blob ([ buffer ], { type: type }), path, true);
 		onSave.dispatch (path);
