@@ -259,7 +259,7 @@ class AudioBuffer {
 		
 		#else
 		
-		promise.completeWith (new Future<AudioBuffer> (function () return fromFiles (paths), true));
+		promise.completeWith (new Future<AudioBuffer> (function () return fromFiles (paths)));
 		
 		#end
 		
