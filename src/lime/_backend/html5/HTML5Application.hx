@@ -1,19 +1,15 @@
 package lime._backend.html5;
 
-
-import js.html.KeyboardEvent;
 import js.Browser;
+import js.html.KeyboardEvent;
 import lime.app.Application;
-import lime.app.Config;
 import lime.media.AudioManager;
-import lime.graphics.Renderer;
 import lime.ui.GamepadAxis;
 import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 import lime.ui.Gamepad;
 import lime.ui.GamepadButton;
 import lime.ui.Joystick;
-import lime.ui.Window;
 
 @:access(lime._backend.html5.HTML5Window)
 @:access(lime.app.Application)
@@ -34,9 +30,6 @@ class HTML5Application {
 	private var lastUpdate:Float;
 	private var nextUpdate:Float;
 	private var parent:Application;
-	#if stats
-	private var stats:Dynamic;
-	#end
 	
 	
 	public inline function new (parent:Application) {
@@ -127,14 +120,7 @@ class HTML5Application {
 	}
 	
 	
-	public function create (config:Config):Void {
-		
-		
-		
-	}
-	
-	
-	public function exec ():Int {
+	public function exec () {
 		
 		Browser.window.addEventListener ("keydown", handleKeyEvent, false);
 		Browser.window.addEventListener ("keyup", handleKeyEvent, false);
@@ -196,16 +182,7 @@ class HTML5Application {
 		
 		lastUpdate = Date.now ().getTime ();
 		
-		handleApplicationEvent ();
-		
-		return 0;
-		
-	}
-	
-	
-	public function exit ():Void {
-		
-		
+		handleApplicationEvent (0);
 		
 	}
 	
@@ -229,13 +206,13 @@ class HTML5Application {
 	}
 	
 	
-	private function handleApplicationEvent (?__):Void {
+	private function handleApplicationEvent (_) {
 		
-		if (parent.window != null) {
-			
-			parent.window.backend.updateSize ();
-			
+		if (parent.window == null) {
+			return; // app is closing
 		}
+			
+		parent.window.backend.updateSize ();
 		
 		updateGameDevices ();
 		
@@ -243,34 +220,12 @@ class HTML5Application {
 		
 		if (currentUpdate >= nextUpdate) {
 			
-			#if stats
-			stats.begin ();
-			#end
-			
 			deltaTime = currentUpdate - lastUpdate;
 			
-			parent.onUpdate.dispatch (Std.int (deltaTime));
-			
-			if (parent.renderer != null && parent.renderer.context != null) {
-				
-				parent.renderer.render ();
-				parent.renderer.onRender.dispatch ();
-				
-				if (!parent.renderer.onRender.canceled) {
-					
-					parent.renderer.flip ();
-					
-				}
-				
-			}
-			
-			#if stats
-			stats.end ();
-			#end
+			parent.stage.__onFrame(Std.int (deltaTime));
 			
 			if (framePeriod < 0) {
 				
-				nextUpdate = currentUpdate;
 				nextUpdate = currentUpdate;
 				
 			} else {
@@ -289,7 +244,7 @@ class HTML5Application {
 			
 		}
 		
-		Browser.window.requestAnimationFrame (cast handleApplicationEvent);
+		Browser.window.requestAnimationFrame (handleApplicationEvent);
 		
 	}
 	

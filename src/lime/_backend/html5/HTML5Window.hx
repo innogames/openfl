@@ -93,13 +93,6 @@ class HTML5Window {
 	}
 	
 	
-	public function close ():Void {
-		
-		parent.application.removeWindow (parent);
-		
-	}
-	
-	
 	public function create (application:Application):Void {
 		
 		setWidth = parent.width;
@@ -477,9 +470,8 @@ class HTML5Window {
 					if (x != cacheMouseX || y != cacheMouseY) {
 						
 						parent.onMouseMove.dispatch (x, y);
-						parent.onMouseMoveRelative.dispatch (x - cacheMouseX, y - cacheMouseY);
 						
-						if (parent.onMouseMove.canceled || parent.onMouseMoveRelative.canceled) {
+						if (parent.onMouseMove.canceled) {
 							
 							event.preventDefault ();
 							

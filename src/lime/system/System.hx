@@ -1,28 +1,14 @@
 package lime.system;
 
+import js.Browser;
 
-import haxe.Constraints;
-
-import lime.app.Application;
-import lime.app.Config;
 import lime.math.Rectangle;
 import lime.utils.ArrayBuffer;
 import lime.utils.UInt8Array;
 import lime.utils.UInt16Array;
 
-#if (js && html5)
-import js.html.Element;
-import js.Browser;
-#end
-
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(lime.system.Display)
 @:access(lime.system.DisplayMode)
-
 class System {
 	
 	
@@ -41,131 +27,18 @@ class System {
 	public static var platformVersion (get, never):String;
 	public static var userDirectory (get, never):String;
 	
-	@:noCompletion private static var __applicationConfig:Map<String, Config>;
-	@:noCompletion private static var __applicationDirectory:String;
-	@:noCompletion private static var __applicationEntryPoint:Map<String, Function>;
-	@:noCompletion private static var __applicationStorageDirectory:String;
-	@:noCompletion private static var __desktopDirectory:String;
-	@:noCompletion private static var __deviceModel:String;
-	@:noCompletion private static var __deviceVendor:String;
-	@:noCompletion private static var __documentsDirectory:String;
-	@:noCompletion private static var __endianness:Endian;
-	@:noCompletion private static var __fontsDirectory:String;
-	@:noCompletion private static var __platformLabel:String;
-	@:noCompletion private static var __platformName:String;
-	@:noCompletion private static var __platformVersion:String;
-	@:noCompletion private static var __userDirectory:String;
-	
-	
-	#if (js && html5)
-	@:keep @:expose("lime.embed")
-	public static function embed (projectName:String, element:Dynamic, width:Null<Int> = null, height:Null<Int> = null, windowConfig:Dynamic = null):Void {
-		
-		if (__applicationEntryPoint == null || __applicationConfig == null) return;
-		
-		if (__applicationEntryPoint.exists (projectName)) {
-			
-			var htmlElement:Element = null;
-			
-			if (Std.is (element, String)) {
-				
-				htmlElement = cast Browser.document.getElementById (element);
-				
-			} else if (element == null) {
-				
-				htmlElement = cast Browser.document.createElement ("div");
-				
-			} else {
-				
-				htmlElement = cast element;
-				
-			}
-			
-			if (htmlElement == null) {
-				
-				Browser.window.console.log ("[lime.embed] ERROR: Cannot find target element: " + element);
-				return;
-				
-			}
-			
-			if (width == null) {
-				
-				width = 0;
-				
-			}
-			
-			if (height == null) {
-				
-				height = 0;
-				
-			}
-			
-			var defaultConfig = __applicationConfig[projectName];
-			var config:Config = {};
-			
-			__copyMissingFields (config, defaultConfig);
-			
-			if (windowConfig != null) {
-				
-				config.windows = [];
-				
-				if (Std.is (windowConfig, Array)) {
-					
-					config.windows = windowConfig;
-					
-				} else {
-					
-					config.windows[0] = windowConfig;
-					
-				}
-				
-				for (i in 0...config.windows.length) {
-					
-					if (i < defaultConfig.windows.length) {
-						
-						__copyMissingFields (config.windows[i], defaultConfig.windows[i]);
-						
-					}
-					
-					__copyMissingFields (config.windows[i].parameters, defaultConfig.windows[i].parameters);
-					
-					if (Std.is (windowConfig.background, String)) {
-						
-						var background = StringTools.replace (Std.string (windowConfig.background), "#", "");
-						
-						if (background.indexOf ("0x") > -1) {
-							
-							windowConfig.background = Std.parseInt (background);
-							
-						} else {
-							
-							windowConfig.background = Std.parseInt ("0x" + background);
-							
-						}
-						
-					}
-					
-				}
-				
-			}
-			
-			if (Reflect.field (config.windows[0], "rootPath")) {
-				
-				config.rootPath = Reflect.field (config.windows[0], "rootPath");
-				Reflect.deleteField (config.windows[0], "rootPath");
-				
-			}
-			
-			config.windows[0].element = htmlElement;
-			config.windows[0].width = width;
-			config.windows[0].height = height;
-			
-			__applicationEntryPoint[projectName] (config);
-			
-		}
-		
-	}
-	#end
+	static var __applicationDirectory:String;
+	static var __applicationStorageDirectory:String;
+	static var __desktopDirectory:String;
+	static var __deviceModel:String;
+	static var __deviceVendor:String;
+	static var __documentsDirectory:String;
+	static var __endianness:Endian;
+	static var __fontsDirectory:String;
+	static var __platformLabel:String;
+	static var __platformName:String;
+	static var __platformVersion:String;
+	static var __userDirectory:String;
 	
 	
 	public static function exit (code:Int):Void {
@@ -267,43 +140,6 @@ class System {
 			#end
 			
 		}
-		
-	}
-	
-	
-	@:noCompletion private static function __copyMissingFields (target:Dynamic, source:Dynamic):Void {
-		
-		if (source == null || target == null) return;
-		
-		for (field in Reflect.fields (source)) {
-			
-			if (!Reflect.hasField (target, field)) {
-				
-				Reflect.setField (target, field, Reflect.field (source, field));
-				
-			}
-			
-		}
-		
-	}
-	
-	
-	@:noCompletion private static function __registerEntryPoint (projectName:String, entryPoint:Function, config:Config):Void {
-		
-		if (__applicationConfig == null) {
-			
-			__applicationConfig = new Map ();
-			
-		}
-		
-		if (__applicationEntryPoint == null) {
-			
-			__applicationEntryPoint = new Map ();
-			
-		}
-		
-		__applicationEntryPoint[projectName] = entryPoint;
-		__applicationConfig[projectName] = config;
 		
 	}
 	

@@ -1,10 +1,8 @@
 package lime._backend.html5;
 
 
-import js.html.webgl.RenderingContext;
 import js.html.CanvasElement;
 import js.Browser;
-import lime.app.Application;
 import lime.graphics.Image;
 import lime.graphics.GLRenderContext;
 import lime.graphics.Renderer;
@@ -106,13 +104,6 @@ class HTML5Renderer {
 	}
 	
 	
-	public function flip ():Void {
-		
-		
-		
-	}
-	
-	
 	private function handleEvent (event:js.html.Event):Void {
 		
 		switch (event.type) {
@@ -170,13 +161,6 @@ class HTML5Renderer {
 		}
 		
 		return null;
-		
-	}
-	
-	
-	public function render ():Void {
-		
-		
 		
 	}
 	

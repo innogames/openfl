@@ -21,12 +21,7 @@ class HTML5Mouse {
 		if (!__hidden) {
 			
 			__hidden = true;
-			
-			for (window in Application.current.windows) {
-				
-				window.backend.element.style.cursor = "none";
-				
-			}
+			Application.current.window.backend.element.style.cursor = "none";
 			
 		}
 		
@@ -76,24 +71,20 @@ class HTML5Mouse {
 			
 			if (!__hidden) {
 				
-				for (window in Application.current.windows) {
+				Application.current.window.backend.element.style.cursor = switch (value) {
 					
-					window.backend.element.style.cursor = switch (value) {
-						
-						case ARROW: "default";
-						case CROSSHAIR: "crosshair";
-						case MOVE: "move";
-						case POINTER: "pointer";
-						case RESIZE_NESW: "nesw-resize";
-						case RESIZE_NS: "ns-resize";
-						case RESIZE_NWSE: "nwse-resize";
-						case RESIZE_WE: "ew-resize";
-						case TEXT: "text";
-						case WAIT: "wait";
-						case WAIT_ARROW: "wait";
-						default: "auto";
-						
-					}
+					case ARROW: "default";
+					case CROSSHAIR: "crosshair";
+					case MOVE: "move";
+					case POINTER: "pointer";
+					case RESIZE_NESW: "nesw-resize";
+					case RESIZE_NS: "ns-resize";
+					case RESIZE_NWSE: "nwse-resize";
+					case RESIZE_WE: "ew-resize";
+					case TEXT: "text";
+					case WAIT: "wait";
+					case WAIT_ARROW: "wait";
+					default: "auto";
 					
 				}
 				

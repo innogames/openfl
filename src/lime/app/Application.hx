@@ -1,37 +1,18 @@
 package lime.app;
 
-
-import openfl.display.LoaderInfo;
-import openfl.display.Sprite;
+import openfl.display.Stage;
 import lime.graphics.Renderer;
 import lime.system.System;
 import lime.ui.Window;
+import lime._backend.html5.HTML5Application as ApplicationBackend;
+
+import openfl.display.LoaderInfo;
+import openfl.display.Sprite;
 import openfl._internal.Lib;
 
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
-/** 
- * The Application class forms the foundation for most Lime projects.
- * It is common to extend this class in a main class. It is then possible
- * to override "on" functions in the class in order to handle standard events
- * that are relevant.
- */
-class Application extends Module {
-	
-	
-	/**
-	 * The current Application instance that is executing
-	**/
+class Application {
 	public static var current (default, null):Application;
-	
-	
-	/**
-	 * Configuration values for the application, such as window options or a package name
-	**/
+
 	public var config (default, null):Config;
 	
 	/**
@@ -42,48 +23,16 @@ class Application extends Module {
 	**/
 	public var frameRate (get, set):Float;
 	
-	/**
-	 * A list of currently attached Module instances
-	**/
-	public var modules (default, null):Array<IModule>;
+	public var stage (default, null):Stage;
+	public var window (default, null):Window;
+	public var renderer (default, null):Renderer;
+
+	public var onExit = new Event<Int->Void> ();
 	
-	/**
-	 * Update events are dispatched each frame (usually just before rendering)
-	 */
-	public var onUpdate = new Event<Int->Void> ();
-	
-	/**
-	 * The Renderer associated with this Application, or the first Renderer
-	 * if there are multiple Renderer instances
-	**/
-	public var renderer (get, null):Renderer;
-	
-	/**
-	 * A list of Renderer instances associated with this Application
-	**/
-	public var renderers (get, null):Array<Renderer>;
-	
-	/**
-	 * The Window associated with this Application, or the first Window
-	 * if there are multiple Windows active
-	**/
-	public var window (get, null):Window;
-	
-	/**
-	 * A list of active Window instances associated with this Application
-	**/
-	public var windows (get, null):Array<Window>;
-	
-	@:noCompletion private var backend:ApplicationBackend;
-	@:noCompletion private var windowByID:Map<Int, Window>;
+	var backend:ApplicationBackend;
 	
 	
-	/**
-	 * Creates a new Application instance
-	**/
 	public function new () {
-		
-		super ();
 		
 		if (Application.current == null) {
 			
@@ -91,268 +40,73 @@ class Application extends Module {
 			
 		}
 		
-		modules = new Array ();
-		windowByID = new Map ();
-		
 		backend = new ApplicationBackend (this);
-		
-		registerModule (this);
 
 	}
 	
 	
-	/**
-	 * Adds a new module to the Application
-	 * @param	module	A module to add
-	 */
-	public function addModule (module:IModule):Void {
-		
-		module.registerModule (this);
-		modules.push (module);
-		
-		if (__renderers.length > 0) {
-			
-			for (renderer in __renderers) {
-				
-				module.addRenderer (renderer);
-				
-			}
-			
-		}
-		
-		if (__windows.length > 0) {
-			
-			for (window in __windows) {
-				
-				module.addWindow (window);
-				
-			}
-			
-		}
-		
-	}
-	
-	
-	/**
-	 * Adds a new Renderer to the Application. By default, this is
-	 * called automatically by create()
-	 * @param	renderer	A Renderer object to add
-	 */
-	public override function addRenderer (renderer:Renderer):Void {
-		
-		super.addRenderer (renderer);
-		
-		for (module in modules) {
-			
-			module.addRenderer (renderer);
-			
-		}
-		
-	}
-	
-	
-	/**
-	 * Initializes the Application, using the settings defined in
-	 * the config instance. By default, this is called automatically
-	 * when building the project using Lime's command-line tools
-	 * @param	config	A Config object
-	 */
 	@:access(openfl.display.DisplayObject)
 	@:access(openfl.display.LoaderInfo)
 	public function create (config:Config):Void {
-		
 		this.config = config;
-		
-		backend.create (config);
+
+		var windowConfig = config.windows[0];
+
+		var loaderInfo = LoaderInfo.create (null);
+		if (windowConfig.parameters != null) {
+			loaderInfo.parameters = windowConfig.parameters;
+		}
 
 		if (Lib.current == null) Lib.current = new Sprite ();
-		Lib.current.__loaderInfo = LoaderInfo.create (null);
+		Lib.current.__loaderInfo = loaderInfo;
 		Lib.current.__loaderInfo.content = Lib.current;
 
-		if (config != null) {
+		if (Reflect.hasField (config, "fps")) {
 			
-			if (Reflect.hasField (config, "fps")) {
-				
-				frameRate = config.fps;
-				
-			}
-			
-			if (Reflect.hasField (config, "windows")) {
-				
-				for (windowConfig in config.windows) {
-					
-					var window = new Window (windowConfig);
-					createWindow (window);
-					break;
-					
-				}
-				
-			}
+			frameRate = config.fps;
 			
 		}
 		
-	}
-	
-	
-	/**
-	 * Adds a new Window to the Application. By default, this is
-	 * called automatically by create()
-	 * @param	window	A Window object to add
-	 */
-	public function createWindow (window:Window):Void {
-		
-		super.addWindow (window);
-		
-		for (module in modules) {
-			
-			module.addWindow (window);
-			
-		}
-		
-		if (window.renderer == null) {
-			
-			var renderer = new Renderer (window);
-			addRenderer (renderer);
-			
-		}
-		
+		window = new Window (windowConfig);
+		renderer = window.renderer; // TODO: remove this
+
+		window.onClose.add (onWindowClose);
 		window.create (this);
-		//__windows.push (window);
-		windowByID.set (window.id, window);
+
+		stage = new Stage (window, Reflect.hasField (windowConfig, "background") ? windowConfig.background : 0xFFFFFF);
 		
-		window.onCreate.dispatch ();
+		if (Reflect.hasField (windowConfig, "resizable") && !windowConfig.resizable) {
+			stage.__setLogicalSize (windowConfig.width, windowConfig.height);
+		}
+
+		stage.__create (this);
 		
+	}
+
+
+	function onWindowClose () {
+		window = null;
+		renderer = null;
+		System.exit (0);
 	}
 	
 	
-	/**
-	 * Execute the Application. On native platforms, this method
-	 * blocks until the application is finished running. On other 
-	 * platforms, it will return immediately
-	 * @return An exit code, 0 if there was no error
-	 */
-	public function exec ():Int {
+	public function exec () {
 		
 		Application.current = this;
 		
-		return backend.exec ();
+		backend.exec ();
 		
 	}
 	
 	
-	public override function onModuleExit (code:Int):Void {
-		
-		backend.exit ();
-		
-	}
-	
-	
-	public override function onWindowClose (window:Window):Void {
-		
-		removeWindow (window);
-		
-	}
-	
-	
-	/**
-	 * Removes a module from the Application
-	 * @param	module	A module to remove
-	 */
-	public function removeModule (module:IModule):Void {
-		
-		if (module != null) {
-			
-			module.unregisterModule (this);
-			modules.remove (module);
-			
-		}
-		
-	}
-	
-	
-	@:noCompletion public override function removeWindow (window:Window):Void {
-		
-		if (window != null && windowByID.exists (window.id)) {
-			
-			__windows.remove (window);
-			windowByID.remove (window.id);
-			window.close ();
-			
-			if (window.renderer != null) {
-				
-				removeRenderer (window.renderer);
-				
-			}
-			
-			if (this.window == window) {
-				
-				this.window = null;
-				
-			}
-			
-			if (__windows.length == 0) {
-				
-				System.exit (0);
-				
-			}
-			
-		}
-		
-	}
-	
-	
-	
-	
-	// Get & Set Methods
-	
-	
-	
-	
-	@:noCompletion private inline function get_frameRate ():Float {
-		
+	inline function get_frameRate ():Float {
 		return backend.getFrameRate ();
-		
 	}
 	
-	
-	@:noCompletion private inline function set_frameRate (value:Float):Float {
-		
+
+	inline function set_frameRate (value:Float):Float {
 		return backend.setFrameRate (value);
-		
 	}
-	
-	
-	@:noCompletion private inline function get_renderer ():Renderer {
-		
-		return __renderers[0];
-		
-	}
-	
-	
-	@:noCompletion private inline function get_renderers ():Array<Renderer> {
-		
-		return __renderers;
-		
-	}
-	
-	
-	@:noCompletion private inline function get_window ():Window {
-		
-		return __windows[0];
-		
-	}
-	
-	
-	@:noCompletion private inline function get_windows ():Array<Window> {
-		
-		return __windows;
-		
-	}
-	
 	
 }
-
-
-#if (js && html5)
-@:noCompletion private typedef ApplicationBackend = lime._backend.html5.HTML5Application;
-#end
