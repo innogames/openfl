@@ -1,9 +1,12 @@
 package lime.app;
 
 
+import openfl.display.LoaderInfo;
+import openfl.display.Sprite;
 import lime.graphics.Renderer;
 import lime.system.System;
 import lime.ui.Window;
+import openfl._internal.Lib;
 
 #if !lime_debug
 @:fileXml('tags="haxe,release"')
@@ -94,7 +97,13 @@ class Application extends Module {
 		backend = new ApplicationBackend (this);
 		
 		registerModule (this);
-		
+
+		if (Lib.application == null) {
+			
+			Lib.application = this;
+			
+		}
+
 	}
 	
 	
@@ -154,12 +163,18 @@ class Application extends Module {
 	 * when building the project using Lime's command-line tools
 	 * @param	config	A Config object
 	 */
+	@:access(openfl.display.DisplayObject)
+	@:access(openfl.display.LoaderInfo)
 	public function create (config:Config):Void {
 		
 		this.config = config;
 		
 		backend.create (config);
-		
+
+		if (Lib.current == null) Lib.current = new Sprite ();
+		Lib.current.__loaderInfo = LoaderInfo.create (null);
+		Lib.current.__loaderInfo.content = Lib.current;
+
 		if (config != null) {
 			
 			if (Reflect.hasField (config, "fps")) {
@@ -174,10 +189,7 @@ class Application extends Module {
 					
 					var window = new Window (windowConfig);
 					createWindow (window);
-					
-					#if html5
 					break;
-					#end
 					
 				}
 				

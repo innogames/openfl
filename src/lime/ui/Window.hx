@@ -9,13 +9,7 @@ import lime.graphics.Renderer;
 import lime.system.Display;
 import lime.system.DisplayMode;
 
-#if openfl
 import openfl.display.Stage;
-#elseif flash
-import flash.display.Stage;
-#else
-typedef Stage = Dynamic;
-#end
 
 typedef CopyDataProvider = String->Void;
 
@@ -136,7 +130,8 @@ class Window {
 		
 	}
 	
-	
+	@:access(openfl.display.Stage)
+	@:access(openfl.display.LoaderInfo)
 	public function create (application:Application):Void {
 		
 		this.application = application;
@@ -149,6 +144,22 @@ class Window {
 			renderer.create ();
 			
 		}
+		
+		stage = new Stage (this, Reflect.hasField (config, "background") ? config.background : 0xFFFFFF);
+		
+		if (Reflect.hasField (config, "parameters")) {
+			
+			stage.loaderInfo.parameters = config.parameters;
+			
+		}
+		
+		if (Reflect.hasField (config, "resizable") && !config.resizable) {
+			
+			stage.__setLogicalSize (config.width, config.height);
+			
+		}
+		
+		application.addModule (stage);
 		
 	}
 	
