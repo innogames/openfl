@@ -58,10 +58,6 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 class GLContext3D {
 	
 	
-	private static var context:Context3D;
-	private static var gl:GLRenderContext;
-	
-	
 	public static function create (context:Context3D) {
 		
 		var gl = context.__renderSession.gl;
@@ -237,10 +233,7 @@ class GLContext3D {
 	
 	public static function configureBackBuffer (context:Context3D, width:Int, height:Int, antiAlias:Int, enableDepthAndStencil:Bool = true, wantsBestResolution:Bool = false, wantsBestResolutionOnBrowserZoom:Bool = false):Void {
 		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
-		
-		__updateBackbufferViewport ();
+		__updateBackbufferViewport (context);
 		
 		var scale = context.__stage3D.__stage.window.scale;
 		
@@ -287,10 +280,9 @@ class GLContext3D {
 			
 		}
 		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
+		var gl = context.__renderSession.gl;
 		
-		__flushSamplerState ();
+		__flushSamplerState (context);
 		context.__program.__flush ();
 		
 		var count = (numTriangles == -1) ? indexBuffer.__numIndices : (numTriangles * 3);
@@ -574,9 +566,9 @@ class GLContext3D {
 		GLUtils.checkGLError (gl);
 		
 		context.__renderToTexture = null;
-		__updateBackbufferViewport ();
-		__disableScissorRectangle ();
-		__updateDepthAndStencilState ();
+		__updateBackbufferViewport (context);
+		__disableScissorRectangle (gl);
+		__updateDepthAndStencilState (context);
 		
 		context.__positionScale[1] = 1.0;
 		
@@ -690,7 +682,7 @@ class GLContext3D {
 			
 		}
 		
-		__setViewport (0, 0, width, height);
+		__setViewport (gl, 0, 0, width, height);
 		
 		context.__positionScale[1] = -1.0;
 		
@@ -705,8 +697,8 @@ class GLContext3D {
 		
 		context.__renderToTexture = texture;
 		context.__rttDepthAndStencil = enableDepthAndStencil;
-		__disableScissorRectangle();
-		__updateDepthAndStencilState ();
+		__disableScissorRectangle(gl);
+		__updateDepthAndStencilState (context);
 		
 	}
 	
@@ -835,18 +827,15 @@ class GLContext3D {
 	
 	public static function setScissorRectangle (context:Context3D, rectangle:Rectangle):Void {
 		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
-		
 		if (rectangle != null) {
 			
 			var scale = context.__stage3D.__stage.window.scale;
-			__setScissorRectangle (Std.int (rectangle.x * scale), Std.int (rectangle.y * scale), 
+			__setScissorRectangle (context, Std.int (rectangle.x * scale), Std.int (rectangle.y * scale), 
 								Std.int (rectangle.width * scale), Std.int (rectangle.height * scale));
 			
 		} else {
 			
-			__disableScissorRectangle ();
+			__disableScissorRectangle (context.__renderSession.gl);
 			
 		}
 		
@@ -855,8 +844,7 @@ class GLContext3D {
 	
 	public static function setStencilActions (context:Context3D, triangleFace:Context3DTriangleFace = FRONT_AND_BACK, compareMode:Context3DCompareMode = ALWAYS, actionOnBothPass:Context3DStencilAction = KEEP, actionOnDepthFail:Context3DStencilAction = KEEP, actionOnDepthPassStencilFail:Context3DStencilAction = KEEP):Void {
 		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
+		var gl = context.__renderSession.gl;
 		
 		context.__stencilCompareMode = compareMode;
 		
@@ -868,8 +856,7 @@ class GLContext3D {
 	
 	public static function setStencilReferenceValue (context:Context3D, referenceValue:UInt, readMask:UInt = 0xFF, writeMask:UInt = 0xFF):Void {
 		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
+		var gl = context.__renderSession.gl;
 		
 		context.__stencilReadMask = readMask;
 		context.__stencilRef = referenceValue;
@@ -952,7 +939,7 @@ class GLContext3D {
 	}
 	
 	
-	private static function __disableScissorRectangle ():Void {
+	private static function __disableScissorRectangle (gl:GL):Void {
 		
 		gl.disable (GL.SCISSOR_TEST);
 		GLUtils.checkGLError (gl);
@@ -960,8 +947,9 @@ class GLContext3D {
 	}
 	
 	
-	private static function __flushSamplerState ():Void {
+	private static function __flushSamplerState (context:Context3D):Void {
 		
+		var gl = context.__renderSession.gl;
 		var sampler = 0;
 		
 		while (context.__samplerDirty != 0) {
@@ -1082,15 +1070,10 @@ class GLContext3D {
 	}
 	
 	
-	private static function __hasGLExtension (name:String):Bool {
+	private static function __setScissorRectangle (context:Context3D, x: Int, y: Int, width: Int, height: Int):Void {
 		
-		return (gl.getSupportedExtensions ().indexOf (name) != -1);
-		
-	}
-	
-	
-	private static function __setScissorRectangle (x: Int, y: Int, width: Int, height: Int):Void {
-		
+		var gl = context.__renderSession.gl;
+
 		gl.enable (GL.SCISSOR_TEST);
 		GLUtils.checkGLError (gl);
 		
@@ -1116,7 +1099,7 @@ class GLContext3D {
 	}
 	
 	
-	private static function __setViewport (originX:Int, originY:Int, width:Int, height:Int):Void {
+	private static function __setViewport (gl:GL, originX:Int, originY:Int, width:Int, height:Int):Void {
 		
 		if (Context3D.__stateCache.updateViewport (originX, originY, width, height)) {
 			
@@ -1214,8 +1197,9 @@ class GLContext3D {
 	// }
 	
 	
-	private static function __updateDepthAndStencilState ():Void {
+	private static function __updateDepthAndStencilState (context:Context3D):Void {
 		
+		var gl = context.__renderSession.gl;
 		var depthAndStencil = context.__renderToTexture != null ? context.__rttDepthAndStencil : context.__backBufferEnableDepthAndStencil;
 		
 		if (depthAndStencil) {
@@ -1237,17 +1221,7 @@ class GLContext3D {
 	}
 	
 	
-	public static function __updateBackbufferViewportTEMP (context:Context3D):Void {
-		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
-		
-		__updateBackbufferViewport ();
-		
-	}
-	
-	
-	private static function __updateBackbufferViewport ():Void {
+	public static function __updateBackbufferViewport (context:Context3D):Void {
 		
 		if (!Stage3D.__active) {
 			
@@ -1258,7 +1232,7 @@ class GLContext3D {
 		
 		if (context.__renderToTexture == null && context.backBufferWidth > 0 && context.backBufferHeight > 0) {
 			
-			__setViewport (Std.int (context.__stage3D.x), Std.int (context.__stage3D.y), context.backBufferWidth, context.backBufferHeight);
+			__setViewport (context.__renderSession.gl, Std.int (context.__stage3D.x), Std.int (context.__stage3D.y), context.backBufferWidth, context.backBufferHeight);
 			
 		}
 		
