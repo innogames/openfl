@@ -30,7 +30,7 @@ class GLIndexBuffer3D {
 		indexBuffer.__elementType = GL.UNSIGNED_SHORT;
 		
 		indexBuffer.__id = gl.createBuffer ();
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		indexBuffer.__usage = (bufferUsage == Context3DBufferUsage.DYNAMIC_DRAW) ? GL.DYNAMIC_DRAW : GL.STATIC_DRAW;
 		
@@ -72,10 +72,10 @@ class GLIndexBuffer3D {
 		var gl = renderSession.gl;
 		
 		gl.bindBuffer (GL.ELEMENT_ARRAY_BUFFER, indexBuffer.__id);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.bufferData (GL.ELEMENT_ARRAY_BUFFER, data, indexBuffer.__usage);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		// if (data.byteLength != __memoryUsage) {
 			

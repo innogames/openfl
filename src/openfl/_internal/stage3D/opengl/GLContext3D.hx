@@ -58,10 +58,6 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 class GLContext3D {
 	
 	
-	private static var context:Context3D;
-	private static var gl:GLRenderContext;
-	
-	
 	public static function create (context:Context3D) {
 		
 		var gl = context.__renderSession.gl;
@@ -162,19 +158,19 @@ class GLContext3D {
 		//__valueFrame = new Telemetry.Value (".rend.molehill.frame");
 		#end
 		
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		var vendor = gl.getParameter (GL.VENDOR);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		var version = gl.getParameter (GL.VERSION);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		var renderer = gl.getParameter (GL.RENDERER);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		var glslVersion = gl.getParameter (GL.SHADING_LANGUAGE_VERSION);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		context.driverInfo = "OpenGL" +
 					 " Vendor=" + vendor +
@@ -207,7 +203,7 @@ class GLContext3D {
 			clearMask |= GL.COLOR_BUFFER_BIT;
 			
 			gl.clearColor (red, green, blue, alpha);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 		}
 		
@@ -216,7 +212,7 @@ class GLContext3D {
 			clearMask |= GL.DEPTH_BUFFER_BIT;
 			
 			gl.clearDepth (depth);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 		}
 		
@@ -225,22 +221,19 @@ class GLContext3D {
 			clearMask |= GL.STENCIL_BUFFER_BIT;
 			
 			gl.clearStencil (stencil);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 		}
 		
 		gl.clear (clearMask);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 	}
 	
 	
 	public static function configureBackBuffer (context:Context3D, width:Int, height:Int, antiAlias:Int, enableDepthAndStencil:Bool = true, wantsBestResolution:Bool = false, wantsBestResolutionOnBrowserZoom:Bool = false):Void {
 		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
-		
-		__updateBackbufferViewport ();
+		__updateBackbufferViewport (context);
 		
 		var scale = context.__stage3D.__stage.window.scale;
 		
@@ -287,19 +280,18 @@ class GLContext3D {
 			
 		}
 		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
+		var gl = context.__renderSession.gl;
 		
-		__flushSamplerState ();
+		__flushSamplerState (context);
 		context.__program.__flush ();
 		
 		var count = (numTriangles == -1) ? indexBuffer.__numIndices : (numTriangles * 3);
 		
 		gl.bindBuffer (GL.ELEMENT_ARRAY_BUFFER, indexBuffer.__id);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.drawElements (GL.TRIANGLES, count, indexBuffer.__elementType, firstIndex);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		#if gl_stats
 			GLStats.incrementDrawCall (DrawCallContext.STAGE3D);
@@ -333,9 +325,9 @@ class GLContext3D {
 		if (Context3D.__stateCache.updateBlendFactors (sourceFactor, destinationFactor)) {
 		
 			gl.enable (GL.BLEND);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			gl.blendFunc (__getGLBlendFactor (sourceFactor), __getGLBlendFactor (destinationFactor));
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 		}
 		
@@ -568,15 +560,15 @@ class GLContext3D {
 		var gl = context.__renderSession.gl;
 		
 		gl.bindFramebuffer (GL.FRAMEBUFFER, null);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.frontFace (GL.CCW);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		context.__renderToTexture = null;
-		__updateBackbufferViewport ();
-		__disableScissorRectangle ();
-		__updateDepthAndStencilState ();
+		__updateBackbufferViewport (context);
+		__disableScissorRectangle (gl);
+		__updateDepthAndStencilState (context);
 		
 		context.__positionScale[1] = 1.0;
 		
@@ -600,31 +592,31 @@ class GLContext3D {
 		if (create) {
 			
 			texture.__framebuffer = gl.createFramebuffer ();
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 		}
 		
 		gl.bindFramebuffer (GL.FRAMEBUFFER, texture.__framebuffer);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		if (create) {
 			
 			if (Std.is (texture, Texture)) {
 				
 				gl.framebufferTexture2D (GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, texture.__textureData.glTexture, 0);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 			} else if (Std.is (texture, RectangleTexture)) {
 				
 				gl.framebufferTexture2D (GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, texture.__textureData.glTexture, 0);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 			} else if (Std.is (texture, CubeTexture)) {
 				
 				for (i in 0...6) {
 					
 					gl.framebufferTexture2D (GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_CUBE_MAP_POSITIVE_X + i, texture.__textureData.glTexture, 0);
-					GLUtils.CheckGLError ();
+					GLUtils.checkGLError (gl);
 					
 				}
 				
@@ -641,15 +633,15 @@ class GLContext3D {
 			if (context.__supportsPackedDepthStencil) {
 				
 				texture.__depthStencilRenderbuffer = gl.createRenderbuffer ();
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 				gl.bindRenderbuffer (GL.RENDERBUFFER, texture.__depthStencilRenderbuffer);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				gl.renderbufferStorage (GL.RENDERBUFFER, Context3D.DEPTH_STENCIL, width, height);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 				gl.framebufferRenderbuffer (GL.FRAMEBUFFER, GL.DEPTH_STENCIL_ATTACHMENT, GL.RENDERBUFFER, texture.__depthStencilRenderbuffer);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 			} else {
 				
@@ -657,24 +649,24 @@ class GLContext3D {
 				texture.__stencilRenderbuffer = gl.createRenderbuffer ();
 				
 				gl.bindRenderbuffer (GL.RENDERBUFFER, texture.__stencilRenderbuffer);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				gl.renderbufferStorage (GL.RENDERBUFFER, GL.DEPTH_COMPONENT16, width, height);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 				gl.bindRenderbuffer (GL.RENDERBUFFER, texture.__stencilRenderbuffer);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				gl.renderbufferStorage (GL.RENDERBUFFER, GL.STENCIL_INDEX8, width, height);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 				gl.framebufferRenderbuffer (GL.FRAMEBUFFER, GL.DEPTH_ATTACHMENT, GL.RENDERBUFFER, texture.__depthRenderbuffer);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				gl.framebufferRenderbuffer (GL.FRAMEBUFFER, GL.STENCIL_ATTACHMENT, GL.RENDERBUFFER, texture.__stencilRenderbuffer);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 			}
 			
 			gl.bindRenderbuffer (GL.RENDERBUFFER, null);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 		}
 		
@@ -690,7 +682,7 @@ class GLContext3D {
 			
 		}
 		
-		__setViewport (0, 0, width, height);
+		__setViewport (gl, 0, 0, width, height);
 		
 		context.__positionScale[1] = -1.0;
 		
@@ -701,12 +693,12 @@ class GLContext3D {
 		}
 		
 		gl.frontFace (GL.CW);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		context.__renderToTexture = texture;
 		context.__rttDepthAndStencil = enableDepthAndStencil;
-		__disableScissorRectangle();
-		__updateDepthAndStencilState ();
+		__disableScissorRectangle(gl);
+		__updateDepthAndStencilState (context);
 		
 	}
 	
@@ -835,18 +827,15 @@ class GLContext3D {
 	
 	public static function setScissorRectangle (context:Context3D, rectangle:Rectangle):Void {
 		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
-		
 		if (rectangle != null) {
 			
 			var scale = context.__stage3D.__stage.window.scale;
-			__setScissorRectangle (Std.int (rectangle.x * scale), Std.int (rectangle.y * scale), 
+			__setScissorRectangle (context, Std.int (rectangle.x * scale), Std.int (rectangle.y * scale), 
 								Std.int (rectangle.width * scale), Std.int (rectangle.height * scale));
 			
 		} else {
 			
-			__disableScissorRectangle ();
+			__disableScissorRectangle (context.__renderSession.gl);
 			
 		}
 		
@@ -855,8 +844,7 @@ class GLContext3D {
 	
 	public static function setStencilActions (context:Context3D, triangleFace:Context3DTriangleFace = FRONT_AND_BACK, compareMode:Context3DCompareMode = ALWAYS, actionOnBothPass:Context3DStencilAction = KEEP, actionOnDepthFail:Context3DStencilAction = KEEP, actionOnDepthPassStencilFail:Context3DStencilAction = KEEP):Void {
 		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
+		var gl = context.__renderSession.gl;
 		
 		context.__stencilCompareMode = compareMode;
 		
@@ -868,8 +856,7 @@ class GLContext3D {
 	
 	public static function setStencilReferenceValue (context:Context3D, referenceValue:UInt, readMask:UInt = 0xFF, writeMask:UInt = 0xFF):Void {
 		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
+		var gl = context.__renderSession.gl;
 		
 		context.__stencilReadMask = readMask;
 		context.__stencilRef = referenceValue;
@@ -899,20 +886,20 @@ class GLContext3D {
 		if (buffer == null) {
 			
 			gl.disableVertexAttribArray (index);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 			gl.bindBuffer (GL.ARRAY_BUFFER, null);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 			return;
 			
 		}
 		
 		gl.enableVertexAttribArray (index);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.bindBuffer (GL.ARRAY_BUFFER, buffer.__id);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		var byteOffset = bufferOffset * 4;
 		
@@ -921,27 +908,27 @@ class GLContext3D {
 			case BYTES_4:
 				
 				gl.vertexAttribPointer (index, 4, GL.UNSIGNED_BYTE, true, buffer.__stride, byteOffset);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 			case FLOAT_4:
 				
 				gl.vertexAttribPointer (index, 4, GL.FLOAT, false, buffer.__stride, byteOffset);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 			
 			case FLOAT_3:
 				
 				gl.vertexAttribPointer (index, 3, GL.FLOAT, false, buffer.__stride, byteOffset);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 			
 			case FLOAT_2:
 				
 				gl.vertexAttribPointer (index, 2, GL.FLOAT, false, buffer.__stride, byteOffset);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 			
 			case FLOAT_1:
 				
 				gl.vertexAttribPointer (index, 1, GL.FLOAT, false, buffer.__stride, byteOffset);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 			
 			default:
 				
@@ -952,16 +939,17 @@ class GLContext3D {
 	}
 	
 	
-	private static function __disableScissorRectangle ():Void {
+	private static function __disableScissorRectangle (gl:GL):Void {
 		
 		gl.disable (GL.SCISSOR_TEST);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 	}
 	
 	
-	private static function __flushSamplerState ():Void {
+	private static function __flushSamplerState (context:Context3D):Void {
 		
+		var gl = context.__renderSession.gl;
 		var sampler = 0;
 		
 		while (context.__samplerDirty != 0) {
@@ -971,7 +959,7 @@ class GLContext3D {
 				if (Context3D.__stateCache.updateActiveTextureSample (sampler)) {
 					
 					gl.activeTexture (GL.TEXTURE0 + sampler);
-					GLUtils.CheckGLError ();
+					GLUtils.checkGLError (gl);
 					
 				}
 				
@@ -982,14 +970,14 @@ class GLContext3D {
 					var target = texture.__textureTarget;
 					
 					gl.bindTexture (target, texture.__getTexture ().glTexture);
-					GLUtils.CheckGLError ();
+					GLUtils.checkGLError (gl);
 					
 					texture.__setSamplerState (context.__samplerStates[sampler]);
 					
 				} else {
 					
 					gl.bindTexture (GL.TEXTURE_2D, null);
-					GLUtils.CheckGLError ();
+					GLUtils.checkGLError (gl);
 					
 				}
 				
@@ -1082,17 +1070,12 @@ class GLContext3D {
 	}
 	
 	
-	private static function __hasGLExtension (name:String):Bool {
+	private static function __setScissorRectangle (context:Context3D, x: Int, y: Int, width: Int, height: Int):Void {
 		
-		return (gl.getSupportedExtensions ().indexOf (name) != -1);
-		
-	}
-	
-	
-	private static function __setScissorRectangle (x: Int, y: Int, width: Int, height: Int):Void {
-		
+		var gl = context.__renderSession.gl;
+
 		gl.enable (GL.SCISSOR_TEST);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		var renderTargetHeight = 0;
 		var offsetX = 0;
@@ -1111,17 +1094,17 @@ class GLContext3D {
 		}
 		
 		gl.scissor (x + offsetX, renderTargetHeight - y - height + offsetY, width, height);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 	}
 	
 	
-	private static function __setViewport (originX:Int, originY:Int, width:Int, height:Int):Void {
+	private static function __setViewport (gl:GL, originX:Int, originY:Int, width:Int, height:Int):Void {
 		
 		if (Context3D.__stateCache.updateViewport (originX, originY, width, height)) {
 			
 			gl.viewport (originX, originY, width, height);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 		}
 		
@@ -1214,40 +1197,31 @@ class GLContext3D {
 	// }
 	
 	
-	private static function __updateDepthAndStencilState ():Void {
+	private static function __updateDepthAndStencilState (context:Context3D):Void {
 		
+		var gl = context.__renderSession.gl;
 		var depthAndStencil = context.__renderToTexture != null ? context.__rttDepthAndStencil : context.__backBufferEnableDepthAndStencil;
 		
 		if (depthAndStencil) {
 			
 			gl.enable (GL.DEPTH_TEST);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			gl.enable (GL.STENCIL_TEST);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 		} else {
 			
 			gl.disable (GL.DEPTH_TEST);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			gl.disable (GL.STENCIL_TEST);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 		}
 		
 	}
 	
 	
-	public static function __updateBackbufferViewportTEMP (context:Context3D):Void {
-		
-		GLContext3D.context = context;
-		GLContext3D.gl = context.__renderSession.gl;
-		
-		__updateBackbufferViewport ();
-		
-	}
-	
-	
-	private static function __updateBackbufferViewport ():Void {
+	public static function __updateBackbufferViewport (context:Context3D):Void {
 		
 		if (!Stage3D.__active) {
 			
@@ -1258,7 +1232,7 @@ class GLContext3D {
 		
 		if (context.__renderToTexture == null && context.backBufferWidth > 0 && context.backBufferHeight > 0) {
 			
-			__setViewport (Std.int (context.__stage3D.x), Std.int (context.__stage3D.y), context.backBufferWidth, context.backBufferHeight);
+			__setViewport (context.__renderSession.gl, Std.int (context.__stage3D.x), Std.int (context.__stage3D.y), context.backBufferWidth, context.backBufferHeight);
 			
 		}
 		

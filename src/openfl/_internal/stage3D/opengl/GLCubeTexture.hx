@@ -47,7 +47,7 @@ class GLCubeTexture {
 		var gl = renderSession.gl;
 		
 		gl.bindTexture (cubeTexture.__textureTarget, cubeTexture.__textureData.glTexture);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		var hasTexture = false;
 		
@@ -62,7 +62,7 @@ class GLCubeTexture {
 			cubeTexture.__format = format;
 			
 			gl.compressedTexImage2D (target, level, cubeTexture.__internalFormat, width, height, 0, bytes, 0, blockLength);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 			// __trackCompressedMemoryUsage (blockLength);
 			
@@ -74,14 +74,14 @@ class GLCubeTexture {
 				
 				var data = new UInt8Array (cubeTexture.__size * cubeTexture.__size * 4);
 				gl.texImage2D (__sideToTarget (gl, side), 0, cubeTexture.__internalFormat, cubeTexture.__size, cubeTexture.__size, 0, cubeTexture.__format, GL.UNSIGNED_BYTE, data);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 			}
 			
 		}
 		
 		gl.bindTexture (cubeTexture.__textureTarget, null);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 	}
 	
@@ -133,13 +133,13 @@ class GLCubeTexture {
 		var target = __sideToTarget (gl, side);
 		
 		gl.bindTexture (GL.TEXTURE_CUBE_MAP, cubeTexture.__textureData.glTexture);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.texImage2D (target, miplevel, cubeTexture.__internalFormat, size, size, 0, cubeTexture.__format, GL.UNSIGNED_BYTE, data);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.bindTexture (cubeTexture.__textureTarget, null);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		cubeTexture.__uploadedSides |= 1 << side;
 		
@@ -158,7 +158,7 @@ class GLCubeTexture {
 			if (state.minFilter != GL.NEAREST && state.minFilter != GL.LINEAR && !state.mipmapGenerated) {
 				
 				gl.generateMipmap (GL.TEXTURE_CUBE_MAP);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 				state.mipmapGenerated = true;
 				
@@ -167,7 +167,7 @@ class GLCubeTexture {
 			if (state.maxAniso != 0.0) {
 				
 				gl.texParameterf (GL.TEXTURE_CUBE_MAP, Context3D.TEXTURE_MAX_ANISOTROPY_EXT, state.maxAniso);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 			}
 			

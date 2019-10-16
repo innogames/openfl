@@ -1,65 +1,40 @@
 package openfl._internal.renderer.opengl;
 
-
 import openfl._internal.renderer.opengl.batcher.BatchRenderer;
 import lime.graphics.GLRenderContext;
-import lime.graphics.opengl.GLFramebuffer;
 import lime.graphics.opengl.GL;
 import lime.math.Matrix4;
-import openfl.display.BitmapData;
 import openfl.display.Graphics;
 import openfl.display.Stage;
 import openfl.geom.Matrix;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-@:access(openfl.display.BitmapData)
 @:access(openfl.display.Graphics)
 @:access(openfl.display.Stage)
 @:access(openfl.display.Stage3D)
-@:access(openfl.display3D.Context3D)
-@:access(openfl.display3D.Program3D)
-@:access(openfl.geom.Matrix)
-
-
 class GLRenderer {
 	
 	public var height:Int;
 	public var width:Int;
-	
-	public var projection:Matrix4;
 	public var projectionFlipped:Matrix4;
-	
-	public var defaultRenderTarget:BitmapData;
 	
 	private var stage:Stage;
 	private var renderSession:RenderSession;
-	private var currentRenderTarget:BitmapData;
+	private var displayWidth:Int;
 	private var displayHeight:Int;
 	private var displayMatrix:Matrix;
-	private var displayWidth:Int;
-	private var flipped:Bool;
 	private var gl:GLRenderContext;
 	private var matrix:Matrix4;
-	private var renderTargetA:BitmapData;
-	private var renderTargetB:BitmapData;
 	private var offsetX:Int;
 	private var offsetY:Int;
 	
 	
-	public function new (stage:Stage, gl:GLRenderContext, ?defaultRenderTarget:BitmapData) {
+	public function new (stage:Stage, gl:GLRenderContext) {
 		
 		this.stage = stage;
+		this.gl = gl;
 		
 		width = stage.stageWidth;
 		height = stage.stageHeight;
-		
-		this.gl = gl;
-		this.defaultRenderTarget = defaultRenderTarget;
-		this.flipped = (defaultRenderTarget == null);
 		
 		if (Graphics.maxTextureWidth == null) {
 			
@@ -72,11 +47,8 @@ class GLRenderer {
 		renderSession = new RenderSession ();
 		renderSession.clearRenderDirty = true;
 		renderSession.gl = gl;
-		//renderSession.roundPixels = true;
 		renderSession.renderer = this;
-		#if (js && html5)
 		renderSession.pixelRatio = stage.window.scale;
-		#end
 		var blendModeManager = new GLBlendModeManager (gl);
 		renderSession.blendModeManager = blendModeManager;
 		var shaderManager = new GLShaderManager (gl);
@@ -93,8 +65,8 @@ class GLRenderer {
 				
 			}
 			
-			var width:Int = (defaultRenderTarget != null) ? defaultRenderTarget.width : Math.ceil (stage.window.width * stage.window.scale);
-			var height:Int = (defaultRenderTarget != null) ? defaultRenderTarget.height : Math.ceil (stage.window.height * stage.window.scale);
+			var width = Math.ceil (stage.window.width * stage.window.scale);
+			var height = Math.ceil (stage.window.height * stage.window.scale);
 			
 			resize (width, height);
 			
@@ -116,18 +88,6 @@ class GLRenderer {
 		}
 		
 		gl.clear (GL.COLOR_BUFFER_BIT);
-		
-	}
-	
-	
-	public function getCacheObject ():Void {
-		
-		// gl.bindFramebuffer (GL.FRAMEBUFFER, cacheObject.__getFramebuffer (gl));
-		// gl.viewport (0, 0, width, height);
-		// gl.clearColor (0, 0, 0, 0);
-		// gl.clear (GL.COLOR_BUFFER_BIT);
-		
-		// flipped = false;
 		
 	}
 	
@@ -162,63 +122,9 @@ class GLRenderer {
 		matrix[5] = _matrix.d;
 		matrix[12] = _matrix.tx;
 		matrix[13] = _matrix.ty;
-		matrix.append (flipped ? projectionFlipped : projection);
+		matrix.append (projectionFlipped);
 		
 		return matrix;
-		
-	}
-	
-	
-	public function getRenderTarget (framebuffer:Bool):Void {
-		
-		if (framebuffer) {
-			
-			if (renderTargetA == null) {
-				
-				renderTargetA = BitmapData.fromTexture (stage.stage3Ds[0].context3D.createRectangleTexture (width, height, BGRA, true));
-				
-				gl.bindTexture (GL.TEXTURE_2D, renderTargetA.getTexture (gl).data.glTexture);
-				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
-				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
-				
-			}
-			
-			if (renderTargetB == null) {
-				
-				renderTargetB = BitmapData.fromTexture (stage.stage3Ds[0].context3D.createRectangleTexture (width, height, BGRA, true));
-				
-				gl.bindTexture (GL.TEXTURE_2D, renderTargetB.getTexture (gl).data.glTexture);
-				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
-				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
-				
-			}
-			
-			if (currentRenderTarget == renderTargetA) {
-				
-				currentRenderTarget = renderTargetB;
-				
-			} else {
-				
-				currentRenderTarget = renderTargetA;
-				
-			}
-			
-			gl.bindFramebuffer (GL.FRAMEBUFFER, currentRenderTarget.__getFramebuffer (gl));
-			gl.viewport (0, 0, width, height);
-			gl.clearColor (0, 0, 0, 0);
-			gl.clear (GL.COLOR_BUFFER_BIT);
-			
-			flipped = false;
-			
-		} else {
-			
-			currentRenderTarget = defaultRenderTarget;
-			var frameBuffer:GLFramebuffer = (currentRenderTarget != null) ? currentRenderTarget.__getFramebuffer (gl) : null;
-			
-			gl.bindFramebuffer (GL.FRAMEBUFFER, frameBuffer);
-			
-			flipped = (currentRenderTarget == null);
-		}
 		
 	}
 	
@@ -231,7 +137,7 @@ class GLRenderer {
 		renderSession.forceSmoothing = #if always_smooth_on_upscale (displayMatrix.a != 1 || displayMatrix.d != 1); #else false; #end
 		
 		// setup projection matrix for the batcher as it's an uniform value for all the draw calls
-		renderSession.batcher.projectionMatrix = flipped ? projectionFlipped : projection;
+		renderSession.batcher.projectionMatrix = projectionFlipped;
 		// also pass the viewport to the batcher because it uses it for the out-of-screen quad culling
 		renderSession.batcher.setViewport(offsetX, offsetY, displayWidth, displayHeight);
 		
@@ -288,51 +194,16 @@ class GLRenderer {
 		this.width = width;
 		this.height = height;
 		
-		// if (cacheObject == null || cacheObject.width != width || cacheObject.height != height) {
-			
-		// 	cacheObject = BitmapData.fromTexture (stage.stage3Ds[0].context3D.createRectangleTexture (width, height, BGRA, true));
-			
-		// 	gl.bindTexture (GL.TEXTURE_2D, cacheObject.getTexture (gl).data.glTexture);
-		// 	gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
-		// 	gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
-			
-		// }
+		displayMatrix = stage.__displayMatrix;
 		
-		if (width > 0 && height > 0) {
-			
-			if (renderTargetA != null && (renderTargetA.width != width || renderTargetA.height != height)) {
-				
-				renderTargetA = BitmapData.fromTexture (stage.stage3Ds[0].context3D.createRectangleTexture (width, height, BGRA, true));
-				
-				gl.bindTexture (GL.TEXTURE_2D, renderTargetA.getTexture (gl).data.glTexture);
-				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
-				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
-				
-			}
-			
-			if (renderTargetB != null && (renderTargetB.width != width || renderTargetB.height != height)) {
-				
-				renderTargetB = BitmapData.fromTexture (stage.stage3Ds[0].context3D.createRectangleTexture (width, height, BGRA, true));
-				
-				gl.bindTexture (GL.TEXTURE_2D, renderTargetB.getTexture (gl).data.glTexture);
-				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
-				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
-				
-			}
-			
-		}
-		
-		displayMatrix = (defaultRenderTarget == null) ? stage.__displayMatrix : new Matrix ();
-		
-		var w = (defaultRenderTarget == null) ? stage.stageWidth : defaultRenderTarget.width;
-		var h = (defaultRenderTarget == null) ? stage.stageHeight : defaultRenderTarget.height;
+		var w = stage.stageWidth;
+		var h = stage.stageHeight;
 		
 		offsetX = Math.round (displayMatrix.__transformX (0, 0));
 		offsetY = Math.round (displayMatrix.__transformY (0, 0));
 		displayWidth = Math.round (displayMatrix.__transformX (w, 0) - offsetX);
 		displayHeight = Math.round (displayMatrix.__transformY (0, h) - offsetY);
 		
-		projection = Matrix4.createOrtho (offsetX, displayWidth + offsetX, offsetY, displayHeight + offsetY, -1000, 1000);
 		projectionFlipped = Matrix4.createOrtho (offsetX, displayWidth + offsetX, displayHeight + offsetY, offsetY, -1000, 1000);
 		
 	}

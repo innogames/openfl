@@ -226,15 +226,15 @@ class GLTextureBase {
 			var gl = renderSession.gl;
 			
 			gl.bindTexture (textureBase.__textureTarget, textureBase.__textureData.glTexture);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			gl.texParameteri (textureBase.__textureTarget, GL.TEXTURE_MIN_FILTER, state.minFilter);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			gl.texParameteri (textureBase.__textureTarget, GL.TEXTURE_MAG_FILTER, state.magFilter);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			gl.texParameteri (textureBase.__textureTarget, GL.TEXTURE_WRAP_S, state.wrapModeS);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			gl.texParameteri (textureBase.__textureTarget, GL.TEXTURE_WRAP_T, state.wrapModeT);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 			if (state.lodBias != 0.0) {
 				

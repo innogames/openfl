@@ -36,10 +36,10 @@ class GLTexture {
 		texture.__textureTarget = GL.TEXTURE_2D;
 		
 		gl.bindTexture (texture.__textureTarget, texture.__textureData.glTexture);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.texImage2D (texture.__textureTarget, 0, texture.__internalFormat, texture.__width, texture.__height, 0, texture.__format, GL.UNSIGNED_BYTE, null);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.bindTexture (texture.__textureTarget, null);
 		
@@ -56,7 +56,7 @@ class GLTexture {
 		var gl = renderSession.gl;
 		
 		gl.bindTexture (texture.__textureTarget, texture.__textureData.glTexture);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		var hasTexture = false;
 		
@@ -70,7 +70,7 @@ class GLTexture {
 			texture.__internalFormat = format;
 			
 			gl.compressedTexImage2D (texture.__textureTarget, level, texture.__internalFormat, width, height, 0, bytes, 0, blockLength);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 			// __trackCompressedMemoryUsage (blockLength);
 			
@@ -80,12 +80,12 @@ class GLTexture {
 			
 			var data = new UInt8Array (texture.__width * texture.__height * 4);
 			gl.texImage2D (texture.__textureTarget, 0, texture.__internalFormat, texture.__width, texture.__height, 0, texture.__format, GL.UNSIGNED_BYTE, data);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 		}
 		
 		gl.bindTexture (texture.__textureTarget, null);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 	}
 	
@@ -157,13 +157,13 @@ class GLTexture {
 		if (height == 0) height = 1;
 		
 		gl.bindTexture (texture.__textureTarget, texture.__textureData.glTexture);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.texImage2D (texture.__textureTarget, miplevel, texture.__internalFormat, width, height, 0, texture.__format, GL.UNSIGNED_BYTE, data);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.bindTexture (texture.__textureTarget, null);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		// var memUsage = (width * height) * 4;
 		// __trackMemoryUsage (memUsage);
@@ -180,7 +180,7 @@ class GLTexture {
 			if (state.minFilter != GL.NEAREST && state.minFilter != GL.LINEAR && !state.mipmapGenerated) {
 				
 				gl.generateMipmap (GL.TEXTURE_2D);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 				state.mipmapGenerated = true;
 				
@@ -189,7 +189,7 @@ class GLTexture {
 			if (state.maxAniso != 0.0) {
 				
 				gl.texParameterf (GL.TEXTURE_2D, Context3D.TEXTURE_MAX_ANISOTROPY_EXT, state.maxAniso);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 			}
 			

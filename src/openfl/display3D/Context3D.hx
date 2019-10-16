@@ -331,7 +331,7 @@ import openfl.Vector;
 	
 	private function __updateBackbufferViewport ():Void {
 		
-		GLContext3D.__updateBackbufferViewportTEMP (this);
+		GLContext3D.__updateBackbufferViewport (this);
 		
 	}
 	
