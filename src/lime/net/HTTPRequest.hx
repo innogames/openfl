@@ -3,6 +3,8 @@ package lime.net;
 import haxe.io.Bytes;
 import lime.app.Future;
 import lime._backend.html5.HTML5HTTPRequest as HTTPRequestBackend;
+import openfl.net.URLRequestMethod;
+import openfl.net.URLRequestHeader;
 
 class HTTPRequest {
 	public var contentType:String;
@@ -10,9 +12,9 @@ class HTTPRequest {
 	public var enableResponseHeaders:Bool;
 	public var followRedirects:Bool;
 	public var formData:Map<String, Dynamic>;
-	public var headers:Array<HTTPRequestHeader>;
-	public var method:HTTPRequestMethod;
-	public var responseHeaders:Array<HTTPRequestHeader>;
+	public var headers:Array<URLRequestHeader>;
+	public var method:URLRequestMethod;
+	public var responseHeaders:Array<URLRequestHeader>;
 	public var responseStatus:Int;
 	public var timeout:Int;
 	public var uri:String;

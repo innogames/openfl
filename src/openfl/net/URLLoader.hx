@@ -3,7 +3,6 @@ package openfl.net;
 
 import haxe.io.Bytes;
 import lime.net.HTTPRequest;
-import lime.net.HTTPRequestHeader;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
 import openfl.events.HTTPStatusEvent;
@@ -125,17 +124,7 @@ class URLLoader extends EventDispatcher {
 		
 		__httpRequest = httpRequest;
 		__httpRequest.uri = request.url;
-		
-		__httpRequest.method = switch (request.method) {
-			
-			case URLRequestMethod.DELETE: DELETE;
-			case URLRequestMethod.HEAD: HEAD;
-			case URLRequestMethod.OPTIONS: OPTIONS;
-			case URLRequestMethod.POST: POST;
-			case URLRequestMethod.PUT: PUT;
-			default: GET;
-			
-		}
+		__httpRequest.method = request.method;
 		
 		if (request.data != null) {
 			
@@ -167,7 +156,7 @@ class URLLoader extends EventDispatcher {
 			
 			for (header in request.requestHeaders) {
 				
-				__httpRequest.headers.push (new HTTPRequestHeader (header.name, header.value));
+				__httpRequest.headers.push (new URLRequestHeader (header.name, header.value));
 				
 			}
 			

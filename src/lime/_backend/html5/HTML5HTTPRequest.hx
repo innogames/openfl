@@ -15,7 +15,7 @@ import lime.app.Promise;
 import lime.graphics.Image;
 import lime.graphics.ImageBuffer;
 import lime.net.HTTPRequest;
-import lime.net.HTTPRequestHeader;
+import openfl.net.URLRequestHeader;
 
 @:access(lime.graphics.ImageBuffer)
 @:access(lime.graphics.Image)
@@ -289,7 +289,7 @@ class HTML5HTTPRequest {
 				
 				if (name != "") {
 					
-					parent.responseHeaders.push (new HTTPRequestHeader (name, value));
+					parent.responseHeaders.push (new URLRequestHeader (name, value));
 					
 				}
 				
