@@ -1,14 +1,10 @@
 package lime.graphics.utils;
 
 
-import haxe.io.Bytes;
 import lime.graphics.Image;
-import lime.graphics.ImageBuffer;
 import lime.graphics.PixelFormat;
-import lime.math.ColorMatrix;
 import lime.math.Rectangle;
 import lime.math.Vector2;
-import lime.system.Endian;
 import lime.utils.UInt8Array;
 
 #if (js && html5)
@@ -19,15 +15,6 @@ import js.Browser;
 
 
 class ImageCanvasUtil {
-	
-	
-	public static function colorTransform (image:Image, rect:Rectangle, colorMatrix:ColorMatrix):Void {
-		
-		convertToData (image);
-		
-		ImageDataUtil.colorTransform (image, rect, colorMatrix);
-		
-	}
 	
 	
 	public static function convertToCanvas (image:Image, clear:Bool = false):Void {
@@ -128,16 +115,6 @@ class ImageCanvasUtil {
 		#end
 		
 		image.type = DATA;
-		
-	}
-	
-	
-	public static function copyChannel (image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, sourceChannel:ImageChannel, destChannel:ImageChannel):Void {
-		
-		convertToData (sourceImage);
-		convertToData (image);
-		
-		ImageDataUtil.copyChannel (image, sourceImage, sourceRect, destPoint, sourceChannel, destChannel);
 		
 	}
 	
@@ -301,52 +278,6 @@ class ImageCanvasUtil {
 	}
 	
 	
-	public static function floodFill (image:Image, x:Int, y:Int, color:Int, format:PixelFormat):Void {
-		
-		convertToData (image);
-		
-		ImageDataUtil.floodFill (image, x, y, color, format);
-		
-	}
-	
-	
-	public static function getPixel (image:Image, x:Int, y:Int, format:PixelFormat):Int {
-		
-		convertToData (image);
-		
-		return ImageDataUtil.getPixel (image, x, y, format);
-		
-	}
-	
-	
-	public static function getPixel32 (image:Image, x:Int, y:Int, format:PixelFormat):Int {
-		
-		convertToData (image);
-		
-		return ImageDataUtil.getPixel32 (image, x, y, format);
-		
-	}
-	
-	
-	public static function getPixels (image:Image, rect:Rectangle, format:PixelFormat):Bytes {
-		
-		convertToData (image);
-		
-		return ImageDataUtil.getPixels (image, rect, format);
-		
-	}
-	
-	
-	public static function merge (image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, redMultiplier:Int, greenMultiplier:Int, blueMultiplier:Int, alphaMultiplier:Int):Void {
-		
-		convertToData (sourceImage);
-		convertToData (image);
-		
-		ImageDataUtil.merge (image, sourceImage, sourceRect, destPoint, redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier);
-		
-	}
-	
-	
 	public static function resize (image:Image, newWidth:Int, newHeight:Int):Void {
 		
 		var buffer = image.buffer;
@@ -388,33 +319,6 @@ class ImageCanvasUtil {
 		
 		image.dirty = true;
 		image.version++;
-		
-	}
-	
-	
-	public static function setPixel (image:Image, x:Int, y:Int, color:Int, format:PixelFormat):Void {
-		
-		convertToData (image);
-		
-		ImageDataUtil.setPixel (image, x, y, color, format);
-		
-	}
-	
-	
-	public static function setPixel32 (image:Image, x:Int, y:Int, color:Int, format:PixelFormat):Void {
-		
-		convertToData (image);
-		
-		ImageDataUtil.setPixel32 (image, x, y, color, format);
-		
-	}
-	
-	
-	public static function setPixels (image:Image, rect:Rectangle, bytes:Bytes, dataPosition:Int, format:PixelFormat, endian:Endian):Void {
-		
-		convertToData (image);
-		
-		ImageDataUtil.setPixels (image, rect, bytes, dataPosition, format, endian);
 		
 	}
 	

@@ -139,19 +139,8 @@ class Image {
 		rect = __clipRect (rect);
 		if (buffer == null || rect == null) return;
 		
-		switch (type) {
-			
-			case CANVAS:
-				
-				ImageCanvasUtil.colorTransform (this, rect, colorMatrix);
-			
-			case DATA:
-				
-				ImageCanvasUtil.convertToData (this);
-				
-				ImageDataUtil.colorTransform (this, rect, colorMatrix);
-			
-		}
+		ImageCanvasUtil.convertToData (this);
+		ImageDataUtil.colorTransform (this, rect, colorMatrix);
 		
 	}
 	
@@ -165,20 +154,10 @@ class Image {
 		if (sourceRect.x + sourceRect.width > sourceImage.width) sourceRect.width = sourceImage.width - sourceRect.x;
 		if (sourceRect.y + sourceRect.height > sourceImage.height) sourceRect.height = sourceImage.height - sourceRect.y;
 		
-		switch (type) {
-			
-			case CANVAS:
-				
-				ImageCanvasUtil.copyChannel (this, sourceImage, sourceRect, destPoint, sourceChannel, destChannel);
-			
-			case DATA:
-				
-				ImageCanvasUtil.convertToData (this);
-				ImageCanvasUtil.convertToData (sourceImage);
-				
-				ImageDataUtil.copyChannel (this, sourceImage, sourceRect, destPoint, sourceChannel, destChannel);
-				
-		}
+		ImageCanvasUtil.convertToData (this);
+		ImageCanvasUtil.convertToData (sourceImage);
+		
+		ImageDataUtil.copyChannel (this, sourceImage, sourceRect, destPoint, sourceChannel, destChannel);
 		
 	}
 	
@@ -318,19 +297,9 @@ class Image {
 		
 		if (buffer == null) return;
 		
-		switch (type) {
-			
-			case CANVAS:
-				
-				ImageCanvasUtil.floodFill (this, x, y, color, format);
-			
-			case DATA:
-				
-				ImageCanvasUtil.convertToData (this);
-				
-				ImageDataUtil.floodFill (this, x, y, color, format);
-			
-		}
+		ImageCanvasUtil.convertToData (this);
+		
+		ImageDataUtil.floodFill (this, x, y, color, format);
 		
 	}
 	
@@ -393,19 +362,11 @@ class Image {
 		
 		if (buffer == null) return null;
 		
-		switch (type) {
-			
-			case CANVAS:
-				
-				ImageCanvasUtil.convertToData (this);
-				
-				return ImageDataUtil.getColorBoundsRect (this, mask, color, findColor, format);
-			
-			case DATA:
-				
-				return ImageDataUtil.getColorBoundsRect (this, mask, color, findColor, format);
-
+		if (type == CANVAS) {
+			ImageCanvasUtil.convertToData (this);
 		}
+
+		return ImageDataUtil.getColorBoundsRect (this, mask, color, findColor, format);
 		
 	}
 	
@@ -414,19 +375,9 @@ class Image {
 		
 		if (buffer == null || x < 0 || y < 0 || x >= width || y >= height) return 0;
 		
-		switch (type) {
-			
-			case CANVAS:
-				
-				return ImageCanvasUtil.getPixel (this, x, y, format);
-			
-			case DATA:
-				
-				ImageCanvasUtil.convertToData (this);
-				
-				return ImageDataUtil.getPixel (this, x, y, format);
-			
-		}
+		ImageCanvasUtil.convertToData (this);
+		
+		return ImageDataUtil.getPixel (this, x, y, format);
 		
 	}
 	
@@ -435,19 +386,9 @@ class Image {
 		
 		if (buffer == null || x < 0 || y < 0 || x >= width || y >= height) return 0;
 		
-		switch (type) {
-			
-			case CANVAS:
-				
-				return ImageCanvasUtil.getPixel32 (this, x, y, format);
-			
-			case DATA:
-				
-				ImageCanvasUtil.convertToData (this);
-				
-				return ImageDataUtil.getPixel32 (this, x, y, format);
-			
-		}
+		ImageCanvasUtil.convertToData (this);
+		
+		return ImageDataUtil.getPixel32 (this, x, y, format);
 		
 	}
 	
@@ -456,19 +397,9 @@ class Image {
 		
 		if (buffer == null) return null;
 		
-		switch (type) {
-			
-			case CANVAS:
-				
-				return ImageCanvasUtil.getPixels (this, rect, format);
-			
-			case DATA:
-				
-				ImageCanvasUtil.convertToData (this);
-				
-				return ImageDataUtil.getPixels (this, rect, format);
-			
-		}
+		ImageCanvasUtil.convertToData (this);
+		
+		return ImageDataUtil.getPixels (this, rect, format);
 		
 	}
 	
@@ -529,46 +460,14 @@ class Image {
 		
 		if (buffer == null || sourceImage == null) return;
 		
-		switch (type) {
-			
-			case CANVAS:
-				
-				ImageCanvasUtil.convertToCanvas (this);
-				ImageCanvasUtil.merge (this, sourceImage, sourceRect, destPoint, redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier);
-			
-			case DATA:
-				
-				ImageCanvasUtil.convertToData (this);
-				ImageCanvasUtil.convertToData (sourceImage);
-				
-				ImageDataUtil.merge (this, sourceImage, sourceRect, destPoint, redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier);
-			
+		if (type == CANVAS) {
+			ImageCanvasUtil.convertToCanvas (this);
 		}
+
+		ImageCanvasUtil.convertToData (this);
+		ImageCanvasUtil.convertToData (sourceImage);
 		
-	}
-	
-	
-	public function resize (newWidth:Int, newHeight:Int):Void {
-		
-		switch (type) {
-			
-			case CANVAS:
-				
-				ImageCanvasUtil.resize (this, newWidth, newHeight);
-			
-			case DATA:
-				
-				ImageDataUtil.resize (this, newWidth, newHeight);
-			
-		}
-		
-		buffer.width = newWidth;
-		buffer.height = newHeight;
-		
-		offsetX = 0;
-		offsetY = 0;
-		width = newWidth;
-		height = newHeight;
+		ImageDataUtil.merge (this, sourceImage, sourceRect, destPoint, redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier);
 		
 	}
 	
@@ -596,19 +495,9 @@ class Image {
 		
 		if (buffer == null || x < 0 || y < 0 || x >= width || y >= height) return;
 		
-		switch (type) {
-			
-			case CANVAS:
-				
-				ImageCanvasUtil.setPixel (this, x, y, color, format);
-			
-			case DATA:
-				
-				ImageCanvasUtil.convertToData (this);
-				
-				ImageDataUtil.setPixel (this, x, y, color, format);
-			
-		}
+		ImageCanvasUtil.convertToData (this);
+		
+		ImageDataUtil.setPixel (this, x, y, color, format);
 		
 	}
 	
@@ -617,19 +506,9 @@ class Image {
 		
 		if (buffer == null || x < 0 || y < 0 || x >= width || y >= height) return;
 		
-		switch (type) {
-			
-			case CANVAS:
-				
-				ImageCanvasUtil.setPixel32 (this, x, y, color, format);
-			
-			case DATA:
-				
-				ImageCanvasUtil.convertToData (this);
-				
-				ImageDataUtil.setPixel32 (this, x, y, color, format);
-			
-		}
+		ImageCanvasUtil.convertToData (this);
+		
+		ImageDataUtil.setPixel32 (this, x, y, color, format);
 		
 	}
 	
@@ -641,19 +520,9 @@ class Image {
 		//if (endian == null) endian = System.endianness; // TODO: System endian order
 		if (endian == null) endian = BIG_ENDIAN;
 		
-		switch (type) {
-			
-			case CANVAS:
-				
-				ImageCanvasUtil.setPixels (this, rect, bytes, dataPosition, format, endian);
-			
-			case DATA:
-				
-				ImageCanvasUtil.convertToData (this);
-				
-				ImageDataUtil.setPixels (this, rect, bytes, dataPosition, format, endian);
-			
-		}
+		ImageCanvasUtil.convertToData (this);
+		
+		ImageDataUtil.setPixels (this, rect, bytes, dataPosition, format, endian);
 		
 	}
 	
