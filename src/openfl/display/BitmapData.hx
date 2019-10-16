@@ -3,11 +3,9 @@ package openfl.display;
 
 import lime.app.Future;
 import lime.graphics.opengl.GLBuffer;
-import lime.graphics.opengl.GLFramebuffer;
 import lime.graphics.opengl.GLVertexArrayObject;
 import lime.graphics.opengl.GL;
 import lime.graphics.GLRenderContext;
-import lime._backend.html5.HTML5Renderer;
 import lime.graphics.Image;
 import lime.graphics.ImageChannel;
 import lime.graphics.utils.ImageCanvasUtil;
@@ -58,12 +56,6 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 @:access(openfl.geom.Matrix)
 @:access(openfl.geom.Point)
 @:access(openfl.geom.Rectangle)
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 class BitmapData implements IBitmapDrawable {
 	
 	
@@ -88,8 +80,6 @@ class BitmapData implements IBitmapDrawable {
 	private var __bufferContext:GLRenderContext;
 	private var __bufferAlpha:Float;
 	private var __bufferData:Float32Array;
-	private var __framebuffer:GLFramebuffer;
-	private var __framebufferContext:GLRenderContext;
 	private var __isMask:Bool;
 	private var __isValid:Bool;
 	private var __renderable:Bool;
@@ -176,8 +166,6 @@ class BitmapData implements IBitmapDrawable {
 			bitmapData.height = height;
 			bitmapData.rect.copyFrom (rect);
 			
-			bitmapData.__framebuffer = __framebuffer;
-			bitmapData.__framebufferContext = __framebufferContext;
 			bitmapData.__textureData = __textureData;
 			bitmapData.__textureContext = __textureContext;
 			bitmapData.__isValid = true;
@@ -394,9 +382,6 @@ class BitmapData implements IBitmapDrawable {
 			__bufferContext = null;
 		}
 		
-		__framebuffer = null;
-		__framebufferContext = null;
-		
 		if (__ownsTexture) {
 			__ownsTexture = false;
 			if (__textureContext.isTexture (__textureData.glTexture)) { // prevent the warning when the id becomes invalid after context loss+restore
@@ -517,32 +502,6 @@ class BitmapData implements IBitmapDrawable {
 		if (readable) {
 			
 			image.fillRect (rect.__toLimeRectangle (), color, ARGB32);
-			
-		} else if (__framebuffer != null) {
-			
-			var gl = HTML5Renderer.context;
-			var color:ARGB = (color:ARGB);
-			var useScissor = !this.rect.equals (rect);
-			
-			gl.bindFramebuffer (GL.FRAMEBUFFER, __framebuffer);
-			
-			if (useScissor) {
-				
-				gl.enable (GL.SCISSOR_TEST);
-				gl.scissor (Math.round (rect.x), Math.round (rect.y), Math.round (rect.width), Math.round (rect.height));
-				
-			}
-			
-			gl.clearColor (color.r / 0xFF, color.g / 0xFF, color.b / 0xFF, color.a / 0xFF);
-			gl.clear (GL.COLOR_BUFFER_BIT);
-			
-			if (useScissor) {
-				
-				gl.disable (GL.SCISSOR_TEST);
-				
-			}
-			
-			gl.bindFramebuffer (GL.FRAMEBUFFER, null);
 			
 		}
 		
@@ -1583,25 +1542,6 @@ class BitmapData implements IBitmapDrawable {
 		var bounds = DisplayObject.__tempBoundsRectangle;
 		this.rect.__transform (bounds, matrix);
 		rect.__expand (bounds.x, bounds.y, bounds.width, bounds.height);
-		
-	}
-	
-	
-	private function __getFramebuffer (gl:GLRenderContext):GLFramebuffer {
-		
-		if (__framebuffer == null || __framebufferContext != gl) {
-			
-			getTexture (gl);
-			
-			__framebufferContext = gl;
-			__framebuffer = gl.createFramebuffer ();
-			
-			gl.bindFramebuffer (GL.FRAMEBUFFER, __framebuffer);
-			gl.framebufferTexture2D (GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, __textureData.glTexture, 0);
-			
-		}
-		
-		return __framebuffer;
 		
 	}
 	

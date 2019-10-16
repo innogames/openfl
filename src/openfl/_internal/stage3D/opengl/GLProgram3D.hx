@@ -56,7 +56,7 @@ class GLProgram3D {
 			
 		}
 		
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 	}
 	
@@ -65,7 +65,7 @@ class GLProgram3D {
 		
 		var gl = renderSession.gl;
 		gl.uniform4fv (program.__positionScale.location, positionScale);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 	}
 	
@@ -97,7 +97,7 @@ class GLProgram3D {
 		var gl = renderSession.gl;
 		
 		gl.useProgram (program.__programID);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		program.__vertexUniformMap.markAllDirty ();
 		program.__fragmentUniformMap.markAllDirty ();
@@ -107,7 +107,7 @@ class GLProgram3D {
 			if (sampler.regCount == 1) {
 				
 				gl.uniform1i (sampler.location, sampler.regIndex);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 			} else {
 				
@@ -118,7 +118,7 @@ class GLProgram3D {
 					// sampler array?
 					for(i in 0...sampler.regCount) {
 						gl.uniform1i(sampler.location + i, sampler.regIndex + i);
-						GLUtils.CheckGLError ();
+						GLUtils.checkGLError (gl);
 					}
 					*/
 			}
@@ -130,7 +130,7 @@ class GLProgram3D {
 			if (sampler.regCount == 1) {
 				
 				gl.uniform1i (sampler.location, sampler.regIndex);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 			} else {
 				
@@ -141,7 +141,7 @@ class GLProgram3D {
 					// sampler array?
 					for(i in 0...sampler.regCount) {
 						gl.uniform1i(sampler.location + i, sampler.regIndex + i);
-						GLUtils.CheckGLError ();
+						GLUtils.checkGLError (gl);
 					}
 					*/
 				
@@ -164,7 +164,7 @@ class GLProgram3D {
 		
 		var numActive = 0;
 		numActive = gl.getProgramParameter (program.__programID, GL.ACTIVE_UNIFORMS);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		var vertexUniforms = new List<Uniform> ();
 		var fragmentUniforms = new List<Uniform> ();
@@ -175,7 +175,7 @@ class GLProgram3D {
 			var name = info.name;
 			var size = info.size;
 			var uniformType = info.type;
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 			var uniform = new Uniform (gl);
 			uniform.name = name;
@@ -183,7 +183,7 @@ class GLProgram3D {
 			uniform.type = uniformType;
 			
 			uniform.location = gl.getUniformLocation (program.__programID, uniform.name);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 			var indexBracket = uniform.name.indexOf ('[');
 			
@@ -270,7 +270,7 @@ class GLProgram3D {
 		if (program.__vertexShaderID != null) {
 			
 			gl.deleteShader (program.__vertexShaderID);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			program.__vertexShaderID = null;
 			
 		}
@@ -278,7 +278,7 @@ class GLProgram3D {
 		if (program.__fragmentShaderID != null) {
 			
 			gl.deleteShader (program.__fragmentShaderID);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			program.__fragmentShaderID = null;
 			
 		}
@@ -319,14 +319,14 @@ class GLProgram3D {
 		
 		program.__vertexShaderID = gl.createShader (GL.VERTEX_SHADER);
 		gl.shaderSource (program.__vertexShaderID, vertexShaderSource);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.compileShader (program.__vertexShaderID);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		var shaderCompiled = gl.getShaderParameter (program.__vertexShaderID, GL.COMPILE_STATUS);
 		
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		if (shaderCompiled == 0) {
 			
@@ -344,10 +344,10 @@ class GLProgram3D {
 		
 		program.__fragmentShaderID = gl.createShader (GL.FRAGMENT_SHADER);
 		gl.shaderSource (program.__fragmentShaderID, fragmentShaderSource);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.compileShader (program.__fragmentShaderID);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		var fragmentCompiled = gl.getShaderParameter (program.__fragmentShaderID, GL.COMPILE_STATUS);
 		
@@ -367,10 +367,10 @@ class GLProgram3D {
 		
 		program.__programID = gl.createProgram ();
 		gl.attachShader (program.__programID, program.__vertexShaderID);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.attachShader (program.__programID, program.__fragmentShaderID);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		for (i in 0...Context3D.MAX_ATTRIBUTES) {
 			

@@ -29,7 +29,7 @@ class GLVertexBuffer3D {
 		var gl = renderSession.gl;
 		
 		vertexBuffer.__id = gl.createBuffer ();
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		vertexBuffer.__stride = vertexBuffer.__vertexSize * 4;
 		// __memoryUsage = 0;
@@ -74,10 +74,10 @@ class GLVertexBuffer3D {
 		var gl = renderSession.gl;
 		
 		gl.bindBuffer (GL.ARRAY_BUFFER, vertexBuffer.__id);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.bufferData (GL.ARRAY_BUFFER, data, vertexBuffer.__usage);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		// if (data.byteLength != __memoryUsage) {
 			

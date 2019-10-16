@@ -75,13 +75,13 @@ class GLRectangleTexture {
 		var gl = renderSession.gl;
 		
 		gl.bindTexture (rectangleTexture.__textureTarget, rectangleTexture.__textureData.glTexture);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.texImage2D (rectangleTexture.__textureTarget, 0, rectangleTexture.__internalFormat, rectangleTexture.__width, rectangleTexture.__height, 0, rectangleTexture.__format, GL.UNSIGNED_BYTE, data);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		gl.bindTexture (rectangleTexture.__textureTarget, null);
-		GLUtils.CheckGLError ();
+		GLUtils.checkGLError (gl);
 		
 		// var memUsage = (__width * __height) * 4;
 		// __trackMemoryUsage (memUsage);
@@ -98,7 +98,7 @@ class GLRectangleTexture {
 			if (state.maxAniso != 0.0) {
 				
 				gl.texParameterf (GL.TEXTURE_2D, Context3D.TEXTURE_MAX_ANISOTROPY_EXT, state.maxAniso);
-				GLUtils.CheckGLError ();
+				GLUtils.checkGLError (gl);
 				
 			}
 			

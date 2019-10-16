@@ -38,10 +38,10 @@ class GLVideoTexture {
 			var gl = renderSession.gl;
 			
 			gl.bindTexture (videoTexture.__textureTarget, videoTexture.__textureData.glTexture);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 			gl.texImage2D (GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, videoTexture.__netStream.__video);
-			GLUtils.CheckGLError ();
+			GLUtils.checkGLError (gl);
 			
 		}
 		

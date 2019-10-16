@@ -4,8 +4,7 @@ package openfl.display;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GL;
-import lime.utils.Float32Array;
-import lime.utils.GLUtils;
+import openfl._internal.stage3D.GLUtils;
 import openfl.utils.ByteArray;
 import openfl.display.ShaderParameter;
 
@@ -281,7 +280,7 @@ class Shader {
 				#endif
 				" + glFragmentSource;
 			
-			glProgram = GLUtils.createProgram (glVertexSource, fragment);
+			glProgram = GLUtils.createProgram (gl, glVertexSource, fragment);
 			
 			if (glProgram != null) {
 				
