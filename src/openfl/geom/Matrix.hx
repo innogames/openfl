@@ -1,7 +1,6 @@
 package openfl.geom;
 
 
-import lime.math.Matrix3;
 import lime.utils.Float32Array;
 import lime.utils.ObjectPool;
 import openfl.geom.Point;
@@ -16,7 +15,6 @@ class Matrix {
 	
 	
 	private static var __identity = new Matrix ();
-	private static var __matrix3 = new Matrix3 ();
 	private static var __pool = new ObjectPool<Matrix> (function () return new Matrix (), function (m) m.identity ());
 	
 	public var a:Float;
@@ -480,14 +478,6 @@ class Matrix {
 		d = Math.round (d * 1000) / 1000;
 		tx = Math.round (tx * 10) / 10;
 		ty = Math.round (ty * 10) / 10;
-		
-	}
-	
-	
-	private function __toMatrix3 ():Matrix3 {
-		
-		__matrix3.setTo (a, b, c, d, tx, ty);
-		return __matrix3;
 		
 	}
 	

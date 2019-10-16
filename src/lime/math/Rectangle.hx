@@ -1,10 +1,6 @@
 package lime.math;
 
 
-#if flash
-import flash.geom.Rectangle in FlashRectangle;
-#end
-
 #if !lime_debug
 @:fileXml('tags="haxe,release"')
 @:noDebug
@@ -189,42 +185,6 @@ class Rectangle {
 	}
 	
 	
-	public function transform (m:Matrix3):Rectangle {
-		
-		var tx0 = m.a * x + m.c * y;
-		var tx1 = tx0;
-		var ty0 = m.b * x + m.d * y;
-		var ty1 = ty0;
-		
-		var tx = m.a * (x + width) + m.c * y;
-		var ty = m.b * (x + width) + m.d * y;
-		
-		if (tx < tx0) tx0 = tx;
-		if (ty < ty0) ty0 = ty;
-		if (tx > tx1) tx1 = tx;
-		if (ty > ty1) ty1 = ty;
-		
-		tx = m.a * (x + width) + m.c * (y + height);
-		ty = m.b * (x + width) + m.d * (y + height);
-		
-		if (tx < tx0) tx0 = tx;
-		if (ty < ty0) ty0 = ty;
-		if (tx > tx1) tx1 = tx;
-		if (ty > ty1) ty1 = ty;
-		
-		tx = m.a * x + m.c * (y + height);
-		ty = m.b * x + m.d * (y + height);
-		
-		if (tx < tx0) tx0 = tx;
-		if (ty < ty0) ty0 = ty;
-		if (tx > tx1) tx1 = tx;
-		if (ty > ty1) ty1 = ty;
-		
-		return new Rectangle (tx0 + m.tx, ty0 + m.ty, tx1 - tx0, ty1 - ty0);
-		
-	}
-	
-	
 	public function union (toUnion:Rectangle):Rectangle {
 		
 		if (width == 0 || height == 0) {
@@ -285,17 +245,6 @@ class Rectangle {
 		if (this.y > y) this.y = y;
 		if (cacheRight < x + width) this.width = x + width - this.x;
 		if (cacheBottom < y + height) this.height = y + height - this.y;
-		
-	}
-	
-	
-	private function __toFlashRectangle ():#if flash FlashRectangle #else Dynamic #end {
-		
-		#if flash
-		return new FlashRectangle (x, y, width, height);
-		#else
-		return null;
-		#end
 		
 	}
 	
