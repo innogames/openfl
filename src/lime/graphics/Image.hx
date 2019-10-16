@@ -36,8 +36,6 @@ class Image {
 	public var dirty:Bool;
 	public var format (get, set):PixelFormat;
 	public var height:Int;
-	public var offsetX:Int;
-	public var offsetY:Int;
 	public var powerOfTwo (get, set):Bool;
 	public var premultiplied (get, set):Bool;
 	public var rect (get, null):Rectangle;
@@ -50,10 +48,8 @@ class Image {
 	public var y:Float;
 	
 	
-	public function new (buffer:ImageBuffer = null, offsetX:Int = 0, offsetY:Int = 0, width:Int = -1, height:Int = -1, color:Null<Int> = null, type:ImageType = null) {
+	public function new (buffer:ImageBuffer = null, width:Int = -1, height:Int = -1, color:Null<Int> = null, type:ImageType = null) {
 		
-		this.offsetX = offsetX;
-		this.offsetY = offsetY;
 		this.width = width;
 		this.height = height;
 		
@@ -121,13 +117,13 @@ class Image {
 				
 			}
 			
-			var image = new Image (buffer.clone (), offsetX, offsetY, width, height, null, type);
+			var image = new Image (buffer.clone (), width, height, null, type);
 			image.version = version;
 			return image;
 			
 		} else {
 			
-			return new Image (null, offsetX, offsetY, width, height, null, type);
+			return new Image (null, width, height, null, type);
 			
 		}
 		
@@ -612,8 +608,6 @@ class Image {
 			buffer = new ImageBuffer (null, image.width, image.height);
 			buffer.__srcImage = cast image;
 			
-			offsetX = 0;
-			offsetY = 0;
 			width = buffer.width;
 			height = buffer.height;
 			

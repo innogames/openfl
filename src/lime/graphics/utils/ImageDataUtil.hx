@@ -402,7 +402,7 @@ class ImageDataUtil {
 		var fillColor:RGBA = color;
 		
 		var hitColor:RGBA;
-		hitColor.readUInt8 (data, ((y + image.offsetY) * (image.buffer.width * 4)) + ((x + image.offsetX) * 4), format, premultiplied);
+		hitColor.readUInt8 (data, (y * (image.buffer.width * 4)) + (x * 4), format, premultiplied);
 		
 		if (!image.transparent) {
 			
@@ -418,10 +418,10 @@ class ImageDataUtil {
 		var dx = [ 0, -1, 1, 0 ];
 		var dy = [ -1, 0, 0, 1 ];
 		
-		var minX = -image.offsetX;
-		var minY = -image.offsetY;
-		var maxX = minX + image.width;
-		var maxY = minY + image.height;
+		var minX = 0;
+		var minY = 0;
+		var maxX = image.width;
+		var maxY = image.height;
 		
 		var queue = new Array<Int> ();
 		queue.push (x);
@@ -831,7 +831,7 @@ class ImageDataUtil {
 		
 		var pixel:RGBA;
 		
-		pixel.readUInt8 (image.buffer.data, (4 * (y + image.offsetY) * image.buffer.width + (x + image.offsetX) * 4), image.buffer.format, image.buffer.premultiplied);
+		pixel.readUInt8 (image.buffer.data, (4 * y * image.buffer.width + x * 4), image.buffer.format, image.buffer.premultiplied);
 		pixel.a = 0;
 		
 		switch (format) {
@@ -849,7 +849,7 @@ class ImageDataUtil {
 		
 		var pixel:RGBA;
 		
-		pixel.readUInt8 (image.buffer.data, (4 * (y + image.offsetY) * image.buffer.width + (x + image.offsetX) * 4), image.buffer.format, image.buffer.premultiplied);
+		pixel.readUInt8 (image.buffer.data, (4 * y * image.buffer.width + x * 4), image.buffer.format, image.buffer.premultiplied);
 		
 		switch (format) {
 			
@@ -1182,10 +1182,10 @@ class ImageDataUtil {
 		// TODO: Write only RGB instead?
 		
 		var source = new RGBA ();
-		source.readUInt8 (image.buffer.data, (4 * (y + image.offsetY) * image.buffer.width + (x + image.offsetX) * 4), image.buffer.format, image.buffer.premultiplied);
+		source.readUInt8 (image.buffer.data, (4 * y * image.buffer.width + x * 4), image.buffer.format, image.buffer.premultiplied);
 		
 		pixel.a = source.a;
-		pixel.writeUInt8 (image.buffer.data, (4 * (y + image.offsetY) * image.buffer.width + (x + image.offsetX) * 4), image.buffer.format, image.buffer.premultiplied);
+		pixel.writeUInt8 (image.buffer.data, (4 * y * image.buffer.width + x * 4), image.buffer.format, image.buffer.premultiplied);
 		
 		image.dirty = true;
 		image.version++;
@@ -1206,7 +1206,7 @@ class ImageDataUtil {
 		}
 		
 		if (!image.transparent) pixel.a = 0xFF;
-		pixel.writeUInt8 (image.buffer.data, (4 * (y + image.offsetY) * image.buffer.width + (x + image.offsetX) * 4), image.buffer.format, image.buffer.premultiplied);
+		pixel.writeUInt8 (image.buffer.data, (4 * y * image.buffer.width + x * 4), image.buffer.format, image.buffer.premultiplied);
 		
 		image.dirty = true;
 		image.version++;
@@ -1557,7 +1557,7 @@ private class ImageDataView {
 		this.y = Math.ceil (rect.y);
 		this.width = Math.floor (rect.width);
 		this.height = Math.floor (rect.height);
-		byteOffset = (stride * (this.y + image.offsetY)) + ((this.x + image.offsetX) * 4);
+		byteOffset = (stride * this.y) + (this.x * 4);
 		
 	}
 	

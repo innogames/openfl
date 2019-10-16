@@ -145,7 +145,7 @@ class ImageCanvasUtil {
 			
 			if (image.transparent && sourceImage.transparent) {
 				
-				image.buffer.__srcContext.clearRect (destPoint.x + image.offsetX, destPoint.y + image.offsetY, sourceRect.width + image.offsetX, sourceRect.height + image.offsetY);
+				image.buffer.__srcContext.clearRect (destPoint.x, destPoint.y, sourceRect.width, sourceRect.height);
 				
 			}
 			
@@ -158,7 +158,7 @@ class ImageCanvasUtil {
 			// Set default composition (just in case it is different)
 			image.buffer.__srcContext.globalCompositeOperation = "source-over";
 
-			image.buffer.__srcContext.drawImage (sourceImage.buffer.src, Std.int (sourceRect.x + sourceImage.offsetX), Std.int (sourceRect.y + sourceImage.offsetY), Std.int (sourceRect.width), Std.int (sourceRect.height), Std.int (destPoint.x + image.offsetX), Std.int (destPoint.y + image.offsetY), Std.int (sourceRect.width), Std.int (sourceRect.height));
+			image.buffer.__srcContext.drawImage (sourceImage.buffer.src, Std.int (sourceRect.x), Std.int (sourceRect.y), Std.int (sourceRect.width), Std.int (sourceRect.height), Std.int (destPoint.x), Std.int (destPoint.y), Std.int (sourceRect.width), Std.int (sourceRect.height));
 			
 		}
 		
@@ -261,14 +261,14 @@ class ImageCanvasUtil {
 		
 		if (a < 255) {
 			
-			image.buffer.__srcContext.clearRect (rect.x + image.offsetX, rect.y + image.offsetY, rect.width + image.offsetX, rect.height + image.offsetY);
+			image.buffer.__srcContext.clearRect (rect.x, rect.y, rect.width, rect.height);
 			
 		}
 		
 		if (a > 0) {
 			
 			image.buffer.__srcContext.fillStyle = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + (a / 255) + ')';
-			image.buffer.__srcContext.fillRect (rect.x + image.offsetX, rect.y + image.offsetY, rect.width + image.offsetX, rect.height + image.offsetY);
+			image.buffer.__srcContext.fillRect (rect.x, rect.y, rect.width, rect.height);
 			
 		}
 		
