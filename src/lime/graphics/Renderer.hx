@@ -4,6 +4,7 @@ package lime.graphics;
 import lime.app.Event;
 import lime.math.Rectangle;
 import lime.ui.Window;
+import lime._backend.html5.HTML5Renderer as RendererBackend;
 
 #if !lime_debug
 @:fileXml('tags="haxe,release"')
@@ -17,7 +18,6 @@ class Renderer {
 	public var context:GLRenderContext;
 	public var onContextLost = new Event<Void->Void> ();
 	public var onContextRestored = new Event<GLRenderContext->Void> ();
-	public var onRender = new Event<Void->Void> ();
 	public var window:Window;
 	
 	@:noCompletion private var backend:RendererBackend;
@@ -29,21 +29,12 @@ class Renderer {
 		
 		backend = new RendererBackend (this);
 		
-		this.window.renderer = this;
-		
 	}
 	
 	
 	public function create ():Void {
 		
 		backend.create ();
-		
-	}
-	
-	
-	public function flip ():Void {
-		
-		backend.flip ();
 		
 	}
 	
@@ -55,16 +46,4 @@ class Renderer {
 	}
 	
 	
-	private function render ():Void {
-		
-		backend.render ();
-		
-	}
-	
-	
 }
-
-
-#if (js && html5)
-@:noCompletion private typedef RendererBackend = lime._backend.html5.HTML5Renderer;
-#end

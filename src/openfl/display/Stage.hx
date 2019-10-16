@@ -3,7 +3,6 @@ package openfl.display;
 
 import haxe.CallStack;
 import lime.app.Application;
-import lime.app.IModule;
 import lime.graphics.GLRenderContext;
 import lime.graphics.Renderer;
 import lime.ui.Touch;
@@ -62,7 +61,7 @@ import openfl._internal.renderer.opengl.stats.GLStats;
 @:access(openfl.ui.Mouse)
 
 
-class Stage extends DisplayObjectContainer implements IModule {
+class Stage extends DisplayObjectContainer {
 	
 	
 	public var align:StageAlign;
@@ -193,49 +192,9 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	@:noCompletion public function addRenderer (renderer:Renderer):Void {
+	@:noCompletion public function __create (application:Application):Void {
 		
-		renderer.onRender.add (render.bind (renderer));
-		renderer.onContextLost.add (onRenderContextLost.bind (renderer));
-		renderer.onContextRestored.add (onRenderContextRestored.bind (renderer));
-		
-	}
-	
-	
-	@:noCompletion public function addWindow (window:Window):Void {
-		
-		if (this.window != window) return;
-		
-		window.onActivate.add (onWindowActivate.bind (window));
-		window.onClose.add (onWindowClose.bind (window), -9000);
-		window.onCreate.add (onWindowCreate.bind (window));
-		window.onDeactivate.add (onWindowDeactivate.bind (window));
-		window.onDropFile.add (onWindowDropFile.bind (window));
-		window.onEnter.add (onWindowEnter.bind (window));
-		window.onFocusIn.add (onWindowFocusIn.bind (window));
-		window.onFocusOut.add (onWindowFocusOut.bind (window));
-		window.onFullscreen.add (onWindowFullscreen.bind (window));
-		window.onKeyDown.add (onKeyDown.bind (window));
-		window.onKeyUp.add (onKeyUp.bind (window));
-		window.onLeave.add (onWindowLeave.bind (window));
-		window.onMinimize.add (onWindowMinimize.bind (window));
-		window.onMouseDown.add (onMouseDown.bind (window));
-		window.onMouseMove.add (onMouseMove.bind (window));
-		window.onMouseMoveRelative.add (onMouseMoveRelative.bind (window));
-		window.onMouseUp.add (onMouseUp.bind (window));
-		window.onMouseWheel.add (onMouseWheel.bind (window));
-		window.onMove.add (onWindowMove.bind (window));
-		window.onResize.add (onWindowResize.bind (window));
-		window.onRestore.add (onWindowRestore.bind (window));
-		window.onTextEdit.add (onTextEdit.bind (window));
-		
-	}
-	
-	
-	@:noCompletion public function registerModule (application:Application):Void {
-		
-		application.onExit.add (onModuleExit, 0);
-		application.onUpdate.add (update);
+		application.onExit.add (onModuleExit);
 		
 		for (gamepad in Gamepad.devices) {
 			
@@ -247,23 +206,30 @@ class Stage extends DisplayObjectContainer implements IModule {
 		Touch.onStart.add (onTouchStart);
 		Touch.onMove.add (onTouchMove);
 		Touch.onEnd.add (onTouchEnd);
+
+		var renderer = window.renderer;
+		renderer.onContextLost.add (onRenderContextLost);
+		renderer.onContextRestored.add (onRenderContextRestored);
+
+		window.onActivate.add (onWindowActivate);
+		window.onClose.add (onWindowClose);
+		window.onDeactivate.add (onWindowDeactivate);
+		window.onEnter.add (onWindowEnter);
+		window.onFocusIn.add (onWindowFocusIn);
+		window.onFocusOut.add (onWindowFocusOut);
+		window.onFullscreen.add (onWindowFullscreen);
+		window.onKeyDown.add (onKeyDown);
+		window.onKeyUp.add (onKeyUp);
+		window.onLeave.add (onWindowLeave);
+		window.onMinimize.add (onWindowMinimize);
+		window.onMouseDown.add (onMouseDown);
+		window.onMouseMove.add (onMouseMove);
+		window.onMouseUp.add (onMouseUp);
+		window.onMouseWheel.add (onMouseWheel);
+		window.onResize.add (onWindowResize);
+		window.onRestore.add (onWindowRestore);
 		
-	}
-	
-	
-	@:noCompletion public function removeRenderer (renderer:Renderer):Void { }
-	@:noCompletion public function removeWindow (window:Window):Void { }
-	
-	
-	@:noCompletion public function unregisterModule (application:Application):Void {
-		
-		application.onExit.remove (onModuleExit);
-		application.onUpdate.remove (update);
-		
-		Gamepad.onConnect.remove (__onGamepadConnect);
-		Touch.onStart.remove (onTouchStart);
-		Touch.onMove.remove (onTouchMove);
-		Touch.onEnd.remove (onTouchEnd);
+		__createRenderer ();
 		
 	}
 	
@@ -357,67 +323,14 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onJoystickAxisMove (joystick:Joystick, axis:Int, value:Float):Void {
-		
-		
-		
-	}
-	
-	
-	public function onJoystickButtonDown (joystick:Joystick, button:Int):Void {
-		
-		
-		
-	}
-	
-	
-	public function onJoystickButtonUp (joystick:Joystick, button:Int):Void {
-		
-		
-		
-	}
-	
-	
-	public function onJoystickConnect (joystick:Joystick):Void {
-		
-		
-		
-	}
-	
-	
-	public function onJoystickDisconnect (joystick:Joystick):Void {
-		
-		
-		
-	}
-	
-	
-	public function onJoystickHatMove (joystick:Joystick, hat:Int, position:JoystickHatPosition):Void {
-		
-		
-		
-	}
-	
-	
-	public function onJoystickTrackballMove (joystick:Joystick, trackball:Int, value:Float):Void {
-		
-		
-		
-	}
-	
-	
-	public function onKeyDown (window:Window, keyCode:KeyCode, modifier:KeyModifier):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onKeyDown (keyCode:KeyCode, modifier:KeyModifier):Void {
 		
 		__onKey (KeyboardEvent.KEY_DOWN, keyCode, modifier);
 		
 	}
 	
 	
-	public function onKeyUp (window:Window, keyCode:KeyCode, modifier:KeyModifier):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onKeyUp (keyCode:KeyCode, modifier:KeyModifier):Void {
 		
 		__onKey (KeyboardEvent.KEY_UP, keyCode, modifier);
 		
@@ -435,9 +348,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onMouseDown (window:Window, x:Float, y:Float, button:Int):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onMouseDown (x:Float, y:Float, button:Int):Void {
 		
 		dispatchPendingMouseMove ();
 		
@@ -457,9 +368,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	var pendingMouseMoveX:Int;
 	var pendingMouseMoveY:Int;
 	
-	public function onMouseMove (window:Window, x:Float, y:Float):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onMouseMove (x:Float, y:Float):Void {
 		
 		hasPendingMouseMove = true;
 		pendingMouseMoveX = Std.int (x * window.scale);
@@ -476,16 +385,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 		
 	}
 	
-	public function onMouseMoveRelative (window:Window, x:Float, y:Float):Void {
-		
-		//if (this.window == null || this.window != window) return;
-		
-	}
-	
-	
-	public function onMouseUp (window:Window, x:Float, y:Float, button:Int):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onMouseUp (x:Float, y:Float, button:Int):Void {
 		
 		dispatchPendingMouseMove ();
 		
@@ -502,9 +402,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onMouseWheel (window:Window, delta:Int):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onMouseWheel (delta:Int):Void {
 		
 		dispatchPendingMouseMove ();
 		
@@ -513,7 +411,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onRenderContextLost (renderer:Renderer):Void {
+	public function onRenderContextLost ():Void {
 		
 		__renderer = null;
 		
@@ -526,18 +424,11 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onRenderContextRestored (renderer:Renderer, context:GLRenderContext):Void {
+	public function onRenderContextRestored (context:GLRenderContext):Void {
 		
 		GLTextureBase.reset();
 		__createRenderer ();
 		__forceRenderDirty ();
-		
-	}
-	
-	
-	public function onTextEdit (window:Window, text:String, start:Int, length:Int):Void {
-		
-		//if (this.window == null || this.window != window) return;
 		
 	}
 	
@@ -575,22 +466,16 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onWindowActivate (window:Window):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onWindowActivate ():Void {
 		
 		//__broadcastEvent (new Event (Event.ACTIVATE));
 		
 	}
 	
 	
-	public function onWindowClose (window:Window):Void {
+	public function onWindowClose ():Void {
 		
-		if (this.window == window) {
-			
-			this.window = null;
-			
-		}
+		window = null;
 		
 		__primaryTouch = null;
 		__broadcastEvent (new Event (Event.DEACTIVATE));
@@ -598,22 +483,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onWindowCreate (window:Window):Void {
-		
-		if (this.window == null || this.window != window) return;
-		
-		if (window.renderer != null) {
-			
-			__createRenderer ();
-			
-		}
-		
-	}
-	
-	
-	public function onWindowDeactivate (window:Window):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onWindowDeactivate ():Void {
 		
 		//__primaryTouch = null;
 		//__broadcastEvent (new Event (Event.DEACTIVATE));
@@ -621,23 +491,13 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onWindowDropFile (window:Window, file:String):Void {
-		
+	public function onWindowEnter ():Void {
 		
 		
 	}
 	
 	
-	public function onWindowEnter (window:Window):Void {
-		
-		//if (this.window == null || this.window != window) return;
-		
-	}
-	
-	
-	public function onWindowFocusIn (window:Window):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onWindowFocusIn ():Void {
 		
 		__renderDirty = true;
 		__broadcastEvent (new Event (Event.ACTIVATE));
@@ -647,9 +507,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onWindowFocusOut (window:Window):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onWindowFocusOut ():Void {
 		
 		__primaryTouch = null;
 		__broadcastEvent (new Event (Event.DEACTIVATE));
@@ -661,9 +519,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onWindowFullscreen (window:Window):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onWindowFullscreen ():Void {
 		
 		__resize ();
 		
@@ -678,18 +534,16 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onWindowLeave (window:Window):Void {
+	public function onWindowLeave ():Void {
 		
-		if (this.window == null || this.window != window || MouseEvent.__buttonDown) return;
+		if (MouseEvent.__buttonDown) return;
 		
 		__dispatchEvent (new Event (Event.MOUSE_LEAVE));
 		
 	}
 	
 	
-	public function onWindowMinimize (window:Window):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onWindowMinimize ():Void {
 		
 		//__primaryTouch = null;
 		//__broadcastEvent (new Event (Event.DEACTIVATE));
@@ -697,16 +551,7 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onWindowMove (window:Window, x:Float, y:Float):Void {
-		
-		//if (this.window == null || this.window != window) return;
-		
-	}
-	
-	
-	public function onWindowResize (window:Window, width:Int, height:Int):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onWindowResize (width:Int, height:Int):Void {
 		
 		__renderDirty = true;
 		__resize ();
@@ -716,11 +561,10 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function onWindowRestore (window:Window):Void {
-		
-		if (this.window == null || this.window != window) return;
+	public function onWindowRestore ():Void {
 		
 		__handleFullScreenRestore ();
+
 	}
 	
 	inline function __handleFullScreenRestore() {
@@ -732,10 +576,12 @@ class Stage extends DisplayObjectContainer implements IModule {
 	}
 	
 	
-	public function render (renderer:Renderer):Void {
+	@:noCompletion public function __onFrame (deltaTime:Int):Void {
 		
-		if (renderer.window == null || renderer.window != window) return;
+		__deltaTime = deltaTime;
 		
+		dispatchPendingMouseMove ();
+
 		if (__rendering) return;
 		__rendering = true;
 		
@@ -789,10 +635,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 			
 			__renderer.render ();
 			
-		} else {
-			
-			renderer.onRender.cancel ();
-			
 		}
 		
 		#if hxtelemetry
@@ -801,15 +643,6 @@ class Stage extends DisplayObjectContainer implements IModule {
 		#end
 		
 		__rendering = false;
-		
-	}
-	
-	
-	public function update (deltaTime:Int):Void {
-		
-		__deltaTime = deltaTime;
-		
-		dispatchPendingMouseMove ();
 		
 	}
 	

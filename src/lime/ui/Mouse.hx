@@ -1,78 +1,23 @@
 package lime.ui;
 
-
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
+import lime._backend.html5.HTML5Mouse as MouseBackend;
 
 class Mouse {
-	
-	
-	public static var cursor (get, set):MouseCursor;
-	public static var lock (get, set):Bool;
-	
-	
-	public static function hide ():Void {
-		
-		MouseBackend.hide ();
-		
+	public static var cursor(get, set):MouseCursor;
+
+	public static function hide():Void {
+		MouseBackend.hide();
 	}
-	
-	
-	public static function show ():Void {
-		
-		MouseBackend.show ();
-		
+
+	public static function show():Void {
+		MouseBackend.show();
 	}
-	
-	
-	public static function warp (x:Int, y:Int, window:Window = null):Void {
-		
-		MouseBackend.warp (x, y, window);
-		
+
+	static function get_cursor():MouseCursor {
+		return MouseBackend.get_cursor();
 	}
-	
-	
-	
-	
-	// Get & Set Methods
-	
-	
-	
-	
-	private static function get_cursor ():MouseCursor {
-		
-		return MouseBackend.get_cursor ();
-		
+
+	static function set_cursor(value:MouseCursor):MouseCursor {
+		return MouseBackend.set_cursor(value);
 	}
-	
-	
-	private static function set_cursor (value:MouseCursor):MouseCursor {
-		
-		return MouseBackend.set_cursor (value);
-		
-	}
-	
-	
-	private static function get_lock ():Bool {
-		
-		return MouseBackend.get_lock ();
-		
-	}
-	
-	
-	private static function set_lock (value:Bool):Bool {
-		
-		return MouseBackend.set_lock (value);
-		
-	}
-	
-	
 }
-
-
-#if (js && html5)
-@:noCompletion private typedef MouseBackend = lime._backend.html5.HTML5Mouse;
-#end

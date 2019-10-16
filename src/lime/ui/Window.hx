@@ -9,13 +9,7 @@ import lime.graphics.Renderer;
 import lime.system.Display;
 import lime.system.DisplayMode;
 
-#if openfl
 import openfl.display.Stage;
-#elseif flash
-import flash.display.Stage;
-#else
-typedef Stage = Dynamic;
-#end
 
 typedef CopyDataProvider = String->Void;
 
@@ -32,7 +26,7 @@ class Window {
 	public var application (default, null):Application;
 	public var borderless (get, set):Bool;
 	public var config:WindowConfig;
-	public var display (get, null):Display;
+	public var display (get, never):Display;
 	public var displayMode (get, set):DisplayMode;
 	public var enableTextEvents (get, set):Bool;
 	public var enableContextMenuEvents:Bool;
@@ -43,7 +37,6 @@ class Window {
 	public var minimized (get, set):Bool;
 	public var onActivate = new Event<Void->Void> ();
 	public var onClose = new Event<Void->Void> ();
-	public var onCreate = new Event<Void->Void> ();
 	public var onDeactivate = new Event<Void->Void> ();
 	public var onDropFile = new Event<String->Void> ();
 	public var onEnter = new Event<Void->Void> ();
@@ -56,21 +49,18 @@ class Window {
 	public var onMinimize = new Event<Void->Void> ();
 	public var onMouseDown = new Event<Float->Float->Int->Void> ();
 	public var onMouseMove = new Event<Float->Float->Void> ();
-	public var onMouseMoveRelative = new Event<Float->Float->Void> ();
 	public var onMouseUp = new Event<Float->Float->Int->Void> ();
 	public var onMouseWheel = new Event<Int->Void> ();
 	public var onMove = new Event<Float->Float->Void> ();
 	public var onResize = new Event<Int->Int->Void> ();
 	public var onRestore = new Event<Void->Void> ();
-	public var onTextEdit = new Event<String->Int->Int->Void> ();
 	public var onTextInput = new Event<String->Void> ();
 	public var onTextCopy = new Event<CopyDataProvider->Void> ();
 	public var onTextCut = new Event<CopyDataProvider->Void> ();
 	public var onTextPaste = new Event<String->Void> ();
-	public var renderer:Renderer;
+	public var renderer (default,null):Renderer;
 	public var resizable (get, set):Bool;
-	public var scale (get, null):Float;
-	public var stage:Stage;
+	public var scale (get, never):Float;
 	public var title (get, set):String;
 	public var width (get, set):Int;
 	public var x (get, set):Int;
@@ -91,6 +81,7 @@ class Window {
 	
 	
 	public function new (config:WindowConfig = null) {
+		if (config == null) config = {};
 		
 		this.config = config;
 		
@@ -103,23 +94,20 @@ class Window {
 		__title = "";
 		id = -1;
 		
-		if (config != null) {
-			
-			if (Reflect.hasField (config, "width")) __width = config.width;
-			if (Reflect.hasField (config, "height")) __height = config.height;
-			if (Reflect.hasField (config, "x")) __x = config.x;
-			if (Reflect.hasField (config, "y")) __y = config.y;
-			#if !web
-			if (Reflect.hasField (config, "fullscreen")) __fullscreen = config.fullscreen;
-			#end
-			if (Reflect.hasField (config, "borderless")) __borderless = config.borderless;
-			if (Reflect.hasField (config, "resizable")) __resizable = config.resizable;
-			if (Reflect.hasField (config, "title")) __title = config.title;
-			
-		}
+		if (Reflect.hasField (config, "width")) __width = config.width;
+		if (Reflect.hasField (config, "height")) __height = config.height;
+		if (Reflect.hasField (config, "x")) __x = config.x;
+		if (Reflect.hasField (config, "y")) __y = config.y;
+		#if !web
+		if (Reflect.hasField (config, "fullscreen")) __fullscreen = config.fullscreen;
+		#end
+		if (Reflect.hasField (config, "borderless")) __borderless = config.borderless;
+		if (Reflect.hasField (config, "resizable")) __resizable = config.resizable;
+		if (Reflect.hasField (config, "title")) __title = config.title;
 		
 		backend = new WindowBackend (this);
 		
+		renderer = new Renderer (this);
 	}
 	
 	
@@ -130,26 +118,15 @@ class Window {
 	}
 	
 	
-	public function close ():Void {
-		
-		backend.close ();
-		
-	}
-	
-	
+	@:access(openfl.display.Stage)
+	@:access(openfl.display.LoaderInfo)
 	public function create (application:Application):Void {
 		
 		this.application = application;
 		
-		if (config == null) config = {};
 		backend.create (application);
 		
-		if (renderer != null) {
-			
-			renderer.create ();
-			
-		}
-		
+		renderer.create ();
 	}
 	
 	

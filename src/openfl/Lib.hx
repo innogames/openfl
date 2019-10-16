@@ -272,7 +272,7 @@ import js.Browser;
 	
 	@:noCompletion private static function get_application ():Application {
 		
-		return InternalLib.application;
+		return Application.current;
 		
 	}
 	

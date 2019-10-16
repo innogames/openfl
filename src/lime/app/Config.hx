@@ -70,18 +70,6 @@ typedef Config = {
 	@:optional var packageName:String;
 	
 	/**
-	 * A root path for application assets
-	 *
-	 * The default value is an empty string, but this can be used when
-	 * bundled application assets are located in a different directory.
-	 *
-	 * This value is not exposed in Lime project files, but is available
-	 * using the `lime.embed` function in HTML5 project embeds, and may
-	 * behave similarly to the Flash "base" embed parameter
-	**/
-	@:optional var rootPath:String;
-	
-	/**
 	 * A version number
 	 *
 	 * The version number is what normally corresponds to the user-facing
