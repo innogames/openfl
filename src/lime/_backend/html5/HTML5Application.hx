@@ -317,13 +317,7 @@ class HTML5Application {
 					
 					if (!event.defaultPrevented) {
 						
-						parent.window.onClose.dispatch ();
-						
-						if (parent.window != null && parent.window.onClose.canceled) {
-							
-							event.preventDefault ();
-							
-						}
+						parent.window.backend.close();
 						
 					}
 				

@@ -1095,5 +1095,19 @@ class HTML5Window {
 		
 	}
 	
+	function close() {
+		
+		for (event in [ "mousedown", "mouseenter", "mouseleave", "mousemove", "mouseup", "wheel" ]) {
+			
+			element.removeEventListener (event, handleMouseEvent, true);
+			
+		}
+		
+		Browser.window.removeEventListener ("mouseup", handleMouseEvent);
+		
+		parent.onClose.dispatch ();
+		
+	}
+	
 	
 }

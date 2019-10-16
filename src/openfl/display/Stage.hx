@@ -212,7 +212,7 @@ class Stage extends DisplayObjectContainer {
 		renderer.onContextRestored.add (onRenderContextRestored);
 
 		window.onActivate.add (onWindowActivate);
-		window.onClose.add (onWindowClose, -9000);
+		window.onClose.add (onWindowClose);
 		window.onDeactivate.add (onWindowDeactivate);
 		window.onEnter.add (onWindowEnter);
 		window.onFocusIn.add (onWindowFocusIn);
