@@ -1,19 +1,11 @@
 package lime.text;
 
 
-import haxe.io.Bytes;
 import lime.app.Future;
 import lime.app.Promise;
-import lime.graphics.Image;
-import lime.graphics.ImageBuffer;
-import lime.math.Vector2;
-import lime.system.System;
 import lime.utils.Log;
-import lime.utils.UInt8Array;
 
 #if (js && html5)
-import js.html.CanvasElement;
-import js.html.CanvasRenderingContext2D;
 import js.html.SpanElement;
 import js.Browser;
 #end
