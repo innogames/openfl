@@ -2,7 +2,6 @@ package openfl.display;
 
 
 import lime.app.Future;
-import lime.app.Promise;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLFramebuffer;
 import lime.graphics.opengl.GLVertexArrayObject;
@@ -11,27 +10,19 @@ import lime.graphics.GLRenderContext;
 import lime._backend.html5.HTML5Renderer;
 import lime.graphics.Image;
 import lime.graphics.ImageChannel;
-import lime.graphics.ImageBuffer;
 import lime.graphics.utils.ImageCanvasUtil;
 import lime.math.color.ARGB;
-import lime.math.ColorMatrix;
-import lime.math.Rectangle in LimeRectangle;
 import lime.math.Vector2;
 import lime.utils.Float32Array;
-import lime.utils.UInt8Array;
-// import openfl.Lib;
 import openfl._internal.renderer.canvas.CanvasBlendModeManager;
 import openfl._internal.renderer.canvas.CanvasMaskManager;
 import openfl._internal.renderer.canvas.CanvasSmoothing;
 import openfl._internal.renderer.RenderSession;
-import openfl._internal.renderer.opengl.GLMaskManager;
 import openfl._internal.renderer.opengl.GLRenderer;
 import openfl._internal.renderer.opengl.vao.IVertexArrayObjectContext;
 import openfl._internal.utils.PerlinNoise;
 import openfl.display3D.textures.TextureBase;
 import openfl.errors.Error;
-import openfl.errors.IOError;
-import openfl.errors.TypeError;
 import openfl.filters.BitmapFilter;
 import openfl.geom.ColorTransform;
 import openfl.geom.Matrix;
@@ -46,11 +37,6 @@ import openfl._internal.renderer.opengl.batcher.QuadTextureData;
 #if (js && html5)
 import js.html.CanvasElement;
 import js.html.CanvasRenderingContext2D;
-import js.html.ImageData;
-import js.html.ImageElement;
-import js.html.Uint8ClampedArray;
-import js.Browser;
-import js.html.webgl.RenderingContext as WebGLContext;
 #end
 
 #if gl_stats
@@ -126,11 +112,6 @@ class BitmapData implements IBitmapDrawable {
 		
 		this.transparent = transparent;
 		
-		#if (neko || (js && html5))
-		width = width == null ? 0 : width;
-		height = height == null ? 0 : height;
-		#end
-		
 		width = width < 0 ? 0 : width;
 		height = height < 0 ? 0 : height;
 		
@@ -156,36 +137,7 @@ class BitmapData implements IBitmapDrawable {
 			
 			fillColor = (fillColor << 8) | ((fillColor >> 24) & 0xFF);
 			
-			#if sys
-			var buffer = new ImageBuffer (new UInt8Array (width * height * 4), width, height);
-			buffer.format = BGRA32;
-			buffer.premultiplied = true;
-			
-			image = new Image (buffer, 0, 0, width, height);
-			
-			if (fillColor != 0) {
-				
-				image.fillRect (image.rect, fillColor);
-				
-			}
-			//#elseif (js && html5)
-			//var buffer = new ImageBuffer (null, width, height);
-			//var canvas:CanvasElement = cast Browser.document.createElement ("canvas");
-			//buffer.__srcCanvas = canvas;
-			//buffer.__srcContext = canvas.getContext ("2d");
-			//
-			//image = new Image (buffer, 0, 0, width, height);
-			//image.type = CANVAS;
-			//
-			//if (fillColor != 0) {
-				//
-				//image.fillRect (image.rect, fillColor);
-				//
-			//}
-			#else
 			image = new Image (null, 0, 0, width, height, fillColor);
-			#end
-			
 			image.transparent = transparent;
 			
 			__isValid = true;
@@ -480,119 +432,28 @@ class BitmapData implements IBitmapDrawable {
 			
 		}
 		
-		if (!readable /*|| !source.readable*/) {
+		if (colorTransform != null && !colorTransform.__isDefault ()) {
 			
-			if (HTML5Renderer.context != null) {
-				
-				var gl = HTML5Renderer.context;
-				
-				gl.bindFramebuffer (GL.FRAMEBUFFER, __getFramebuffer (gl));
-				gl.viewport (0, 0, width, height);
-				
-				var renderer = new GLRenderer (null, gl, this);
-				
-				var renderSession = renderer.renderSession;
-				renderSession.clearRenderDirty = false;
-				renderSession.shaderManager = cast (null, GLRenderer).renderSession.shaderManager;
-				
-				var matrixCache = Matrix.__pool.get ();
-				matrixCache.copyFrom (source.__worldTransform);
-				source.__updateTransforms (matrix);
-				source.__updateChildren (false);
-				source.__renderGL (renderer.renderSession);
-				source.__updateTransforms (matrixCache);
-				Matrix.__pool.release (matrixCache);
-				source.__updateChildren (true);
-				
-				gl.bindFramebuffer (GL.FRAMEBUFFER, null);
-				
-			}
+			var bounds = Rectangle.__pool.get ();
+			var boundsMatrix = Matrix.__pool.get ();
 			
-		} else {
+			source.__getBounds (bounds, boundsMatrix);
 			
-			#if (js && html5)
+			var width:Int = Math.ceil (bounds.width);
+			var height:Int = Math.ceil (bounds.height);
 			
-			if (colorTransform != null && !colorTransform.__isDefault ()) {
-				
-				var bounds = Rectangle.__pool.get ();
-				var boundsMatrix = Matrix.__pool.get ();
-				
-				source.__getBounds (bounds, boundsMatrix);
-				
-				var width:Int = Math.ceil (bounds.width);
-				var height:Int = Math.ceil (bounds.height);
-				
-				var copy = new BitmapData (width, height, true, 0);
-				copy.__pixelRatio = __pixelRatio;
-				copy.draw (source);
-				copy.colorTransform (copy.rect, colorTransform);
-				source = copy;
-				
-				Rectangle.__pool.release (bounds);
-				Matrix.__pool.release (boundsMatrix);
-				
-			}
+			var copy = new BitmapData (width, height, true, 0);
+			copy.__pixelRatio = __pixelRatio;
+			copy.draw (source);
+			copy.colorTransform (copy.rect, colorTransform);
+			source = copy;
 			
-			ImageCanvasUtil.convertToCanvas (image);
-			
-			var buffer = image.buffer;
-			
-			var renderSession = new RenderSession ();
-			renderSession.clearRenderDirty = false;
-			renderSession.context = cast buffer.__srcContext;
-			renderSession.allowSmoothing = smoothing;
-			renderSession.pixelRatio = __pixelRatio;
-			//renderSession.roundPixels = true;
-			renderSession.maskManager = new CanvasMaskManager (renderSession);
-			renderSession.blendModeManager = new CanvasBlendModeManager (renderSession);
-			renderSession.blendModeManager.setBlendMode(blendMode);
-			
-			buffer.__srcContext.save();
-
-			CanvasSmoothing.setEnabled(buffer.__srcContext, smoothing);
-			
-			if (clipRect != null) {
-				
-				renderSession.maskManager.pushRect (clipRect, new Matrix ());
-				
-			}
-			
-			var matrixCache = Matrix.__pool.get ();
-			matrixCache.copyFrom (source.__worldTransform);
-			var cacheWorldAlpha = source.__worldAlpha;
-			var cacheAlpha = source.__alpha;
-			var cacheVisible = source.__visible;
-			var cacheIsMask = source.__isMask;
-			source.__alpha = 1;
-			source.__visible = true;
-			source.__isMask = false;
-			source.__updateTransforms (matrix);
-			source.__updateChildren (false);
-			source.__renderCanvas (renderSession);
-			source.__alpha = cacheAlpha;
-			source.__visible = cacheVisible;
-			source.__isMask = cacheIsMask;
-			source.__updateTransforms (matrixCache);
-			Matrix.__pool.release (matrixCache);
-			source.__updateChildren (true);
- 			source.__worldAlpha = cacheWorldAlpha;
-			buffer.__srcContext.restore();
-			
-			if (clipRect != null) {
-				
-				renderSession.maskManager.popRect ();
-				
-			}
-			
-			buffer.__srcImageData = null;
-			buffer.data = null;
-			
-			image.dirty = true;
-			image.version++;
-			
-			#end
+			Rectangle.__pool.release (bounds);
+			Matrix.__pool.release (boundsMatrix);
 			
 		}
+		
+		__draw (source, matrix, blendMode, clipRect, smoothing, false);
 		
 	}
 	
@@ -714,7 +575,6 @@ class BitmapData implements IBitmapDrawable {
 	}
 	
 	
-	#if (js && html5)
 	public static function fromCanvas (canvas:CanvasElement, transparent:Bool = true):BitmapData {
 		
 		if (canvas == null) return null;
@@ -725,7 +585,6 @@ class BitmapData implements IBitmapDrawable {
 		return bitmapData;
 		
 	}
-	#end
 	
 	
 	public static function fromFile (path:String):BitmapData {
@@ -1603,135 +1462,65 @@ class BitmapData implements IBitmapDrawable {
 	}
 	
 	
-	private function __draw (source:IBitmapDrawable, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:BlendMode = null, clipRect:Rectangle = null, smoothing:Bool = false):Void {
+	private function __draw (source:IBitmapDrawable, matrix:Matrix, blendMode:BlendMode, clipRect:Null<Rectangle>, smoothing:Bool, clearRenderDirty:Bool):Void {
 		
-		if (matrix == null) {
+		ImageCanvasUtil.convertToCanvas (image);
+		
+		var buffer = image.buffer;
+		
+		var renderSession = new RenderSession ();
+		renderSession.clearRenderDirty = clearRenderDirty;
+		renderSession.context = buffer.__srcContext;
+		renderSession.allowSmoothing = smoothing;
+		renderSession.pixelRatio = __pixelRatio;
+		renderSession.maskManager = new CanvasMaskManager (renderSession);
+		renderSession.blendModeManager = new CanvasBlendModeManager (renderSession);
+		renderSession.blendModeManager.setBlendMode(blendMode);
+		
+		buffer.__srcContext.save();
+		
+		CanvasSmoothing.setEnabled(buffer.__srcContext, smoothing);
+		
+		if (clipRect != null) {
 			
-			matrix = new Matrix ();
-			
-			if (source.__transform != null) {
-				
-				matrix.copyFrom (source.__transform);
-				matrix.tx = 0;
-				matrix.ty = 0;
-				
-			}
+			renderSession.maskManager.pushRect (clipRect, new Matrix ());
 			
 		}
 		
-		if (!readable /*|| !source.readable*/) {
+		var matrixCache = Matrix.__pool.get ();
+		matrixCache.copyFrom (source.__worldTransform);
+		var cacheWorldAlpha = source.__worldAlpha;
+		var cacheAlpha = source.__alpha;
+		var cacheVisible = source.__visible;
+		var cacheIsMask = source.__isMask;
+		source.__alpha = 1;
+		source.__visible = true;
+		source.__isMask = false;
+		source.__updateTransforms (matrix);
+		source.__updateChildren (false);
+		
+		source.__renderCanvas (renderSession);
+		source.__alpha = cacheAlpha;
+		source.__visible = cacheVisible;
+		source.__isMask = cacheIsMask;
+		
+		source.__updateTransforms (matrixCache);
+		Matrix.__pool.release (matrixCache);
+		source.__updateChildren (true);
+		source.__worldAlpha = cacheWorldAlpha;
+		buffer.__srcContext.restore();
+		
+		if (clipRect != null) {
 			
-			if (HTML5Renderer.context != null) {
-				
-				var gl = HTML5Renderer.context;
-				
-				gl.bindFramebuffer (GL.FRAMEBUFFER, __getFramebuffer (gl));
-				gl.viewport (0, 0, width, height);
-				
-				var renderer = new GLRenderer (null, gl, this);
-				
-				var renderSession = renderer.renderSession;
-				renderSession.clearRenderDirty = true;
-				renderSession.shaderManager = cast (null, GLRenderer).renderSession.shaderManager;
-				
-				var matrixCache = Matrix.__pool.get ();
-				matrixCache.copyFrom (source.__worldTransform);
-				source.__updateTransforms (matrix);
-				source.__updateChildren (false);
-				source.__renderGL (renderer.renderSession);
-				source.__updateTransforms (matrixCache);
-				Matrix.__pool.release (matrixCache);
-				source.__updateChildren (true);
-				
-				gl.bindFramebuffer (GL.FRAMEBUFFER, null);
-				
-			}
-			
-		} else {
-			
-			#if (js && html5)
-			
-			if (colorTransform != null && !colorTransform.__isDefault ()) {
-				
-				var bounds = Rectangle.__pool.get ();
-				var boundsMatrix = Matrix.__pool.get ();
-				
-				source.__getBounds (bounds, boundsMatrix);
-				
-				var width:Int = Math.ceil (bounds.width);
-				var height:Int = Math.ceil (bounds.height);
-				
-				var copy = new BitmapData (width, height, true, 0);
-				copy.__pixelRatio = __pixelRatio;
-				copy.draw (source);
-				copy.colorTransform (copy.rect, colorTransform);
-				source = copy;
-				
-				Rectangle.__pool.release (bounds);
-				Matrix.__pool.release (boundsMatrix);
-				
-			}
-			
-			ImageCanvasUtil.convertToCanvas (image);
-			
-			var buffer = image.buffer;
-			
-			var renderSession = new RenderSession ();
-			renderSession.clearRenderDirty = true;
-			renderSession.context = cast buffer.__srcContext;
-			renderSession.allowSmoothing = smoothing;
-			renderSession.pixelRatio = __pixelRatio;
-			//renderSession.roundPixels = true;
-			renderSession.maskManager = new CanvasMaskManager (renderSession);
-			renderSession.blendModeManager = new CanvasBlendModeManager (renderSession);
-			
-			buffer.__srcContext.save();
-			
-			CanvasSmoothing.setEnabled(buffer.__srcContext, smoothing);
-			
-			if (clipRect != null) {
-				
-				renderSession.maskManager.pushRect (clipRect, new Matrix ());
-				
-			}
-			
-			var matrixCache = Matrix.__pool.get ();
-			matrixCache.copyFrom (source.__worldTransform);
-			var cacheWorldAlpha = source.__worldAlpha;
-			var cacheAlpha = source.__alpha;
-			var cacheVisible = source.__visible;
-			var cacheIsMask = source.__isMask;
- 			source.__alpha = 1;
-			source.__visible = true;
-			source.__isMask = false;
- 			source.__updateTransforms (matrix);
-			source.__updateChildren (false);
-			
-			source.__renderCanvas (renderSession);
-			source.__alpha = cacheAlpha;
-			source.__visible = cacheVisible;
-			source.__isMask = cacheIsMask;
-			
-			source.__updateTransforms (matrixCache);
-			Matrix.__pool.release (matrixCache);
-			source.__updateChildren (true);
- 			source.__worldAlpha = cacheWorldAlpha;
-			buffer.__srcContext.restore();
-			
-			if (clipRect != null) {
-				
-				renderSession.maskManager.popRect ();
-				
-			}
-			
-			buffer.__srcImageData = null;
-			buffer.data = null;
-			
-			image.dirty = true;
-			image.version++;
-			#end
+			renderSession.maskManager.popRect ();
 			
 		}
+		
+		buffer.__srcImageData = null;
+		buffer.data = null;
+		
+		image.dirty = true;
+		image.version++;
 		
 	}
 	

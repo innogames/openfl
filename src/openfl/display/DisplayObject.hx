@@ -1062,7 +1062,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 				matrix.tx -= Math.round (rect.x);
 				matrix.ty -= Math.round (rect.y);
 				
-				@:privateAccess __cacheBitmapData.__draw (this, matrix, null, null, null, renderSession.allowSmoothing);
+				@:privateAccess __cacheBitmapData.__draw (this, matrix, NORMAL, null, renderSession.allowSmoothing, true);
 
 				Matrix.__pool.release (matrix);
 				
