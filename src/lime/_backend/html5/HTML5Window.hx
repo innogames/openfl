@@ -921,38 +921,6 @@ class HTML5Window {
 	}
 	
 	
-	public function setIcon (image:Image):Void {
-		
-		//var iconWidth = 16;
-		//var iconHeight = 16;
-		
-		//image = image.clone ();
-		
-		//if (image.width != iconWidth || image.height != iconHeight) {
-			//
-			//image.resize (iconWidth, iconHeight);
-			//
-		//}
-		
-		ImageCanvasUtil.convertToCanvas (image);
-		
-		var link:LinkElement = cast Browser.document.querySelector ("link[rel*='icon']");
-		
-		if (link == null) {
-			
-			link = cast Browser.document.createElement ("link");
-			
-		}
-		
-		link.type = "image/x-icon";
-		link.rel = "shortcut icon";
-		link.href = image.buffer.src.toDataURL ("image/x-icon");
-		
-		Browser.document.getElementsByTagName ("head")[0].appendChild (link);
-		
-	}
-	
-	
 	public function setMaximized (value:Bool):Bool {
 		
 		return false;
