@@ -3,7 +3,6 @@ package lime.app;
 import js.Browser;
 import js.html.KeyboardEvent;
 import lime.graphics.Renderer;
-import lime.media.AudioManager;
 import lime.system.System;
 import lime.ui.Window;
 import lime.ui.GamepadAxis;
@@ -62,8 +61,6 @@ class Application {
 		lastUpdate = 0;
 		nextUpdate = 0;
 		framePeriod = -1;
-		
-		AudioManager.init ();
 
 	}
 	

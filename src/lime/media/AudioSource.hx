@@ -3,12 +3,7 @@ package lime.media;
 
 import lime.app.Event;
 import lime.math.Vector4;
-
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
+import lime._backend.html5.HTML5AudioSource as AudioSourceBackend;
 
 class AudioSource {
 	
@@ -163,8 +158,3 @@ class AudioSource {
 	
 	
 }
-
-
-#if (js && html5)
-@:noCompletion private typedef AudioSourceBackend = lime._backend.html5.HTML5AudioSource;
-#end
