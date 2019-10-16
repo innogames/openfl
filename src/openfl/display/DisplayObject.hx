@@ -98,7 +98,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	private var __objectTransform:Transform;
 	private var __renderable:Bool;
 	private var __renderDirty:Bool;
-	private var __renderParent:DisplayObject;
 	private var __renderTransform:Matrix;
 	private var __rotation:Float;
 	private var __rotationCosine:Float;
@@ -786,7 +785,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	
 	private function __setParentRenderDirty ():Void {
 		
-		var renderParent = __renderParent != null ? __renderParent : parent;
+		var renderParent = parent;
 		if (renderParent != null && !renderParent.__renderDirty) {
 			
 			renderParent.__renderDirty = true;
@@ -848,7 +847,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
  	
  	private function __setParentUpdateTraverse ():Void {
  		
- 		var renderParent = __renderParent != null ? __renderParent : parent;
+ 		var renderParent = parent;
  		
  		if (renderParent != null && !renderParent.__updateTraverse) {
  			
@@ -893,7 +892,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 			
 		}
 		
-		var renderParent = __renderParent != null ? __renderParent : parent;
+		var renderParent:DisplayObject = parent;
 		if (__isMask && renderParent == null) renderParent = __maskTarget;
 		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
 		__updateTransforms ();
@@ -1187,7 +1186,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	
 	public function __updateChildren (transformOnly:Bool):Void {
 		
-		var renderParent = __renderParent != null ? __renderParent : parent;
+		var renderParent = parent;
 		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
 		__worldAlpha = alpha;
 		__worldBlendMode = blendMode;
@@ -1206,36 +1205,14 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		var overrided = overrideTransform != null;
 		var local = overrided ? overrideTransform : __transform;
 		
-		if (__worldTransform == null) {
-			
-			__worldTransform = new Matrix ();
-			
-		}
-		
-		if (__renderTransform == null) {
-			
-			__renderTransform = new Matrix ();
-			
-		}
-		
-		var renderParent = __renderParent != null ? __renderParent : parent;
-		
 		if (!overrided && parent != null) {
 			
 			__calculateAbsoluteTransform (local, parent.__worldTransform, __worldTransform);
+			__calculateAbsoluteTransform (local, parent.__renderTransform, __renderTransform);
 			
 		} else {
 			
 			__worldTransform.copyFrom (local);
-			
-		}
-		
-		if (!overrided && renderParent != null) {
-			
-			__calculateAbsoluteTransform (local, renderParent.__renderTransform, __renderTransform);
-			
-		} else {
-			
 			__renderTransform.copyFrom (local);
 			
 		}
