@@ -127,7 +127,7 @@ class BitmapData implements IBitmapDrawable {
 			
 			fillColor = (fillColor << 8) | ((fillColor >> 24) & 0xFF);
 			
-			image = new Image (null, 0, 0, width, height, fillColor);
+			image = new Image (null, width, height, fillColor);
 			image.transparent = transparent;
 			
 			__isValid = true;

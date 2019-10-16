@@ -157,19 +157,6 @@ class Window {
 	}
 	
 	
-	public function setIcon (image:Image):Void {
-		
-		if (image == null) {
-			
-			return;
-			
-		}
-		
-		backend.setIcon (image);
-		
-	}
-	
-	
 	public function toString ():String {
 		
 		return "[object Window]";

@@ -1,14 +1,10 @@
 package lime.graphics.utils;
 
 
-import haxe.io.Bytes;
 import lime.graphics.Image;
-import lime.graphics.ImageBuffer;
 import lime.graphics.PixelFormat;
-import lime.math.ColorMatrix;
 import lime.math.Rectangle;
 import lime.math.Vector2;
-import lime.system.Endian;
 import lime.utils.UInt8Array;
 
 #if (js && html5)
@@ -19,15 +15,6 @@ import js.Browser;
 
 
 class ImageCanvasUtil {
-	
-	
-	public static function colorTransform (image:Image, rect:Rectangle, colorMatrix:ColorMatrix):Void {
-		
-		convertToData (image);
-		
-		ImageDataUtil.colorTransform (image, rect, colorMatrix);
-		
-	}
 	
 	
 	public static function convertToCanvas (image:Image, clear:Bool = false):Void {
@@ -132,16 +119,6 @@ class ImageCanvasUtil {
 	}
 	
 	
-	public static function copyChannel (image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, sourceChannel:ImageChannel, destChannel:ImageChannel):Void {
-		
-		convertToData (sourceImage);
-		convertToData (image);
-		
-		ImageDataUtil.copyChannel (image, sourceImage, sourceRect, destPoint, sourceChannel, destChannel);
-		
-	}
-	
-	
 	public static function copyPixels (image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, alphaImage:Image = null, alphaPoint:Vector2 = null, mergeAlpha:Bool = false):Void {
 		
 		if (destPoint == null || destPoint.x >= image.width || destPoint.y >= image.height || sourceRect == null || sourceRect.width < 1 || sourceRect.height < 1) {
@@ -168,7 +145,7 @@ class ImageCanvasUtil {
 			
 			if (image.transparent && sourceImage.transparent) {
 				
-				image.buffer.__srcContext.clearRect (destPoint.x + image.offsetX, destPoint.y + image.offsetY, sourceRect.width + image.offsetX, sourceRect.height + image.offsetY);
+				image.buffer.__srcContext.clearRect (destPoint.x, destPoint.y, sourceRect.width, sourceRect.height);
 				
 			}
 			
@@ -181,7 +158,7 @@ class ImageCanvasUtil {
 			// Set default composition (just in case it is different)
 			image.buffer.__srcContext.globalCompositeOperation = "source-over";
 
-			image.buffer.__srcContext.drawImage (sourceImage.buffer.src, Std.int (sourceRect.x + sourceImage.offsetX), Std.int (sourceRect.y + sourceImage.offsetY), Std.int (sourceRect.width), Std.int (sourceRect.height), Std.int (destPoint.x + image.offsetX), Std.int (destPoint.y + image.offsetY), Std.int (sourceRect.width), Std.int (sourceRect.height));
+			image.buffer.__srcContext.drawImage (sourceImage.buffer.src, Std.int (sourceRect.x), Std.int (sourceRect.y), Std.int (sourceRect.width), Std.int (sourceRect.height), Std.int (destPoint.x), Std.int (destPoint.y), Std.int (sourceRect.width), Std.int (sourceRect.height));
 			
 		}
 		
@@ -284,65 +261,19 @@ class ImageCanvasUtil {
 		
 		if (a < 255) {
 			
-			image.buffer.__srcContext.clearRect (rect.x + image.offsetX, rect.y + image.offsetY, rect.width + image.offsetX, rect.height + image.offsetY);
+			image.buffer.__srcContext.clearRect (rect.x, rect.y, rect.width, rect.height);
 			
 		}
 		
 		if (a > 0) {
 			
 			image.buffer.__srcContext.fillStyle = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + (a / 255) + ')';
-			image.buffer.__srcContext.fillRect (rect.x + image.offsetX, rect.y + image.offsetY, rect.width + image.offsetX, rect.height + image.offsetY);
+			image.buffer.__srcContext.fillRect (rect.x, rect.y, rect.width, rect.height);
 			
 		}
 		
 		image.dirty = true;
 		image.version++;
-		
-	}
-	
-	
-	public static function floodFill (image:Image, x:Int, y:Int, color:Int, format:PixelFormat):Void {
-		
-		convertToData (image);
-		
-		ImageDataUtil.floodFill (image, x, y, color, format);
-		
-	}
-	
-	
-	public static function getPixel (image:Image, x:Int, y:Int, format:PixelFormat):Int {
-		
-		convertToData (image);
-		
-		return ImageDataUtil.getPixel (image, x, y, format);
-		
-	}
-	
-	
-	public static function getPixel32 (image:Image, x:Int, y:Int, format:PixelFormat):Int {
-		
-		convertToData (image);
-		
-		return ImageDataUtil.getPixel32 (image, x, y, format);
-		
-	}
-	
-	
-	public static function getPixels (image:Image, rect:Rectangle, format:PixelFormat):Bytes {
-		
-		convertToData (image);
-		
-		return ImageDataUtil.getPixels (image, rect, format);
-		
-	}
-	
-	
-	public static function merge (image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, redMultiplier:Int, greenMultiplier:Int, blueMultiplier:Int, alphaMultiplier:Int):Void {
-		
-		convertToData (sourceImage);
-		convertToData (image);
-		
-		ImageDataUtil.merge (image, sourceImage, sourceRect, destPoint, redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier);
 		
 	}
 	
@@ -388,33 +319,6 @@ class ImageCanvasUtil {
 		
 		image.dirty = true;
 		image.version++;
-		
-	}
-	
-	
-	public static function setPixel (image:Image, x:Int, y:Int, color:Int, format:PixelFormat):Void {
-		
-		convertToData (image);
-		
-		ImageDataUtil.setPixel (image, x, y, color, format);
-		
-	}
-	
-	
-	public static function setPixel32 (image:Image, x:Int, y:Int, color:Int, format:PixelFormat):Void {
-		
-		convertToData (image);
-		
-		ImageDataUtil.setPixel32 (image, x, y, color, format);
-		
-	}
-	
-	
-	public static function setPixels (image:Image, rect:Rectangle, bytes:Bytes, dataPosition:Int, format:PixelFormat, endian:Endian):Void {
-		
-		convertToData (image);
-		
-		ImageDataUtil.setPixels (image, rect, bytes, dataPosition, format, endian);
 		
 	}
 	
