@@ -5,7 +5,5 @@ enum ImageType {
 	
 	CANVAS;
 	DATA;
-	FLASH;
-	CUSTOM;
 	
 }
