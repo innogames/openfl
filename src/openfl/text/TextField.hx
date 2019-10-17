@@ -65,7 +65,7 @@ class TextField extends InteractiveObject {
 	public var displayAsPassword (get, set):Bool;
 	public var embedFonts (get, set):Bool;
 	public var gridFitType (get, set):GridFitType;
-	public var htmlText (get, set):UTF8String;
+	public var htmlText (get, set):String;
 	public var length (get, never):Int;
 	public var maxChars (get, set):Int;
 	public var maxScrollH (get, never):Int;
@@ -73,7 +73,7 @@ class TextField extends InteractiveObject {
 	public var mouseWheelEnabled (get, set):Bool;
 	public var multiline (get, set):Bool;
 	public var numLines (get, never):Int;
-	public var restrict (get, set):UTF8String;
+	public var restrict (get, set):String;
 	public var scrollH (get, set):Int;
 	public var scrollV (get, set):Int;
 	public var selectable (get, set):Bool;
@@ -81,7 +81,7 @@ class TextField extends InteractiveObject {
 	public var selectionEndIndex (get, never):Int;
 	@:beta public var shader:Shader;
 	public var sharpness (get, set):Float;
-	public var text (get, set):UTF8String;
+	public var text (get, set):String;
 	public var textColor (get, set):Int;
 	public var textHeight (get, never):Float;
 	public var textWidth (get, never):Float;
