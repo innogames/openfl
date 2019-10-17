@@ -514,7 +514,7 @@ class TextField extends InteractiveObject {
 		
 		__replaceText (startIndex, endIndex, value);
 		
-		var i = startIndex + cast (value, UTF8String).length;
+		var i = startIndex + (value : UTF8String).length;
 		if (i > __text.length) i = __text.length;
 		
 		setSelection (i, i);
@@ -581,7 +581,7 @@ class TextField extends InteractiveObject {
 			
 		}
 		
-		var caretIndex = beginIndex + cast (newText, UTF8String).length;
+		var caretIndex = beginIndex + (newText : UTF8String).length;
 		if (caretIndex > __text.length) caretIndex = __text.length;
 		
 		__dirty = true;
@@ -2128,11 +2128,10 @@ class TextField extends InteractiveObject {
 			
 		}
 		
-		var utfValue:UTF8String = value;
 		var range = __textEngine.textFormatRanges[0];
 		range.format = __textFormat;
 		range.start = 0;
-		range.end = utfValue.length;
+		range.end = (value : UTF8String).length;
 		
 		__isHTML = false;
 		
