@@ -1653,45 +1653,6 @@ class BitmapData implements IBitmapDrawable {
 	}
 	
 	
-	private function __renderGL (renderSession:RenderSession):Void {
-		
-		var renderer:GLRenderer = cast renderSession.renderer;
-		var gl = renderSession.gl;
-		
-		renderSession.blendModeManager.setBlendMode (NORMAL);
-		
-		var shader = renderSession.shaderManager.defaultShader;
-		
-		shader.data.uImage0.input = this;
-		shader.data.uImage0.smoothing = renderSession.allowSmoothing && renderSession.forceSmoothing;
-		shader.data.uMatrix.value = renderer.getMatrix (__worldTransform);
-		
-		renderSession.shaderManager.setShader (shader);
-		
-		gl.bindBuffer (GL.ARRAY_BUFFER, getBuffer (gl, 1, __worldColorTransform));
-		gl.vertexAttribPointer (shader.data.aPosition.index, 3, GL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
-		gl.vertexAttribPointer (shader.data.aTexCoord.index, 2, GL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
-		gl.vertexAttribPointer (shader.data.aAlpha.index, 1, GL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
-		
-		gl.drawArrays (GL.TRIANGLE_STRIP, 0, 4);
-		
-		#if gl_stats
-			GLStats.incrementDrawCall (DrawCallContext.STAGE);
-		#end
-		
-	}
-	
-	
-	function __resize (width:Int, height:Int) {
-		
-		this.width = width;
-		this.height = height;
-		this.rect.width = width;
-		this.rect.height = height;
-		
-	}
-	
-	
 	public function __updateChildren (transformOnly:Bool):Void {
 		
 		
