@@ -108,7 +108,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	private var __transform:Matrix;
 	private var __transformDirty:Bool;
 	private var __updateDirty:Bool;
-	private var __updateTraverse:Bool;
 	private var __visible:Bool;
 	private var __worldAlpha:Float;
 	private var __worldBlendMode:BlendMode;
@@ -888,7 +887,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		if (resetUpdateDirty) {
 			
 			__updateDirty = false;
-			__updateTraverse = false;
 			
 		}
 		
