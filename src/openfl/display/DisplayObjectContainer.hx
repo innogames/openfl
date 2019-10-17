@@ -35,6 +35,7 @@ class DisplayObjectContainer extends InteractiveObject {
 	public var tabChildren:Bool;
 	
 	private var __removedChildren:Vector<DisplayObject>;
+	private var __updateTraverse:Bool;
 	
 	
 	private function new () {
@@ -891,6 +892,10 @@ class DisplayObjectContainer extends InteractiveObject {
 	
 	
 	public override function __update (transformOnly:Bool, updateChildren:Bool, ?resetUpdateDirty:Bool = false):Void {
+		
+		if (resetUpdateDirty) {
+			__updateTraverse = false;
+		}
 		
 		super.__update (transformOnly, updateChildren, resetUpdateDirty);
 		
