@@ -30,7 +30,6 @@ import js.Browser;
 	public static var current (get, never):MovieClip;
 	
 	private static var __lastTimerID:UInt = 0;
-	private static var __sentWarnings = new Map<String, Bool> ();
 	private static var __timers = new Map<UInt, Timer> ();
 	
 	
@@ -179,21 +178,6 @@ import js.Browser;
 		
 		System.openURL (uri, window);
 		#end
-		
-	}
-	
-	
-	public static function notImplemented (?posInfo:PosInfos):Void {
-		
-		var api = posInfo.className + "." + posInfo.methodName;
-		
-		if (!__sentWarnings.exists (api)) {
-			
-			__sentWarnings.set (api, true);
-			
-			Log.warn (posInfo.methodName + " is not implemented", posInfo);
-			
-		}
 		
 	}
 	
