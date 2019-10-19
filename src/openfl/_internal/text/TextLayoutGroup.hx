@@ -1,18 +1,8 @@
 package openfl._internal.text;
 
-
-import lime.text.GlyphPosition;
 import openfl.text.TextFormat;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
 // TODO: Need to measure all characters (including whitespace) but include a value for non-whitespace characters separately (for sake of alignment and wrapping)
-
-
 class TextLayoutGroup {
 	
 	
@@ -25,11 +15,7 @@ class TextLayoutGroup {
 	public var lineIndex:Int;
 	public var offsetX:Float;
 	public var offsetY:Float;
-	#if (js && html5)
-	public var positions:Array<Float>; // TODO: Make consistent with native?
-	#else
-	public var positions:Array<GlyphPosition>;
-	#end
+	public var positions:Array<Float>;
 	public var startIndex:Int;
 	public var width:Float;
 	
@@ -45,11 +31,7 @@ class TextLayoutGroup {
 	
 	public inline function getAdvance (index:Int):Float {
 		
-		#if (js && html5)
 		return positions[index];
-		#else
-		return (index >= 0 && index < positions.length) ? positions[index].advance.x : 0;
-		#end
 		
 	}
 	
