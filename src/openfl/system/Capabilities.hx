@@ -43,8 +43,6 @@ import openfl._internal.Lib;
 	public static var touchscreenType (default, null) = TouchscreenType.FINGER; // TODO
 	public static var version (get, never):String;
 	
-	private static var __standardDensities = [ 120, 160, 240, 320, 480, 640, 800, 960 ];
-	
 	
 	public static function hasMultiChannelAudio (type:String):Bool {
 		
@@ -166,54 +164,13 @@ import openfl._internal.Lib;
 	private static function get_screenDPI ():Float {
 		
 		var window = Application.current != null ? Application.current.window : null;
-		var screenDPI:Float;
-		
-		#if (desktop || web)
-		
-		screenDPI = 72;
+		var screenDPI:Float = 72;
 		
 		if (window != null) {
 			
 			screenDPI *= window.scale;
 			
 		}
-		
-		#else
-		
-		screenDPI = __standardDensities[0];
-		
-		if (window != null) {
-			
-			var display = window.display;
-			
-			if (display != null) {
-				
-				var actual = display.dpi;
-				
-				var closestValue = screenDPI;
-				var closestDifference = Math.abs (actual - screenDPI);
-				var difference:Float;
-				
-				for (density in __standardDensities) {
-					
-					difference = Math.abs (actual - density);
-					
-					if (difference < closestDifference) {
-						
-						closestDifference = difference;
-						closestValue = density;
-						
-					}
-					
-				}
-				
-				screenDPI = closestValue;
-				
-			}
-			
-		}
-		
-		#end
 		
 		return screenDPI;
 		
@@ -227,13 +184,7 @@ import openfl._internal.Lib;
 		
 		if (stage.window != null) {
 			
-			var display = stage.window.display;
-			
-			if (display != null) {
-				
-				resolutionX = Math.ceil (display.currentMode.width * stage.window.scale);
-				
-			}
+			resolutionX = Math.ceil (stage.window.displayWidth * stage.window.scale);
 			
 		}
 		
@@ -255,13 +206,7 @@ import openfl._internal.Lib;
 		
 		if (stage.window != null) {
 			
-			var display = stage.window.display;
-			
-			if (display != null) {
-				
-				resolutionY = Math.ceil (display.currentMode.height * stage.window.scale);
-				
-			}
+			resolutionY = Math.ceil (stage.window.displayHeight * stage.window.scale);
 			
 		}
 		

@@ -8,18 +8,12 @@ import js.html.FocusEvent;
 import js.html.InputElement;
 import js.html.IFrameElement;
 import js.html.InputEvent;
-import js.html.LinkElement;
 import js.html.MouseEvent;
 import js.html.TouchEvent;
 import js.html.ClipboardEvent;
 import js.html.WheelEvent;
 import js.Browser;
 import lime.app.Application;
-import lime.graphics.utils.ImageCanvasUtil;
-import lime.graphics.Image;
-import lime.system.Display;
-import lime.system.DisplayMode;
-import lime.system.System;
 import lime.system.Clipboard;
 import lime.ui.Gamepad;
 import lime.ui.Joystick;
@@ -43,9 +37,6 @@ class HTML5Window {
 	
 	public var canvas:CanvasElement;
 	public var element:Element;
-	#if stats
-	public var stats:Dynamic;
-	#end
 	
 	private var cacheElementHeight:Float;
 	private var cacheElementWidth:Float;
@@ -78,17 +69,6 @@ class HTML5Window {
 		
 		cacheMouseX = 0;
 		cacheMouseY = 0;
-		
-	}
-	
-	
-	public function alert (message:String, title:String):Void {
-		
-		if (message != null) {
-			
-			Browser.alert (message);
-			
-		}
 		
 	}
 	
@@ -193,36 +173,7 @@ class HTML5Window {
 		}
 		
 	}
-	
-	
-	public function focus ():Void {
-		
-		
-		
-	}
-	
-	
-	public function getDisplay ():Display {
-		
-		return System.getDisplay (0);
-		
-	}
-	
-	
-	public function getDisplayMode ():DisplayMode {
-		
-		return System.getDisplay (0).currentMode;
-		
-	}
-	
-	
-	public function setDisplayMode (value:DisplayMode):DisplayMode {
-		
-		return value;
-		
-	}
-	
-	
+
 	public function getEnableTextEvents ():Bool {
 		
 		return enableTextEvents;
@@ -725,13 +676,6 @@ class HTML5Window {
 	}
 	
 	
-	public function move (x:Int, y:Int):Void {
-		
-		
-		
-	}
-	
-	
 	inline function normalizeInputNewlines (text:String):String {
 		
 		// normalize line breaks to `\n`, no matter if they were `\r\n` or just `\r`
@@ -743,20 +687,7 @@ class HTML5Window {
 		
 	}
 	
-	
-	public function resize (width:Int, height:Int):Void {
-		
-		
-		
-	}
-	
-	
-	public function setBorderless (value:Bool):Bool {
-		
-		return value;
-		
-	}
-	
+
 	private var settingSystemClipboard = false;
 	
 	public function setClipboard (value:String):Void {
@@ -921,27 +852,6 @@ class HTML5Window {
 	}
 	
 	
-	public function setMaximized (value:Bool):Bool {
-		
-		return false;
-		
-	}
-	
-	
-	public function setMinimized (value:Bool):Bool {
-		
-		return false;
-		
-	}
-	
-	
-	public function setResizable (value:Bool):Bool {
-		
-		return value;
-		
-	}
-	
-	
 	public function setTitle (value:String):String {
 		
 		if (value != null) {
@@ -963,7 +873,7 @@ class HTML5Window {
 			
 		}
 		
-		parent.__scale = scale;
+		parent.scale = scale;
 		
 	}
 	

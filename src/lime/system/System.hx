@@ -2,7 +2,6 @@ package lime.system;
 
 import js.Browser;
 
-import lime.math.Rectangle;
 import lime.utils.ArrayBuffer;
 import lime.utils.UInt8Array;
 import lime.utils.UInt16Array;
@@ -62,36 +61,6 @@ class System {
 		#elseif air
 		NativeApplication.nativeApplication.exit (code);
 		#end
-		
-	}
-	
-	
-	public static function getDisplay (id:Int):Display {
-		
-		#if html5
-		if (id == 0) {
-			
-			var display = new Display ();
-			display.id = 0;
-			display.name = "Generic Display";
-			
-			//var div = Browser.document.createElement ("div");
-			//div.style.width = "1in";
-			//Browser.document.body.appendChild (div);
-			//var ppi = Browser.document.defaultView.getComputedStyle (div, null).getPropertyValue ("width");
-			//Browser.document.body.removeChild (div);
-			//display.dpi = Std.parseFloat (ppi);
-			display.dpi = 96 * Browser.window.devicePixelRatio;
-			display.currentMode = new DisplayMode (Browser.window.screen.width, Browser.window.screen.height, 60, ARGB32);
-			
-			display.supportedModes = [ display.currentMode ];
-			display.bounds = new Rectangle (0, 0, display.currentMode.width, display.currentMode.height);
-			return display;
-			
-		}
-		#end
-		
-		return null;
 		
 	}
 	

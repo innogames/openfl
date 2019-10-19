@@ -1769,14 +1769,14 @@ class Stage extends DisplayObjectContainer {
 	
 	private function get_fullScreenHeight ():UInt {
 		
-		return Math.ceil (window.display.currentMode.height * window.scale);
+		return Math.ceil (window.displayHeight * window.scale);
 		
 	}
 	
 	
 	private function get_fullScreenWidth ():UInt {
 		
-		return Math.ceil (window.display.currentMode.width * window.scale);
+		return Math.ceil (window.displayWidth * window.scale);
 		
 	}
 
