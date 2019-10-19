@@ -1,17 +1,8 @@
 package openfl._internal.text;
 
 
-import haxe.Timer;
-import lime.graphics.opengl.GLTexture;
-import lime.system.System;
-import lime.text.GlyphPosition;
-import lime.text.TextLayout;
 import lime.text.UTF8String;
 import openfl.Vector;
-import openfl.events.Event;
-import openfl.events.FocusEvent;
-import openfl.events.MouseEvent;
-import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.text.AntiAliasType;
 import openfl.text.Font;
@@ -20,28 +11,13 @@ import openfl.text.TextField;
 import openfl.text.TextFieldAutoSize;
 import openfl.text.TextFieldType;
 import openfl.text.TextFormat;
-import openfl.text.TextFormatAlign;
 
-#if (js && html5)
-import js.html.CanvasElement;
 import js.html.CanvasRenderingContext2D;
 import js.Browser;
-#end
-
-#if sys
-import haxe.io.Path;
-#end
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 @:access(openfl.text.Font)
 @:access(openfl.text.TextField)
 @:access(openfl.text.TextFormat)
-
-
 class TextEngine {
 	
 	private static inline var GUTTER = 2.0;
@@ -50,9 +26,7 @@ class TextEngine {
 	private static inline var UTF8_SPACE = 32;
 	private static inline var UTF8_HYPHEN = 0x2D;
 	
-	#if (js && html5)
 	private static var __context:CanvasRenderingContext2D;
-	#end
 	
 	public var antiAliasType:AntiAliasType;
 	public var autoSize:TextFieldAutoSize;
@@ -94,23 +68,9 @@ class TextEngine {
 	
 	private var textField:TextField;
 	
-	@:noCompletion private var __cursorTimer:Timer;
-	@:noCompletion private var __hasFocus:Bool;
-	@:noCompletion private var __isKeyDown:Bool;
-	@:noCompletion private var __measuredHeight:Int;
-	@:noCompletion private var __measuredWidth:Int;
-	@:noCompletion private var __restrictRegexp:EReg;
-	@:noCompletion private var __selectionStart:Int;
-	@:noCompletion private var __showCursor:Bool;
-	@:noCompletion private var __textFormat:TextFormat;
-	@:noCompletion private var __textLayout:TextLayout;
-	@:noCompletion private var __texture:GLTexture;
-	//@:noCompletion private var __tileData:Map<Tilesheet, Array<Float>>;
-	//@:noCompletion private var __tileDataLength:Map<Tilesheet, Int>;
-	//@:noCompletion private var __tilesheets:Map<Tilesheet, Bool>;
+	private var __hasFocus:Bool;
+	private var __restrictRegexp:EReg;
 	private var __useIntAdvances:Null<Bool>;
-	
-	@:noCompletion @:dox(hide) public var __font:Font;
 	
 	
 	public function new (textField:TextField) {
@@ -147,11 +107,9 @@ class TextEngine {
 		layoutGroups = new Vector ();
 		textFormatRanges = new Vector ();
 		
-		#if (js && html5)
 		if (__context == null) {
-			__context = (cast Browser.document.createElement ("canvas") : CanvasElement).getContext ("2d");
+			__context = Browser.document.createCanvasElement ().getContext ("2d");
 		}
-		#end
 		
 	}
 	
@@ -201,8 +159,6 @@ class TextEngine {
 		
 		var ascent:Float, descent:Float, leading:Int;
 		
-		#if (js && html5)
-		
 		__context.font = getFont (format);
 
 		if (format.__ascent != null) {
@@ -217,12 +173,6 @@ class TextEngine {
 		}
 		
 		leading = format.leading;
-		
-		#else
-		
-		ascent = descent = leading = 0;
-		
-		#end
 		
 		return ascent + descent + leading;
 		
@@ -409,8 +359,6 @@ class TextEngine {
 			var currentFormat = textField.__textFormat;
 			var ascent, descent, leading, heightValue;
 			
-			#if js
-			
 			// __context.font = getFont (currentFormat);
 			
 			if (currentFormat.__ascent != null) {
@@ -428,8 +376,6 @@ class TextEngine {
 			leading = currentFormat.leading;
 			
 			heightValue = ascent + descent + leading;
-			
-			#end
 			
 			currentLineAscent = ascent;
 			currentLineDescent = descent;
@@ -543,8 +489,6 @@ class TextEngine {
 			
 			var positions = [];
 			
-			#if (js && html5)
-			
 			if (__useIntAdvances == null) {
 				
 				__useIntAdvances = ~/Trident\/7.0/.match (Browser.navigator.userAgent); // IE
@@ -595,43 +539,15 @@ class TextEngine {
 			
 			return positions;
 			
-			#else
-			
-			if (__textLayout == null) {
-				
-				__textLayout = new TextLayout ();
-				
-			}
-			
-			var width = 0.0;
-			
-			__textLayout.text = null;
-			__textLayout.font = font;
-			
-			if (formatRange.format.size != null) {
-				
-				__textLayout.size = formatRange.format.size;
-				
-			}
-			
-			__textLayout.text = text.substring (startIndex, endIndex);
-			return __textLayout.positions;
-			
-			#end
-			
 		}
 		
-		inline function getPositionsWidth (positions:#if (js && html5) Array<Float> #else Array<GlyphPosition> #end):Float {
+		inline function getPositionsWidth (positions:Array<Float>):Float {
 			
 			var width = 0.0;
 			
 			for (position in positions) {
 				
-				#if (js && html5)
 				width += position;
-				#else
-				width += position.advance.x;
-				#end
 				
 			}
 			
@@ -639,18 +555,14 @@ class TextEngine {
 			
 		}
 		
-		inline function getCharIndexAtWidth (positions:#if (js && html5) Array<Float> #else Array<GlyphPosition> #end, width:Float):Int {
+		inline function getCharIndexAtWidth (positions:Array<Float>, width:Float):Int {
 			
 			var charIndex = -1;
 			var currentWidth = 0.0;
 			
 			for (i in 0...positions.length) {
 				
-				#if (js && html5)
 				currentWidth += positions[i];
-				#else
-				currentWidth += positions[i].advance.x;
-				#end
 				if (currentWidth > width) {
 					break;
 				} else {
@@ -665,40 +577,7 @@ class TextEngine {
 		
 		inline function getTextWidth (text:String):Float {
 			
-			#if (js && html5)
-			
 			return measureTextWidth (text);
-			
-			#else
-			
-			if (__textLayout == null) {
-				
-				__textLayout = new TextLayout ();
-				
-			}
-			
-			var width = 0.0;
-			
-			__textLayout.text = null;
-			__textLayout.font = font;
-			
-			if (formatRange.format.size != null) {
-				
-				__textLayout.size = formatRange.format.size;
-				
-			}
-			
-			__textLayout.text = text;
-			
-			for (position in __textLayout.positions) {
-				
-				width += position.advance.x;
-				
-			}
-			
-			return width;
-			
-			#end
 			
 		}
 		
@@ -727,8 +606,6 @@ class TextEngine {
 				formatRange = textFormatRanges[rangeIndex];
 				currentFormat.__merge (formatRange.format);
 				
-				#if (js && html5)
-				
 				__context.font = getFont (currentFormat);
 				
 				if (currentFormat.__ascent != null) {
@@ -745,8 +622,6 @@ class TextEngine {
 				leading = currentFormat.leading;
 				
 				heightValue = ascent + descent + leading;
-				
-				#end
 				
 			}
 			
@@ -814,7 +689,7 @@ class TextEngine {
 				
 				if (groupEndIndex == textIndex) {
 					
-					if (positions.length > 0 && #if (js && html5) positions[0] #else positions[0].advance.x #end > width - 2 * GUTTER) {
+					if (positions.length > 0 && positions[0] > width - 2 * GUTTER) {
 						
 						// if the textfield is smaller than a single character and
 						groupEndIndex = endIndex + 1;
@@ -979,7 +854,7 @@ class TextEngine {
 							// Trim left space of this word
 							textIndex++;
 							
-							var spaceWidth = #if (js && html5) positions.shift () #else positions.shift ().advance.x #end;
+							var spaceWidth = positions.shift ();
 							widthValue -= spaceWidth;
 							offsetX += spaceWidth;
 							
@@ -990,7 +865,7 @@ class TextEngine {
 							// Trim right space of this word
 							endIndex--;
 							
-							var spaceWidth = #if (js && html5) positions.pop () #else positions.pop ().advance.x #end;
+							var spaceWidth = positions.pop ();
 							widthValue -= spaceWidth;
 							
 						}
@@ -1009,7 +884,7 @@ class TextEngine {
 								// TODO: Handle multiple spaces
 								
 								var lastPosition = positions[positions.length - 1];
-								var spaceWidth = #if (js && html5) lastPosition #else lastPosition.advance.x #end;
+								var spaceWidth = lastPosition;
 								
 								if (offsetX + widthValue - spaceWidth <= width - 2) {
 									
@@ -1166,7 +1041,7 @@ class TextEngine {
 							if (breakIndex - layoutGroup.startIndex - layoutGroup.positions.length < 0) {
 								
 								// Newline has no size
-								layoutGroup.positions.push (#if (js && html5) 0.0 #else null #end);
+								layoutGroup.positions.push (0.0);
 								
 							}
 							
@@ -1237,22 +1112,14 @@ class TextEngine {
 			
 		}
 		
-		#if openfl_trace_text_layout_groups
-		for (lg in layoutGroups) {
-			trace("LG", lg.positions.length - (lg.endIndex - lg.startIndex), "line:" + lg.lineIndex, "w:" + lg.width, "h:" + lg.height, "x:" + Std.int(lg.offsetX), "y:" + Std.int(lg.offsetY), '"${text.substring(lg.startIndex, lg.endIndex)}"', lg.startIndex, lg.endIndex);
-		}
-		#end
-		
 	}
 	
 	
-	#if (js && html5)
 	inline private function measureTextWidth (value:String):Float {
 		
 		return __context.measureText(value).width;
 		
 	}
-	#end
 	
 	
 	private function setTextAlignment ():Void {

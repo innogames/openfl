@@ -1,29 +1,25 @@
 package openfl.text;
 
-
+import js.Browser;
+import js.html.SpanElement;
 import lime.app.Future;
-import lime.text.Font in LimeFont;
+import lime.app.Promise;
+import lime.utils.Log;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
-class Font extends LimeFont {
+class Font {
 	
 	
-	public var fontName (get, set):String;
-	public var fontStyle:FontStyle;
-	public var fontType:FontType;
+	public var fontName (default, null):String;
+	public var fontStyle(default, null):FontStyle;
+	public var fontType(default, null):FontType;
 	
 	private static var __fontByName = new Map<String, Font> ();
 	private static var __registeredFonts = new Array<Font> ();
 	
 	
-	public function new (name:String = null) {
+	public function new (?name:String) {
 		
-		super (name);
+		this.fontName = name;
 		
 	}
 	
@@ -38,64 +34,122 @@ class Font extends LimeFont {
 	
 	public static function loadFromName (path:String):Future<Font> {
 		
-		return LimeFont.loadFromName (path).then (function (font) {
-			
-			return Future.withValue (Font.__fromLimeFont (font));
-			
-		});
-		
+		return new Font ().__loadFromName (path);
+
 	}
 	
 	
-	public static function registerFont (font:Class<Dynamic>) {
+	public static function registerFont (font:Class<Font>) {
 		
-		var instance = cast (Type.createInstance (font, []), Font);
+		var instance = Type.createInstance (font, []);
 		
 		if (instance != null) {
 			
-			/*if (Reflect.hasField (font, "resourceName")) {
-				
-				instance.fontName = __ofResource (Reflect.field (font, "resourceName"));
-				
-			}*/
-			
 			__registeredFonts.push (instance);
-			__fontByName[instance.name] = instance;
+			__fontByName[instance.fontName] = instance;
 			
 		}
 		
 	}
 	
-	
-	private static function __fromLimeFont (value:LimeFont):Font {
+
+	private function __loadFromName (name:String):Future<Font> {
 		
-		var font = new Font ();
-		font.name = value.name;
-		font.src = value.src;
-		return font;
+		var promise = new Promise<Font> ();
+		
+		this.fontName = name;
+		
+		var ua = Browser.navigator.userAgent.toLowerCase();
+		var isSafari = (ua.indexOf(" safari/") >= 0 && ua.indexOf(" chrome/") < 0);
+		
+		if (!isSafari && Browser.document.fonts != null && Browser.document.fonts.load != null) {
+			
+			Browser.document.fonts.load ("1em '" + name + "'").then (function (_) {
+				
+				promise.complete (this);
+				
+			}, function (_) {
+				
+				Log.warn ("Could not load web font \"" + name + "\"");
+				promise.complete (this);
+				
+			});
+			
+		} else {
+			
+			var node1 = __measureFontNode ("'" + name + "', sans-serif");
+			var node2 = __measureFontNode ("'" + name + "', serif");
+			
+			var width1 = node1.offsetWidth;
+			var width2 = node2.offsetWidth;
+			
+			var interval = -1;
+			var timeout = 3000;
+			var intervalLength = 50;
+			var intervalCount = 0;
+			var loaded, timeExpired;
+			
+			function checkFont() {
+				
+				intervalCount++;
+				
+				loaded = (node1.offsetWidth != width1 || node2.offsetWidth != width2);
+				timeExpired = (intervalCount * intervalLength >= timeout);
+				
+				if (loaded || timeExpired) {
+					
+					Browser.window.clearInterval (interval);
+					node1.parentNode.removeChild (node1);
+					node2.parentNode.removeChild (node2);
+					node1 = null;
+					node2 = null;
+					
+					if (timeExpired) {
+						
+						Log.warn ("Could not load web font \"" + name + "\"");
+						
+					}
+					
+					promise.complete (this);
+					
+				}
+				
+			}
+			
+			interval = Browser.window.setInterval (checkFont, intervalLength);
+			
+		}
+		
+	
+		return promise.future;
 		
 	}
-	
-	
-	
-	
-	// Get & Set Methods
-	
-	
-	
-	
-	private inline function get_fontName ():String {
+
+
+	private static function __measureFontNode (fontFamily:String):SpanElement {
 		
-		return name;
+		var node:SpanElement = cast Browser.document.createElement ("span");
+		node.setAttribute ("aria-hidden", "true");
+		var text = Browser.document.createTextNode ("BESbswy");
+		node.appendChild (text);
+		var style = node.style;
+		style.display = "block";
+		style.position = "absolute";
+		style.top = "-9999px";
+		style.left = "-9999px";
+		style.fontSize = "300px";
+		style.width = "auto";
+		style.height = "auto";
+		style.lineHeight = "normal";
+		style.margin = "0";
+		style.padding = "0";
+		style.fontVariant = "normal";
+		style.whiteSpace = "nowrap";
+		style.fontFamily = fontFamily;
+		Browser.document.body.appendChild (node);
+		return node;
 		
 	}
-	
-	
-	private inline function set_fontName (value:String):String {
-		
-		return name = value;
-		
-	}
-	
-	
+
+
 }
