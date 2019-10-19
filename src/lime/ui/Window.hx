@@ -4,37 +4,24 @@ package lime.ui;
 import lime.app.Application;
 import lime.app.Config;
 import lime.app.Event;
-import lime.graphics.Image;
 import lime.graphics.Renderer;
-import lime.system.Display;
-import lime.system.DisplayMode;
-
-import openfl.display.Stage;
+import lime._backend.html5.HTML5Window as WindowBackend;
 
 typedef CopyDataProvider = String->Void;
-
-
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 
 class Window {
 	
 	
 	public var application (default, null):Application;
-	public var borderless (get, set):Bool;
 	public var config:WindowConfig;
-	public var display (get, never):Display;
-	public var displayMode (get, set):DisplayMode;
+	public var displayHeight (get, never):Int;
+	public var displayWidth (get, never):Int;
 	public var enableTextEvents (get, set):Bool;
 	public var enableContextMenuEvents:Bool;
 	public var fullscreen (get, set):Bool;
-	public var height (get, set):Int;
+	public var height:Int;
 	public var id (default, null):Int;
-	public var maximized (get, set):Bool;
-	public var minimized (get, set):Bool;
 	public var onActivate = new Event<Void->Void> ();
 	public var onClose = new Event<Void->Void> ();
 	public var onDeactivate = new Event<Void->Void> ();
@@ -59,25 +46,16 @@ class Window {
 	public var onTextCut = new Event<CopyDataProvider->Void> ();
 	public var onTextPaste = new Event<String->Void> ();
 	public var renderer (default,null):Renderer;
-	public var resizable (get, set):Bool;
-	public var scale (get, never):Float;
+	public var scale (default, null):Float;
 	public var title (get, set):String;
-	public var width (get, set):Int;
-	public var x (get, set):Int;
-	public var y (get, set):Int;
+	public var width:Int;
 	
 	@:noCompletion private var backend:WindowBackend;
-	@:noCompletion private var __borderless:Bool;
 	@:noCompletion private var __fullscreen:Bool;
-	@:noCompletion private var __height:Int;
 	@:noCompletion private var __maximized:Bool;
 	@:noCompletion private var __minimized:Bool;
 	@:noCompletion private var __resizable:Bool;
-	@:noCompletion private var __scale:Float;
 	@:noCompletion private var __title:String;
-	@:noCompletion private var __width:Int;
-	@:noCompletion private var __x:Int;
-	@:noCompletion private var __y:Int;
 	
 	
 	public function new (config:WindowConfig = null) {
@@ -85,36 +63,24 @@ class Window {
 		
 		this.config = config;
 		
-		__width = 0;
-		__height = 0;
+		width = 0;
+		height = 0;
 		__fullscreen = false;
-		__scale = 1;
-		__x = 0;
-		__y = 0;
+		scale = 1;
 		__title = "";
 		id = -1;
 		
-		if (Reflect.hasField (config, "width")) __width = config.width;
-		if (Reflect.hasField (config, "height")) __height = config.height;
-		if (Reflect.hasField (config, "x")) __x = config.x;
-		if (Reflect.hasField (config, "y")) __y = config.y;
+		if (Reflect.hasField (config, "width")) width = config.width;
+		if (Reflect.hasField (config, "height")) height = config.height;
 		#if !web
 		if (Reflect.hasField (config, "fullscreen")) __fullscreen = config.fullscreen;
 		#end
-		if (Reflect.hasField (config, "borderless")) __borderless = config.borderless;
 		if (Reflect.hasField (config, "resizable")) __resizable = config.resizable;
 		if (Reflect.hasField (config, "title")) __title = config.title;
 		
 		backend = new WindowBackend (this);
 		
 		renderer = new Renderer (this);
-	}
-	
-	
-	public function alert (message:String = null, title:String = null):Void {
-		
-		backend.alert (message, title);
-		
 	}
 	
 	
@@ -130,40 +96,6 @@ class Window {
 	}
 	
 	
-	public function focus ():Void {
-		
-		backend.focus ();
-		
-	}
-	
-	
-	public function move (x:Int, y:Int):Void {
-		
-		backend.move (x, y);
-		
-		__x = x;
-		__y = y;
-		
-	}
-	
-	
-	public function resize (width:Int, height:Int):Void {
-		
-		backend.resize (width, height);
-		
-		__width = width;
-		__height = height;
-		
-	}
-	
-	
-	public function toString ():String {
-		
-		return "[object Window]";
-		
-	}
-	
-	
 	
 	
 	// Get & Set Methods
@@ -171,37 +103,16 @@ class Window {
 	
 	
 	
-	@:noCompletion private function get_display ():Display {
+	@:noCompletion inline function get_displayWidth ():Int {
 		
-		return backend.getDisplay ();
-		
-	}
-	
-	
-	@:noCompletion private function get_displayMode ():DisplayMode {
-		
-		return backend.getDisplayMode ();
+		return js.Browser.window.screen.width;
 		
 	}
 	
 	
-	@:noCompletion private function set_displayMode (value:DisplayMode):DisplayMode {
+	@:noCompletion inline function get_displayHeight ():Int {
 		
-		return backend.setDisplayMode (value);
-		
-	}
-	
-	
-	@:noCompletion private inline function get_borderless ():Bool {
-		
-		return __borderless;
-		
-	}
-	
-	
-	@:noCompletion private function set_borderless (value:Bool):Bool {
-		
-		return __borderless = backend.setBorderless (value);
+		return js.Browser.window.screen.height;
 		
 	}
 	
@@ -234,73 +145,6 @@ class Window {
 	}
 	
 	
-	@:noCompletion private inline function get_height ():Int {
-		
-		return __height;
-		
-	}
-	
-	
-	@:noCompletion private function set_height (value:Int):Int {
-		
-		resize (__width, value);
-		return __height;
-		
-	}
-	
-	
-	@:noCompletion private inline function get_maximized ():Bool {
-		
-		return __maximized;
-		
-	}
-	
-	
-	@:noCompletion private inline function set_maximized (value:Bool):Bool {
-		
-		__minimized = false;
-		return __maximized = backend.setMaximized (value);
-		
-	}
-	
-	
-	@:noCompletion private inline function get_minimized ():Bool {
-		
-		return __minimized;
-		
-	}
-	
-	
-	@:noCompletion private function set_minimized (value:Bool):Bool {
-		
-		__maximized = false;
-		return __minimized = backend.setMinimized (value);
-		
-	}
-	
-	
-	@:noCompletion private inline function get_resizable ():Bool {
-		
-		return __resizable;
-		
-	}
-	
-	
-	@:noCompletion private function set_resizable (value:Bool):Bool {
-		
-		__resizable = backend.setResizable (value);
-		return __resizable;
-		
-	}
-	
-	
-	@:noCompletion private inline function get_scale ():Float {
-		
-		return __scale;
-		
-	}
-	
-	
 	@:noCompletion private inline function get_title ():String {
 		
 		return __title;
@@ -315,54 +159,4 @@ class Window {
 	}
 	
 	
-	@:noCompletion private inline function get_width ():Int {
-		
-		return __width;
-		
-	}
-	
-	
-	@:noCompletion private function set_width (value:Int):Int {
-		
-		resize (value, __height);
-		return __width;
-		
-	}
-	
-	
-	@:noCompletion private inline function get_x ():Int {
-		
-		return __x;
-		
-	}
-	
-	
-	@:noCompletion private function set_x (value:Int):Int {
-		
-		move (value, __y);
-		return __x;
-		
-	}
-	
-	
-	@:noCompletion private inline function get_y ():Int {
-		
-		return __y;
-		
-	}
-	
-	
-	@:noCompletion private function set_y (value:Int):Int {
-		
-		move (__x, value);
-		return __y;
-		
-	}
-	
-	
 }
-
-
-#if (js && html5)
-@:noCompletion private typedef WindowBackend = lime._backend.html5.HTML5Window;
-#end
