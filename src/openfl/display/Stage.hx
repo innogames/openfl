@@ -1584,35 +1584,6 @@ class Stage extends DisplayObjectContainer {
 	}
 	
 	
-	public override function __update (transformOnly:Bool, updateChildren:Bool, ?resetUpdateDirty:Bool = false):Void {
-		
-		if (transformOnly) {
-			
-			if (__transformDirty) {
-				
-				super.__update (true, updateChildren, resetUpdateDirty);
-				
-				if (updateChildren) {
-					
-					__transformDirty = false;
-					
-				}
-				
-			}
-			
-		} else {
-			
-			if (__transformDirty || __renderDirty) {
-				
-				super.__update (false, updateChildren, resetUpdateDirty);
-				
-			}
-			
-		}
-		
-	}
-	
-	
 	
 	
 	// Get & Set Methods

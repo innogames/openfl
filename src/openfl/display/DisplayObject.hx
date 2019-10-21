@@ -106,7 +106,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	private var __scaleY:Float;
 	private var __scrollRect:Rectangle;
 	private var __transform:Matrix;
-	private var __transformDirty:Bool;
 	private var __updateDirty:Bool;
 	private var __visible:Bool;
 	private var __worldAlpha:Float;
@@ -589,7 +588,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	
 	private function __getWorldTransform ():Matrix {
 
-		var transformDirty = __transformDirty || __worldTransformInvalid;
+		var transformDirty = __worldTransformInvalid;
 
 		if (transformDirty) {
 
@@ -816,15 +815,8 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	
 	private function __setTransformDirty ():Void {
 		
-		if (!__transformDirty) {
-			
-			__transformDirty = true;
-			
-			__setWorldTransformInvalid ();
-			__setParentRenderDirty ();
-			
-		}
-		
+		__setWorldTransformInvalid ();
+		__setParentRenderDirty ();
 		__setUpdateDirty();
 		
 	}
@@ -894,12 +886,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		if (__isMask && renderParent == null) renderParent = __maskTarget;
 		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
 		__updateTransforms ();
-		
-		//if (updateChildren && __transformDirty) {
-			
-			__transformDirty = false;
-			
-		//}
 		
 		__worldTransformInvalid = false;
 
@@ -1188,12 +1174,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
 		__worldAlpha = alpha;
 		__worldBlendMode = blendMode;
-		
-		if (__transformDirty) {
-			
-			__transformDirty = false;
-			
-		}
 		
 	}
 	
