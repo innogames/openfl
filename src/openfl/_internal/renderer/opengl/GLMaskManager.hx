@@ -19,9 +19,6 @@ import openfl.utils.ByteArray;
 @:access(openfl.display.DisplayObject)
 @:access(openfl.geom.Matrix)
 @:access(openfl.geom.Rectangle)
-@:keep
-
-
 class GLMaskManager extends AbstractMaskManager {
 	
 	

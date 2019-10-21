@@ -10,9 +10,6 @@ import openfl.geom.*;
 #end
 
 @:access(openfl.display.DisplayObject)
-@:keep
-
-
 class AbstractMaskManager {
 	
 	
@@ -62,20 +59,6 @@ class AbstractMaskManager {
 	
 	
 	public function popRect ():Void {
-		
-		
-		
-	}
-	
-	
-	public function saveState ():Void {
-		
-		
-		
-	}
-	
-	
-	public function restoreState ():Void {
 		
 		
 		

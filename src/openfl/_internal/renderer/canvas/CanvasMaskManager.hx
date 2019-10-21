@@ -6,9 +6,6 @@ import openfl.display.*;
 import openfl.geom.*;
 
 @:access(openfl.display.DisplayObject)
-@:keep
-
-
 class CanvasMaskManager extends AbstractMaskManager {
 	
 	
