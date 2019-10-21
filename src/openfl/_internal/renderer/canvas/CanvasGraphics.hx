@@ -1,14 +1,16 @@
 package openfl._internal.renderer.canvas;
 
+import js.html.CanvasElement;
+import js.html.CanvasGradient;
+import js.html.CanvasRenderingContext2D;
+import js.html.CanvasWindingRule;
+import js.Browser;
 import lime.graphics.utils.ImageCanvasUtil;
 import openfl._internal.renderer.RenderSession;
 import openfl.display.BitmapData;
-import openfl.display.BitmapDataChannel;
 import openfl.display.CapsStyle;
-import openfl.display.DisplayObject;
 import openfl._internal.renderer.DrawCommandBuffer;
 import openfl._internal.renderer.DrawCommandReader;
-import openfl._internal.renderer.DrawCommandType;
 import openfl.display.GradientType;
 import openfl.display.Graphics;
 import openfl.display.InterpolationMethod;
@@ -16,18 +18,8 @@ import openfl.display.SpreadMethod;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
-import openfl.utils.ByteArray;
 import openfl.Vector;
 
-#if (js && html5)
-import js.html.CanvasElement;
-import js.html.CanvasGradient;
-import js.html.CanvasPattern;
-import js.html.CanvasRenderingContext2D;
-import js.html.CanvasWindingRule;
-import js.Browser;
-import js.html.ImageData;
-#end
 
 @:access(openfl.display.DisplayObject)
 @:access(openfl.display.BitmapData)
@@ -55,16 +47,12 @@ class CanvasGraphics {
 	private static var inversePendingMatrix:Matrix;
 	private static var pendingMatrix:Matrix;
 	private static var strokeCommands:DrawCommandBuffer = new DrawCommandBuffer ();
-	private static var windingRule:#if (js && html5) CanvasWindingRule #else Dynamic #end;
+	private static var windingRule:CanvasWindingRule;
 	
-	#if (js && html5)
 	private static var context:CanvasRenderingContext2D;
 	private static var hitTestCanvas:CanvasElement;
 	private static var hitTestContext:CanvasRenderingContext2D;
-	#end
 	
-	
-	#if (js && html5)
 	private static function __init__ ():Void {
 		
 		if (Browser.supported) {
@@ -75,12 +63,9 @@ class CanvasGraphics {
 		}
 		
 	}
-	#end
 	
 	
 	private static function closePath (strokeBefore:Bool = false):Void {
-		
-		#if (js && html5)
 		
 		if (context.strokeStyle == null) {
 			
@@ -104,14 +89,10 @@ class CanvasGraphics {
 		
 		context.beginPath ();
 		
-		#end
-		
 	}
 	
 	
 	private static function createBitmapFill (bitmap:BitmapData, bitmapRepeat:Bool, smooth:Bool) {
-		
-		#if (js && html5)
 		
 		if (!bitmap.__prepareImage()) return null;
 		
@@ -119,18 +100,10 @@ class CanvasGraphics {
 		setSmoothing (smooth);
 		return context.createPattern (bitmap.image.src, bitmapRepeat ? "repeat" : "no-repeat");
 		
-		#else
-		
-		return null;
-		
-		#end
-		
 	}
 	
 	
-	private static function createGradientPattern (type:GradientType, colors:Array<Dynamic>, alphas:Array<Dynamic>, ratios:Array<Dynamic>, matrix:Matrix, spreadMethod:SpreadMethod, interpolationMethod:InterpolationMethod, focalPointRatio:Float) {
-		
-		#if (js && html5)
+	private static function createGradientPattern (type:GradientType, colors:Array<Dynamic>, alphas:Array<Dynamic>, ratios:Array<Dynamic>, matrix:Matrix, spreadMethod:SpreadMethod, interpolationMethod:InterpolationMethod, focalPointRatio:Float):CanvasGradient {
 		
 		var gradientFill = null, point = null, point2 = null, releaseMatrix = false;
 		
@@ -187,18 +160,15 @@ class CanvasGraphics {
 		if (point2 != null) Point.__pool.release (point2);
 		if (releaseMatrix) Matrix.__pool.release (matrix);
 		
-		return cast (gradientFill);
-		
-		#end
+		return gradientFill;
 		
 	}
 	
 	
-	private static function createTempPatternCanvas (bitmap:BitmapData, repeat:Bool, width:Int, height:Int) {
+	private static function createTempPatternCanvas (bitmap:BitmapData, repeat:Bool, width:Int, height:Int):CanvasElement {
 		
 		// TODO: Don't create extra canvas elements like this
 		
-		#if (js && html5)
 		var canvas:CanvasElement = cast Browser.document.createElement ("canvas");
 		var context = canvas.getContext ("2d");
 		
@@ -215,14 +185,12 @@ class CanvasGraphics {
 		context.closePath ();
 		if (!hitTesting) context.fill (windingRule);
 		return canvas;
-		#end
 		
 	}
 	
 	
 	private static function drawRoundRect (x:Float, y:Float, width:Float, height:Float, ellipseWidth:Float, ellipseHeight:Null<Float>):Void {
 		
-		#if (js && html5)
 		if (ellipseHeight == null) ellipseHeight = ellipseWidth;
 		
 		ellipseWidth *= 0.5;
@@ -251,37 +219,30 @@ class CanvasGraphics {
 		context.quadraticCurveTo (xe + cx2, y, xe + cx1, y - cy1);
 		context.quadraticCurveTo (xe, y - cy2, xe, y + ellipseHeight);
 		context.lineTo (xe, ye - ellipseHeight);
-		#end
 		
 	}
 	
 	
 	private static function endFill ():Void {
 		
-		#if (js && html5)
 		context.beginPath ();
 		playCommands (fillCommands, false);
 		fillCommands.clear ();
-		#end
 		
 	}
 	
 	
 	private static function endStroke ():Void {
 		
-		#if (js && html5)
 		context.beginPath ();
 		playCommands (strokeCommands, true);
 		context.closePath ();
 		strokeCommands.clear ();
-		#end
 		
 	}
 	
 	
 	public static function hitTest (graphics:Graphics, x:Float, y:Float):Bool {
-		
-		#if (js && html5)
 		
 		bounds = graphics.__bounds;
 		CanvasGraphics.graphics = graphics;
@@ -514,8 +475,6 @@ class CanvasGraphics {
 			
 		}
 		
-		#end
-		
 		return false;
 		
 	}
@@ -579,7 +538,6 @@ class CanvasGraphics {
 	
 	private static function playCommands (commands:DrawCommandBuffer, stroke:Bool = false):Void {
 		
-		#if (js && html5)
 		bounds = graphics.__bounds;
 		
 		var offsetX = bounds.x;
@@ -1101,14 +1059,11 @@ class CanvasGraphics {
 			}
 			
 		}
-		#end
 		
 	}
 	
 	
 	public static function render (graphics:Graphics, renderSession:RenderSession):Void {
-		
-		#if (js && html5)
 		
 		graphics.__update ();
 		
@@ -1427,14 +1382,10 @@ class CanvasGraphics {
 			
 		}
 		
-		#end
-		
 	}
 	
 	
 	public static function renderMask (graphics:Graphics, renderSession:RenderSession) {
-		
-		#if (js && html5)
 		
 		if (graphics.__commands.length != 0) {
 			
@@ -1535,18 +1486,12 @@ class CanvasGraphics {
 			
 		}
 		
-		#end
-		
 	}
 	
 	
 	private static function setSmoothing (smooth:Bool):Void {
 		
-		#if (js && html5)
-		
 		CanvasSmoothing.setEnabled(context, allowSmoothing && smooth);
-		
-		#end
 		
 	}
 	
