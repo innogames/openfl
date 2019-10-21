@@ -1,46 +1,25 @@
 package openfl._internal.renderer.canvas;
 
+import js.Browser;
 
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.text.TextEngine;
 import openfl.display.BitmapData;
-import openfl.display.DisplayObject;
-import openfl.display.BitmapDataChannel;
-import openfl.display.Graphics;
-import openfl.events.Event;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
 import openfl.text.TextField;
 import openfl.text.TextFieldAutoSize;
-import openfl.text.TextFormat;
-import openfl.text.TextFormatAlign;
-import openfl.utils.ByteArray;
 
-#if (js && html5)
-import js.html.CanvasRenderingContext2D;
-import js.Browser;
-import js.html.ImageData;
-#end
 
 @:access(openfl.display.BitmapData)
 @:access(openfl._internal.text.TextEngine)
 @:access(openfl.display.Graphics)
 @:access(openfl.display.DisplayObject)
 @:access(openfl.text.TextField)
-
-
 class CanvasTextField {
 	
 	
-	#if (js && html5)
-	private static var context:CanvasRenderingContext2D;
-	#end
-	
-	
 	public static function render (textField:TextField, renderSession:RenderSession, transform:Matrix):Void {
-		
-		#if (js && html5)
-		
 		var textEngine = textField.__textEngine;
 		var bounds = textEngine.bounds;
 		var graphics = textField.__graphics;
@@ -89,8 +68,7 @@ class CanvasTextField {
 					
 				}
 				
-				context = graphics.__context;
-				
+				var context = graphics.__context;
 				var transform = graphics.__renderTransform;
 				
 				graphics.__canvas.width = Std.int (width * pixelRatio);
@@ -104,11 +82,11 @@ class CanvasTextField {
 					
 					if (!renderSession.allowSmoothing || (textEngine.antiAliasType == ADVANCED && textEngine.sharpness == 400)) {
 						
-						CanvasSmoothing.setEnabled(graphics.__context, false);
+						CanvasSmoothing.setEnabled(context, false);
 						
 					} else {
 						
-						CanvasSmoothing.setEnabled(graphics.__context, true);
+						CanvasSmoothing.setEnabled(context, true);
 						
 					}
 					
@@ -325,8 +303,6 @@ class CanvasTextField {
 			}
 			
 		}
-		
-		#end
 		
 	}
 	
