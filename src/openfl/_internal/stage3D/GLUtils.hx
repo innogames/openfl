@@ -8,7 +8,16 @@ import openfl.errors.IllegalOperationError;
 
 class GLUtils {
 	private static var debug = false;
-
+	
+	
+	public static function isWebGL2(gl:GL):Bool {
+		if (Reflect.hasField(js.Browser.window, "WebGL2RenderingContext") && Std.is(gl, js.html.webgl.WebGL2RenderingContext)) {
+			return true;
+		}
+		return false;
+	}
+	
+	
 	public static function compileShader (context:GL, source:String, type:Int):GLShader {
 		var shader = context.createShader (type);
 		context.shaderSource (shader, source);

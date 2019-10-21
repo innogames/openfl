@@ -1,8 +1,8 @@
 package openfl._internal.renderer;
 
-import lime._backend.html5.HTML5Renderer;
 import lime.graphics.CanvasRenderContext;
 import lime.graphics.GLRenderContext;
+import openfl._internal.stage3D.GLUtils;
 import openfl._internal.renderer.opengl.GLShaderManager;
 import openfl._internal.renderer.opengl.GLRenderer;
 import openfl._internal.renderer.opengl.batcher.BatchRenderer;
@@ -30,7 +30,7 @@ class RenderSession {
 		this.gl = gl;
 
 		#if vertex_array_object
-		if (HTML5Renderer.getWebGLVersion(gl) == 2) {
+		if (GLUtils.isWebGL2(gl)) {
 			vaoContext = new VertexArrayObjectContext(gl);
 		} else {
 			var vaoExtension = gl.getExtension("OES_vertex_array_object");

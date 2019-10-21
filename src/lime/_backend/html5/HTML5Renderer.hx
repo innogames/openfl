@@ -19,13 +19,6 @@ class HTML5Renderer {
 	
 	public static var context (default, null):GLRenderContext;
 
-	public static function getWebGLVersion(gl:GLRenderContext):Int {
-		if (Reflect.hasField(js.Browser.window, "WebGL2RenderingContext") && Std.is(gl, js.html.webgl.WebGL2RenderingContext)) {
-			return 2;
-		}
-		return 1;
-	}
-
 	#if debug
 	static var __lastLoseContextExtension:Dynamic;
 	
