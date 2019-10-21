@@ -37,11 +37,6 @@ import js.html.CanvasElement;
 import js.html.CanvasRenderingContext2D;
 #end
 
-#if gl_stats
-import openfl._internal.renderer.opengl.stats.GLStats;
-import openfl._internal.renderer.opengl.stats.DrawCallContext;
-#end
-
 @:access(lime.graphics.opengl.GL)
 @:access(lime.graphics.Image)
 @:access(lime.graphics.ImageBuffer)
@@ -72,17 +67,12 @@ class BitmapData implements IBitmapDrawable {
 	public var transparent (default, null):Bool;
 	public var width (default, null):Int;
 	
-	private var __alpha:Float;
-	private var __visible:Bool;
-	private var __blendMode:BlendMode;
 	private var __buffer:GLBuffer;
 	private var __bufferColorTransform:ColorTransform;
 	private var __bufferContext:GLRenderContext;
 	private var __bufferAlpha:Float;
 	private var __bufferData:Float32Array;
-	private var __isMask:Bool;
 	private var __isValid:Bool;
-	private var __renderable:Bool;
 	private var __pixelRatio:Float = 1.0;
 	private var __textureData:TextureData;
 	private var __quadTextureData:QuadTextureData;
@@ -90,9 +80,6 @@ class BitmapData implements IBitmapDrawable {
 	private var __textureVersion:Int;
 	private var __ownsTexture:Bool;
 	private var __transform:Matrix;
-	private var __worldAlpha:Float;
-	private var __worldColorTransform:ColorTransform;
-	private var __worldTransform:Matrix;
 	
 	private var __vao:GLVertexArrayObject;
 	private var __vaoMask:GLVertexArrayObject;
@@ -135,9 +122,6 @@ class BitmapData implements IBitmapDrawable {
 			
 		}
 		
-		__worldTransform = new Matrix ();
-		__worldColorTransform = new ColorTransform ();
-		__renderable = true;
 		__ownsTexture = false;
 		
 	}
@@ -1446,27 +1430,8 @@ class BitmapData implements IBitmapDrawable {
 			
 		}
 		
-		var matrixCache = Matrix.__pool.get ();
-		matrixCache.copyFrom (source.__worldTransform);
-		var cacheWorldAlpha = source.__worldAlpha;
-		var cacheAlpha = source.__alpha;
-		var cacheVisible = source.__visible;
-		var cacheIsMask = source.__isMask;
-		source.__alpha = 1;
-		source.__visible = true;
-		source.__isMask = false;
-		source.__updateTransforms (matrix);
-		source.__updateChildren (false);
+		source.__renderToBitmap (renderSession, matrix);
 		
-		source.__renderCanvas (renderSession);
-		source.__alpha = cacheAlpha;
-		source.__visible = cacheVisible;
-		source.__isMask = cacheIsMask;
-		
-		source.__updateTransforms (matrixCache);
-		Matrix.__pool.release (matrixCache);
-		source.__updateChildren (true);
-		source.__worldAlpha = cacheWorldAlpha;
 		buffer.__srcContext.restore();
 		
 		if (clipRect != null) {
@@ -1641,36 +1606,10 @@ class BitmapData implements IBitmapDrawable {
 	#end
 	
 	
-	private function __renderCanvas (renderSession:RenderSession):Void {
-		
-		#if (js && html5)
-		if (!readable) return;
+	private function __renderToBitmap (renderSession:RenderSession, matrix:Matrix) {
 		
 		renderSession.context.globalAlpha = 1;
-		__drawToCanvas (renderSession.context, __worldTransform, renderSession.roundPixels, renderSession.pixelRatio, null, false);
-		#end
-		
-	}
-	
-	
-	public function __updateChildren (transformOnly:Bool):Void {
-		
-		
-		
-	}
-	
-	
-	public function __updateTransforms (overrideTransform:Matrix = null):Void {
-		
-		if (overrideTransform == null) {
-			
-			__worldTransform.identity ();
-			
-		} else {
-			
-			__worldTransform = overrideTransform;
-			
-		}
+		__drawToCanvas (renderSession.context, matrix, renderSession.roundPixels, renderSession.pixelRatio, null, false);
 		
 	}
 	

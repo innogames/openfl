@@ -5,7 +5,6 @@ import openfl.display.BitmapData;
 #if !display
 import js.Browser;
 import js.html.CanvasElement;
-import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.opengl.batcher.TextureData;
 import openfl._internal.renderer.opengl.batcher.QuadTextureData;
 import openfl.geom.ColorTransform;
@@ -15,14 +14,12 @@ import openfl.geom.Point;
 import openfl.filters.BitmapFilter;
 import openfl.display.BitmapData.TextureRegionResult;
 import openfl.utils.ByteArray;
-import lime.graphics.CanvasRenderContext;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.utils.ImageCanvasUtil;
 import lime.utils.Float32Array;
 #if (js && html5)
-import js.html.webgl.RenderingContext as WebGLContext;
 import js.html.CanvasRenderingContext2D;
 #end
 #end
@@ -502,13 +499,6 @@ class SubBitmapData extends BitmapData {
 		}
 		return true;
 		
-	}
-
-	override function __renderCanvas (renderSession:RenderSession) {
-	
-		renderSession.context.globalAlpha = 1;
-		__drawToCanvas (renderSession.context, __worldTransform, renderSession.roundPixels, renderSession.pixelRatio, null, false);
-	
 	}
 
 	#if (js && html5)

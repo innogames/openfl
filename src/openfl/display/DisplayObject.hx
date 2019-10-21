@@ -1166,6 +1166,37 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 			||
 			!__cacheBitmapColorTransform.__equals (__worldColorTransform);
 	}
+
+
+	private function __renderToBitmap (renderSession:RenderSession, matrix:Matrix) {
+
+		var matrixCache = Matrix.__pool.get ();
+		matrixCache.copyFrom (__worldTransform);
+
+		var cacheWorldAlpha = __worldAlpha;
+		var cacheAlpha = __alpha;
+		var cacheVisible = __visible;
+		var cacheIsMask = __isMask;
+
+		__alpha = 1;
+		__visible = true;
+		__isMask = false;
+
+		__updateTransforms (matrix);
+		__updateChildren (false);
+		
+		__renderCanvas (renderSession);
+
+		__alpha = cacheAlpha;
+		__visible = cacheVisible;
+		__isMask = cacheIsMask;
+		
+		__updateTransforms (matrixCache);
+		Matrix.__pool.release (matrixCache);
+		__updateChildren (true);
+		__worldAlpha = cacheWorldAlpha;
+
+	}
 	
 	
 	public function __updateChildren (transformOnly:Bool):Void {
