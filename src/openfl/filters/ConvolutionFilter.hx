@@ -1,18 +1,8 @@
 package openfl.filters;
 
 
-import openfl._internal.renderer.RenderSession;
-import openfl.display.BitmapData;
-import openfl.display.DisplayObject;
-import openfl.display.Shader;
-import openfl.geom.Point;
-import openfl.geom.Rectangle;
-
-
 class ConvolutionFilter extends BitmapFilter {
 	
-	
-	//private static var __convolutionShader = new ConvolutionShader ();
 	
 	public var alpha:Float;
 	public var bias:Float;
@@ -41,31 +31,12 @@ class ConvolutionFilter extends BitmapFilter {
 		this.color = color;
 		this.alpha = alpha;
 		
-		// __numShaderPasses = 1;
-		__numShaderPasses = 0;
-		
 	}
 	
 	
 	public override function clone ():BitmapFilter {
 		
 		return new ConvolutionFilter (matrixX, matrixY, __matrix, divisor, bias, preserveAlpha, clamp, color, alpha);
-		
-	}
-	
-	
-	private override function __initShader (renderSession:RenderSession, pass:Int):Shader {
-		
-		// var data = __convolutionShader.data;
-		
-		// data.uConvoMatrix.value = matrix;
-		// data.uDivisor.value[0] = divisor;
-		// data.uBias.value[0] = bias;
-		// data.uPreserveAlpha.value[0] = preserveAlpha;
-		
-		// return __convolutionShader;
-		
-		return null;
 		
 	}
 	
@@ -99,128 +70,6 @@ class ConvolutionFilter extends BitmapFilter {
 		}
 		
 		return __matrix = v;
-		
-	}
-	
-	
-}
-
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
-private class ConvolutionShader extends Shader {
-	
-	
-	@:glFragmentSource( 
-		
-		"varying vec2 vBlurCoords[9];
-		varying float vAlpha;
-		varying vec2 vTexCoord;
-		
-		uniform sampler2D uImage0;
-		
-		uniform float uBias;
-		uniform mat3 uConvoMatrix;
-		uniform float uDivisor;
-		uniform bool uPreserveAlpha;
-		
-		void main(void) {
-			
-			vec4 tc = texture2D (uImage0, vBlurCoords[4]);
-			vec4 c = vec4 (0.0);
-			
-			c += texture2D (uImage0, vBlurCoords[0]) * uConvoMatrix[0][0];
-			c += texture2D (uImage0, vBlurCoords[1]) * uConvoMatrix[0][1];
-			c += texture2D (uImage0, vBlurCoords[2]) * uConvoMatrix[0][2];
-			
-			c += texture2D (uImage0, vBlurCoords[3]) * uConvoMatrix[1][0];
-			c += tc * uConvoMatrix[1][1];
-			c += texture2D (uImage0, vBlurCoords[5]) * uConvoMatrix[1][2];
-			
-			c += texture2D (uImage0, vBlurCoords[6]) * uConvoMatrix[2][0];
-			c += texture2D (uImage0, vBlurCoords[7]) * uConvoMatrix[2][1];
-			c += texture2D (uImage0, vBlurCoords[8]) * uConvoMatrix[2][2];
-			
-			if (uDivisor > 0) {
-				
-				c /= vec4 (uDivisor, uDivisor, uDivisor, uDivisor);
-				
-			}
-			
-			c += vec4 (uBias, uBias, uBias, uBias);
-			
-			if (uPreserveAlpha) {
-				
-				c.a = tc.a;
-				
-			}
-			
-			gl_FragColor = c * vAlpha;
-			
-		}"
-		
-	)
-	
-	@:glVertexSource( 
-		
-		"attribute float aAlpha;
-		attribute vec4 aPosition;
-		attribute vec2 aTexCoord;
-		
-		varying vec2 vBlurCoords[9];
-		varying float vAlpha;
-		varying vec2 vTexCoord;
-		
-		uniform mat4 uMatrix;
-		uniform vec2 uTextureSize;
-		
-		void main(void) {
-			
-			vec2 r = vec2 (1.0, 1.0) / uTextureSize;
-			vec2 t = aTexCoord;
-			
-			vBlurCoords[0] = t + r * vec2 (-1.0, -1.0);
-			vBlurCoords[1] = t + r * vec2 (0.0, -1.0);
-			vBlurCoords[2] = t + r * vec2 (1.0, -1.0);
-			
-			vBlurCoords[3] = t + r * vec2 (-1.0, 0.0);
-			vBlurCoords[4] = t;
-			vBlurCoords[5] = t + r * vec2 (1.0, 0.0);
-			
-			vBlurCoords[6] = t + r * vec2 (-1.0, 1.0);
-			vBlurCoords[7] = t + r * vec2 (0.0, 1.0);
-			vBlurCoords[8] = t + r * vec2 (1.0, 1.0);
-			
-			vAlpha = aAlpha;
-			vTexCoord = aTexCoord;
-			gl_Position = uMatrix * aPosition;
-			
-		}"
-		
-	)
-	
-	
-	public function new () {
-		
-		super ();
-		
-		get_data().uDivisor.value = 1;
-		get_data().uBias.value = 0;
-		get_data().uPreserveAlpha.value = true;
-		
-	}
-	
-	
-	private override function __update ():Void {
-		
-		get_data().uTextureSize.value0 = data.uImage0.input.width;
-		get_data().uTextureSize.value1 = data.uImage0.input.height;
-		
-		super.__update ();
 		
 	}
 	
