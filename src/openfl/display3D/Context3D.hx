@@ -4,7 +4,6 @@ package openfl.display3D;
 import lime.utils.Float32Array;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.stage3D.opengl.GLContext3D;
-import openfl._internal.stage3D.Context3DStateCache;
 import openfl._internal.stage3D.SamplerState;
 import openfl.display3D.textures.CubeTexture;
 import openfl.display3D.textures.RectangleTexture;
@@ -46,8 +45,6 @@ import openfl.Vector;
 	
 	private static var TEXTURE_MAX_ANISOTROPY_EXT:Int = 0;
 	private static var DEPTH_STENCIL:Int = 0;
-	
-	private static var __stateCache:Context3DStateCache = new Context3DStateCache ();
 	
 	public var backBufferHeight (default, null):Int = 0;
 	public var backBufferWidth (default, null):Int = 0;

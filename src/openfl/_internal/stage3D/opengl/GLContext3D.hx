@@ -1,7 +1,6 @@
 package openfl._internal.stage3D.opengl;
 
 
-import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.math.Rectangle in LimeRectangle;
 import lime.math.Vector2;
@@ -40,12 +39,6 @@ import openfl._internal.renderer.opengl.stats.GLStats;
 import openfl._internal.renderer.opengl.stats.DrawCallContext;
 #end
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-@:access(openfl._internal.stage3D.Context3DStateCache)
 @:access(openfl._internal.stage3D.GLUtils)
 @:access(openfl.display3D.textures.TextureBase)
 @:access(openfl.display3D.Context3D)
@@ -53,8 +46,6 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 @:access(openfl.display3D.Program3D)
 @:access(openfl.display3D.VertexBuffer3D)
 @:access(openfl.display.Stage3D)
-
-
 class GLContext3D {
 	
 	
@@ -76,11 +67,7 @@ class GLContext3D {
 			
 		}
 		
-		#if (js && html5)
 		context.maxBackBufferHeight = context.maxBackBufferWidth = gl.getParameter (GL.MAX_VIEWPORT_DIMS);
-		#else
-		context.maxBackBufferHeight = context.maxBackBufferWidth = 16384;
-		#end
 		
 		context.__backBufferAntiAlias = 0;
 		context.__backBufferEnableDepthAndStencil = true;
@@ -188,8 +175,6 @@ class GLContext3D {
 			
 		// }
 		
-		// __stateCache.clearSettings ();
-		
 	}
 	
 	
@@ -243,8 +228,6 @@ class GLContext3D {
 		context.__backBufferAntiAlias = antiAlias;
 		context.__backBufferEnableDepthAndStencil = enableDepthAndStencil;
 		context.__backBufferWantsBestResolution = wantsBestResolution;
-		
-		Context3D.__stateCache.clearSettings ();
 		
 	}
 	
@@ -322,14 +305,10 @@ class GLContext3D {
 		
 		var gl = context.__renderSession.gl;
 		
-		if (Context3D.__stateCache.updateBlendFactors (sourceFactor, destinationFactor)) {
-		
-			gl.enable (GL.BLEND);
-			GLUtils.checkGLError (gl);
-			gl.blendFunc (__getGLBlendFactor (sourceFactor), __getGLBlendFactor (destinationFactor));
-			GLUtils.checkGLError (gl);
-			
-		}
+		gl.enable (GL.BLEND);
+		GLUtils.checkGLError (gl);
+		gl.blendFunc (__getGLBlendFactor (sourceFactor), __getGLBlendFactor (destinationFactor));
+		GLUtils.checkGLError (gl);
 		
 	}
 	
@@ -347,18 +326,14 @@ class GLContext3D {
 		
 		var gl = context.__renderSession.gl;
 		
-		if (Context3D.__stateCache.updateCullingMode (triangleFaceToCull)) {
+		if (triangleFaceToCull == NONE) {
 			
-			if (triangleFaceToCull == NONE) {
-				
-				gl.disable (GL.CULL_FACE);
-				
-			} else {
-				
-				gl.enable (GL.CULL_FACE);
-				gl.cullFace (__getGLTriangleFace (triangleFaceToCull, true));
-				
-			}
+			gl.disable (GL.CULL_FACE);
+			
+		} else {
+			
+			gl.enable (GL.CULL_FACE);
+			gl.cullFace (__getGLTriangleFace (triangleFaceToCull, true));
 			
 		}
 		
@@ -370,31 +345,18 @@ class GLContext3D {
 		var gl = context.__renderSession.gl;
 		var depthTestEnabled = context.__backBufferEnableDepthAndStencil;
 		
-		if (Context3D.__stateCache.updateDepthTestEnabled (depthTestEnabled)) {
+		if (depthTestEnabled) {
 			
-			if (depthTestEnabled) {
-				
-				gl.enable (GL.DEPTH_TEST);
-				
-			} else {
-				
-				gl.disable (GL.DEPTH_TEST);
-				
-			}
+			gl.enable (GL.DEPTH_TEST);
+			
+		} else {
+			
+			gl.disable (GL.DEPTH_TEST);
 			
 		}
 		
-		if (Context3D.__stateCache.updateDepthTestMask (depthMask)) {
-			
-			gl.depthMask (depthMask);
-			
-		}
-		
-		if (Context3D.__stateCache.updateDepthCompareMode (passCompareMode)) {
-			
-			gl.depthFunc (__getGLCompareMode (passCompareMode));
-			
-		}
+		gl.depthMask (depthMask);
+		gl.depthFunc (__getGLCompareMode (passCompareMode));
 		
 	}
 	
@@ -408,20 +370,16 @@ class GLContext3D {
 	
 	public static function setProgram (context:Context3D, program:Program3D):Void {
 		
-		if (Context3D.__stateCache.updateProgram3D (program)) {
+		program.__use ();
+		program.__setPositionScale (context.__positionScale);
+		
+		context.__program = program;
+		
+		context.__samplerDirty |= context.__program.__samplerUsageMask;
+		
+		for (i in 0...Context3D.MAX_SAMPLERS) {
 			
-			program.__use ();
-			program.__setPositionScale (context.__positionScale);
-			
-			context.__program = program;
-			
-			context.__samplerDirty |= context.__program.__samplerUsageMask;
-			
-			for (i in 0...Context3D.MAX_SAMPLERS) {
-				
-				context.__samplerStates[i].copyFrom (context.__program.__getSamplerState (i));
-				
-			}
+			context.__samplerStates[i].copyFrom (context.__program.__getSamplerState (i));
 			
 		}
 		
@@ -956,12 +914,8 @@ class GLContext3D {
 			
 			if ((context.__samplerDirty & (1 << sampler)) != 0) {
 				
-				if (Context3D.__stateCache.updateActiveTextureSample (sampler)) {
-					
-					gl.activeTexture (GL.TEXTURE0 + sampler);
-					GLUtils.checkGLError (gl);
-					
-				}
+				gl.activeTexture (GL.TEXTURE0 + sampler);
+				GLUtils.checkGLError (gl);
 				
 				var texture = context.__samplerTextures[sampler];
 				
@@ -1101,12 +1055,8 @@ class GLContext3D {
 	
 	private static function __setViewport (gl:GL, originX:Int, originY:Int, width:Int, height:Int):Void {
 		
-		if (Context3D.__stateCache.updateViewport (originX, originY, width, height)) {
-			
-			gl.viewport (originX, originY, width, height);
-			GLUtils.checkGLError (gl);
-			
-		}
+		gl.viewport (originX, originY, width, height);
+		GLUtils.checkGLError (gl);
 		
 	}
 	
