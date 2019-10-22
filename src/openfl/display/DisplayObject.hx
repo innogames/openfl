@@ -588,37 +588,31 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	
 	private function __getWorldTransform ():Matrix {
 
-		var transformDirty = __worldTransformInvalid;
-
-		if (transformDirty) {
-
-			var list = [];
-			var current = this;
+		if (__worldTransformInvalid) {
 
 			if (parent == null) {
 				
-				__update (true, false);
+				__updateTransforms ();
 				
 			} else {
+
+				var list = [];
+				var current = this;
 				
-				while (current != stage) {
-					
+				do {
 					list.push (current);
 					current = current.parent;
-					
-					if (current == null) break;
+				} while (current != null && current.__worldTransformInvalid);
+				
+				var i = list.length;
+				while (--i >= 0) {
+
+					current = list[i];
+					current.__updateTransforms ();
+
 				}
 				
 			}
-			
-			var i = list.length;
-			while (--i >= 0) {
-
-				current = list[i];
-				current.__update (true, false);
-
-			}
-				
 
 		}
 		
@@ -887,8 +881,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
 		__updateTransforms ();
 		
-		__worldTransformInvalid = false;
-
 		if (!transformOnly) {
 			
 			if (!__worldColorTransform.__equals (transform.colorTransform)) {
@@ -1227,6 +1219,8 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		}
 		
 		__adjustRenderTransform ();
+		
+		__worldTransformInvalid = false;
 		
 	}
 	
