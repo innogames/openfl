@@ -1,16 +1,6 @@
 package openfl.system;
 
 
-import lime.system.Clipboard;
-import lime.system.System in LimeSystem;
-
-#if neko
-import neko.vm.Gc;
-#elseif cpp
-import cpp.vm.Gc;
-#end
-
-
 @:final class System {
 	
 	
@@ -21,16 +11,14 @@ import cpp.vm.Gc;
 	
 	public static function exit (code:Int):Void {
 		
-		LimeSystem.exit (code);
+		openfl._internal.Lib.notImplemented ();
 		
 	}
 	
 	
 	public static function gc ():Void {
 		
-		#if (cpp || neko)
-		return Gc.run (true);
-		#end
+		openfl._internal.Lib.notImplemented ();
 		
 	}
 	
@@ -51,7 +39,7 @@ import cpp.vm.Gc;
 	
 	public static function setClipboard (string:String):Void {
 		
-		Clipboard.text = string;
+		lime.system.Clipboard.setText(string, true);
 		
 	}
 	
@@ -68,15 +56,7 @@ import cpp.vm.Gc;
 	
 	private static function get_totalMemory ():Int {
 		
-		#if neko
-		return Gc.stats ().heap;
-		#elseif cpp
-		return untyped __global__.__hxcpp_gc_used_bytes ();
-		#elseif (js && html5)
 		return untyped __js__ ("(window.performance && window.performance.memory) ? window.performance.memory.usedJSHeapSize : 0");
-		#else
-		return 0;
-		#end
 		
 	}
 	

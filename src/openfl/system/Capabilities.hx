@@ -119,37 +119,14 @@ import openfl._internal.Lib;
 	
 	private static inline function get_manufacturer ():String {
 		
-		#if mac
-		return "OpenFL Macintosh";
-		#elseif linux
-		return "OpenFL Linux";
-		#else
-		var name = System.platformName;
-		return "OpenFL" + (name != null ? " " + name : "");
-		#end
+		return "OpenFL";
 		
 	}
 	
 	
 	private static inline function get_os ():String {
 		
-		#if (ios || tvos)
-		return System.deviceModel;
-		#elseif mac
-		return "Mac OS " + System.platformVersion;
-		#elseif linux
-		var kernelVersion = "";
-		try {
-			var process = new Process ("uname", [ "-r" ]);
-			kernelVersion = StringTools.trim (process.stdout.readLine ().toString ());
-			process.close ();
-		} catch (e:Dynamic) {}
-		if (kernelVersion != "") return "Linux " + kernelVersion;
-		else return "Linux";
-		#else
-		var label = System.platformLabel;
-		return label != null ? label : "";
-		#end
+		return "HTML5";
 		
 	}
 	

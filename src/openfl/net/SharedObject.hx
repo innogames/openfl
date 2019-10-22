@@ -1,27 +1,16 @@
 package openfl.net;
 
 
+import js.Browser;
 import haxe.io.Bytes;
-import haxe.io.Path;
 import haxe.Serializer;
 import haxe.Unserializer;
 import lime.app.Application;
-import lime.system.System;
 import openfl._internal.Lib;
 import openfl.errors.Error;
 import openfl.events.EventDispatcher;
 import openfl.net.SharedObjectFlushStatus;
 import openfl.utils.Object;
-
-#if (js && html5)
-import js.html.Storage;
-import js.Browser;
-#end
-
-#if sys
-import sys.io.File;
-import sys.FileSystem;
-#end
 
 
 class SharedObject extends EventDispatcher {
@@ -58,8 +47,6 @@ class SharedObject extends EventDispatcher {
 		
 		try {
 			
-			#if (js && html5)
-			
 			var storage = Browser.getLocalStorage ();
 			
 			if (storage != null) {
@@ -67,18 +54,6 @@ class SharedObject extends EventDispatcher {
 				storage.removeItem (__localPath + ":" + __name);
 				
 			}
-			
-			#else
-			
-			var path = __getPath (__localPath, __name);
-			
-			if (FileSystem.exists (path)) {
-				
-				FileSystem.deleteFile (path);
-				
-			}
-			
-			#end
 			
 		} catch (e:Dynamic) {}
 		
@@ -111,8 +86,6 @@ class SharedObject extends EventDispatcher {
 		
 		try {
 			
-			#if (js && html5)
-			
 			var storage = Browser.getLocalStorage ();
 			
 			if (storage != null) {
@@ -121,23 +94,6 @@ class SharedObject extends EventDispatcher {
 				storage.setItem (__localPath + ":" + __name, encodedData);
 				
 			}
-			
-			#else
-			
-			var path = __getPath (__localPath, __name);
-			var directory = Path.directory (path);
-			
-			if (!FileSystem.exists (directory)) {
-				
-				__mkdir (directory);
-				
-			}
-			
-			var output = File.write (path, false);
-			output.writeString (encodedData);
-			output.close ();
-			
-			#end
 			
 		} catch (e:Dynamic) {
 			
@@ -183,11 +139,7 @@ class SharedObject extends EventDispatcher {
 		
 		if (localPath == null) {
 			
-			#if (js && html5)
 			localPath = Browser.window.location.href;
-			#else
-			localPath = "";
-			#end
 			
 		}
 		
@@ -216,8 +168,6 @@ class SharedObject extends EventDispatcher {
 			
 			try {
 				
-				#if (js && html5)
-				
 				var storage = Browser.getLocalStorage ();
 				
 				if (storage != null) {
@@ -225,18 +175,6 @@ class SharedObject extends EventDispatcher {
 					encodedData = storage.getItem (localPath + ":" + name);
 					
 				}
-				
-				#else
-				
-				var path = __getPath (localPath, name);
-				
-				if (FileSystem.exists (path)) {
-					
-					encodedData = File.getContent (path);
-					
-				}
-				
-				#end
 				
 			} catch (e:Dynamic) { }
 			
@@ -291,104 +229,6 @@ class SharedObject extends EventDispatcher {
 			Reflect.setField (data, propertyName, value);
 			
 		}
-		
-	}
-	
-	
-	private static function __getPath (localPath:String, name:String):String {
-		
-		var path = System.applicationStorageDirectory + "/" + localPath + "/";
-		
-		name = StringTools.replace (name, "//", "/");
-		name = StringTools.replace (name, "//", "/");
-		
-		if (StringTools.startsWith (name, "/")) {
-			
-			name = name.substr (1);
-			
-		}
-		
-		if (StringTools.endsWith (name, "/")) {
-			
-			name = name.substring (0, name.length - 1);
-			
-		}
-		
-		if (name.indexOf ("/") > -1) {
-			
-			var split = name.split ("/");
-			name = "";
-			
-			for (i in 0...(split.length - 1)) {
-				
-				name += "#" + split[i] + "/";
-				
-			}
-			
-			name += split[split.length - 1];
-			
-		}
-		
-		return path + name + ".sol";
-		
-	}
-	
-	
-	private static function __mkdir (directory:String):Void {
-		
-		// TODO: Move this to Lime somewhere?
-		
-		#if sys
-		
-		directory = StringTools.replace (directory, "\\", "/");
-		var total = "";
-		
-		if (directory.substr (0, 1) == "/") {
-			
-			total = "/";
-			
-		}
-		
-		var parts = directory.split("/");
-		var oldPath = "";
-		
-		if (parts.length > 0 && parts[0].indexOf (":") > -1) {
-			
-			oldPath = Sys.getCwd ();
-			Sys.setCwd (parts[0] + "\\");
-			parts.shift ();
-			
-		}
-		
-		for (part in parts) {
-			
-			if (part != "." && part != "") {
-				
-				if (total != "" && total != "/") {
-					
-					total += "/";
-					
-				}
-				
-				total += part;
-				
-				if (!FileSystem.exists (total)) {
-					
-					FileSystem.createDirectory (total);
-					
-				}
-				
-			}
-			
-		}
-		
-		if (oldPath != "") {
-			
-			Sys.setCwd (oldPath);
-			
-		}
-		
-		#end
 		
 	}
 	

@@ -1,26 +1,14 @@
 package openfl;
 
 
+import js.Browser;
 import haxe.Constraints.Function;
-import haxe.PosInfos;
 import haxe.Timer;
-import lime.system.System;
-import lime.utils.Log;
 import openfl._internal.Lib in InternalLib;
 import openfl.display.Application;
 import openfl.display.MovieClip;
-import openfl.display.Stage;
 import openfl.net.URLLoader;
 import openfl.net.URLRequest;
-
-#if (js && html5)
-import js.Browser;
-#end
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 
 @:access(openfl.display.Stage) class Lib {
@@ -33,24 +21,9 @@ import js.Browser;
 	private static var __timers = new Map<UInt, Timer> ();
 	
 	
-	public static function as<T> (v:Dynamic, c:Class<T>):Null<T> {
+	public static /* inline */ function as<T> (v:Dynamic, c:Class<T>):Null<T> {
 		
-		#if flash
-		return flash.Lib.as (v,c);
-		#else
 		return Std.is (v, c) ? v : null;
-		#end
-		
-	}
-	
-	
-	public static function attach (name:String):MovieClip {
-		
-		#if flash
-		return cast flash.Lib.attach (name);
-		#else
-		return new MovieClip ();
-		#end
 		
 	}
 	
@@ -81,24 +54,6 @@ import js.Browser;
 	}
 	
 	
-	#if flash
-	public static function eval (path:String):Dynamic {
-		
-		return flash.Lib.eval (path);
-		
-	}
-	#end
-	
-	
-	#if flash
-	public static function fscommand (cmd:String, ?param:String) {
-		
-		return flash.Lib.fscommand (cmd, param);
-		
-	}
-	#end
-	
-	
 	public static function getDefinitionByName (name:String):Class<Dynamic> {
 		
 		return Type.resolveClass (name);
@@ -123,11 +78,7 @@ import js.Browser;
 	
 	public static function getTimer ():Int {
 		
-		#if flash
-		return flash.Lib.getTimer ();
-		#else
-		return System.getTimer ();
-		#end
+		return Std.int (Browser.window.performance.now ());
 		
 	}
 	
@@ -147,9 +98,6 @@ import js.Browser;
 			
 		}
 		
-		#if flash
-		return flash.Lib.getURL (request, window);
-		#else
 		var uri = request.url;
 		
 		if (Type.typeof(request.data) == TObject) {
@@ -176,32 +124,20 @@ import js.Browser;
 			
 		}
 		
-		System.openURL (uri, window);
-		#end
+		Browser.window.open (uri, window);
 		
 	}
 	
 	
 	public static function preventDefaultTouchMove ():Void {
 		
-		#if (js && html5)
 		Browser.document.addEventListener ("touchmove", function (evt:js.html.Event):Void {
 			
 			evt.preventDefault ();
 			
 		}, false);
-		#end
 		
 	}
-	
-	
-	#if flash
-	public static function redirectTraces () {
-		
-		return flash.Lib.redirectTraces ();
-		
-	}
-	#end
 	
 	
 	public static function sendToURL (request:URLRequest):Void {
@@ -240,13 +176,6 @@ import js.Browser;
 	}
 	
 	
-	public static function trace (arg:Dynamic):Void {
-		
-		haxe.Log.trace (arg);
-		
-	}
-	
-	
 	
 	
 	// Get & Set Methods
@@ -254,30 +183,19 @@ import js.Browser;
 	
 	
 	
-	@:noCompletion private static function get_application ():Application {
+	static inline function get_application ():Application {
 		
 		return Application.current;
 		
 	}
 	
 	
-	@:noCompletion private static function get_current ():MovieClip {
+	static function get_current ():MovieClip {
 		
-		#if flash
-		return cast flash.Lib.current;
-		#else
 		if (InternalLib.current == null) InternalLib.current = new MovieClip ();
 		return InternalLib.current;
-		#end
 		
 	}
-	
-	
-	// @:noCompletion private static function set_current (current:MovieClip):MovieClip {
-		
-	// 	return cast flash.Lib.current = cast current;
-		
-	// }
 	
 	
 }

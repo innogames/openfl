@@ -13,7 +13,7 @@ import lime.math.color.RGBA;
 import lime.math.ColorMatrix;
 import lime.math.Rectangle;
 import lime.math.Vector2;
-import lime.system.Endian;
+import openfl.utils.Endian;
 import lime.utils.UInt8Array;
 
 #if !lime_debug

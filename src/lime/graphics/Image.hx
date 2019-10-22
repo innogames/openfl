@@ -12,7 +12,7 @@ import lime.graphics.utils.ImageDataUtil;
 import lime.math.ColorMatrix;
 import lime.math.Rectangle;
 import lime.math.Vector2;
-import lime.system.Endian;
+import openfl.utils.Endian;
 import lime.utils.UInt8Array;
 
 import lime._backend.html5.HTML5HTTPRequest;
