@@ -202,12 +202,10 @@ class Bitmap extends DisplayObject {
 		
 	}
 
-	override function __updateTransforms (overrideTransform:Matrix = null):Void {
-		super.__updateTransforms (overrideTransform);
+	override function __updateTransforms ():Void {
 		
-		if (overrideTransform == null) {
-			__batchQuadDirty = true;
-		}
+		super.__updateTransforms ();
+		__batchQuadDirty = true;
 		
 	}
 	

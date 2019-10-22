@@ -1170,59 +1170,59 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 
 	private function __renderToBitmap (renderSession:RenderSession, matrix:Matrix) {
 
-		var matrixCache = Matrix.__pool.get ();
-		matrixCache.copyFrom (__worldTransform);
-
-		var cacheWorldAlpha = __worldAlpha;
-		var cacheAlpha = __alpha;
-		var cacheVisible = __visible;
 		var cacheIsMask = __isMask;
-
-		__alpha = 1;
-		__visible = true;
-		__isMask = false;
-
-		__updateTransforms (matrix);
-		__updateChildren (false);
+		var cacheVisible = __visible;
+		var cacheRenderable = __renderable;
+		var cacheWorldAlpha = __worldAlpha;
+		var cacheBlendMode = __worldBlendMode;
 		
+		var cacheWorldTransform = Matrix.__pool.get ();
+		var cacheRenderTransform = Matrix.__pool.get ();
+		cacheWorldTransform.copyFrom (__worldTransform);
+		cacheRenderTransform.copyFrom (__renderTransform);
+
+		__isMask = false;
+		__visible = true;
+		__renderable = true;
+		__worldAlpha = 1;
+		__worldBlendMode = NORMAL;
+		__worldTransform.copyFrom (matrix);
+		__renderTransform.copyFrom (matrix);
+		__adjustRenderTransform ();
+
+		__updateChildrenForRenderToBitmap (false);
 		__renderCanvas (renderSession);
 
-		__alpha = cacheAlpha;
-		__visible = cacheVisible;
 		__isMask = cacheIsMask;
-		
-		__updateTransforms (matrixCache);
-		Matrix.__pool.release (matrixCache);
-		__updateChildren (true);
+		__visible = cacheVisible;
+		__renderable = cacheRenderable;
 		__worldAlpha = cacheWorldAlpha;
+		__worldBlendMode = cacheBlendMode;
+		
+		__worldTransform.copyFrom (cacheWorldTransform);
+		__renderTransform.copyFrom (cacheRenderTransform);
+		Matrix.__pool.release (cacheWorldTransform);
+		Matrix.__pool.release (cacheRenderTransform);
+
+		__updateChildrenForRenderToBitmap (true);
 
 	}
 	
 	
-	function __updateChildren (transformOnly:Bool):Void {
-		
-		var renderParent = parent;
-		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
-		__worldAlpha = alpha;
-		__worldBlendMode = blendMode;
-		
-	}
+	function __updateChildrenForRenderToBitmap (transformOnly:Bool):Void {}
 	
 	
-	function __updateTransforms (overrideTransform:Matrix = null):Void {
+	function __updateTransforms ():Void {
 		
-		var overrided = overrideTransform != null;
-		var local = overrided ? overrideTransform : __transform;
-		
-		if (!overrided && parent != null) {
+		if (parent != null) {
 			
-			__calculateAbsoluteTransform (local, parent.__worldTransform, __worldTransform);
-			__calculateAbsoluteTransform (local, parent.__renderTransform, __renderTransform);
+			__calculateAbsoluteTransform (__transform, parent.__worldTransform, __worldTransform);
+			__calculateAbsoluteTransform (__transform, parent.__renderTransform, __renderTransform);
 			
 		} else {
 			
-			__worldTransform.copyFrom (local);
-			__renderTransform.copyFrom (local);
+			__worldTransform.copyFrom (__transform);
+			__renderTransform.copyFrom (__transform);
 			
 		}
 		

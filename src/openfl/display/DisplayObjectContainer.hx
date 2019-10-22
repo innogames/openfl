@@ -912,9 +912,7 @@ class DisplayObjectContainer extends InteractiveObject {
 	}
 	
 	
-	override function __updateChildren (transformOnly:Bool):Void {
-		
-		super.__updateChildren (transformOnly);
+	override function __updateChildrenForRenderToBitmap (transformOnly:Bool):Void {
 		
 		for (child in __children) {
 			
