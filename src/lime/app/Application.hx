@@ -107,7 +107,6 @@ class Application {
 	function onWindowClose () {
 		window = null;
 		renderer = null;
-		System.exit (0);
 	}
 	
 	
