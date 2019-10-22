@@ -2,10 +2,7 @@ package openfl.filters;
 
 
 import lime.graphics.utils.ImageDataUtil;
-import openfl._internal.renderer.RenderSession;
 import openfl.display.BitmapData;
-import openfl.display.Shader;
-import openfl.display.ShaderParameter;
 import openfl.geom.ColorTransform;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
@@ -16,8 +13,6 @@ import openfl.geom.Rectangle;
 
 @:final class GlowFilter extends BitmapFilter {
 	
-	
-	//private static var __glowShader = new GlowShader ();
 	
 	public var alpha (get, set):Float;
 	public var blurX (get, set):Float;
@@ -32,12 +27,10 @@ import openfl.geom.Rectangle;
 	private var __blurX:Float;
 	private var __blurY:Float;
 	private var __color:Int;
-	private var __horizontalPasses:Int;
 	private var __inner:Bool;
 	private var __knockout:Bool;
 	private var __quality:Int;
 	private var __strength:Float;
-	private var __verticalPasses:Int;
 	
 	
 	public function new (color:Int = 0xFF0000, alpha:Float = 1, blurX:Float = 6, blurY:Float = 6, strength:Float = 2, quality:Int = 1, inner:Bool = false, knockout:Bool = false) {
@@ -80,36 +73,6 @@ import openfl.geom.Rectangle;
 		
 		if (finalImage == bitmapData.image) return bitmapData;
 		return sourceBitmapData;
-		
-	}
-	
-	
-	private override function __initShader (renderSession:RenderSession, pass:Int):Shader {
-		
-		// var data = __glowShader.data;
-		
-		// if (pass <= horizontalPasses) {
-			
-		// 	var scale = Math.pow (0.5, pass >> 1);
-		// 	data.uRadius.value[0] = blurX * scale;
-		// 	data.uRadius.value[1] = 0;
-			
-		// } else {
-			
-		// 	var scale = Math.pow (0.5, (pass - horizontalPasses) >> 1);
-		// 	data.uRadius.value[0] = 0;
-		// 	data.uRadius.value[1] = blurY * scale;
-			
-		// }
-		
-		// data.uColor.value[0] = ((color >> 16) & 0xFF) / 255;
-		// data.uColor.value[1] = ((color >> 8) & 0xFF) / 255;
-		// data.uColor.value[2] = (color & 0xFF) / 255;
-		// data.uColor.value[3] = alpha;
-		
-		// return __glowShader;
-		
-		return null;
 		
 	}
 	
@@ -230,13 +193,6 @@ import openfl.geom.Rectangle;
 	
 	private function set_quality (value:Int):Int {
 		
-		// TODO: Quality effect with fewer passes?
-		
-		__horizontalPasses = (__blurX <= 0) ? 0 : Math.round (__blurX * (value / 4)) + 1;
-		__verticalPasses = (__blurY <= 0) ? 0 : Math.round (__blurY * (value / 4)) + 1;
-		
-		__numShaderPasses = __horizontalPasses + __verticalPasses;
-		
 		if (value != __quality) __renderDirty = true;
 		return __quality = value;
 		
@@ -254,99 +210,6 @@ import openfl.geom.Rectangle;
 		
 		if (value != __strength) __renderDirty = true;
 		return __strength = value;
-		
-	}
-	
-	
-}
-
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
-private class GlowShader extends Shader {
-	
-	
-	@:glFragmentSource( 
-		
-		"varying float vAlpha;
-		varying vec2 vTexCoord;
-		uniform sampler2D uImage0;
-		
-		uniform vec4 uColor;
-		
-		varying vec2 vBlurCoords[7];
-		
-		void main(void) {
-			
-			float a = 0.0;
-			a += texture2D(uImage0, vBlurCoords[0]).a * 0.00443;
-			a += texture2D(uImage0, vBlurCoords[1]).a * 0.05399;
-			a += texture2D(uImage0, vBlurCoords[2]).a * 0.24197;
-			a += texture2D(uImage0, vBlurCoords[3]).a * 0.39894;
-			a += texture2D(uImage0, vBlurCoords[4]).a * 0.24197;
-			a += texture2D(uImage0, vBlurCoords[5]).a * 0.05399;
-			a += texture2D(uImage0, vBlurCoords[6]).a * 0.00443;
-			a *= uColor.a;
-			
-			gl_FragColor = vec4(uColor.rgb * a, a);
-			
-		}"
-		
-	)
-	
-	
-	@:glVertexSource(
-		
-		"attribute float aAlpha;
-		attribute vec4 aPosition;
-		attribute vec2 aTexCoord;
-		varying float vAlpha;
-		varying vec2 vTexCoord;
-		
-		uniform mat4 uMatrix;
-		
-		uniform vec2 uRadius;
-		varying vec2 vBlurCoords[7];
-		uniform vec2 uTextureSize;
-		
-		void main(void) {
-			
-			vAlpha = aAlpha;
-			vTexCoord = aTexCoord;
-			gl_Position = uMatrix * aPosition;
-			
-			vec2 r = uRadius / uTextureSize;
-			vBlurCoords[0] = aTexCoord - r * 1.0;
-			vBlurCoords[1] = aTexCoord - r * 0.75;
-			vBlurCoords[2] = aTexCoord - r * 0.5;
-			vBlurCoords[3] = aTexCoord;
-			vBlurCoords[4] = aTexCoord + r * 0.5;
-			vBlurCoords[5] = aTexCoord + r * 0.75;
-			vBlurCoords[6] = aTexCoord + r * 1.0;
-			
-		}"
-		
-	)
-	
-	
-	public function new () {
-		
-		super ();
-				
-	}
-	
-	
-	private override function __update ():Void {
-		
-		var uTextureSize = get_data().uTextureSize;
-		uTextureSize.value0 = data.uImage0.input.width;
-		uTextureSize.value1 = data.uImage0.input.height;
-		
-		super.__update ();
 		
 	}
 	

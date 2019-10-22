@@ -2,9 +2,7 @@ package openfl.filters;
 
 
 import lime.graphics.utils.ImageDataUtil;
-import openfl._internal.renderer.RenderSession;
 import openfl.display.BitmapData;
-import openfl.display.Shader;
 import openfl.geom.ColorTransform;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;

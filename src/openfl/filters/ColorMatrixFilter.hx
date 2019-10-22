@@ -3,11 +3,7 @@ package openfl.filters;
 
 import lime.graphics.utils.ImageCanvasUtil;
 import lime.math.color.RGBA;
-import lime.utils.Float32Array;
-import openfl._internal.renderer.RenderSession;
 import openfl.display.BitmapData;
-import openfl.display.Shader;
-import openfl.display.ShaderParameter;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 
@@ -28,8 +24,6 @@ import openfl.geom.Rectangle;
 		
 		this.matrix = matrix;
 		
-		// __numShaderPasses = 1;
-		__numShaderPasses = 0;
 		__needSecondBitmapData = false;
 		
 	}
@@ -102,15 +96,6 @@ import openfl.geom.Rectangle;
 	}
 	
 	
-	private override function __initShader (renderSession:RenderSession, pass:Int):Shader {
-		
-		return null;
-		//__colorMatrixShader.init (matrix);
-		//return __colorMatrixShader;
-		
-	}
-	
-	
 	
 	
 	// Get & Set Methods
@@ -134,71 +119,6 @@ import openfl.geom.Rectangle;
 		}
 		
 		return __matrix = value;
-		
-	}
-	
-	
-}
-
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
-private class ColorMatrixShader extends Shader {
-	
-	
-	@:glFragmentSource( 
-		
-		"varying float vAlpha;
-		varying vec2 vTexCoord;
-		uniform sampler2D uImage0;
-		
-		uniform mat4 uMultipliers;
-		uniform vec4 uOffsets;
-		
-		void main(void) {
-			
-			vec4 color = texture2D (uImage0, vTexCoord);
-			
-			if (color.a == 0.0) {
-				
-				gl_FragColor = vec4 (0.0, 0.0, 0.0, 0.0);
-				
-			} else {
-				
-				color = vec4 (color.rgb / color.a, color.a);
-				color = uOffsets + color * uMultipliers;
-				
-				gl_FragColor = vec4 (color.rgb * color.a * vAlpha, color.a * vAlpha);
-				
-			}
-			
-		}"
-		
-	)
-	
-	
-	public function new () {
-		
-		super ();
-		
-		
-	}
-	
-	
-	public function init (matrix:Array<Float>):Void {
-		
-		var multipliers = get_data().uMultipliers;
-		var offsets = get_data().uOffsets;
-		
-		multipliers.value = new Float32Array(matrix);
-		offsets.value0 = matrix[4] / 255.0;
-		offsets.value1 = matrix[9] / 255.0;
-		offsets.value2 = matrix[14] / 255.0;
-		offsets.value3 = matrix[19] / 255.0;
 		
 	}
 	
