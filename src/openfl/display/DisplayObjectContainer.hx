@@ -873,7 +873,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		
 		if (__updateDirty) {
 			
-			__update (false, true, true);
+			__update (false, true);
 			
 		} else if (__updateTraverse) {
 			
@@ -891,21 +891,17 @@ class DisplayObjectContainer extends InteractiveObject {
 	}
 	
 	
-	public override function __update (transformOnly:Bool, updateChildren:Bool, ?resetUpdateDirty:Bool = false):Void {
+	public override function __update (transformOnly:Bool, resetUpdateDirty:Bool):Void {
 		
 		if (resetUpdateDirty) {
 			__updateTraverse = false;
 		}
 		
-		super.__update (transformOnly, updateChildren, resetUpdateDirty);
+		super.__update (transformOnly, resetUpdateDirty);
 		
-		if (updateChildren) {
+		for (child in __children) {
 			
-			for (child in __children) {
-				
-				child.__update (transformOnly, true, resetUpdateDirty);
-				
-			}
+			child.__update (transformOnly, resetUpdateDirty);
 			
 		}
 		
@@ -916,7 +912,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		
 		for (child in __children) {
 			
-			child.__update (transformOnly, true);
+			child.__update (transformOnly, false);
 			
 		}
 		

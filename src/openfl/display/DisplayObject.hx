@@ -862,13 +862,13 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		
 		if (__updateDirty) {
 			
-			__update (false, true, true);
+			__update (false, true);
 			
 		}
 	}
 	
 	
-	public function __update (transformOnly:Bool, updateChildren:Bool, ?resetUpdateDirty:Bool = false):Void {
+	public function __update (transformOnly:Bool, resetUpdateDirty:Bool):Void {
 		
 		if (resetUpdateDirty) {
 			
@@ -912,17 +912,11 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 				
 			}
 			
-			//if (updateChildren && __renderDirty) {
-				
-				//__renderDirty = false;
-				
-			//}
-			
 		}
 		
-		if (updateChildren && mask != null) {
+		if (mask != null) {
 			
-			mask.__update (transformOnly, true, resetUpdateDirty);
+			mask.__update (transformOnly, resetUpdateDirty);
 			
 		}
 		
