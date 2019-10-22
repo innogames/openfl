@@ -1199,7 +1199,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	}
 	
 	
-	public function __updateChildren (transformOnly:Bool):Void {
+	function __updateChildren (transformOnly:Bool):Void {
 		
 		var renderParent = parent;
 		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
@@ -1209,7 +1209,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	}
 	
 	
-	public function __updateTransforms (overrideTransform:Matrix = null):Void {
+	function __updateTransforms (overrideTransform:Matrix = null):Void {
 		
 		var overrided = overrideTransform != null;
 		var local = overrided ? overrideTransform : __transform;

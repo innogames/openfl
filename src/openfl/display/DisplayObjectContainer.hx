@@ -912,7 +912,7 @@ class DisplayObjectContainer extends InteractiveObject {
 	}
 	
 	
-	public override function __updateChildren (transformOnly:Bool):Void {
+	override function __updateChildren (transformOnly:Bool):Void {
 		
 		super.__updateChildren (transformOnly);
 		
