@@ -1226,6 +1226,13 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 			
 		}
 		
+		__adjustRenderTransform ();
+		
+	}
+	
+	
+	function __adjustRenderTransform () {
+		
 		if (__scrollRect != null) {
 			
 			__renderTransform.__translateTransformed (-__scrollRect.x, -__scrollRect.y);
