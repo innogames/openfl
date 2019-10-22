@@ -588,37 +588,31 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	
 	private function __getWorldTransform ():Matrix {
 
-		var transformDirty = __worldTransformInvalid;
-
-		if (transformDirty) {
-
-			var list = [];
-			var current = this;
+		if (__worldTransformInvalid) {
 
 			if (parent == null) {
 				
-				__update (true, false);
+				__updateTransforms ();
 				
 			} else {
+
+				var list = [];
+				var current = this;
 				
-				while (current != stage) {
-					
+				do {
 					list.push (current);
 					current = current.parent;
-					
-					if (current == null) break;
+				} while (current != null && current.__worldTransformInvalid);
+				
+				var i = list.length;
+				while (--i >= 0) {
+
+					current = list[i];
+					current.__updateTransforms ();
+
 				}
 				
 			}
-			
-			var i = list.length;
-			while (--i >= 0) {
-
-				current = list[i];
-				current.__update (true, false);
-
-			}
-				
 
 		}
 		
@@ -868,13 +862,13 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		
 		if (__updateDirty) {
 			
-			__update (false, true, true);
+			__update (true);
 			
 		}
 	}
 	
 	
-	public function __update (transformOnly:Bool, updateChildren:Bool, ?resetUpdateDirty:Bool = false):Void {
+	public function __update (resetUpdateDirty:Bool):Void {
 		
 		if (resetUpdateDirty) {
 			
@@ -887,50 +881,38 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
 		__updateTransforms ();
 		
-		__worldTransformInvalid = false;
-
-		if (!transformOnly) {
+		if (!__worldColorTransform.__equals (transform.colorTransform)) {
 			
-			if (!__worldColorTransform.__equals (transform.colorTransform)) {
-				
-				__worldColorTransform = transform.colorTransform.__clone ();
-				
-			}
-			
-			if (renderParent != null) {
-				
-				__worldAlpha = alpha * renderParent.__worldAlpha;
-				
-				__worldColorTransform.__combine (renderParent.__worldColorTransform);
-				
-				if (__blendMode == null || __blendMode == NORMAL) {
-					
-					// TODO: Handle multiple blend modes better
-					__worldBlendMode = renderParent.__blendMode;
-					
-				} else {
-					
-					__worldBlendMode = __blendMode;
-					
-				}
-				
-			} else {
-				
-				__worldAlpha = alpha;
-				
-			}
-			
-			//if (updateChildren && __renderDirty) {
-				
-				//__renderDirty = false;
-				
-			//}
+			__worldColorTransform = transform.colorTransform.__clone ();
 			
 		}
 		
-		if (updateChildren && mask != null) {
+		if (renderParent != null) {
 			
-			mask.__update (transformOnly, true, resetUpdateDirty);
+			__worldAlpha = alpha * renderParent.__worldAlpha;
+			
+			__worldColorTransform.__combine (renderParent.__worldColorTransform);
+			
+			if (__blendMode == null || __blendMode == NORMAL) {
+				
+				// TODO: Handle multiple blend modes better
+				__worldBlendMode = renderParent.__blendMode;
+				
+			} else {
+				
+				__worldBlendMode = __blendMode;
+				
+			}
+			
+		} else {
+			
+			__worldAlpha = alpha;
+			
+		}
+		
+		if (mask != null) {
+			
+			mask.__update (resetUpdateDirty);
 			
 		}
 		
@@ -1166,34 +1148,74 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 			||
 			!__cacheBitmapColorTransform.__equals (__worldColorTransform);
 	}
-	
-	
-	public function __updateChildren (transformOnly:Bool):Void {
+
+
+	private function __renderToBitmap (renderSession:RenderSession, matrix:Matrix) {
+
+		var cacheIsMask = __isMask;
+		var cacheVisible = __visible;
+		var cacheRenderable = __renderable;
+		var cacheWorldAlpha = __worldAlpha;
+		var cacheBlendMode = __worldBlendMode;
 		
-		var renderParent = parent;
-		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
-		__worldAlpha = alpha;
-		__worldBlendMode = blendMode;
+		var cacheWorldTransform = Matrix.__pool.get ();
+		var cacheRenderTransform = Matrix.__pool.get ();
+		cacheWorldTransform.copyFrom (__worldTransform);
+		cacheRenderTransform.copyFrom (__renderTransform);
+
+		__isMask = false;
+		__visible = true;
+		__renderable = true;
+		__worldAlpha = 1;
+		__worldBlendMode = NORMAL;
+		__worldTransform.copyFrom (matrix);
+		__renderTransform.copyFrom (matrix);
+		__adjustRenderTransform ();
+
+		__updateChildrenForRenderToBitmap ();
+		__renderCanvas (renderSession);
+
+		__isMask = cacheIsMask;
+		__visible = cacheVisible;
+		__renderable = cacheRenderable;
+		__worldAlpha = cacheWorldAlpha;
+		__worldBlendMode = cacheBlendMode;
+		
+		__worldTransform.copyFrom (cacheWorldTransform);
+		__renderTransform.copyFrom (cacheRenderTransform);
+		Matrix.__pool.release (cacheWorldTransform);
+		Matrix.__pool.release (cacheRenderTransform);
+
+		__updateChildrenForRenderToBitmap ();
+
+	}
+	
+	
+	function __updateChildrenForRenderToBitmap ():Void {}
+	
+	
+	function __updateTransforms ():Void {
+		
+		if (parent != null) {
+			
+			__calculateAbsoluteTransform (__transform, parent.__worldTransform, __worldTransform);
+			__calculateAbsoluteTransform (__transform, parent.__renderTransform, __renderTransform);
+			
+		} else {
+			
+			__worldTransform.copyFrom (__transform);
+			__renderTransform.copyFrom (__transform);
+			
+		}
+		
+		__adjustRenderTransform ();
+		
+		__worldTransformInvalid = false;
 		
 	}
 	
 	
-	public function __updateTransforms (overrideTransform:Matrix = null):Void {
-		
-		var overrided = overrideTransform != null;
-		var local = overrided ? overrideTransform : __transform;
-		
-		if (!overrided && parent != null) {
-			
-			__calculateAbsoluteTransform (local, parent.__worldTransform, __worldTransform);
-			__calculateAbsoluteTransform (local, parent.__renderTransform, __renderTransform);
-			
-		} else {
-			
-			__worldTransform.copyFrom (local);
-			__renderTransform.copyFrom (local);
-			
-		}
+	function __adjustRenderTransform () {
 		
 		if (__scrollRect != null) {
 			

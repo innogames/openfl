@@ -1486,9 +1486,9 @@ class TextField extends InteractiveObject {
 	}
 	
 	
-	public override function __updateTransforms (overrideTransform:Matrix = null):Void {
+	override function __adjustRenderTransform () {
 		
-		super.__updateTransforms (overrideTransform);
+		super.__adjustRenderTransform ();
 		__renderTransform.__translateTransformed (__offsetX, __offsetY);
 		
 	}
