@@ -862,13 +862,13 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		
 		if (__updateDirty) {
 			
-			__update (false, true);
+			__update (true);
 			
 		}
 	}
 	
 	
-	public function __update (transformOnly:Bool, resetUpdateDirty:Bool):Void {
+	public function __update (resetUpdateDirty:Bool):Void {
 		
 		if (resetUpdateDirty) {
 			
@@ -881,42 +881,38 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
 		__updateTransforms ();
 		
-		if (!transformOnly) {
+		if (!__worldColorTransform.__equals (transform.colorTransform)) {
 			
-			if (!__worldColorTransform.__equals (transform.colorTransform)) {
-				
-				__worldColorTransform = transform.colorTransform.__clone ();
-				
-			}
+			__worldColorTransform = transform.colorTransform.__clone ();
 			
-			if (renderParent != null) {
+		}
+		
+		if (renderParent != null) {
+			
+			__worldAlpha = alpha * renderParent.__worldAlpha;
+			
+			__worldColorTransform.__combine (renderParent.__worldColorTransform);
+			
+			if (__blendMode == null || __blendMode == NORMAL) {
 				
-				__worldAlpha = alpha * renderParent.__worldAlpha;
-				
-				__worldColorTransform.__combine (renderParent.__worldColorTransform);
-				
-				if (__blendMode == null || __blendMode == NORMAL) {
-					
-					// TODO: Handle multiple blend modes better
-					__worldBlendMode = renderParent.__blendMode;
-					
-				} else {
-					
-					__worldBlendMode = __blendMode;
-					
-				}
+				// TODO: Handle multiple blend modes better
+				__worldBlendMode = renderParent.__blendMode;
 				
 			} else {
 				
-				__worldAlpha = alpha;
+				__worldBlendMode = __blendMode;
 				
 			}
+			
+		} else {
+			
+			__worldAlpha = alpha;
 			
 		}
 		
 		if (mask != null) {
 			
-			mask.__update (transformOnly, resetUpdateDirty);
+			mask.__update (resetUpdateDirty);
 			
 		}
 		
@@ -1176,7 +1172,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		__renderTransform.copyFrom (matrix);
 		__adjustRenderTransform ();
 
-		__updateChildrenForRenderToBitmap (false);
+		__updateChildrenForRenderToBitmap ();
 		__renderCanvas (renderSession);
 
 		__isMask = cacheIsMask;
@@ -1190,12 +1186,12 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		Matrix.__pool.release (cacheWorldTransform);
 		Matrix.__pool.release (cacheRenderTransform);
 
-		__updateChildrenForRenderToBitmap (true);
+		__updateChildrenForRenderToBitmap ();
 
 	}
 	
 	
-	function __updateChildrenForRenderToBitmap (transformOnly:Bool):Void {}
+	function __updateChildrenForRenderToBitmap ():Void {}
 	
 	
 	function __updateTransforms ():Void {

@@ -873,7 +873,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		
 		if (__updateDirty) {
 			
-			__update (false, true);
+			__update (true);
 			
 		} else if (__updateTraverse) {
 			
@@ -891,28 +891,30 @@ class DisplayObjectContainer extends InteractiveObject {
 	}
 	
 	
-	public override function __update (transformOnly:Bool, resetUpdateDirty:Bool):Void {
+	public override function __update (resetUpdateDirty:Bool):Void {
 		
 		if (resetUpdateDirty) {
+			
 			__updateTraverse = false;
+			
 		}
 		
-		super.__update (transformOnly, resetUpdateDirty);
+		super.__update (resetUpdateDirty);
 		
 		for (child in __children) {
 			
-			child.__update (transformOnly, resetUpdateDirty);
+			child.__update (resetUpdateDirty);
 			
 		}
 		
 	}
 	
 	
-	override function __updateChildrenForRenderToBitmap (transformOnly:Bool):Void {
+	override function __updateChildrenForRenderToBitmap ():Void {
 		
 		for (child in __children) {
 			
-			child.__update (transformOnly, false);
+			child.__update (false);
 			
 		}
 		
