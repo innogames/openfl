@@ -1,17 +1,18 @@
 package lime.graphics;
 
-
+import js.Browser;
 import lime.app.Event;
 import lime.math.Rectangle;
 import lime.ui.Window;
-import lime._backend.html5.HTML5Renderer as RendererBackend;
+import lime._backend.html5.HTML5Renderer;
 
 #if !lime_debug
 @:fileXml('tags="haxe,release"')
 @:noDebug
 #end
 
-
+@:access(lime.ui.Window)
+@:access(lime._backend.html5.HTML5Renderer.context)
 class Renderer {
 	
 	
@@ -20,28 +21,112 @@ class Renderer {
 	public var onContextRestored = new Event<GLRenderContext->Void> ();
 	public var window:Window;
 	
-	@:noCompletion private var backend:RendererBackend;
-	
 	
 	public function new (window:Window) {
 		
 		this.window = window;
-		
-		backend = new RendererBackend (this);
 		
 	}
 	
 	
 	public function create ():Void {
 		
-		backend.create ();
+		createContext ();
+		
+		window.backend.canvas.addEventListener ("webglcontextlost", handleEvent, false);
+		window.backend.canvas.addEventListener ("webglcontextrestored", handleEvent, false);
+		
+	}
+	
+	
+	private function createContext ():Void {
+		
+		if (window.backend.canvas != null) {
+			
+			var transparentBackground = Reflect.hasField (window.config, "background") && window.config.background == null;
+			var colorDepth = Reflect.hasField (window.config, "colorDepth") ? window.config.colorDepth : 16;
+			
+			var options = {
+				alpha: (transparentBackground || colorDepth > 16) ? true : false,
+				antialias: Reflect.hasField (window.config, "antialiasing") ? window.config.antialiasing > 0 : false,
+				depth: Reflect.hasField (window.config, "depthBuffer") ? window.config.depthBuffer : true,
+				premultipliedAlpha: true,
+				stencil: Reflect.hasField (window.config, "stencilBuffer") ? window.config.stencilBuffer : false,
+				preserveDrawingBuffer: false
+			};
+			
+			for (name in [ "webgl2", "webgl", "experimental-webgl" ]) {
+
+				var webgl = window.backend.canvas.getContext (name, options);
+				if (webgl != null) {
+					context = HTML5Renderer.context = webgl;
+					break;
+				}
+				
+			}
+			
+		}
+		
+	}
+	
+	
+	private function handleEvent (event:js.html.Event):Void {
+		
+		switch (event.type) {
+			
+			case "webglcontextlost":
+				
+				event.preventDefault ();
+				
+				context = null;
+				
+				onContextLost.dispatch ();
+				
+			case "webglcontextrestored":
+				
+				createContext ();
+				
+				onContextRestored.dispatch (context);
+			
+			default:
+			
+		}
 		
 	}
 	
 	
 	public function readPixels (rect:Rectangle = null):Image {
 		
-		return backend.readPixels (rect);
+		// TODO: Handle DIV, improve 3D canvas support
+		
+		if (window.backend.canvas != null) {
+			
+			if (rect == null) {
+				
+				rect = new Rectangle (0, 0, window.backend.canvas.width, window.backend.canvas.height);
+				
+			} else {
+				
+				rect.__contract (0, 0, window.backend.canvas.width, window.backend.canvas.height);
+				
+			}
+			
+			if (rect.width > 0 && rect.height > 0) {
+				
+				var canvas = Browser.document.createCanvasElement ();
+				canvas.width = Std.int (rect.width);
+				canvas.height = Std.int (rect.height);
+				
+				var context = canvas.getContext ("2d");
+				context.drawImage (window.backend.canvas, -rect.x, -rect.y);
+				
+				return Image.fromCanvas (canvas);
+				
+			}
+			
+		}
+		
+		return null;
 		
 	}
 	
