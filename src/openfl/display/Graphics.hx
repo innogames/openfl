@@ -938,7 +938,7 @@ import js.html.CanvasRenderingContext2D;
 				__batchQuad = Quad.pool.get ();
 			}
 			
-			var transform = (cast renderSession.renderer : GLRenderer).getDisplayTransformTempMatrix (__worldTransform, false);
+			var transform = renderSession.renderer.getDisplayTransformTempMatrix (__worldTransform, false);
 			__bitmap.__fillBatchQuad (transform, __batchQuad.vertexData);
 			__batchQuad.texture = __bitmap.getTexture (renderSession.gl);
 			__batchQuadDirty = false;
