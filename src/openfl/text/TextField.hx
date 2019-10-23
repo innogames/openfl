@@ -109,7 +109,6 @@ class TextField extends InteractiveObject {
 	private var __textEngine:TextEngine;
 	private var __textFormat:TextFormat;
 	private var __forceCachedBitmapUpdate:Bool = false;
-	private var __ensureCaretVisibleNeeded = false;
 	
 	#if (js && html5)
 	private var __div:DivElement;
@@ -1205,17 +1204,6 @@ class TextField extends InteractiveObject {
 	}
 	
 	
-	override function __enterFrame(deltaTime:Int) {
-		
-		if (__ensureCaretVisibleNeeded) {
-			
-			__doEnsureCaretVisible ();
-			
-		}
-		
-	}
-	
-	
 	private override function __renderCanvas (renderSession:RenderSession):Void {
 		
 		#if (js && html5)
@@ -1365,16 +1353,20 @@ class TextField extends InteractiveObject {
 		
 	}
 	
-	inline function __ensureCaretVisible () {
+	function __ensureCaretVisible () {
 		
-		__ensureCaretVisibleNeeded = true;
+		if (!hasEventListener (Event.ENTER_FRAME)) {
+			
+			addEventListener (Event.ENTER_FRAME, __doEnsureCaretVisible);
+			
+		}
 		
 	}
 	
 	
-	private function __doEnsureCaretVisible () {
+	private function __doEnsureCaretVisible (_:Event) {
 		
-		__ensureCaretVisibleNeeded = false;
+		removeEventListener (Event.ENTER_FRAME, __doEnsureCaretVisible);
 		
 		__updateLayout ();
 		
@@ -2486,7 +2478,7 @@ class TextField extends InteractiveObject {
 		
 		// remove delayed __ensureCaretVisible calls, that could be added by the focus-in event before,
 		// because we changed the caret index and it's known to be within the visible area
-		__ensureCaretVisibleNeeded = false;
+		if (hasEventListener (Event.ENTER_FRAME)) removeEventListener (Event.ENTER_FRAME, __doEnsureCaretVisible);
 		
 		__dirty = true;
 		__setRenderDirty ();
