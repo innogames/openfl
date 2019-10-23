@@ -2,7 +2,6 @@ package lime.media;
 
 
 import lime.app.Event;
-import lime.math.Vector4;
 import lime._backend.html5.HTML5AudioSource as AudioSourceBackend;
 
 class AudioSource {
@@ -16,7 +15,7 @@ class AudioSource {
 	public var length (get, set):Int;
 	public var loops (get, set):Int;
 	public var offset:Int;
-	public var position (get, set):Vector4;
+	public var pan (get, set):Float;
 	
 	@:noCompletion private var backend:AudioSourceBackend;
 	
@@ -143,16 +142,16 @@ class AudioSource {
 	}
 	
 	
-	private function get_position ():Vector4 {
+	private function get_pan ():Float {
 		
-		return backend.getPosition ();
+		return backend.getPan ();
 		
 	}
 	
 	
-	private function set_position (value:Vector4):Vector4 {
+	private function set_pan (value:Float):Float {
 		
-		return backend.setPosition (value);
+		return backend.setPan (value);
 		
 	}
 	

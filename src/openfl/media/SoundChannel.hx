@@ -134,11 +134,7 @@ import openfl.media.Sound;
 			if (__isValid) {
 				
 				__source.gain = volume;
-				
-				var position = __source.position;
-				position.x = pan;
-				position.z = -1 * Math.sqrt (1 - Math.pow (pan, 2));
-				__source.position = position;
+				__source.pan = pan;
 				
 				return value;
 				

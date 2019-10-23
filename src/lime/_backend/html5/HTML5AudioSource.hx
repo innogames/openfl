@@ -2,7 +2,6 @@ package lime._backend.html5;
 
 
 import lime.media.AudioSource;
-import lime.math.Vector4;
 
 @:access(lime.media.AudioBuffer)
 
@@ -17,7 +16,7 @@ class HTML5AudioSource {
 	private var loops:Int;
 	private var parent:AudioSource;
 	private var playing:Bool;
-	private var position:Vector4;
+	private var pan:Float;
 	
 	
 	public function new (parent:AudioSource) {
@@ -26,7 +25,7 @@ class HTML5AudioSource {
 		
 		id = -1;
 		gain = 1;
-		position = new Vector4 ();
+		pan = 0;
 		
 	}
 	
@@ -69,7 +68,7 @@ class HTML5AudioSource {
 		parent.buffer.__srcHowl._volume = cacheVolume;
 		//setGain (parent.gain);
 		
-		setPosition (parent.position);
+		setPan (pan);
 		
 		parent.buffer.__srcHowl.on ("end", howl_onEnd, id);
 		
@@ -266,33 +265,27 @@ class HTML5AudioSource {
 	}
 	
 	
-	public function getPosition ():Vector4 {
+	public function getPan ():Float {
 		
-		#if howlerjs
-		
-		// TODO: Use 3D audio plugin
-		
-		#end
-		
-		return position;
+		return pan;
 		
 	}
 	
 	
-	public function setPosition (value:Vector4):Vector4 {
+	public function setPan (value:Float):Float {
 		
-		position.x = value.x;
-		position.y = value.y;
-		position.z = value.z;
-		position.w = value.w;
-		
-		#if howlerjs
-		
-		// TODO: Use 3D audio plugin
-		
-		#end
-		
-		return position;
+		if (pan != value) {
+			
+			pan = value;
+
+			if (parent.buffer != null && id != -1) {
+				
+				parent.buffer.__srcHowl.stereo (value, id);
+				
+			}
+			
+		}
+		return value;
 		
 	}
 	

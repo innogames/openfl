@@ -47,6 +47,9 @@ extern class Howl {
 	@:overload(function(vol:Float):Howl {})
 	@:overload(function(vol:Float, id:Int):Howl {})
 	public function volume ():Float;
+
+	// spatial plugin
+	function stereo(pan:Float, ?id:Int):Howl;
 	
 	// internals used in HTML5AudioSource
 	private var _volume:Float;
