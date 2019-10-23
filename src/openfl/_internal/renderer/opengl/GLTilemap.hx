@@ -48,7 +48,7 @@ class GLTilemap {
 		// break the batch as we don't batch tilemaps for now
 		renderSession.batcher.flush ();
 		
-		var renderer:GLRenderer = cast renderSession.renderer;
+		var renderer = renderSession.renderer;
 		var gl = renderSession.gl;
 		
 		renderSession.blendModeManager.setBlendMode (tilemap.__worldBlendMode);
@@ -192,7 +192,7 @@ class GLTilemap {
 		// break the batch as we don't batch tilemaps for now
 		renderSession.batcher.flush ();
 		
-		var renderer:GLRenderer = cast renderSession.renderer;
+		var renderer = renderSession.renderer;
 		var gl = renderSession.gl;
 		
 		var shader = (cast renderSession.maskManager:GLMaskManager).maskShader;

@@ -214,7 +214,7 @@ class GLMaskManager extends AbstractMaskManager {
 		
 		if (rect != null) {
 			
-			var renderer:GLRenderer = cast renderSession.renderer;
+			var renderer = renderSession.renderer;
 			
 			gl.enable (GL.SCISSOR_TEST);
 			

@@ -68,7 +68,7 @@ class GLShape {
 			
 			if (graphics.__bitmap != null) {
 				
-				var renderer:GLRenderer = cast renderSession.renderer;
+				var renderer = renderSession.renderer;
 				var gl = renderSession.gl;
 				
 				var shader = (cast renderSession.maskManager:GLMaskManager).maskShader;

@@ -32,7 +32,7 @@ class GLVideo {
 		
 		if (video.__stream.__video != null) {
 			
-			var renderer:GLRenderer = cast renderSession.renderer;
+			var renderer = renderSession.renderer;
 			var gl = renderSession.gl;
 			
 			renderSession.blendModeManager.setBlendMode (video.__worldBlendMode);
@@ -101,7 +101,7 @@ class GLVideo {
 		
 		if (video.__stream.__video != null) {
 			
-			var renderer:GLRenderer = cast renderSession.renderer;
+			var renderer = renderSession.renderer;
 			var gl = renderSession.gl;
 			
 			var shader = (cast renderSession.maskManager:GLMaskManager).maskShader;
