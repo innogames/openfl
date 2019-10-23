@@ -777,11 +777,12 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	
 	private function __setParentRenderDirty ():Void {
 		
-		var renderParent = parent;
-		if (renderParent != null && !renderParent.__renderDirty) {
+		var parent = this.parent;
+		
+		while (parent != null && !parent.__renderDirty) {
 			
-			renderParent.__renderDirty = true;
-			renderParent.__setParentRenderDirty ();
+			parent.__renderDirty = true;
+			parent = parent.parent;
 			
 		}
 		
@@ -832,12 +833,12 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
  	
  	private function __setParentUpdateTraverse ():Void {
  		
- 		var renderParent = parent;
+ 		var parent = this.parent;
  		
- 		if (renderParent != null && !renderParent.__updateTraverse) {
+ 		while (parent != null && !parent.__updateTraverse) {
  			
- 			renderParent.__updateTraverse = true;
- 			renderParent.__setParentUpdateTraverse ();
+ 			parent.__updateTraverse = true;
+ 			parent = parent.parent;
  		
  		}
  		
