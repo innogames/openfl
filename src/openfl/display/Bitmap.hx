@@ -41,7 +41,6 @@ class Bitmap extends DisplayObject {
 	private var __bitmapData:BitmapData;
 	private var __bitmapDataUserPrev:Bitmap;
 	private var __bitmapDataUserNext:Bitmap;
-	private var __imageVersion:Int;
 	
 	var __batchQuad:Quad;
 	var __batchQuadDirty:Bool = true;
@@ -90,16 +89,6 @@ class Bitmap extends DisplayObject {
 		}
 		
 	}
-	
-	inline function __syncImageVersion (version:Int) {
-		
-		if (__imageVersion != version) {
-			__setRenderDirty ();
-			__imageVersion = version;
-		}
-		
-	}
-	
 	
 	private override function __getBounds (rect:Rectangle, matrix:Matrix):Void {
 		
@@ -330,8 +319,6 @@ class Bitmap extends DisplayObject {
 			//__updateFilters = true;
 			
 		}
-		
-		__imageVersion = -1;
 		
 		return __bitmapData;
 		

@@ -180,10 +180,9 @@ class BitmapData implements IBitmapDrawable {
 	
 	
 	function __markUsersRenderDirty () {
-		var version = image.version;
 		var user = __usersHead;
 		while (user != null) {
-			user.__syncImageVersion(version);
+			user.__setRenderDirty ();
 			user = user.__bitmapDataUserNext;
 		}
 	}
