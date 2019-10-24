@@ -193,7 +193,7 @@ class PerlinNoise {
 
         var color = Std.int( ( s * fPersMax + 1 ) * 128 );
 
-        bitmap.setPixel32( px, py, 0xff000000 | color << 16 | color << 8 | color );
+        bitmap.image.setPixel32( px, py, 0xff000000 | color << 16 | color << 8 | color, ARGB32 );
 
         _x += baseFactor;
       }
