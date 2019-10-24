@@ -301,6 +301,14 @@ class Bitmap extends DisplayObject {
 	}
 	
 	
+	inline function __setBitmapDataDirty () {
+		
+		__batchQuadDirty = true;
+		__setRenderDirty ();
+		
+	}
+	
+	
 	private function set_bitmapData (value:BitmapData):BitmapData {
 		
 		if (stage != null && value != __bitmapData) {
@@ -311,8 +319,7 @@ class Bitmap extends DisplayObject {
 		__bitmapData = value;
 		smoothing = false;
 		
-		__setRenderDirty ();
-		__batchQuadDirty = true;
+		__setBitmapDataDirty ();
 		
 		if (__hasFilters ()) {
 			

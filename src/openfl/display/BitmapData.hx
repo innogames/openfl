@@ -182,7 +182,7 @@ class BitmapData implements IBitmapDrawable {
 	function __markUsersRenderDirty () {
 		var user = __usersHead;
 		while (user != null) {
-			user.__setRenderDirty ();
+			user.__setBitmapDataDirty ();
 			user = user.__bitmapDataUserNext;
 		}
 	}
