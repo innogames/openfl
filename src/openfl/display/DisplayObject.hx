@@ -87,7 +87,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	private var __cacheBitmapColorTransform:ColorTransform;
 	private var __cacheBitmapData:BitmapData;
 	private var __cacheBitmapRender:Bool;
-	private var __children:Array<DisplayObject>;
 	private var __filters:Array<BitmapFilter>;
 	private var __graphics:Graphics;
 	private var __isMask:Bool;
@@ -464,13 +463,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		event.eventPhase = AT_TARGET;
 		
 		return __dispatchEvent (event);
-		
-	}
-	
-	
-	private function __enterFrame (deltaTime:Int):Void {
-		
-		
 		
 	}
 	
@@ -1135,24 +1127,31 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	
 	private function __cacheBitmapNeedsRender ():Bool {
 		return
-			(
-				__renderDirty
-				&& 
-				(
-					(__children != null && __children.length > 0) // TODO: this is the only place we use __children in DisplayObject, we can probably move this check in a DisplayObjectContainer override along with __children
-					||
-					(__graphics != null && __graphics.__dirty) // TODO: not sure if this ever holds, because graphics dirty flag is reset before we end up here
-				)
-			)
+			__checkRenderDirty ()
 			||
 			opaqueBackground != __cacheBitmapBackground
 			||
 			!__cacheBitmapColorTransform.__equals (__worldColorTransform);
 	}
-
-
+	
+	
+	function __checkRenderDirty ():Bool {
+		
+		return __renderDirty && __isGraphicsDirty ();
+		
+	}
+	
+	
+	inline function __isGraphicsDirty () {
+		
+		// TODO: not sure if this ever holds, because graphics dirty flag is reset before we end up here
+		return (__graphics != null && __graphics.__dirty);
+		
+	}
+	
+	
 	private function __renderToBitmap (renderSession:RenderSession, matrix:Matrix) {
-
+		
 		var cacheIsMask = __isMask;
 		var cacheVisible = __visible;
 		var cacheRenderable = __renderable;

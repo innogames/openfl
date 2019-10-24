@@ -34,6 +34,7 @@ class DisplayObjectContainer extends InteractiveObject {
 	public var numChildren (get, never):Int;
 	public var tabChildren:Bool;
 	
+	private var __children:Array<DisplayObject>;
 	private var __removedChildren:Vector<DisplayObject>;
 	private var __updateTraverse:Bool;
 	
@@ -404,17 +405,6 @@ class DisplayObjectContainer extends InteractiveObject {
 				child.__dispatchChildren (event);
 				
 			}
-			
-		}
-		
-	}
-	
-	
-	private override function __enterFrame (deltaTime:Int):Void {
-		
-		for (child in __children) {
-			
-			child.__enterFrame (deltaTime);
 			
 		}
 		
@@ -816,6 +806,32 @@ class DisplayObjectContainer extends InteractiveObject {
 			}
 			
 		}
+		
+	}
+	
+	
+	override function __checkRenderDirty():Bool {
+		
+		if (__renderDirty) {
+			
+			return __children.length > 0 || __isGraphicsDirty ();
+			
+		}
+		
+		for (child in __children) {
+			
+			if (child.__checkRenderDirty ()) {
+				
+				// mark ourselves dirty to prevent recursion next time
+				__renderDirty = true;
+				
+				return true;
+				
+			}
+			
+		}
+		
+		return false;
 		
 	}
 	

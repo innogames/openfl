@@ -77,17 +77,24 @@ class Bitmap extends DisplayObject {
 		
 	}
 	
-	private override function __enterFrame (deltaTime:Int):Void {
+	override function __checkRenderDirty ():Bool {
 		
-		if (__bitmapData != null && __bitmapData.image != null) {
+		if (__renderDirty) {
+			
+			return true;
+			
+		} else if (__bitmapData != null) {
 			
 			var image = __bitmapData.image;
-			if (__bitmapData.image.version != __imageVersion) {
-				__setRenderDirty ();
+			if (image != null && image.version != __imageVersion) {
+				__renderDirty = true;
 				__imageVersion = image.version;
+				return true;
 			}
 			
 		}
+		
+		return false;
 		
 	}
 	
@@ -194,6 +201,9 @@ class Bitmap extends DisplayObject {
 			bitmapData.__fillBatchQuad (transform, __batchQuad.vertexData);
 			__batchQuad.texture = __bitmapData.getTexture (renderSession.gl);
 			__batchQuadDirty = false;
+		} else if (__checkRenderDirty()) {
+			__batchQuad.texture = __bitmapData.getTexture (renderSession.gl);
+			
 		}
 		
 		__batchQuad.setup(__worldAlpha, __worldColorTransform, BatcherBlendMode.fromOpenFLBlendMode(__worldBlendMode), smoothing);
