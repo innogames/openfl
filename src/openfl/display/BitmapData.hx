@@ -85,6 +85,9 @@ class BitmapData implements IBitmapDrawable {
 	private var __vaoMask:GLVertexArrayObject;
 	private var __vaoContext: IVertexArrayObjectContext;
 	
+	var __usersHead:Bitmap;
+	var __usersTail:Bitmap;
+	
 	public function new (width:Int, height:Int, transparent:Bool = true, fillColor:UInt = 0xFFFFFFFF) {
 		
 		this.transparent = transparent;
@@ -171,6 +174,18 @@ class BitmapData implements IBitmapDrawable {
 		
 		image.colorTransform (rect.__toLimeRectangle (), colorTransform.__toLimeColorMatrix ());
 		
+		__markUsersRenderDirty ();
+		
+	}
+	
+	
+	function __markUsersRenderDirty () {
+		var version = image.version;
+		var user = __usersHead;
+		while (user != null) {
+			user.__syncImageVersion(version);
+			user = user.__bitmapDataUserNext;
+		}
 	}
 	
 	

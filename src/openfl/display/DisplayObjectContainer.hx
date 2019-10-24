@@ -410,17 +410,6 @@ class DisplayObjectContainer extends InteractiveObject {
 	}
 	
 	
-	private override function __enterFrame (deltaTime:Int):Void {
-		
-		for (child in __children) {
-			
-			child.__enterFrame (deltaTime);
-			
-		}
-		
-	}
-	
-	
 	private override function __forceRenderDirty ():Void {
 		
 		super.__forceRenderDirty();

@@ -92,7 +92,6 @@ class Stage extends DisplayObjectContainer {
 	private var __colorSplit:Array<Float>;
 	private var __colorString:String;
 	private var __contentsScaleFactor:Float;
-	private var __deltaTime:Int;
 	private var __displayMatrix:Matrix;
 	private var __displayState:StageDisplayState;
 	private var __dragBounds:Rectangle;
@@ -138,7 +137,6 @@ class Stage extends DisplayObjectContainer {
 		this.name = null;
 		
 		__contentsScaleFactor = window.scale;
-		__deltaTime = 0;
 		__displayState = NORMAL;
 		__mouseX = 0;
 		__mouseY = 0;
@@ -578,8 +576,6 @@ class Stage extends DisplayObjectContainer {
 	
 	@:noCompletion public function __onFrame (deltaTime:Int):Void {
 		
-		__deltaTime = deltaTime;
-		
 		dispatchPendingMouseMove ();
 
 		if (__rendering) return;
@@ -621,8 +617,6 @@ class Stage extends DisplayObjectContainer {
 		
 		__renderable = true;
 		
-		__enterFrame (__deltaTime);
-		__deltaTime = 0;
 		__traverse ();
 		
 		if (__renderer != null #if !openfl_always_render && __renderDirty #end) {
