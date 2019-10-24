@@ -820,10 +820,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		
 		for (child in __children) {
 			
-			if (child.__checkRenderDirty ()) {
-				
-				// mark ourselves dirty to prevent recursion next time
-				__renderDirty = true;
+			if (child.__renderable && child.__worldAlpha > 0 && child.__checkRenderDirty ()) {
 				
 				return true;
 				

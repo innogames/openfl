@@ -79,15 +79,14 @@ class Bitmap extends DisplayObject {
 	
 	override function __checkRenderDirty ():Bool {
 		
-		if (__renderDirty) {
+/* 		if (__renderDirty) {
 			
 			return true;
 			
-		} else if (__bitmapData != null) {
+		} else  */if (__bitmapData != null) {
 			
 			var image = __bitmapData.image;
 			if (image != null && image.version != __imageVersion) {
-				__renderDirty = true;
 				__imageVersion = image.version;
 				return true;
 			}
@@ -199,12 +198,13 @@ class Bitmap extends DisplayObject {
 			var snapToPixel = renderSession.roundPixels || __snapToPixel ();
 			var transform = renderSession.renderer.getDisplayTransformTempMatrix (__renderTransform, snapToPixel);
 			bitmapData.__fillBatchQuad (transform, __batchQuad.vertexData);
-			__batchQuad.texture = __bitmapData.getTexture (renderSession.gl);
+			// __batchQuad.texture = __bitmapData.getTexture (renderSession.gl);
 			__batchQuadDirty = false;
-		} else if (__checkRenderDirty()) {
-			__batchQuad.texture = __bitmapData.getTexture (renderSession.gl);
-			
 		}
+		// } else if (__checkRenderDirty()) {
+		__batchQuad.texture = __bitmapData.getTexture (renderSession.gl);
+			// 
+		// }
 		
 		__batchQuad.setup(__worldAlpha, __worldColorTransform, BatcherBlendMode.fromOpenFLBlendMode(__worldBlendMode), smoothing);
 		
