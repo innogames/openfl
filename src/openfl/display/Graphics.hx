@@ -1,14 +1,10 @@
 package openfl.display;
 
 
-import lime.graphics.Image;
 import openfl._internal.renderer.canvas.CanvasGraphics;
-import openfl._internal.renderer.opengl.GLRenderer;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.DrawCommandBuffer;
 import openfl._internal.renderer.DrawCommandReader;
-//import openfl._internal.renderer.opengl.utils.RenderTexture;
-import openfl.display.Shader;
 import openfl.errors.ArgumentError;
 import openfl.display.GraphicsPathCommand;
 import openfl.display.GraphicsBitmapFill;
@@ -18,7 +14,6 @@ import openfl.display.GraphicsPath;
 import openfl.display.GraphicsSolidFill;
 import openfl.display.GraphicsStroke;
 import openfl.geom.Matrix;
-import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.Vector;
 
@@ -51,12 +46,10 @@ import js.html.CanvasRenderingContext2D;
 	private var __commands:DrawCommandBuffer;
 	private var __dirty (default, set):Bool = true;
 	private var __height:Int;
-	private var __managed:Bool;
 	private var __positionX:Float;
 	private var __positionY:Float;
 	private var __renderTransform:Matrix;
 	private var __strokePadding:Float;
-	private var __transformDirty:Bool;
 	private var __visible:Bool;
 	//private var __cachedTexture:RenderTexture;
 	private var __owner:DisplayObject;
@@ -137,7 +130,6 @@ import js.html.CanvasRenderingContext2D;
 		if (__bounds != null) {
 			
 			__dirty = true;
-			__transformDirty = true;
 			__bounds = null;
 			
 		}
@@ -159,7 +151,6 @@ import js.html.CanvasRenderingContext2D;
 		__strokePadding = sourceGraphics.__strokePadding;
 		__positionX = sourceGraphics.__positionX;
 		__positionY = sourceGraphics.__positionY;
-		__transformDirty = true;
 		__visible = sourceGraphics.__visible;
 		
 	}
@@ -697,7 +688,6 @@ import js.html.CanvasRenderingContext2D;
 		if (__bounds != null) {
 			
 			__dirty = true;
-			__transformDirty = true;
 			
 		}
 		
@@ -760,7 +750,6 @@ import js.html.CanvasRenderingContext2D;
 		if (__bounds == null) {
 			
 			__bounds = new Rectangle (x, y, 0, 0);
-			__transformDirty = true;
 			return;
 			
 		}
@@ -769,7 +758,6 @@ import js.html.CanvasRenderingContext2D;
 			
 			__bounds.width += __bounds.x - x;
 			__bounds.x = x;
-			__transformDirty = true;
 			
 		}
 		
@@ -777,7 +765,6 @@ import js.html.CanvasRenderingContext2D;
 			
 			__bounds.height += __bounds.y - y;
 			__bounds.y = y;
-			__transformDirty = true;
 			
 		}
 		
