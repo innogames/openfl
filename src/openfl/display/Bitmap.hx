@@ -39,7 +39,8 @@ class Bitmap extends DisplayObject {
 	#end
 	
 	private var __bitmapData:BitmapData;
-	private var __imageVersion:Int;
+	private var __bitmapDataUserPrev:Bitmap;
+	private var __bitmapDataUserNext:Bitmap;
 	
 	var __batchQuad:Quad;
 	var __batchQuadDirty:Bool = true;
@@ -55,6 +56,18 @@ class Bitmap extends DisplayObject {
 		__pixelSnapping = pixelSnapping;
 
 		this.smoothing = smoothing;
+		
+	}
+	
+	override function __setStageReference(stage:Stage) {
+		
+		this.stage = stage;
+		
+		if (stage == null) {
+			__unlinkFromBitmapData(__bitmapData);
+		} else {
+			__linkToBitmapData(__bitmapData);
+		}
 		
 	}
 	
@@ -76,21 +89,6 @@ class Bitmap extends DisplayObject {
 		}
 		
 	}
-	
-	private override function __enterFrame (deltaTime:Int):Void {
-		
-		if (__bitmapData != null && __bitmapData.image != null) {
-			
-			var image = __bitmapData.image;
-			if (__bitmapData.image.version != __imageVersion) {
-				__setRenderDirty ();
-				__imageVersion = image.version;
-			}
-			
-		}
-		
-	}
-	
 	
 	private override function __getBounds (rect:Rectangle, matrix:Matrix):Void {
 		
@@ -272,22 +270,62 @@ class Bitmap extends DisplayObject {
 		
 	}
 	
+	inline function __unlinkFromBitmapData(b:BitmapData) {
+		if (b != null) {
+			if (b.__usersHead == this) {
+				b.__usersHead = __bitmapDataUserNext;
+			}
+			if (b.__usersTail == this) {
+				b.__usersTail = __bitmapDataUserPrev;
+			}
+			if (__bitmapDataUserPrev != null) {
+				__bitmapDataUserPrev.__bitmapDataUserNext = __bitmapDataUserNext;
+			}
+			if (__bitmapDataUserNext != null) {
+				__bitmapDataUserNext.__bitmapDataUserPrev = __bitmapDataUserPrev;
+			}
+			__bitmapDataUserPrev = __bitmapDataUserNext = null;
+		}
+	}
+	
+	inline function __linkToBitmapData(b:BitmapData) {
+		if (b != null) {
+			if (b.__usersHead == null) {
+				b.__usersHead = b.__usersTail = this;
+			} else {
+				b.__usersTail.__bitmapDataUserNext = this;
+				__bitmapDataUserPrev = b.__usersTail;
+				b.__usersTail = this;
+			}
+		}
+	}
+	
+	
+	inline function __setBitmapDataDirty () {
+		
+		__batchQuadDirty = true;
+		__setRenderDirty ();
+		
+	}
+	
 	
 	private function set_bitmapData (value:BitmapData):BitmapData {
+		
+		if (stage != null && value != __bitmapData) {
+			__unlinkFromBitmapData(__bitmapData);
+			__linkToBitmapData(value);
+		}
 		
 		__bitmapData = value;
 		smoothing = false;
 		
-		__setRenderDirty ();
-		__batchQuadDirty = true;
+		__setBitmapDataDirty ();
 		
 		if (__hasFilters ()) {
 			
 			//__updateFilters = true;
 			
 		}
-		
-		__imageVersion = -1;
 		
 		return __bitmapData;
 		

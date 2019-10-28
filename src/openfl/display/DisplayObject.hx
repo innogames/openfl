@@ -468,13 +468,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	}
 	
 	
-	private function __enterFrame (deltaTime:Int):Void {
-		
-		
-		
-	}
-	
-	
 	private function __forceRenderDirty ():Void {
 		
 		__renderDirty = true;

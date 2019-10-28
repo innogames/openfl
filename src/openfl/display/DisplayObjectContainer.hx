@@ -106,7 +106,7 @@ class DisplayObjectContainer extends InteractiveObject {
 			
 			if (addedToStage) {
 				
-				this.__setStageReference (stage);
+				child.__setStageReference (stage);
 				
 			}
 			
@@ -404,17 +404,6 @@ class DisplayObjectContainer extends InteractiveObject {
 				child.__dispatchChildren (event);
 				
 			}
-			
-		}
-		
-	}
-	
-	
-	private override function __enterFrame (deltaTime:Int):Void {
-		
-		for (child in __children) {
-			
-			child.__enterFrame (deltaTime);
 			
 		}
 		

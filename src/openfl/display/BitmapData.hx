@@ -80,10 +80,14 @@ class BitmapData implements IBitmapDrawable {
 	private var __textureVersion:Int;
 	private var __ownsTexture:Bool;
 	private var __transform:Matrix;
+	private var __lock:LockState;
 	
 	private var __vao:GLVertexArrayObject;
 	private var __vaoMask:GLVertexArrayObject;
 	private var __vaoContext: IVertexArrayObjectContext;
+	
+	var __usersHead:Bitmap;
+	var __usersTail:Bitmap;
 	
 	public function new (width:Int, height:Int, transparent:Bool = true, fillColor:UInt = 0xFFFFFFFF) {
 		
@@ -95,6 +99,8 @@ class BitmapData implements IBitmapDrawable {
 		this.width = width;
 		this.height = height;
 		rect = new Rectangle (0, 0, width, height);
+
+		__lock = Unlocked;
 		
 		if (width > 0 && height > 0) {
 			
@@ -132,6 +138,8 @@ class BitmapData implements IBitmapDrawable {
 		if (!readable || sourceBitmapData == null || !sourceBitmapData.readable) return;
 		
 		filter.__applyFilter (this, sourceBitmapData, sourceRect, destPoint);
+		
+		__markUsersRenderDirty ();
 		
 	}
 	
@@ -171,6 +179,25 @@ class BitmapData implements IBitmapDrawable {
 		
 		image.colorTransform (rect.__toLimeRectangle (), colorTransform.__toLimeColorMatrix ());
 		
+		__markUsersRenderDirty ();
+		
+	}
+	
+	
+	inline function __markUsersRenderDirty () {
+		if (__lock == Unlocked)  {
+			__doMarkUsersRenderDirty();
+		} else {
+			__lock = Modified;
+		}
+	}
+	
+	function __doMarkUsersRenderDirty () {
+		var user = __usersHead;
+		while (user != null) {
+			user.__setBitmapDataDirty ();
+			user = user.__bitmapDataUserNext;
+		}
 	}
 	
 	
@@ -281,7 +308,7 @@ class BitmapData implements IBitmapDrawable {
 						
 					}
 					
-					bitmapData.setPixel32 (x, y, comparePixel);
+					bitmapData.image.setPixel32 (x, y, comparePixel, ARGB32);
 					
 				}
 				
@@ -326,6 +353,8 @@ class BitmapData implements IBitmapDrawable {
 		
 		image.copyChannel (sourceBitmapData.image, sourceRect.__toLimeRectangle (), destPoint.__toLimeVector2 (), sourceChannel, destChannel);
 		
+		__markUsersRenderDirty ();
+		
 	}
 	
 	
@@ -342,6 +371,8 @@ class BitmapData implements IBitmapDrawable {
 		
 		image.copyPixels (sourceBitmapData.image, sourceRect.__toLimeRectangle (), destPoint.__toLimeVector2 (), alphaBitmapData != null ? alphaBitmapData.image : null, alphaPoint != null ? __tempVector : null, mergeAlpha);
 		
+		__markUsersRenderDirty ();
+		
 	}
 	
 	
@@ -357,6 +388,15 @@ class BitmapData implements IBitmapDrawable {
 		
 		__isValid = false;
 		readable = false;
+		
+		// unlink all the users TODO: prevent re-linking disposed BitmapData's (check __isValid?)
+		var user = __usersHead;
+		while (user != null) {
+			var next = user.__bitmapDataUserNext;
+			user.__bitmapDataUserPrev = user.__bitmapDataUserNext = null;
+			user = next;
+		}
+		__usersHead = __usersTail = null;
 		
 		if (__buffer != null) {
 			if (__bufferContext.isBuffer (__buffer)) { // prevent the warning when the id becomes invalid after context loss+restore
@@ -424,6 +464,8 @@ class BitmapData implements IBitmapDrawable {
 		
 		__draw (source, matrix, blendMode, clipRect, smoothing, false);
 		
+		__markUsersRenderDirty ();
+		
 	}
 	
 	
@@ -487,6 +529,8 @@ class BitmapData implements IBitmapDrawable {
 			
 			image.fillRect (rect.__toLimeRectangle (), color, ARGB32);
 			
+			__markUsersRenderDirty ();
+			
 		}
 		
 	}
@@ -496,6 +540,7 @@ class BitmapData implements IBitmapDrawable {
 		
 		if (!readable) return;
 		image.floodFill (x, y, color, ARGB32);
+		__markUsersRenderDirty ();
 		
 	}
 	
@@ -1180,7 +1225,9 @@ class BitmapData implements IBitmapDrawable {
 	
 	public function lock ():Void {
 		
-		
+		if (__lock == Unlocked) {
+			__lock = Locked;
+		}
 		
 	}
 	
@@ -1189,6 +1236,7 @@ class BitmapData implements IBitmapDrawable {
 		
 		if (!readable || sourceBitmapData == null || !sourceBitmapData.readable || sourceRect == null || destPoint == null) return;
 		image.merge (sourceBitmapData.image, sourceRect.__toLimeRectangle (), destPoint.__toLimeVector2 (), redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier);
+		__markUsersRenderDirty ();
 		
 	}
 	
@@ -1244,9 +1292,10 @@ class BitmapData implements IBitmapDrawable {
 				rgb = (rgb << 8) + green;
 				rgb = (rgb << 8) + blue;
 				
-				setPixel32(x, y, rgb);
+				image.setPixel32 (x, y, rgb, ARGB32);
 			}
 		}
+		__markUsersRenderDirty ();
 		
 	}
 	
@@ -1290,6 +1339,7 @@ class BitmapData implements IBitmapDrawable {
 		if (!readable) return;
 		var noise = new PerlinNoise (randomSeed, numOctaves, 0.01);
 		noise.fill (this, baseX, baseY, 0);
+		__markUsersRenderDirty ();
 		
 	}
 	
@@ -1298,6 +1348,7 @@ class BitmapData implements IBitmapDrawable {
 		
 		if (!readable) return;
 		image.scroll (x, y);
+		__markUsersRenderDirty ();
 		
 	}
 	
@@ -1306,6 +1357,7 @@ class BitmapData implements IBitmapDrawable {
 		
 		if (!readable) return;
 		image.setPixel (x, y, color, ARGB32);
+		__markUsersRenderDirty ();
 		
 	}
 	
@@ -1314,6 +1366,7 @@ class BitmapData implements IBitmapDrawable {
 		
 		if (!readable) return;
 		image.setPixel32 (x, y, color, ARGB32);
+		__markUsersRenderDirty ();
 		
 	}
 	
@@ -1326,6 +1379,7 @@ class BitmapData implements IBitmapDrawable {
 		if (byteArray.bytesAvailable < length) throw new Error ("End of file was encountered.", 2030);
 		
 		image.setPixels (rect.__toLimeRectangle (), byteArray, byteArray.position, ARGB32, byteArray.endian);
+		__markUsersRenderDirty ();
 		
 	}
 	
@@ -1358,7 +1412,10 @@ class BitmapData implements IBitmapDrawable {
 	
 	public function unlock (changeRect:Rectangle = null):Void {
 		
-		
+		if (__lock == Modified) {
+			__doMarkUsersRenderDirty ();
+		}
+		__lock = Unlocked;
 		
 	}
 	
@@ -1634,4 +1691,11 @@ class BitmapData implements IBitmapDrawable {
 	var u3:Float;
 	var v3:Float;
 	function new() {}
+}
+
+
+private enum abstract LockState(Int) {
+	var Unlocked;
+	var Locked;
+	var Modified;
 }
