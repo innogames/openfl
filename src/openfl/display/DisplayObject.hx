@@ -1144,7 +1144,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	}
 
 
-	private function __renderToBitmap (renderSession:RenderSession, matrix:Matrix) {
+	private function __renderToBitmap (renderSession:RenderSession, matrix:Matrix, blendMode:BlendMode) {
 
 		var cacheIsMask = __isMask;
 		var cacheVisible = __visible;
@@ -1161,7 +1161,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		__visible = true;
 		__renderable = true;
 		__worldAlpha = 1;
-		__worldBlendMode = NORMAL;
+		__worldBlendMode = blendMode;
 		__worldTransform.copyFrom (matrix);
 		__renderTransform.copyFrom (matrix);
 		__adjustRenderTransform ();

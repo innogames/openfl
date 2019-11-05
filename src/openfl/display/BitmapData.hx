@@ -462,6 +462,12 @@ class BitmapData implements IBitmapDrawable {
 			
 		}
 		
+		if (blendMode == null) {
+			
+			blendMode = NORMAL;
+			
+		}
+		
 		__draw (source, matrix, blendMode, clipRect, smoothing, false);
 		
 		__markUsersRenderDirty ();
@@ -1475,7 +1481,6 @@ class BitmapData implements IBitmapDrawable {
 		renderSession.pixelRatio = __pixelRatio;
 		renderSession.maskManager = new CanvasMaskManager (renderSession);
 		renderSession.blendModeManager = new CanvasBlendModeManager (renderSession);
-		renderSession.blendModeManager.setBlendMode(blendMode);
 		
 		buffer.__srcContext.save();
 		
@@ -1487,7 +1492,7 @@ class BitmapData implements IBitmapDrawable {
 			
 		}
 		
-		source.__renderToBitmap (renderSession, matrix);
+		source.__renderToBitmap (renderSession, matrix, blendMode);
 		
 		buffer.__srcContext.restore();
 		
@@ -1663,9 +1668,10 @@ class BitmapData implements IBitmapDrawable {
 	#end
 	
 	
-	private function __renderToBitmap (renderSession:RenderSession, matrix:Matrix) {
+	private function __renderToBitmap (renderSession:RenderSession, matrix:Matrix, blendMode:BlendMode) {
 		
 		renderSession.context.globalAlpha = 1;
+		renderSession.blendModeManager.setBlendMode (blendMode);
 		__drawToCanvas (renderSession.context, matrix, renderSession.roundPixels, renderSession.pixelRatio, null, false);
 		
 	}
