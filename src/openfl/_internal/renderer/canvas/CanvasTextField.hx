@@ -1,6 +1,7 @@
 package openfl._internal.renderer.canvas;
 
 import js.Browser;
+import js.html.CanvasRenderingContext2D;
 
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.text.TextEngine;
@@ -177,15 +178,8 @@ class CanvasTextField {
 										
 									}
 									
-									context.beginPath ();
-									context.strokeStyle = "#" + StringTools.hex (group.format.color & 0xFFFFFF, 6);
-									context.moveTo (group.offsetX + advance - textField.scrollH, scrollY + 2);
-									context.lineWidth = 1;
-									context.lineTo (group.offsetX + advance - textField.scrollH, scrollY + TextEngine.getFormatHeight (textField.defaultTextFormat) - 1);
-									context.stroke ();
-									context.closePath ();
 									
-									// context.fillRect (group.offsetX + advance - textField.scrollH, scrollY + 2, 1, TextEngine.getFormatHeight (textField.defaultTextFormat) - 1);
+									drawCursor(context, group.offsetX + advance - textField.scrollH, scrollY + 2, TextEngine.getFormatHeight (textField.defaultTextFormat) - 3, group.format.color);
 									
 								}
 								
@@ -282,13 +276,14 @@ class CanvasTextField {
 							
 						}
 						
-						context.beginPath ();
-						context.strokeStyle = "#" + StringTools.hex (textField.defaultTextFormat.color & 0xFFFFFF, 6);
-						context.moveTo (scrollX + 2.5, scrollY + 2.5);
-						context.lineWidth = 1;
-						context.lineTo (scrollX + 2.5, scrollY + TextEngine.getFormatHeight (textField.defaultTextFormat) - 1);
-						context.stroke ();
-						context.closePath ();
+						var offsetX = switch textField.defaultTextFormat.align {
+							// TODO: START/END can be RIGHT/LEFT or vice-versa depending on whether the language is RTL or LTR
+							case RIGHT | END: textEngine.width - 2;
+							case LEFT | START | JUSTIFY: 2;
+							case CENTER: textEngine.width / 2;
+						}
+						
+						drawCursor (context, scrollX + offsetX, scrollY + 2, TextEngine.getFormatHeight (textField.defaultTextFormat) - 3, textField.defaultTextFormat.color);
 						
 					}
 					
@@ -306,5 +301,15 @@ class CanvasTextField {
 		
 	}
 	
+	static function drawCursor(context:CanvasRenderingContext2D, x:Float, y:Float, height:Float, color:Null<Int>) {
+		context.beginPath ();
+		context.strokeStyle = "#" + StringTools.hex (color & 0xFFFFFF, 6);
+		context.moveTo (x, y);
+		context.lineCap = "butt"; // haha butt
+		context.lineWidth = 1;
+		context.lineTo (x, y + height);
+		context.stroke ();
+		context.closePath ();
+	}
 	
 }
