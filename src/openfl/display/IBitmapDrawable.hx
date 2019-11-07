@@ -11,6 +11,6 @@ interface IBitmapDrawable {
 	private var __transform:Matrix;
 	
 	private function __getBounds (rect:Rectangle, matrix:Matrix):Void;
-	private function __renderToBitmap (RenderSession:RenderSession, matrix:Matrix):Void;
+	private function __renderToBitmap (renderSession:RenderSession, matrix:Matrix, blendMode:BlendMode):Void;
 	
 }
