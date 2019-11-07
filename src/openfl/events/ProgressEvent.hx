@@ -1,17 +1,18 @@
 package openfl.events;
 
+import openfl.events.Event;
 
 class ProgressEvent extends Event {
 	
 	
-	public static inline var PROGRESS = "progress";
-	public static inline var SOCKET_DATA = "socketData";
+	public static inline var PROGRESS:EventName<ProgressEvent> = "progress";
+	public static inline var SOCKET_DATA:EventName<ProgressEvent> = "socketData";
 	
 	public var bytesLoaded:Float;
 	public var bytesTotal:Float;
 	
 	
-	public function new (type:String, bubbles:Bool = false, cancelable:Bool = false, bytesLoaded:Float = 0, bytesTotal:Float = 0) {
+	public function new (type:EventName<ProgressEvent>, bubbles:Bool = false, cancelable:Bool = false, bytesLoaded:Float = 0, bytesTotal:Float = 0) {
 		
 		super (type, bubbles, cancelable);
 		

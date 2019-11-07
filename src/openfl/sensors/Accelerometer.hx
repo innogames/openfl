@@ -5,6 +5,7 @@ import haxe.Timer;
 import lime.system.Sensor;
 import lime.system.SensorType;
 import openfl.errors.ArgumentError;
+import openfl.events.Event;
 import openfl.events.AccelerometerEvent;
 import openfl.events.EventDispatcher;
 
@@ -45,7 +46,7 @@ class Accelerometer extends EventDispatcher {
 	}
 	
 	
-	override public function addEventListener (type:String, listener:Dynamic -> Void, useCapture:Bool = false, priority:Int = 0, useWeakReference:Bool = false):Void {
+	override public function addEventListener<T:Event> (type:EventName<T>, listener:T -> Void, useCapture:Bool = false, priority:Int = 0, useWeakReference:Bool = false):Void {
 		
 		super.addEventListener (type, listener, useCapture, priority, useWeakReference);
 		update ();

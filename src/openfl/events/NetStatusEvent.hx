@@ -1,15 +1,17 @@
 package openfl.events;
 
+import openfl.events.Event;
+
 
 class NetStatusEvent extends Event {
 	
 	
-	public static inline var NET_STATUS = "netStatus";
+	public static inline var NET_STATUS:EventName<NetStatusEvent> = "netStatus";
 	
 	public var info:Dynamic;
 	
 	
-	public function new (type:String, bubbles:Bool = false, cancelable:Bool = false, info:Dynamic = null):Void {
+	public function new (type:EventName<NetStatusEvent>, bubbles:Bool = false, cancelable:Bool = false, info:Dynamic = null):Void {
 		
 		this.info = info;
 		

@@ -2,22 +2,22 @@ package openfl.events;
 
 
 import openfl.display.InteractiveObject;
-
+import openfl.events.Event;
 
 class FocusEvent extends Event {
 	
 	
-	public static inline var FOCUS_IN = "focusIn";
-	public static inline var FOCUS_OUT = "focusOut";
-	public static inline var KEY_FOCUS_CHANGE = "keyFocusChange";
-	public static inline var MOUSE_FOCUS_CHANGE = "mouseFocusChange";
+	public static inline var FOCUS_IN:EventName<FocusEvent> = "focusIn";
+	public static inline var FOCUS_OUT:EventName<FocusEvent> = "focusOut";
+	public static inline var KEY_FOCUS_CHANGE:EventName<FocusEvent> = "keyFocusChange";
+	public static inline var MOUSE_FOCUS_CHANGE:EventName<FocusEvent> = "mouseFocusChange";
 	
 	public var keyCode:Int;
 	public var relatedObject:InteractiveObject;
 	public var shiftKey:Bool;
 	
 	
-	public function new (type:String, bubbles:Bool = false, cancelable:Bool = false, relatedObject:InteractiveObject = null, shiftKey:Bool = false, keyCode:Int = 0) {
+	public function new (type:EventName<FocusEvent>, bubbles:Bool = false, cancelable:Bool = false, relatedObject:InteractiveObject = null, shiftKey:Bool = false, keyCode:Int = 0) {
 		
 		super (type, bubbles, cancelable);
 		

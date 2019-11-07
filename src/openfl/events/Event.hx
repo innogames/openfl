@@ -1,53 +1,44 @@
 package openfl.events;
 
 
-import openfl.display.InteractiveObject;
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
 class Event {
 	
-	
-	public static inline var ACTIVATE = "activate";
-	public static inline var ADDED = "added";
-	public static inline var ADDED_TO_STAGE = "addedToStage";
-	public static inline var CANCEL = "cancel";
-	public static inline var CHANGE = "change";
-	public static inline var CLEAR = "clear";
-	public static inline var CLOSE = "close";
-	public static inline var COMPLETE = "complete";
-	public static inline var CONNECT = "connect";
-	public static inline var CONTEXT3D_CREATE = "context3DCreate";
-	public static inline var COPY = "copy";
-	public static inline var CUT = "cut";
-	public static inline var DEACTIVATE = "deactivate";
-	public static inline var ENTER_FRAME = "enterFrame";
-	public static inline var EXIT_FRAME = "exitFrame";
-	public static inline var FRAME_CONSTRUCTED = "frameConstructed";
-	public static inline var FRAME_LABEL = "frameLabel";
-	public static inline var FULLSCREEN = "fullScreen";
-	public static inline var ID3 = "id3";
-	public static inline var INIT = "init";
-	public static inline var MOUSE_LEAVE = "mouseLeave";
-	public static inline var OPEN = "open";
-	public static inline var PASTE = "paste";
-	public static inline var REMOVED = "removed";
-	public static inline var REMOVED_FROM_STAGE = "removedFromStage";
-	public static inline var RENDER = "render";
-	public static inline var RESIZE = "resize";
-	public static inline var SCROLL = "scroll";
-	public static inline var SELECT = "select";
-	public static inline var SELECT_ALL = "selectAll";
-	public static inline var SOUND_COMPLETE = "soundComplete";
-	public static inline var TAB_CHILDREN_CHANGE = "tabChildrenChange";
-	public static inline var TAB_ENABLED_CHANGE = "tabEnabledChange";
-	public static inline var TAB_INDEX_CHANGE = "tabIndexChange";
-	public static inline var TEXTURE_READY = "textureReady";
-	public static inline var UNLOAD = "unload";
+	public static inline var ACTIVATE:EventName<Event> = "activate";
+	public static inline var ADDED:EventName<Event> = "added";
+	public static inline var ADDED_TO_STAGE:EventName<Event> = "addedToStage";
+	public static inline var CANCEL:EventName<Event> = "cancel";
+	public static inline var CHANGE:EventName<Event> = "change";
+	public static inline var CLEAR:EventName<Event> = "clear";
+	public static inline var CLOSE:EventName<Event> = "close";
+	public static inline var COMPLETE:EventName<Event> = "complete";
+	public static inline var CONNECT:EventName<Event> = "connect";
+	public static inline var CONTEXT3D_CREATE:EventName<Event> = "context3DCreate";
+	public static inline var COPY:EventName<Event> = "copy";
+	public static inline var CUT:EventName<Event> = "cut";
+	public static inline var DEACTIVATE:EventName<Event> = "deactivate";
+	public static inline var ENTER_FRAME:EventName<Event> = "enterFrame";
+	public static inline var EXIT_FRAME:EventName<Event> = "exitFrame";
+	public static inline var FRAME_CONSTRUCTED:EventName<Event> = "frameConstructed";
+	public static inline var FRAME_LABEL:EventName<Event> = "frameLabel";
+	public static inline var FULLSCREEN:EventName<Event> = "fullScreen";
+	public static inline var ID3:EventName<Event> = "id3";
+	public static inline var INIT:EventName<Event> = "init";
+	public static inline var MOUSE_LEAVE:EventName<Event> = "mouseLeave";
+	public static inline var OPEN:EventName<Event> = "open";
+	public static inline var PASTE:EventName<Event> = "paste";
+	public static inline var REMOVED:EventName<Event> = "removed";
+	public static inline var REMOVED_FROM_STAGE:EventName<Event> = "removedFromStage";
+	public static inline var RENDER:EventName<Event> = "render";
+	public static inline var RESIZE:EventName<Event> = "resize";
+	public static inline var SCROLL:EventName<Event> = "scroll";
+	public static inline var SELECT:EventName<Event> = "select";
+	public static inline var SELECT_ALL:EventName<Event> = "selectAll";
+	public static inline var SOUND_COMPLETE:EventName<Event> = "soundComplete";
+	public static inline var TAB_CHILDREN_CHANGE:EventName<Event> = "tabChildrenChange";
+	public static inline var TAB_ENABLED_CHANGE:EventName<Event> = "tabEnabledChange";
+	public static inline var TAB_INDEX_CHANGE:EventName<Event> = "tabIndexChange";
+	public static inline var TEXTURE_READY:EventName<Event> = "textureReady";
+	public static inline var UNLOAD:EventName<Event> = "unload";
 	
 	public var bubbles (default, null):Bool;
 	public var cancelable (default, null):Bool;
@@ -166,3 +157,5 @@ class Event {
 	
 	
 }
+
+abstract EventName<T:Event>(String) from String to String {}

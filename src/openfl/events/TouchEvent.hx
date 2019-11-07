@@ -1,6 +1,7 @@
 package openfl.events;
 
 
+import openfl.events.Event;
 import openfl.display.InteractiveObject;
 import openfl.geom.Point;
 import openfl.utils.ByteArray;
@@ -9,14 +10,14 @@ import openfl.utils.ByteArray;
 class TouchEvent extends Event {
 	
 	
-	public static inline var TOUCH_BEGIN = "touchBegin";
-	public static inline var TOUCH_END = "touchEnd";
-	public static inline var TOUCH_MOVE = "touchMove";
-	public static inline var TOUCH_OUT = "touchOut";
-	public static inline var TOUCH_OVER = "touchOver";
-	public static inline var TOUCH_ROLL_OUT = "touchRollOut";
-	public static inline var TOUCH_ROLL_OVER = "touchRollOver";
-	public static inline var TOUCH_TAP = "touchTap";
+	public static inline var TOUCH_BEGIN:EventName<TouchEvent> = "touchBegin";
+	public static inline var TOUCH_END:EventName<TouchEvent> = "touchEnd";
+	public static inline var TOUCH_MOVE:EventName<TouchEvent> = "touchMove";
+	public static inline var TOUCH_OUT:EventName<TouchEvent> = "touchOut";
+	public static inline var TOUCH_OVER:EventName<TouchEvent> = "touchOver";
+	public static inline var TOUCH_ROLL_OUT:EventName<TouchEvent> = "touchRollOut";
+	public static inline var TOUCH_ROLL_OVER:EventName<TouchEvent> = "touchRollOver";
+	public static inline var TOUCH_TAP:EventName<TouchEvent> = "touchTap";
 	
 	public var altKey:Bool;
 	public var commandKey:Bool;
@@ -36,7 +37,7 @@ class TouchEvent extends Event {
 	public var touchPointID:Int;
 	
 	
-	public function new (type:String, bubbles:Bool = true, cancelable:Bool = false, touchPointID:Int = 0, isPrimaryTouchPoint:Bool = false, localX:Float = 0, localY:Float = 0, sizeX:Float = 0, sizeY:Float = 0, pressure:Float = 0, relatedObject:InteractiveObject = null, ctrlKey:Bool = false, altKey:Bool = false, shiftKey:Bool = false, commandKey:Bool = false, controlKey:Bool = false, timestamp:Float = 0, touchIntent:String = null, samples:ByteArray = null, isTouchPointCanceled:Bool = false) {
+	public function new (type:EventName<TouchEvent>, bubbles:Bool = true, cancelable:Bool = false, touchPointID:Int = 0, isPrimaryTouchPoint:Bool = false, localX:Float = 0, localY:Float = 0, sizeX:Float = 0, sizeY:Float = 0, pressure:Float = 0, relatedObject:InteractiveObject = null, ctrlKey:Bool = false, altKey:Bool = false, shiftKey:Bool = false, commandKey:Bool = false, controlKey:Bool = false, timestamp:Float = 0, touchIntent:String = null, samples:ByteArray = null, isTouchPointCanceled:Bool = false) {
 		
 		super (type, bubbles, cancelable);
 		

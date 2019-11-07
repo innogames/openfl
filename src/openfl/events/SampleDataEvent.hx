@@ -1,6 +1,7 @@
 package openfl.events;
 
 
+import openfl.events.Event;
 import openfl.utils.ByteArray;
 import openfl.utils.Endian;
 
@@ -8,13 +9,13 @@ import openfl.utils.Endian;
 class SampleDataEvent extends Event {
 	
 	
-	public static inline var SAMPLE_DATA = "sampleData";
+	public static inline var SAMPLE_DATA:EventName<SampleDataEvent> = "sampleData";
 	
 	public var data:ByteArray;
 	public var position:Float;
 	
 	
-	public function new (type:String, bubbles:Bool = false, cancelable:Bool = false) {
+	public function new (type:EventName<SampleDataEvent>, bubbles:Bool = false, cancelable:Bool = false) {
 		
 		super (type, bubbles, cancelable);
 		

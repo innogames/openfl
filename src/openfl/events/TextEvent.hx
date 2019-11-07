@@ -1,16 +1,17 @@
 package openfl.events;
 
+import openfl.events.Event;
 
 class TextEvent extends Event {
 	
 	
-	public static inline var LINK = "link";
-	public static inline var TEXT_INPUT = "textInput";
+	public static inline var LINK:EventName<TextEvent> = "link";
+	public static inline var TEXT_INPUT:EventName<TextEvent> = "textInput";
 	
 	public var text:String;
 	
 	
-	public function new (type:String, bubbles:Bool = false, cancelable:Bool = false, text:String = "") {
+	public function new (type:EventName<TextEvent>, bubbles:Bool = false, cancelable:Bool = false, text:String = "") {
 		
 		super (type, bubbles, cancelable);
 		

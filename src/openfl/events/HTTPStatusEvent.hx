@@ -2,13 +2,14 @@ package openfl.events;
 
 
 import openfl.net.URLRequestHeader;
+import openfl.events.Event;
 
 
 class HTTPStatusEvent extends Event {
 	
 	
-	public static inline var HTTP_RESPONSE_STATUS = "httpResponseStatus";
-	public static inline var HTTP_STATUS = "httpStatus";
+	public static inline var HTTP_RESPONSE_STATUS:EventName<HTTPStatusEvent> = "httpResponseStatus";
+	public static inline var HTTP_STATUS:EventName<HTTPStatusEvent> = "httpStatus";
 	
 	public var redirected:Bool;
 	public var responseHeaders:Array<URLRequestHeader>;
@@ -16,7 +17,7 @@ class HTTPStatusEvent extends Event {
 	public var status (default, null):Int;
 	
 	
-	public function new (type:String, bubbles:Bool = false, cancelable:Bool = false, status:Int = 0, redirected:Bool = false):Void {
+	public function new (type:EventName<HTTPStatusEvent>, bubbles:Bool = false, cancelable:Bool = false, status:Int = 0, redirected:Bool = false):Void {
 		
 		this.status = status;
 		this.redirected = redirected;

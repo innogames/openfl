@@ -1,14 +1,15 @@
 package openfl.events;
 
 
+import openfl.events.Event;
 import openfl.ui.KeyLocation;
 
 
 class KeyboardEvent extends Event {
 	
 	
-	public static inline var KEY_DOWN = "keyDown";
-	public static inline var KEY_UP = "keyUp";
+	public static inline var KEY_DOWN:EventName<KeyboardEvent> = "keyDown";
+	public static inline var KEY_UP:EventName<KeyboardEvent> = "keyUp";
 	
 	public var altKey:Bool;
 	public var charCode:Int;
@@ -20,7 +21,7 @@ class KeyboardEvent extends Event {
 	public var shiftKey:Bool;
 	
 	
-	public function new (type:String, bubbles:Bool = false, cancelable:Bool = false, charCodeValue:Int = 0, keyCodeValue:Int = 0, keyLocationValue:KeyLocation = null, ctrlKeyValue:Bool = false, altKeyValue:Bool = false, shiftKeyValue:Bool = false, controlKeyValue:Bool = false, commandKeyValue:Bool = false) {
+	public function new (type:EventName<KeyboardEvent>, bubbles:Bool = false, cancelable:Bool = false, charCodeValue:Int = 0, keyCodeValue:Int = 0, keyLocationValue:KeyLocation = null, ctrlKeyValue:Bool = false, altKeyValue:Bool = false, shiftKeyValue:Bool = false, controlKeyValue:Bool = false, commandKeyValue:Bool = false) {
 		
 		super (type, bubbles, cancelable);
 		

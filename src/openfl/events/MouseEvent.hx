@@ -3,28 +3,29 @@ package openfl.events;
 
 import openfl.display.InteractiveObject;
 import openfl.geom.Point;
+import openfl.events.Event;
 
 
 class MouseEvent extends Event {
 	
 	
-	public static inline var CLICK = "click";
-	public static inline var DOUBLE_CLICK = "doubleClick";
-	public static inline var MIDDLE_CLICK = "middleClick";
-	public static inline var MIDDLE_MOUSE_DOWN = "middleMouseDown";
-	public static inline var MIDDLE_MOUSE_UP = "middleMouseUp";
-	public static inline var MOUSE_DOWN = "mouseDown";
-	public static inline var MOUSE_MOVE = "mouseMove";
-	public static inline var MOUSE_OUT = "mouseOut";
-	public static inline var MOUSE_OVER = "mouseOver";
-	public static inline var MOUSE_UP = "mouseUp";
-	public static inline var MOUSE_WHEEL = "mouseWheel";
-	public static inline var RELEASE_OUTSIDE = "releaseOutside";
-	public static inline var RIGHT_CLICK = "rightClick";
-	public static inline var RIGHT_MOUSE_DOWN = "rightMouseDown";
-	public static inline var RIGHT_MOUSE_UP = "rightMouseUp";
-	public static inline var ROLL_OUT = "rollOut";
-	public static inline var ROLL_OVER = "rollOver";
+	public static inline var CLICK:EventName<MouseEvent> = "click";
+	public static inline var DOUBLE_CLICK:EventName<MouseEvent> = "doubleClick";
+	public static inline var MIDDLE_CLICK:EventName<MouseEvent> = "middleClick";
+	public static inline var MIDDLE_MOUSE_DOWN:EventName<MouseEvent> = "middleMouseDown";
+	public static inline var MIDDLE_MOUSE_UP:EventName<MouseEvent> = "middleMouseUp";
+	public static inline var MOUSE_DOWN:EventName<MouseEvent> = "mouseDown";
+	public static inline var MOUSE_MOVE:EventName<MouseEvent> = "mouseMove";
+	public static inline var MOUSE_OUT:EventName<MouseEvent> = "mouseOut";
+	public static inline var MOUSE_OVER:EventName<MouseEvent> = "mouseOver";
+	public static inline var MOUSE_UP:EventName<MouseEvent> = "mouseUp";
+	public static inline var MOUSE_WHEEL:EventName<MouseEvent> = "mouseWheel";
+	public static inline var RELEASE_OUTSIDE:EventName<MouseEvent> = "releaseOutside";
+	public static inline var RIGHT_CLICK:EventName<MouseEvent> = "rightClick";
+	public static inline var RIGHT_MOUSE_DOWN:EventName<MouseEvent> = "rightMouseDown";
+	public static inline var RIGHT_MOUSE_UP:EventName<MouseEvent> = "rightMouseUp";
+	public static inline var ROLL_OUT:EventName<MouseEvent> = "rollOut";
+	public static inline var ROLL_OVER:EventName<MouseEvent> = "rollOver";
 	
 	private static var __altKey:Bool;
 	private static var __buttonDown:Bool;
@@ -47,7 +48,7 @@ class MouseEvent extends Event {
 	public var stageY:Float;
 	
 	
-	public function new (type:String, bubbles:Bool = true, cancelable:Bool = false, localX:Float = 0, localY:Float = 0, relatedObject:InteractiveObject = null, ctrlKey:Bool = false, altKey:Bool = false, shiftKey:Bool = false, buttonDown:Bool = false, delta:Int = 0, commandKey:Bool = false, clickCount:Int = 0) {
+	public function new (type:EventName<MouseEvent>, bubbles:Bool = true, cancelable:Bool = false, localX:Float = 0, localY:Float = 0, relatedObject:InteractiveObject = null, ctrlKey:Bool = false, altKey:Bool = false, shiftKey:Bool = false, buttonDown:Bool = false, delta:Int = 0, commandKey:Bool = false, clickCount:Int = 0) {
 		
 		super (type, bubbles, cancelable);
 		

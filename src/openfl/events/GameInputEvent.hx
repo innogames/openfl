@@ -2,19 +2,19 @@ package openfl.events;
 
 
 import openfl.ui.GameInputDevice;
-
+import openfl.events.Event;
 
 @:final class GameInputEvent extends Event {
 	
 	
-	public static inline var DEVICE_ADDED = "deviceAdded";
-	public static inline var DEVICE_REMOVED = "deviceRemoved";
-	public static inline var DEVICE_UNUSABLE = "deviceUnusable";
+	public static inline var DEVICE_ADDED:EventName<GameInputEvent> = "deviceAdded";
+	public static inline var DEVICE_REMOVED:EventName<GameInputEvent> = "deviceRemoved";
+	public static inline var DEVICE_UNUSABLE:EventName<GameInputEvent> = "deviceUnusable";
 	
 	public var device (default, null):GameInputDevice;
 	
 	
-	public function new (type:String, bubbles:Bool = true, cancelable:Bool = false, device:GameInputDevice = null) {
+	public function new (type:EventName<GameInputEvent>, bubbles:Bool = true, cancelable:Bool = false, device:GameInputDevice = null) {
 		
 		super (type, bubbles, cancelable);
 		
