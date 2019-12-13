@@ -471,6 +471,9 @@ class HTML5Window {
 	
 	// See https://stackoverflow.com/a/37474225
 	static function getScrollLineHeight():Int {
+		if (!Browser.supported) {
+			return 14;
+		}
 		var iframe:IFrameElement = cast Browser.document.createElement('iframe');
 		iframe.src = '#';
 		Browser.document.body.appendChild(iframe);
