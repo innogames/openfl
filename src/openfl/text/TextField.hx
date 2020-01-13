@@ -540,11 +540,10 @@ class TextField extends InteractiveObject {
 		var offset = newText.length - (endIndex - beginIndex);
 		
 		var i = 0;
-		var range;
 		
 		while (i < __textEngine.textFormatRanges.length) {
 			
-			range = __textEngine.textFormatRanges[i];
+			var range = __textEngine.textFormatRanges[i];
 			
 			if (range.start <= beginIndex && range.end >= endIndex) {
 				
