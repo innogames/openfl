@@ -580,9 +580,6 @@ class TextField extends InteractiveObject {
 			
 		}
 		
-		var caretIndex = beginIndex + (newText : UTF8String).length;
-		if (caretIndex > __text.length) caretIndex = __text.length;
-		
 		__dirty = true;
 		__layoutDirty = true;
 		__setRenderDirty ();
