@@ -535,7 +535,6 @@ class TextField extends InteractiveObject {
 		if (endIndex < beginIndex || beginIndex < 0 || endIndex > __text.length || newText == null) return;
 		
 		__updateText (__text.substring (0, beginIndex) + newText + __text.substring (endIndex));
-		if (endIndex > __text.length) endIndex = __text.length;
 		
 		var offset = newText.length - (endIndex - beginIndex);
 		
