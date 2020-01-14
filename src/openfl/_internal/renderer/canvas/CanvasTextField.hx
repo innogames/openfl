@@ -9,8 +9,6 @@ import openfl.display.BitmapData;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
 import openfl.text.TextField;
-import openfl.text.TextFieldAutoSize;
-
 
 @:access(openfl.display.BitmapData)
 @:access(openfl._internal.text.TextEngine)
@@ -52,7 +50,7 @@ class CanvasTextField {
 				graphics.__bitmap.dispose ();
 			}
 			
-			if (((textEngine.text == null || textEngine.text == "") && !textEngine.background && !textEngine.border && !textEngine.__hasFocus && (textEngine.type != INPUT || !textEngine.selectable)) || ((textEngine.width <= 0 || textEngine.height <= 0) && textEngine.autoSize != TextFieldAutoSize.NONE)) {
+			if (((textEngine.text == null || textEngine.text == "") && !textEngine.background && !textEngine.border && !textEngine.__hasFocus && (textEngine.type != INPUT || !textEngine.selectable)) || width <= 0 || height <= 0) {
 				
 				textField.__graphics.__canvas = null;
 				textField.__graphics.__context = null;
