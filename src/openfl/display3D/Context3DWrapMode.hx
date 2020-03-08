@@ -1,6 +1,4 @@
 package openfl.display3D;
-import openfl._internal.utils.NullUtils;
-
 
 @:enum abstract Context3DWrapMode(Null<Int>) {
 	
@@ -23,9 +21,9 @@ import openfl._internal.utils.NullUtils;
 		
 	}
 	
-	@:to private static function toString (value:Int):String {
+	@:to private function toString ():String {
 		
-		return switch (value) {
+		return switch (cast this) {
 			
 			case Context3DWrapMode.CLAMP: "clamp";
 			case Context3DWrapMode.CLAMP_U_REPEAT_V: "clamp_u_repeat_y";
@@ -36,21 +34,5 @@ import openfl._internal.utils.NullUtils;
 		}
 		
 	}
-	
-	#if cs
-	@:noCompletion @:op(A == B) private static function equals (a:Context3DWrapMode, b:Context3DWrapMode):Bool {
-		
-		return NullUtils.valueEquals (a, b, Int);
-		
-	}
-	#end
-	
-	#if cs
-	@:noCompletion @:op(A != B) private static function notEquals (a:Context3DWrapMode, b:Context3DWrapMode):Bool {
-		
-		return !equals (a, b);
-		
-	}
-	#end
 	
 }

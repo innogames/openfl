@@ -11,8 +11,7 @@ import openfl.display.ShaderParameter;
 
 #if ((!cs && !java) || display) @:final #end
 
-
-class ShaderData implements Dynamic<ShaderParameter> {
+class ShaderData {
 	
 	
 	public var aAlpha:ShaderParameterAttrib;

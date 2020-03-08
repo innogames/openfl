@@ -1,6 +1,4 @@
 package openfl.display3D;
-import openfl._internal.utils.NullUtils;
-
 
 @:enum abstract Context3DCompareMode(Null<Int>) {
 	
@@ -31,9 +29,9 @@ import openfl._internal.utils.NullUtils;
 		
 	}
 	
-	@:to private static function toString (value:Int):String {
+	@:to private function toString ():String {
 		
-		return switch (value) {
+		return switch (cast this) {
 			
 			case Context3DCompareMode.ALWAYS: "always";
 			case Context3DCompareMode.EQUAL: "equal";
@@ -48,21 +46,5 @@ import openfl._internal.utils.NullUtils;
 		}
 		
 	}
-	
-	#if cs
-	@:noCompletion @:op(A == B) private static function equals (a:Context3DCompareMode, b:Context3DCompareMode):Bool {
-		
-		return NullUtils.valueEquals (a, b, Int);
-		
-	}
-	#end
-	
-	#if cs
-	@:noCompletion @:op(A != B) private static function notEquals (a:Context3DCompareMode, b:Context3DCompareMode):Bool {
-		
-		return !equals (a, b);
-		
-	}
-	#end
 	
 }

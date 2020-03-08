@@ -174,7 +174,7 @@ import js.Browser;
 		#else
 		var uri = request.url;
 		
-		if (Std.is (request.data, URLVariables)) {
+		if (Type.typeof(request.data) == TObject) {
 			
 			var query = "";
 			var fields = Reflect.fields (request.data);

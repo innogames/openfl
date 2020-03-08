@@ -1,10 +1,12 @@
 package openfl.net;
 
-
-class URLVariables implements Dynamic {
+@:forward
+abstract URLVariables(Dynamic) {
 	
 	
 	public function new (source:String = null) {
+		
+		this = {};
 		
 		if (source != null) {
 			

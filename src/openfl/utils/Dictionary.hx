@@ -1,11 +1,8 @@
-package openfl.utils; #if (!flash || display)
-
+package openfl.utils;
 
 import haxe.ds.StringMap;
 import haxe.ds.IntMap;
-import haxe.ds.HashMap;
 import haxe.ds.ObjectMap;
-import haxe.ds.WeakMap;
 import haxe.ds.EnumValueMap;
 import haxe.Constraints.IMap;
 
@@ -59,6 +56,13 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 		return this.iterator ();
 		
 	}
+	
+	
+	#if haxe4
+	public inline function keyValueIterator ():KeyValueIterator<K, V> {
+		return this.keyValueIterator ();
+	}
+	#end
 	
 	
 	@:to static function toStringMap<K:String, V> (t:IMap<K, V>, weakKeys:Bool):StringMap<V> {
@@ -177,6 +181,14 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 	
 	
 	#if (haxe_ver >= "4.0.0")
+	public function clear () {
+		
+		types.clear ();
+		values.clear ();
+		
+	}
+	
+	
 	public function copy ():ClassMap<K, V> {
 		
 		var copied = new ClassMap<K, V> ();
@@ -213,6 +225,13 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 		return values.iterator ();
 		
 	}
+	
+	
+	#if haxe4
+	public inline function keyValueIterator ():KeyValueIterator<K, V> {
+		return new haxe.iterators.MapKeyValueIterator (this);
+	}
+	#end
 	
 	
 	public function remove (key:K):Bool {
@@ -265,6 +284,14 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 	
 	
 	#if (haxe_ver >= "4.0.0")
+	public function clear () {
+		
+		floatKeys.resize (0);
+		values.resize (0);
+		
+	}
+	
+
 	public function copy ():FloatMap<K, V> {
 		
 		var copied = new FloatMap<K, V> ();
@@ -302,6 +329,13 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 		return values.copy().iterator ();
 		
 	}
+	
+	
+	#if haxe4
+	public inline function keyValueIterator ():KeyValueIterator<K, V> {
+		return new haxe.iterators.MapKeyValueIterator (this);
+	}
+	#end
 	
 	
 	public function remove (key:K):Bool {
@@ -468,6 +502,13 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 	
 	
 	#if (haxe_ver >= "4.0.0")
+	public function clear () {
+		
+		map.clear ();
+		
+	}
+	
+	
 	public function copy ():UtilsObjectMap<K, V> {
 		
 		var copied = new UtilsObjectMap<K, V> ();
@@ -506,6 +547,13 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 	}
 	
 	
+	#if haxe4
+	public inline function keyValueIterator ():KeyValueIterator<K, V> {
+		return new haxe.iterators.MapKeyValueIterator (this);
+	}
+	#end
+	
+	
 	public function remove (key:K):Bool {
 		
 		return map.remove (cast key);
@@ -528,73 +576,3 @@ abstract Dictionary<K, V> (IMap<K, V>) {
 	
 	
 }
-
-
-#else
-
-
-abstract Dictionary <K, V> (flash.utils.Dictionary) from flash.utils.Dictionary to flash.utils.Dictionary {
-	
-	
-	public function new (weakKeys:Bool = false) {
-		
-		this = new flash.utils.Dictionary (weakKeys);
-		
-	}
-	
-	
-	public inline function exists (key:K):Bool {
-		
-		return (untyped this[key] != untyped __global__["undefined"]);
-		
-	}
-	
-	
-	@:arrayAccess public inline function get (key:K):V {
-		
-		return untyped this[key];
-		
-	}
-	
-	
-	public inline function remove (key:K):Bool {
-		
-		var exists = (this:Dictionary<K, V>).exists (key);
-		untyped __delete__ (this, key);
-		return exists;
-		
-	}
-	
-	
-	@:arrayAccess public inline function set (key:K, value:V):V {
-		
-		return untyped this[key] = value;
-		
-	}
-	
-	
-	public inline function iterator ():Iterator<K> {
-		
-		return untyped __keys__ (this).iterator ();
-		
-	}
-	
-	
-	@:analyzer(ignore) public function each ():Iterator<V> {
-		
-		return untyped {
-			
-			ref: this,
-			it: iterator (),
-			hasNext: function () { return __this__.it.hasNext (); },
-			next: function () { return __this__.ref[__this__.it.next ()]; }
-			
-		}
-		
-	}
-	
-	
-}
-
-
-#end
