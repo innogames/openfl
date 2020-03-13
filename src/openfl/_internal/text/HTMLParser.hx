@@ -23,7 +23,7 @@ class HTMLParser {
 	private static var __regexTabStops = ~/tabstops=("([^"]+)"|'([^']+)')/i;
 	
 	
-	public static function parse (value:String, textFormat:TextFormat, textFormatRanges:Vector<TextFormatRange>) {
+	public static function parse (value:String, textFormat:TextFormat, textFormatRanges:Array<TextFormatRange>) {
 		
 		value = __regexBreakTag.replace (value, "\n");
 		value = __regexEntities[0].replace (value, "\"");
