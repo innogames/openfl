@@ -6,156 +6,154 @@ import haxe.Constraints.Function;
 @:multiType(T)
 
 
-abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
+abstract Vector<T>(IVector<T>) from IVector<T> {
 	
 	
 	public var fixed (get, set):Bool;
 	public var length (get, set):Int;
 	
 	
-	public function new (?length:Int, ?fixed:Bool, ?array:Array<T>):Void;
+	public function new (?length:Int, ?fixed:Bool):Void;
 	
 	
 	public inline function concat (?a:Vector<T>):Vector<T> {
 		
-		var data:IVector<T> = cast (a != null ? (a:AbstractVector<T>).data : null);
-		return cast new AbstractVector<T> (this.data.concat (data));
+		return this.concat (cast a);
 		
 	}
 	
 	
 	public inline function filter (callback:T->Bool):Vector<T> {
 		
-		return new AbstractVector<T> (this.data.filter (callback));
+		return this.filter (callback);
 		
 	}
 	
 	
 	public inline function copy ():Vector<T> {
 		
-		return cast new AbstractVector<T> (this.data.copy ());
+		return this.copy ();
 		
 	}
 	
 	
-	@:arrayAccess public inline function get (index:Int):T {
+	@:arrayAccess inline function get (index:Int):T {
 		
-		return this.data.get (index);
+		return this.get (index);
 		
 	}
 	
 	
 	public inline function indexOf (x:T, ?from:Int = 0):Int {
 		
-		return this.data.indexOf (x, from);
+		return this.indexOf (x, from);
 		
 	}
 	
 	
 	public inline function insertAt (index:Int, element:T):Void {
 		
-		this.data.insertAt (index, element);
+		this.insertAt (index, element);
 		
 	}
 	
 	
 	public inline function iterator ():Iterator<T> {
 		
-		return this.data.iterator ();
+		return this.iterator ();
 		
 	}
 	
 	
 	public inline function join (sep:String = ","):String {
 		
-		return this.data.join (sep);
+		return this.join (sep);
 		
 	}
 	
 	
 	public inline function lastIndexOf (x:T, ?from:Int = 0):Int {
 		
-		return this.data.lastIndexOf (x, from);
+		return this.lastIndexOf (x, from);
 		
 	}
 	
 	
 	public inline function pop ():Null<T> {
 		
-		return this.data.pop ();
+		return this.pop ();
 		
 	}
 	
 	
 	public inline function push (x:T):Int {
 		
-		return this.data.push (x);
+		return this.push (x);
 		
 	}
 	
 	
 	public inline function removeAt (index:Int):T {
 		
-		return this.data.removeAt (index);
+		return this.removeAt (index);
 		
 	}
 	
 	
 	public inline function reverse ():Vector<T> {
 		
-		return cast new AbstractVector<T> (this.data.reverse ());
+		return this.reverse ();
 		
 	}
 	
 	
-	@:arrayAccess public inline function set (index:Int, value:T):T {
+	@:arrayAccess inline function set (index:Int, value:T):T {
 		
-		return this.data.set (index, value);
+		return this.set (index, value);
 		
 	}
 	
 	
 	public inline function shift ():Null<T> {
 		
-		return this.data.shift ();
+		return this.shift ();
 		
 	}
 	
 	
 	public inline function slice (?pos:Int, ?end:Int):Vector<T> {
 		
-		return cast new AbstractVector<T> (this.data.slice (pos, end));
+		return this.slice (pos, end);
 		
 	}
 	
 	
 	public inline function sort (f:T->T->Int):Void {
 		
-		this.data.sort (f);
+		this.sort (f);
 		
 	}
 	
 	
 	public inline function splice (pos:Int, len:Int):Vector<T> {
 		
-		return cast new AbstractVector<T> (this.data.splice (pos, len));
+		return this.splice (pos, len);
 		
 	}
 	
 	
 	public inline function toString ():String {
 		
-		return (this != null && this.data != null) ? this.data.toString () : null;
+		return this.toString ();
 		
 	}
 	
 	
 	public inline function unshift (x:T):Void {
 		
-		this.data.unshift (x);
+		this.unshift (x);
 		
 	}
-	
 	
 	public inline static function ofArray<T> (a:Array<T>):Vector<T> {
 		
@@ -163,7 +161,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 		
 		for (i in 0...a.length) {
 			
-			vector[i] = cast a[i];
+			vector[i] = a[i];
 			
 		}
 		
@@ -174,7 +172,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	
 	public inline static function isVector (obj:Any):Bool {
 		
-		return Std.is (obj, AbstractVector);
+		return Std.is (obj, IVector);
 		
 	}
 	
@@ -186,37 +184,37 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	}
 	
 	
-	@:to static #if (!js && !flash) inline #end function toBoolVector<T:Bool> (t:AbstractVector<T>, length:Int, fixed:Bool, array:Array<T>):AbstractVector<T> {
+	@:to static #if (!js && !flash) inline #end function toBoolVector<T:Bool> (t:IVector<T>, length:Int, fixed:Bool):IVector<T> {
 		
-		return new AbstractVector<T> (cast new BoolVector (length, fixed), array);
-		
-	}
-	
-	
-	@:to static #if (!js && !flash) inline #end function toIntVector<T:Int> (t:AbstractVector<T>, length:Int, fixed:Bool, array:Array<T>):AbstractVector<T> {
-		
-		return new AbstractVector<T> (cast new IntVector (length, fixed), array);
+		return cast new BoolVector (length, fixed);
 		
 	}
 	
 	
-	@:to static #if (!js && !flash) inline #end function toFloatVector<T:Float> (t:AbstractVector<T>, length:Int, fixed:Bool, array:Array<T>):AbstractVector<T> {
+	@:to static #if (!js && !flash) inline #end function toIntVector<T:Int> (t:IVector<T>, length:Int, fixed:Bool):IVector<T> {
 		
-		return new AbstractVector<T> (cast new FloatVector (length, fixed), array);
-		
-	}
-	
-	
-	@:to static #if (!js && !flash) inline #end function toFunctionVector<T:Function> (t:AbstractVector<T>, length:Int, fixed:Bool, array:Array<T>):AbstractVector<T> {
-		
-		return new AbstractVector<T> (cast new FunctionVector (length, fixed), array);
+		return cast new IntVector (length, fixed);
 		
 	}
 	
 	
-	@:to static #if (!js && !flash) inline #end function toObjectVector<T> (t:AbstractVector<T>, length:Int, fixed:Bool, array:Array<T>):AbstractVector<T> {
+	@:to static #if (!js && !flash) inline #end function toFloatVector<T:Float> (t:IVector<T>, length:Int, fixed:Bool):IVector<T> {
 		
-		return cast new AbstractVector<T> (cast new ObjectVector<T> (length, fixed), array);
+		return cast new FloatVector (length, fixed);
+		
+	}
+	
+	
+	@:to static #if (!js && !flash) inline #end function toFunctionVector<T:Function> (t:IVector<T>, length:Int, fixed:Bool):IVector<T> {
+		
+		return cast new FunctionVector (length, fixed);
+		
+	}
+	
+	
+	@:to static #if (!js && !flash) inline #end function toObjectVector<T> (t:IVector<T>, length:Int, fixed:Bool):IVector<T> {
+		
+		return new ObjectVector<T> (length, fixed);
 		
 	}
 	
@@ -228,35 +226,37 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	
 	
 	
-	@:noCompletion private inline function get_fixed ():Bool {
+	inline function get_fixed ():Bool {
 		
-		return this.data.fixed;
-		
-	}
-	
-	
-	@:noCompletion private inline function set_fixed (value:Bool):Bool {
-		
-		return this.data.fixed = value;
+		return this.fixed;
 		
 	}
 	
 	
-	@:noCompletion private inline function get_length ():Int {
+	inline function set_fixed (value:Bool):Bool {
 		
-		return this.data.length;
+		return this.fixed = value;
 		
 	}
 	
 	
-	@:noCompletion private inline function set_length (value:Int):Int {
+	inline function get_length ():Int {
 		
-		return this.data.length = value;
+		return this.length;
+		
+	}
+	
+	
+	inline function set_length (value:Int):Int {
+		
+		return this.length = value;
 		
 	}
 	
 	
 }
+
+
 
 
 
@@ -267,57 +267,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 #end
 
 
-// Wrap sub-types in a common wrapper to allow
-// for Vector<T> to Vector<Dynamic> conversion
-// while retaining the underlying type
-
-@:dox(hide) private class AbstractVector<T> {
-	
-	
-	public var data:IVector<T>;
-	
-	
-	public function new (data:IVector<T>, ?array:Array<T>) {
-		
-		this.data = data;
-		
-		if (array != null) {
-			
-			var cacheFixed = data.fixed;
-			data.fixed = false;
-			
-			for (i in 0...array.length) {
-				
-				data.set (i, cast array[i]);
-				
-			}
-			
-			data.fixed = cacheFixed;
-			
-		}
-		
-	}
-	
-	
-	@:noCompletion @:keep private function toJSON () {
-		
-		return @:privateAccess data.toJSON ();
-		
-	}
-	
-
-}
-
-
-
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
-@:dox(hide) private class BoolVector implements IVector<Bool> {
+private class BoolVector implements IVector<Bool> {
 	
 	
 	public var fixed:Bool;
@@ -325,8 +275,8 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	
 	private var __array:Array<Bool>;
 	
-	
-	public function new (?length:Int, ?fixed:Bool, ?array:Array<Bool>):Void {
+
+	public function new (?length:Int, ?fixed:Bool, ?array:Array<Bool>) {
 		
 		if (array == null) {
 			
@@ -421,7 +371,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	
 	public function iterator ():Iterator<Bool> {
 		
-		return cast __array.iterator ();
+		return __array.iterator ();
 		
 	}
 	
@@ -640,7 +590,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 #end
 
 
-@:dox(hide) private class FloatVector implements IVector<Float> {
+private class FloatVector implements IVector<Float> {
 	
 	
 	public var fixed:Bool;
@@ -649,7 +599,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	private var __array:Array<Float>;
 	
 	
-	public function new (?length:Int, ?fixed:Bool, ?array:Array<Float>):Void {
+	public function new (?length:Int, ?fixed:Bool, ?array:Array<Float>) {
 		
 		if (array == null) {
 			
@@ -736,7 +686,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	
 	public function iterator ():Iterator<Float> {
 		
-		return cast __array.iterator ();
+		return __array.iterator ();
 		
 	}
 	
@@ -956,7 +906,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 #end
 
 
-@:dox(hide) private class FunctionVector implements IVector<Function> {
+private class FunctionVector implements IVector<Function> {
 	
 	
 	public var fixed:Bool;
@@ -965,7 +915,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	private var __array:Array<Function>;
 	
 	
-	public function new (?length:Int, ?fixed:Bool, ?array:Array<Function>):Void {
+	public function new (?length:Int, ?fixed:Bool, ?array:Array<Function>) {
 		
 		if (array == null) {
 			
@@ -1060,7 +1010,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	
 	public function iterator ():Iterator<Function> {
 		
-		return cast __array.iterator ();
+		return __array.iterator ();
 		
 	}
 	
@@ -1280,7 +1230,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 #end
 
 
-@:dox(hide) private class IntVector implements IVector<Int> {
+private class IntVector implements IVector<Int> {
 	
 	
 	public var fixed:Bool;
@@ -1289,7 +1239,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	private var __array:Array<Int>;
 	
 	
-	public function new (?length:Int, ?fixed:Bool, ?array:Array<Int>):Void {
+	public function new (?length:Int, ?fixed:Bool, ?array:Array<Int>) {
 		
 		if (array == null) {
 			
@@ -1376,7 +1326,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	
 	public function iterator ():Iterator<Int> {
 		
-		return cast __array.iterator ();
+		return __array.iterator ();
 		
 	}
 	
@@ -1596,7 +1546,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 #end
 
 
-@:dox(hide) private class ObjectVector<T> implements IVector<T> {
+private class ObjectVector<T> implements IVector<T> {
 	
 	
 	public var fixed:Bool;
@@ -1605,7 +1555,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	private var __array:Array<T>;
 	
 	
-	public function new (?length:Int, ?fixed:Bool, ?array:Array<T>):Void {
+	public function new (?length:Int, ?fixed:Bool, ?array:Array<T>) {
 		
 		if (array == null) {
 			
@@ -1692,7 +1642,7 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 	
 	public function iterator ():Iterator<T> {
 		
-		return cast __array.iterator ();
+		return __array.iterator ();
 		
 	}
 	
@@ -1904,32 +1854,32 @@ abstract Vector<T>(AbstractVector<T>) from AbstractVector<T> {
 
 
 
-@:dox(hide) private interface IVector<T> {
+private interface IVector<T> {
 	
-	public var fixed:Bool;
-	public var length (get, set):Int;
+	var fixed:Bool;
+	var length (get, set):Int;
 	
-	public function concat (?a:IVector<T>):IVector<T>;
-	public function filter (callback:T->Bool):IVector<T>;
-	public function copy ():IVector<T>;
-	public function get (index:Int):T;
-	public function indexOf (x:T, ?from:Int = 0):Int;
-	public function insertAt (index:Int, element:T):Void;
-	public function iterator ():Iterator<T>;
-	public function join (sep:String = ","):String;
-	public function lastIndexOf (x:T, ?from:Int = 0):Int;
-	public function pop ():Null<T>;
-	public function push (x:T):Int;
-	public function removeAt (index:Int):T;
-	public function reverse ():IVector<T>;
-	public function set (index:Int, value:T):T;
-	public function shift ():Null<T>;
-	public function slice (?pos:Int, ?end:Int):IVector<T>;
-	public function sort (f:T -> T -> Int):Void;
-	public function splice (pos:Int, len:Int):IVector<T>;
-	public function toString ():String;
-	public function unshift (x:T):Void;
+	function concat (?a:IVector<T>):IVector<T>;
+	function filter (callback:T->Bool):IVector<T>;
+	function copy ():IVector<T>;
+	function get (index:Int):T;
+	function indexOf (x:T, ?from:Int = 0):Int;
+	function insertAt (index:Int, element:T):Void;
+	function iterator ():Iterator<T>;
+	function join (sep:String = ","):String;
+	function lastIndexOf (x:T, ?from:Int = 0):Int;
+	function pop ():Null<T>;
+	function push (x:T):Int;
+	function removeAt (index:Int):T;
+	function reverse ():IVector<T>;
+	function set (index:Int, value:T):T;
+	function shift ():Null<T>;
+	function slice (?pos:Int, ?end:Int):IVector<T>;
+	function sort (f:T -> T -> Int):Void;
+	function splice (pos:Int, len:Int):IVector<T>;
+	function toString ():String;
+	function unshift (x:T):Void;
 	
-	@:noCompletion private function toJSON ():Dynamic;
+	private function toJSON ():Dynamic;
 	
 }
