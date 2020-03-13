@@ -34,7 +34,7 @@ class DisplayObjectContainer extends InteractiveObject {
 	public var numChildren (get, never):Int;
 	public var tabChildren:Bool;
 	
-	private var __removedChildren:Vector<DisplayObject>;
+	private var __removedChildren:Null<Array<DisplayObject>>;
 	private var __updateTraverse:Bool;
 	
 	
@@ -45,7 +45,6 @@ class DisplayObjectContainer extends InteractiveObject {
 		mouseChildren = true;
 		
 		__children = new Array<DisplayObject> ();
-		__removedChildren = new Vector<DisplayObject> ();
 
 		
 	}
@@ -231,7 +230,11 @@ class DisplayObjectContainer extends InteractiveObject {
 			
 			child.parent = null;
 			__children.remove (child);
-			__removedChildren.push (child);
+			if (__removedChildren == null) {
+				__removedChildren = [child];
+			} else {
+				__removedChildren.push (child);
+			}
 			child.__setTransformDirty ();
 			
 		}
@@ -355,20 +358,15 @@ class DisplayObjectContainer extends InteractiveObject {
 	}
 	
 	
-	inline function __cleanupRemovedChildren () {
-		
-		for (orphan in __removedChildren) {
-			
-			if (orphan.stage == null) {
-				
-				orphan.__cleanup ();
-				
+	function __cleanupRemovedChildren () {
+		if (__removedChildren != null) {
+			for (orphan in __removedChildren) {
+				if (orphan.stage == null) {
+					orphan.__cleanup ();
+				}
 			}
-			
+			__removedChildren = null;
 		}
-		
-		__removedChildren.length = 0;
-		
 	}
 	
 	
