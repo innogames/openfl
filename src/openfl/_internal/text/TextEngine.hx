@@ -108,7 +108,9 @@ class TextEngine {
 		textFormatRanges = new Vector ();
 		
 		if (__context == null) {
+			#if !nodejs
 			__context = Browser.document.createCanvasElement ().getContext ("2d");
+			#end
 		}
 		
 	}
