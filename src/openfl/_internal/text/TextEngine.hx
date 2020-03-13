@@ -463,7 +463,6 @@ class TextEngine {
 		
 		var rangeIndex = -1;
 		var formatRange:TextFormatRange = null;
-		var font = null;
 		
 		var currentFormat = TextField.__defaultTextFormat.clone ();
 		
@@ -573,12 +572,6 @@ class TextEngine {
 			}
 			
 			return charIndex;
-			
-		}
-		
-		inline function getTextWidth (text:String):Float {
-			
-			return measureTextWidth (text);
 			
 		}
 		
