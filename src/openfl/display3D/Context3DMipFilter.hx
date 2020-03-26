@@ -1,6 +1,6 @@
 package openfl.display3D;
 
-@:enum abstract Context3DMipFilter(Null<Int>) {
+enum abstract Context3DMipFilter(Null<Int>) {
 	
 	public var MIPLINEAR = 0;
 	public var MIPNEAREST = 1;

@@ -1,7 +1,7 @@
 package openfl.geom;
 
 
-@:enum abstract Orientation3D(Null<Int>) {
+enum abstract Orientation3D(Null<Int>) {
 	
 	public var AXIS_ANGLE = 0;
 	public var EULER_ANGLES = 1;

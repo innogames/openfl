@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract InterpolationMethod(Null<Int>) {
+enum abstract InterpolationMethod(Null<Int>) {
 	
 	public var LINEAR_RGB = 0;
 	public var RGB = 1;

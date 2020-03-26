@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract GraphicsPathWinding(Null<Int>) {
+enum abstract GraphicsPathWinding(Null<Int>) {
 	
 	public var EVEN_ODD = 0;
 	public var NON_ZERO = 1;

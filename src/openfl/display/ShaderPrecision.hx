@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract ShaderPrecision(Null<Int>) {
+enum abstract ShaderPrecision(Null<Int>) {
 	
 	public var FAST = 0;
 	public var FULL = 1;

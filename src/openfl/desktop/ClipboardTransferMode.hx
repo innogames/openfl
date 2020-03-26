@@ -1,7 +1,7 @@
 package openfl.desktop;
 
 
-@:enum abstract ClipboardTransferMode(Null<Int>) {
+enum abstract ClipboardTransferMode(Null<Int>) {
 	
 	public var CLONE_ONLY = 0;
 	public var CLONE_PREFERRED = 1;

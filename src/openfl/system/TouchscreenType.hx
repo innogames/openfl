@@ -1,7 +1,7 @@
 package openfl.system;
 
 
-@:enum abstract TouchscreenType(Null<Int>) {
+enum abstract TouchscreenType(Null<Int>) {
 	
 	public var FINGER = 0;
 	public var NONE = 1;

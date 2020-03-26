@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract LineScaleMode(Null<Int>) {
+enum abstract LineScaleMode(Null<Int>) {
 	
 	public var HORIZONTAL = 0;
 	public var NONE = 1;

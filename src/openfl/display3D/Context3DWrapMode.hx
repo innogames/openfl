@@ -1,6 +1,6 @@
 package openfl.display3D;
 
-@:enum abstract Context3DWrapMode(Null<Int>) {
+enum abstract Context3DWrapMode(Null<Int>) {
 	
 	public var CLAMP = 0;
 	public var CLAMP_U_REPEAT_V = 1;

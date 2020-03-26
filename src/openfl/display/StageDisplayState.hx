@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract StageDisplayState(Null<Int>) {
+enum abstract StageDisplayState(Null<Int>) {
 	
 	public var FULL_SCREEN = 0;
 	public var FULL_SCREEN_INTERACTIVE = 1;

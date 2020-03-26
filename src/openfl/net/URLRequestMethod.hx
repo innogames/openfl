@@ -1,7 +1,7 @@
 package openfl.net;
 
 
-@:enum abstract URLRequestMethod(String) from String to String {
+enum abstract URLRequestMethod(String) from String to String {
 	
 	public var DELETE = "DELETE";
 	public var GET = "GET";

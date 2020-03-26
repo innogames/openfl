@@ -1,7 +1,7 @@
 package openfl.text;
 
 
-@:enum abstract TextFieldAutoSize(Null<Int>) {
+enum abstract TextFieldAutoSize(Null<Int>) {
 	
 	public var CENTER = 0;
 	public var LEFT = 1;

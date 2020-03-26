@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract GradientType(Null<Int>) {
+enum abstract GradientType(Null<Int>) {
 	
 	public var LINEAR = 0;
 	public var RADIAL = 1;

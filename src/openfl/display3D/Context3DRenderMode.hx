@@ -1,6 +1,6 @@
 package openfl.display3D;
 
-@:enum abstract Context3DRenderMode(Null<Int>) {
+enum abstract Context3DRenderMode(Null<Int>) {
 	
 	public var AUTO = 0;
 	public var SOFTWARE = 1;

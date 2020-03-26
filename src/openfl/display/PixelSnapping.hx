@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract PixelSnapping(Null<Int>) {
+enum abstract PixelSnapping(Null<Int>) {
 	
 	public var ALWAYS = 0;
 	public var AUTO = 1;

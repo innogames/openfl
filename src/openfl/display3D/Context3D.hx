@@ -352,7 +352,7 @@ final class Context3D extends EventDispatcher {
 }
 
 
-@:enum abstract Context3DTelemetry(Int) to Int {
+enum abstract Context3DTelemetry(Int) to Int {
 	
 	public var DRAW_CALLS = 0;
 	public var COUNT_INDEX_BUFFER = 1;

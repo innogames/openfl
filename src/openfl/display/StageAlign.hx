@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract StageAlign(Null<Int>) {
+enum abstract StageAlign(Null<Int>) {
 	
 	public var BOTTOM = 0;
 	public var BOTTOM_LEFT = 1;

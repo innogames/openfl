@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract BlendMode(Null<Int>) {
+enum abstract BlendMode(Null<Int>) {
 	
 	public var ADD = 0;
 	public var ALPHA = 1;

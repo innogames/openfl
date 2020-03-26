@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract CapsStyle(Null<Int>) {
+enum abstract CapsStyle(Null<Int>) {
 	
 	public var NONE = 0;
 	public var ROUND = 1;

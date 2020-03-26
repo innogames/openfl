@@ -1,7 +1,7 @@
 package openfl.filters;
 
 
-@:enum abstract BitmapFilterType(Null<Int>) {
+enum abstract BitmapFilterType(Null<Int>) {
 	
 	public var FULL = 0;
 	public var INNER = 1;

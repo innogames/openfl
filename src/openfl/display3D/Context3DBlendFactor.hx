@@ -1,6 +1,6 @@
 package openfl.display3D;
 
-@:enum abstract Context3DBlendFactor(Null<Int>) {
+enum abstract Context3DBlendFactor(Null<Int>) {
 	
 	public var DESTINATION_ALPHA = 0;
 	public var DESTINATION_COLOR = 1;

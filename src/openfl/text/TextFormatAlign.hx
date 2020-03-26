@@ -1,7 +1,7 @@
 package openfl.text;
 
 
-@:enum abstract TextFormatAlign(Null<Int>) {
+enum abstract TextFormatAlign(Null<Int>) {
 	
 	public var CENTER = 0;
 	public var END = 1;

@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract StageQuality(Null<Int>) {
+enum abstract StageQuality(Null<Int>) {
 	
 	public var BEST = 0;
 	public var HIGH = 1;

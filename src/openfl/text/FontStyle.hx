@@ -1,7 +1,7 @@
 package openfl.text;
 
 
-@:enum abstract FontStyle(Null<Int>) {
+enum abstract FontStyle(Null<Int>) {
 	
 	public var BOLD = 0;
 	public var BOLD_ITALIC = 1;

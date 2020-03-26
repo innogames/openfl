@@ -1,7 +1,7 @@
 package openfl.utils;
 
 
-@:enum abstract Endian(Null<Int>) {
+enum abstract Endian(Null<Int>) {
 	
 	
 	public var BIG_ENDIAN = 0;

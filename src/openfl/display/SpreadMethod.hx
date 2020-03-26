@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract SpreadMethod(Null<Int>) {
+enum abstract SpreadMethod(Null<Int>) {
 	
 	public var PAD = 0;
 	public var REFLECT = 1;

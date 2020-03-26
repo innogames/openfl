@@ -1,6 +1,6 @@
 package openfl.display3D;
 
-@:enum abstract Context3DCompareMode(Null<Int>) {
+enum abstract Context3DCompareMode(Null<Int>) {
 	
 	public var ALWAYS = 0;
 	public var EQUAL = 1;

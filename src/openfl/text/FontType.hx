@@ -1,7 +1,7 @@
 package openfl.text;
 
 
-@:enum abstract FontType(Null<Int>) {
+enum abstract FontType(Null<Int>) {
 	
 	public var DEVICE = 0;
 	public var EMBEDDED = 1;

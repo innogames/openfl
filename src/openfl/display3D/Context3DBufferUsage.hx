@@ -1,6 +1,6 @@
 package openfl.display3D;
 
-@:enum abstract Context3DBufferUsage(Null<Int>) {
+enum abstract Context3DBufferUsage(Null<Int>) {
 	
 	public var DYNAMIC_DRAW = 0;
 	public var STATIC_DRAW = 1;

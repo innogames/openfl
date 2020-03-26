@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract JointStyle(Null<Int>) {
+enum abstract JointStyle(Null<Int>) {
 	
 	public var BEVEL = 0;
 	public var MITER = 1;

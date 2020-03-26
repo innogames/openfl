@@ -857,7 +857,7 @@ private class RegisterMapEntry {
 }
 
 
-@:enum abstract RegisterType(Int) {
+enum abstract RegisterType(Int) {
 	
 	var ATTRIBUTE = 0;
 	var CONSTANT = 1;

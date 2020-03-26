@@ -1,7 +1,7 @@
 package openfl.printing;
 
 
-@:enum abstract PrintJobOrientation(Null<Int>) {
+enum abstract PrintJobOrientation(Null<Int>) {
 	
 	public var LANDSCAPE = 0;
 	public var PORTRAIT = 1;

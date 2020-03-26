@@ -127,7 +127,7 @@ final class Telemetry {
 }
 
 
-@:noCompletion @:dox(hide) @:enum abstract TelemetryCommandName(String) from String to String {
+@:noCompletion @:dox(hide) enum abstract TelemetryCommandName(String) from String to String {
 	
 	var EVENT = ".event";
 	var RENDER = ".render";

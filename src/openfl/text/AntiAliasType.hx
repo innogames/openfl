@@ -1,7 +1,7 @@
 package openfl.text;
 
 
-@:enum abstract AntiAliasType(Null<Int>) {
+enum abstract AntiAliasType(Null<Int>) {
 	
 	public var ADVANCED = 0;
 	public var NORMAL = 1;

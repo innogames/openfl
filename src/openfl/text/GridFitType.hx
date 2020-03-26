@@ -1,7 +1,7 @@
 package openfl.text;
 
 
-@:enum abstract GridFitType(Null<Int>) {
+enum abstract GridFitType(Null<Int>) {
 	
 	public var NONE = 0;
 	public var PIXEL = 1;

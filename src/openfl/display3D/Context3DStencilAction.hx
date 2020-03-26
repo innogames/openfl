@@ -1,6 +1,6 @@
 package openfl.display3D;
 
-@:enum abstract Context3DStencilAction(Null<Int>) {
+enum abstract Context3DStencilAction(Null<Int>) {
 	
 	public var DECREMENT_SATURATE = 0;
 	public var DECREMENT_WRAP = 1;

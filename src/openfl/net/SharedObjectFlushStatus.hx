@@ -1,7 +1,7 @@
 package openfl.net;
 
 
-@:enum abstract SharedObjectFlushStatus(Null<Int>) {
+enum abstract SharedObjectFlushStatus(Null<Int>) {
 	
 	public var FLUSHED = 0;
 	public var PENDING = 1;

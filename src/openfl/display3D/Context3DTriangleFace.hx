@@ -1,6 +1,6 @@
 package openfl.display3D;
 
-@:enum abstract Context3DTriangleFace(Null<Int>) {
+enum abstract Context3DTriangleFace(Null<Int>) {
 	
 	public var BACK = 0;
 	public var FRONT = 1;

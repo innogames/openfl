@@ -1,6 +1,6 @@
 package openfl.display3D;
 
-@:enum abstract Context3DProfile(Null<Int>) {
+enum abstract Context3DProfile(Null<Int>) {
 	
 	public var BASELINE = 0;
 	public var BASELINE_CONSTRAINED = 1;

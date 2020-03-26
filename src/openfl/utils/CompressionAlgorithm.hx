@@ -1,7 +1,7 @@
 package openfl.utils;
 
 
-@:enum abstract CompressionAlgorithm(Null<Int>) {
+enum abstract CompressionAlgorithm(Null<Int>) {
 	
 	public var DEFLATE = 0;
 	//GZIP;

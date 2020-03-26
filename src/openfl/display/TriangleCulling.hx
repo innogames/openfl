@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract TriangleCulling(Null<Int>) {
+enum abstract TriangleCulling(Null<Int>) {
 	
 	public var NEGATIVE = 0;
 	public var NONE = 1;

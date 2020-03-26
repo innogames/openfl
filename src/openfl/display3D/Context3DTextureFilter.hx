@@ -1,6 +1,6 @@
 package openfl.display3D;
 
-@:enum abstract Context3DTextureFilter(Null<Int>) {
+enum abstract Context3DTextureFilter(Null<Int>) {
 	
 	public var ANISOTROPIC16X = 0;
 	public var ANISOTROPIC2X = 1;

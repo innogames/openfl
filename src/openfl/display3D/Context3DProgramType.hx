@@ -1,6 +1,6 @@
 package openfl.display3D;
 
-@:enum abstract Context3DProgramType(Null<Int>) {
+enum abstract Context3DProgramType(Null<Int>) {
 	
 	public var FRAGMENT = 0;
 	public var VERTEX = 1;

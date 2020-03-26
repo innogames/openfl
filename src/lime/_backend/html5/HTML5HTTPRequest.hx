@@ -565,7 +565,7 @@ class HTML5HTTPRequest {
 }
 
 
-@:enum abstract AssetType(String) to String {
+enum abstract AssetType(String) to String {
 	
 	var BINARY = "BINARY";
 	var FONT = "FONT";

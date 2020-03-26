@@ -1,6 +1,6 @@
 package openfl.display3D;
 
-@:enum abstract Context3DTextureFormat(Null<Int>) {
+enum abstract Context3DTextureFormat(Null<Int>) {
 	
 	public var BGR_PACKED = 0;
 	public var BGRA = 1;

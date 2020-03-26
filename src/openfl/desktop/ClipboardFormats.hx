@@ -1,7 +1,7 @@
 package openfl.desktop;
 
 
-@:enum abstract ClipboardFormats(Null<Int>) {
+enum abstract ClipboardFormats(Null<Int>) {
 	
 	public var HTML_FORMAT = 0;
 	public var RICH_TEXT_FORMAT = 1;

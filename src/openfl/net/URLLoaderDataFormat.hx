@@ -1,7 +1,7 @@
 package openfl.net;
 
 
-@:enum abstract URLLoaderDataFormat(Null<Int>) {
+enum abstract URLLoaderDataFormat(Null<Int>) {
 	
 	public var BINARY = 0;
 	public var TEXT = 1;

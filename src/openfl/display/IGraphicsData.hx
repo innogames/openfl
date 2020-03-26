@@ -8,7 +8,7 @@ interface IGraphicsData {
 }
 
 
-@:enum abstract GraphicsDataType(Int) {
+enum abstract GraphicsDataType(Int) {
 
 	var STROKE = 0;
 	var SOLID = 1;

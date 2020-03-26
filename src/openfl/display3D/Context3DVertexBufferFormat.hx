@@ -1,6 +1,6 @@
 package openfl.display3D;
 
-@:enum abstract Context3DVertexBufferFormat(Null<Int>) {
+enum abstract Context3DVertexBufferFormat(Null<Int>) {
 	
 	public var BYTES_4 = 0;
 	public var FLOAT_1 = 1;

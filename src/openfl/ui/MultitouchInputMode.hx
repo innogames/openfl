@@ -1,7 +1,7 @@
 package openfl.ui;
 
 
-@:enum abstract MultitouchInputMode(Null<Int>) {
+enum abstract MultitouchInputMode(Null<Int>) {
 	
 	public var GESTURE = 0;
 	public var NONE = 1;

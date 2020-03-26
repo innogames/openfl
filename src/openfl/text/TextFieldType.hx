@@ -1,7 +1,7 @@
 package openfl.text;
 
 
-@:enum abstract TextFieldType(Null<Int>) {
+enum abstract TextFieldType(Null<Int>) {
 	
 	public var DYNAMIC = 0;
 	public var INPUT = 1;

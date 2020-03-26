@@ -1,7 +1,7 @@
 package openfl.display;
 
 
-@:enum abstract StageScaleMode(Null<Int>) {
+enum abstract StageScaleMode(Null<Int>) {
 	
 	public var EXACT_FIT = 0;
 	public var NO_BORDER = 1;
