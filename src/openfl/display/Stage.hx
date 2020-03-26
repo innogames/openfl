@@ -871,7 +871,11 @@ class Stage extends DisplayObjectContainer {
 			neko.Lib.rethrow (e);
 			#elseif js
 			try {
+				#if (haxe < version("4.1.0-rc.1"))
 				var exc = @:privateAccess haxe.CallStack.lastException;
+				#else
+				var exc = @:privateAccess haxe.NativeStackTrace.lastError;
+				#end
 				if (exc != null && Reflect.hasField (exc, "stack") && exc.stack != null && exc.stack != "") {
 					js.Browser.console.log(exc.stack);
 					e.stack = exc.stack;
