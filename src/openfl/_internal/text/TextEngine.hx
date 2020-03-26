@@ -1,7 +1,6 @@
 package openfl._internal.text;
 
 
-import lime.text.UTF8String;
 import openfl.geom.Rectangle;
 import openfl.text.AntiAliasType;
 import openfl.text.Font;
@@ -52,12 +51,12 @@ class TextEngine {
 	public var multiline:Bool;
 	public var numLines (default, null):Int;
 	public var numVisibleLines (default,null):Int;
-	public var restrict (default, set):UTF8String;
+	public var restrict (default, set):UnicodeString;
 	public var scrollH:Int;
 	public var scrollV(default, set):Int = 1;
 	public var selectable:Bool;
 	public var sharpness:Float;
-	public var text (default, set):UTF8String;
+	public var text (default, set):UnicodeString;
 	public var textHeight:Float;
 	public var textFormatRanges:Array<TextFormatRange>;
 	public var textWidth:Float;
@@ -483,7 +482,7 @@ class TextEngine {
 		var lineIndex = 0;
 		var lineFormat = null;
 		
-		inline function getPositions (text:UTF8String, startIndex:Int, endIndex:Int) {
+		inline function getPositions (text:UnicodeString, startIndex:Int, endIndex:Int) {
 			
 			// TODO: optimize
 			

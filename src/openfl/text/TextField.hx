@@ -3,7 +3,6 @@ package openfl.text;
 
 import haxe.Timer;
 import lime.system.Clipboard;
-import lime.text.UTF8String;
 import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 import lime.ui.MouseCursor;
@@ -94,8 +93,8 @@ class TextField extends InteractiveObject {
 	private var __offsetY:Float;
 	private var __selectionIndex:Int;
 	private var __showCursor:Bool;
-	private var __text:UTF8String;
-	private var __htmlText:UTF8String;
+	private var __text:UnicodeString;
+	private var __htmlText:UnicodeString;
 	private var __textEngine:TextEngine;
 	private var __textFormat:TextFormat;
 	private var __forceCachedBitmapUpdate:Bool = false;
@@ -502,7 +501,7 @@ class TextField extends InteractiveObject {
 		
 		__replaceText (startIndex, endIndex, value);
 		
-		var i = startIndex + (value : UTF8String).length;
+		var i = startIndex + (value : UnicodeString).length;
 		if (i > __text.length) i = __text.length;
 		
 		setSelection (i, i);
@@ -2107,7 +2106,7 @@ class TextField extends InteractiveObject {
 		var range = __textEngine.textFormatRanges[0];
 		range.format = __textFormat;
 		range.start = 0;
-		range.end = (value : UTF8String).length;
+		range.end = (value : UnicodeString).length;
 		
 		__isHTML = false;
 		
