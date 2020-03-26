@@ -1,0 +1,3 @@
+-D html5
+-D no-deprecation-warnings
+--remap flash:openfl

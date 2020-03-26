@@ -10,5 +10,5 @@ install:
 
 script:
  - haxe build.hxml
- - haxelib run travix node
+ - haxelib run travix node tests-html5.hxml
  - haxelib run travix flash -D exit

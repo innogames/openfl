@@ -1,7 +1,5 @@
 -cp src
 tests.hxml
--D html5
--D no-deprecation-warnings
---remap flash:openfl
+tests-html5.hxml
 -js test.js
 -cmd node test.js
