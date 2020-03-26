@@ -4,5 +4,11 @@ haxe:
  - 4.0.5
  - development
 
+install:
+ - haxelib install travix
+ - haxelib run travix install
+
 script:
  - haxe build.hxml
+ - haxelib run travix node
+ - haxelib run travix flash -D exit

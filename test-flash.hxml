@@ -1,0 +1,5 @@
+# useful to check if flash behaves the same
+-cp src
+tests.hxml
+-swf test.swf
+-cmd test.swf
