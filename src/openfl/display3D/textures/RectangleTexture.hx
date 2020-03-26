@@ -7,15 +7,8 @@ import openfl._internal.stage3D.SamplerState;
 import openfl.display.BitmapData;
 import openfl.utils.ByteArray;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl.display3D.Context3D)
-
-
-@:final class RectangleTexture extends TextureBase {
+final class RectangleTexture extends TextureBase {
 	
 	
 	private function new (context:Context3D, width:Int, height:Int, format:String, optimizeForRenderToTexture:Bool) {

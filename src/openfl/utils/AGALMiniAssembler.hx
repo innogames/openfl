@@ -32,12 +32,6 @@ import openfl.display3D.Context3D;
 import openfl.display3D.Program3D;
 import openfl.Lib;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
 class AGALMiniAssembler {
 	
 	
@@ -878,12 +872,6 @@ class AGALMiniAssembler {
 }
 
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
 private class OpCode {
 	
 	
@@ -911,12 +899,6 @@ private class OpCode {
 	
 	
 }
-
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 
 private class Register {
@@ -948,12 +930,6 @@ private class Register {
 	
 	
 }
-
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 
 private class Sampler {

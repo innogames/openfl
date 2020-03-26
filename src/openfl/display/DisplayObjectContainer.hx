@@ -1,23 +1,18 @@
 package openfl.display;
 
 
-import openfl._internal.renderer.canvas.CanvasGraphics;
+import openfl.Vector;
 import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.canvas.CanvasGraphics;
 import openfl.display.Stage;
 import openfl.errors.ArgumentError;
 import openfl.errors.RangeError;
 import openfl.errors.TypeError;
 import openfl.events.Event;
-import openfl.events.EventPhase;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
-import openfl.Vector;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 @:access(openfl.events.Event)
 @:access(openfl.display.Graphics)
@@ -25,8 +20,6 @@ import openfl.Vector;
 @:access(openfl.geom.Point)
 @:access(openfl.geom.Matrix)
 @:access(openfl.geom.Rectangle)
-
-
 class DisplayObjectContainer extends InteractiveObject {
 	
 	

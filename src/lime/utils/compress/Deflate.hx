@@ -7,11 +7,6 @@ import haxe.io.Bytes;
 import flash.utils.ByteArray;
 #end
 
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 class Deflate {
 	
 	

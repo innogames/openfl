@@ -4,7 +4,7 @@ package openfl.ui;
 import openfl.Vector;
 
 
-@:final class Multitouch {
+final class Multitouch {
 	
 	
 	public static var inputMode:MultitouchInputMode;

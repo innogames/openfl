@@ -1,23 +1,16 @@
 package openfl._internal.renderer;
 
 
+import openfl.Vector;
 import openfl.display.BitmapData;
 import openfl.display.CapsStyle;
 import openfl.display.GradientType;
-import openfl.display.GraphicsPathWinding;
 import openfl.display.InterpolationMethod;
 import openfl.display.JointStyle;
 import openfl.display.LineScaleMode;
-import openfl.display.Shader;
 import openfl.display.SpreadMethod;
 import openfl.display.TriangleCulling;
 import openfl.geom.Matrix;
-import openfl.Vector;
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 @:allow(openfl._internal.renderer.DrawCommandReader)
 

@@ -6,11 +6,6 @@ import lime.graphics.opengl.GL;
 import openfl._internal.renderer.AbstractBlendModeManager;
 import openfl.display.BlendMode;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 
 class GLBlendModeManager extends AbstractBlendModeManager {
 	
@@ -20,8 +15,6 @@ class GLBlendModeManager extends AbstractBlendModeManager {
 	
 	
 	public function new (gl:GLRenderContext) {
-		
-		super ();
 		
 		this.gl = gl;
 		

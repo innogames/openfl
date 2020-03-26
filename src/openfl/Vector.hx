@@ -142,10 +142,6 @@ abstract Vector<T>(IVector<T>) from IVector<T> {
 	}
 }
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 private class BoolVector implements IVector<Bool> {
 	public var fixed:Bool;
 	public var length(get, set):Int;
@@ -328,10 +324,6 @@ private class BoolVector implements IVector<Bool> {
 	}
 }
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 private class FloatVector implements IVector<Float> {
 	public var fixed:Bool;
 	public var length(get, set):Int;
@@ -510,10 +502,6 @@ private class FloatVector implements IVector<Float> {
 	}
 }
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 private class FunctionVector implements IVector<Function> {
 	public var fixed:Bool;
 	public var length(get, set):Int;
@@ -696,10 +684,6 @@ private class FunctionVector implements IVector<Function> {
 	}
 }
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 private class IntVector implements IVector<Int> {
 	public var fixed:Bool;
 	public var length(get, set):Int;
@@ -878,10 +862,6 @@ private class IntVector implements IVector<Int> {
 	}
 }
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 private class ObjectVector<T> implements IVector<T> {
 	public var fixed:Bool;
 	public var length(get, set):Int;

@@ -2,23 +2,14 @@ package openfl.display3D.textures;
 
 
 import haxe.Timer;
-import lime.graphics.opengl.GLTexture;
 import openfl._internal.renderer.opengl.batcher.TextureData;
 import openfl._internal.stage3D.opengl.GLVideoTexture;
-import openfl._internal.stage3D.GLUtils;
 import openfl.events.Event;
 import openfl.net.NetStream;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl.display3D.Context3D)
 @:access(openfl.net.NetStream)
-
-
-@:final class VideoTexture extends TextureBase {
+final class VideoTexture extends TextureBase {
 	
 	
 	public var videoHeight (default, null):Int;

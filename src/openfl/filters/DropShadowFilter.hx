@@ -9,9 +9,7 @@ import openfl.geom.Rectangle;
 
 @:access(openfl.geom.Point)
 @:access(openfl.geom.Rectangle)
-
-
-@:final class DropShadowFilter extends BitmapFilter {
+final class DropShadowFilter extends BitmapFilter {
 	
 	
 	public var alpha (get, set):Float;

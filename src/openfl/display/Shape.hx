@@ -1,14 +1,7 @@
 package openfl.display;
 
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl.display.Graphics)
-
-
 class Shape extends DisplayObject {
 	
 	

@@ -12,16 +12,9 @@ import openfl._internal.stage3D.SamplerState;
 import openfl.display3D.textures.TextureBase;
 import openfl.display.BitmapData;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl._internal.stage3D.SamplerState)
 @:access(openfl.display3D.textures.TextureBase)
 @:access(openfl.display.BitmapData)
-
-
 class GLTextureBase {
 	
 	

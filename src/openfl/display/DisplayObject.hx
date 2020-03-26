@@ -1,22 +1,21 @@
 package openfl.display;
 
 
-import lime.graphics.opengl.GLVertexArrayObject;
 import lime.ui.MouseCursor;
 import lime.utils.ObjectPool;
+import openfl.Vector;
+import openfl._internal.Lib;
+import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.canvas.CanvasBitmap;
 import openfl._internal.renderer.canvas.CanvasDisplayObject;
 import openfl._internal.renderer.canvas.CanvasGraphics;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLDisplayObject;
-import openfl._internal.renderer.opengl.GLRenderer;
-import openfl._internal.renderer.RenderSession;
-import openfl._internal.Lib;
 import openfl.display.Stage;
 import openfl.errors.TypeError;
 import openfl.events.Event;
-import openfl.events.EventPhase;
 import openfl.events.EventDispatcher;
+import openfl.events.EventPhase;
 import openfl.events.MouseEvent;
 import openfl.events.TouchEvent;
 import openfl.filters.BitmapFilter;
@@ -25,12 +24,7 @@ import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.geom.Transform;
-import openfl.Vector;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 @:access(openfl.events.Event)
 @:access(openfl.display.Bitmap)
@@ -41,8 +35,6 @@ import openfl.Vector;
 @:access(openfl.geom.ColorTransform)
 @:access(openfl.geom.Matrix)
 @:access(openfl.geom.Rectangle)
-
-
 class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	
 	

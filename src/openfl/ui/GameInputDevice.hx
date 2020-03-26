@@ -7,7 +7,7 @@ import openfl.utils.ByteArray;
 @:access(openfl.ui.GameInputControl)
 
 
-@:final class GameInputDevice {
+final class GameInputDevice {
 	
 	
 	public static var MAX_BUFFER_SIZE = 32000;

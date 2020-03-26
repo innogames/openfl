@@ -438,7 +438,7 @@ class HTML5HTTPRequest {
 		
 		if (supportsImageProgress == null) {
 			
-			supportsImageProgress = untyped __js__ ("'onprogress' in image");
+			supportsImageProgress = js.Syntax.code("('onprogress' in {0})", image);
 			
 		}
 		

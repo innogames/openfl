@@ -12,16 +12,9 @@ import openfl.display3D.Context3D;
 import openfl.display.BitmapData;
 import openfl.utils.ByteArray;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl._internal.stage3D.SamplerState)
 @:access(openfl.display3D.textures.RectangleTexture)
 @:access(openfl.display3D.Context3D)
-
-
 class GLRectangleTexture {
 	
 	

@@ -3,10 +3,9 @@ package openfl.system;
 import haxe.macro.Compiler;
 import lime.app.Application;
 import lime.system.Locale;
-import lime.system.System;
 import openfl._internal.Lib;
 
-@:final class Capabilities {
+final class Capabilities {
 	
 	
 	public static var avHardwareDisable (default, null) = true;

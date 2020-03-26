@@ -1,19 +1,12 @@
 package openfl.display;
 
 
-import openfl.geom.Point;
 import openfl.geom.Rectangle;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 #if !flash
 @:access(openfl.geom.Rectangle)
 #end
-
-
 class Tileset {
 
 
@@ -128,12 +121,6 @@ class Tileset {
 }
 
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
 @:allow(openfl.display.Tileset) class TileData {
 
 
@@ -176,7 +163,7 @@ class Tileset {
 
 			#if flash
 			__bitmapData = new BitmapData (width, height);
-			__bitmapData.copyPixels (bitmapData, new Rectangle (x, y, width, height), new Point ());
+			__bitmapData.copyPixels (bitmapData, new Rectangle (x, y, width, height), new openfl.geom.Point ());
 			#end
 
 		}

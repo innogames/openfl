@@ -2,24 +2,15 @@ package openfl.display3D.textures;
 
 
 import haxe.Timer;
-import lime.graphics.opengl.GL;
 import lime.utils.ArrayBufferView;
-import openfl._internal.stage3D.opengl.GLTexture;
-import openfl._internal.stage3D.GLUtils;
 import openfl._internal.stage3D.SamplerState;
+import openfl._internal.stage3D.opengl.GLTexture;
 import openfl.display.BitmapData;
 import openfl.events.Event;
 import openfl.utils.ByteArray;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl.display3D.Context3D)
-
-
-@:final class Texture extends TextureBase {
+final class Texture extends TextureBase {
 	
 	
 	private static var __lowMemoryMode:Bool = false;

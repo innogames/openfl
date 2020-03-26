@@ -1,12 +1,5 @@
 package openfl.geom;
 
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
 class Vector3D {
 	
 	

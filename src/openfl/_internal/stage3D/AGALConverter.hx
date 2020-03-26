@@ -8,11 +8,6 @@ import openfl.errors.IllegalOperationError;
 import openfl.utils.ByteArray;
 import openfl.utils.Endian;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 
 class AGALConverter {
 	
@@ -511,12 +506,6 @@ class AGALConverter {
 }
 
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
 private class DestRegister {
 	
 	
@@ -849,12 +838,6 @@ class RegisterMap {
 }
 
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
 private class RegisterMapEntry {
 	
 	
@@ -897,12 +880,6 @@ private enum RegisterUsage {
 	VECTOR_4_ARRAY;
 	
 }
-
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 
 private class SamplerRegister {
@@ -1025,12 +1002,6 @@ private class SamplerRegister {
 	
 	
 }
-
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 
 private class SourceRegister {

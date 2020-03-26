@@ -4,11 +4,6 @@ package lime.app;
 import lime.system.System;
 import lime.utils.Log;
 
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:allow(lime.app.Promise)
 
 

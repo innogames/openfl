@@ -1,13 +1,12 @@
 package openfl.display;
 
 
-import openfl._internal.Lib;
 import openfl.display.IGraphicsData;
 import openfl.display.IGraphicsFill;
 import openfl.geom.Matrix;
 
 
-@:final class GraphicsBitmapFill implements IGraphicsData implements IGraphicsFill {
+final class GraphicsBitmapFill implements IGraphicsData implements IGraphicsFill {
 	
 	
 	public var bitmapData:BitmapData;

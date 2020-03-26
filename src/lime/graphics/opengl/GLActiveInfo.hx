@@ -1,21 +1,11 @@
-package lime.graphics.opengl; #if (!js || !html5)
+package lime.graphics.opengl;
 
-
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
+#if (js && html5)
+typedef GLActiveInfo = js.html.webgl.ActiveInfo;
+#else
 typedef GLActiveInfo = {
-	
 	size:Int,
 	type:Int,
 	name:String
-	
 }
-
-
-#else
-typedef GLActiveInfo = js.html.webgl.ActiveInfo;
 #end

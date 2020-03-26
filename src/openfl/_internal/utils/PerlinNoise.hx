@@ -12,11 +12,6 @@ Haxe port and optimization by Nicolas Cannasse http://haxe.org
 */
 import openfl.display.BitmapData;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 class PerlinNoise {
 
   private static var P = [

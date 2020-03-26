@@ -5,7 +5,7 @@ import openfl.display.IGraphicsData;
 import openfl.Vector;
 
 
-@:final class GraphicsPath implements IGraphicsData implements IGraphicsPath {
+final class GraphicsPath implements IGraphicsData implements IGraphicsPath {
 	
 	
 	private static var SIN45 = 0.70710678118654752440084436210485;

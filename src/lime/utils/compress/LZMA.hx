@@ -8,11 +8,6 @@ import flash.utils.CompressionAlgorithm;
 import flash.utils.ByteArray;
 #end
 
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 class LZMA {
 	
 	

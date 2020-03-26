@@ -1,23 +1,15 @@
 package openfl._internal.stage3D.opengl;
 
 
-import lime.graphics.opengl.GLTexture;
 import lime.graphics.opengl.GL;
-import js.html.webgl.RenderingContext as WebGLContext;
-import openfl._internal.renderer.opengl.batcher.TextureData;
 import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.opengl.batcher.TextureData;
 import openfl._internal.stage3D.GLUtils;
 import openfl.display3D.textures.VideoTexture;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 @:access(openfl.display3D.textures.VideoTexture)
 @:access(openfl.net.NetStream)
-
-
 class GLVideoTexture {
 	
 	

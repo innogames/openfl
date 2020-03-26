@@ -6,11 +6,6 @@ import lime.math.Rectangle;
 import lime.ui.Window;
 import lime._backend.html5.HTML5Renderer;
 
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(lime.ui.Window)
 @:access(lime._backend.html5.HTML5Renderer.context)
 class Renderer {

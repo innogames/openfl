@@ -12,7 +12,7 @@ import openfl.events.GameInputEvent;
 @:access(openfl.ui.GameInputDevice)
 
 
-@:final class GameInput extends EventDispatcher {
+final class GameInput extends EventDispatcher {
 	
 	
 	public static var isSupported (default, null) = true;

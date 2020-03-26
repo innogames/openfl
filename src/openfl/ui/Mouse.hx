@@ -6,7 +6,7 @@ import lime.ui.Mouse in LimeMouse;
 @:access(openfl.display.Stage)
 
 
-@:final class Mouse {
+final class Mouse {
 	
 	
 	public static var cursor (get, set):MouseCursor;

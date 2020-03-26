@@ -1,24 +1,14 @@
-package lime.graphics.opengl; #if (!js || !html5)
+package lime.graphics.opengl;
 
-
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
+#if (js && html5)
+typedef GLContextAttributes = js.html.webgl.ContextAttributes;
+#else
 typedef GLContextAttributes = {
-	
-	alpha:Bool, 
+	alpha:Bool,
 	depth:Bool,
 	stencil:Bool,
 	antialias:Bool,
 	premultipliedAlpha:Bool,
 	preserveDrawingBuffer:Bool
-	
 }
-
-
-#else
-typedef GLContextAttributes = js.html.webgl.ContextAttributes;
 #end

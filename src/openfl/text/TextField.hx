@@ -30,22 +30,12 @@ import openfl.net.URLRequest;
 import openfl.ui.Keyboard;
 import openfl.Lib;
 
-#if (js && html5)
-import js.html.DivElement;
-#end
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 @:access(openfl.display.Graphics)
 @:access(openfl.geom.ColorTransform)
 @:access(openfl.geom.Rectangle)
 @:access(openfl._internal.text.TextEngine)
 @:access(openfl.text.TextFormat)
-
-
 class TextField extends InteractiveObject {
 	
 	
@@ -111,7 +101,6 @@ class TextField extends InteractiveObject {
 	private var __forceCachedBitmapUpdate:Bool = false;
 	
 	#if (js && html5)
-	private var __div:DivElement;
 	private var __rawHtmlText:String;
 	#end
 	

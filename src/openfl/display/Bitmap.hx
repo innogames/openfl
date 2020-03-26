@@ -1,31 +1,22 @@
 package openfl.display;
 
 
+import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.canvas.CanvasBitmap;
 import openfl._internal.renderer.opengl.GLBitmap;
-import openfl._internal.renderer.opengl.GLRenderer;
-import openfl._internal.renderer.opengl.batcher.Quad;
 import openfl._internal.renderer.opengl.batcher.BlendMode as BatcherBlendMode;
-import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.opengl.batcher.Quad;
 import openfl.geom.Matrix;
-import openfl.geom.Point;
 import openfl.geom.Rectangle;
 
 #if (js && html5)
 import js.html.ImageElement;
 #end
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl.display.BitmapData)
 @:access(openfl.display.Graphics)
 @:access(openfl.geom.ColorTransform)
 @:access(openfl.geom.Rectangle)
-
-
 class Bitmap extends DisplayObject {
 	
 	

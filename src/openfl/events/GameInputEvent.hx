@@ -1,10 +1,8 @@
 package openfl.events;
 
-
 import openfl.ui.GameInputDevice;
 
-
-@:final class GameInputEvent extends Event {
+final class GameInputEvent extends Event {
 	
 	
 	public static inline var DEVICE_ADDED = "deviceAdded";

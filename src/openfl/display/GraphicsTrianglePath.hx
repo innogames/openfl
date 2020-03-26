@@ -5,7 +5,7 @@ import openfl.display.IGraphicsData;
 import openfl.Vector;
 
 
-@:final class GraphicsTrianglePath implements IGraphicsData implements IGraphicsPath {
+final class GraphicsTrianglePath implements IGraphicsData implements IGraphicsPath {
 	
 	
 	public var culling:TriangleCulling;

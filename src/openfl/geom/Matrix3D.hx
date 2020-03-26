@@ -3,14 +3,7 @@ package openfl.geom;
 
 import openfl.geom.Orientation3D;
 import openfl.geom.Vector3D;
-import openfl.errors.Error;
 import openfl.Vector;
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 
 class Matrix3D {
 	

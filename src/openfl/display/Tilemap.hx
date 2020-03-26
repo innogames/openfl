@@ -12,17 +12,10 @@ import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
 import openfl.Vector;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl.display.Tile)
 @:access(openfl.display.TileArray)
 @:access(openfl.geom.ColorTransform)
 @:access(openfl.geom.Rectangle)
-
-
 class Tilemap extends DisplayObject {
 	
 	

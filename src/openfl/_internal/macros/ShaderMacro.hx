@@ -125,7 +125,7 @@ class ShaderMacro {
 					
 					case "__data":
 						
-						field.kind = FVar (TPath ({ name: dataClassName, pack: dataClassPack }), Context.parse ("new " + dataClassName + " (null)", pos));
+						field.kind = FVar (TPath ({ name: dataClassName, pack: dataClassPack }), Context.parse ("new " + dataClassName + " ()", pos));
 					
 					default:
 					

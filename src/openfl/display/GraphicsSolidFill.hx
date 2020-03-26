@@ -5,7 +5,7 @@ import openfl.display.IGraphicsData;
 import openfl.display.IGraphicsFill;
 
 
-@:final class GraphicsSolidFill implements IGraphicsData implements IGraphicsFill {
+final class GraphicsSolidFill implements IGraphicsData implements IGraphicsFill {
 	
 	
 	public var alpha:Float;

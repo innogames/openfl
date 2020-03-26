@@ -1,15 +1,8 @@
 package openfl.ui;
 
-
 import lime.ui.KeyCode;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
-@:final class Keyboard {
+final class Keyboard {
 	
 	
 	public static inline var NUMBER_0 = 48;

@@ -4,14 +4,7 @@ package openfl._internal.renderer.opengl;
 import lime.graphics.GLRenderContext;
 import openfl.display.Shader;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl.display.Shader)
-
-
 class GLShaderManager {
 	
 	public var currentShader (default, null):Shader;

@@ -4,14 +4,7 @@ package openfl.events;
 import openfl.events.EventPhase;
 import openfl.events.IEventDispatcher;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl.events.Event)
-
-
 class EventDispatcher implements IEventDispatcher {
 	
 	
@@ -270,12 +263,6 @@ class EventDispatcher implements IEventDispatcher {
 }
 
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
 @:dox(hide) private class DispatchIterator {
 	
 	
@@ -373,12 +360,6 @@ class EventDispatcher implements IEventDispatcher {
 	
 	
 }
-
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 
 private class Listener {

@@ -9,15 +9,8 @@ import openfl.display.BitmapData;
 import openfl.events.Event;
 import openfl.utils.ByteArray;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl.display3D.Context3D)
-
-
-@:final class CubeTexture extends TextureBase {
+final class CubeTexture extends TextureBase {
 	
 	
 	private var __size:Int;
@@ -34,7 +27,7 @@ import openfl.utils.ByteArray;
 		__optimizeForRenderToTexture = optimizeForRenderToTexture;
 		__streamingLevels = streamingLevels;
 		
-		GLCubeTexture.create (this, __context.__renderSession);
+		GLCubeTexture.create (this);
 		
 	}
 	

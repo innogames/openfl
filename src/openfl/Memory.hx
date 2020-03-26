@@ -1,14 +1,7 @@
 package openfl;
 
 
-import haxe.io.BytesData;
 import openfl.utils.ByteArray;
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 
 class Memory {
 	

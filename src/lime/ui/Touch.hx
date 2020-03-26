@@ -1,13 +1,6 @@
 package lime.ui;
 
-
 import lime.app.Event;
-
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 
 class Touch {
 	

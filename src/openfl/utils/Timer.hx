@@ -10,12 +10,6 @@ import openfl.events.TimerEvent;
 import js.Browser;
 #end
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
 class Timer extends EventDispatcher {
 	
 	

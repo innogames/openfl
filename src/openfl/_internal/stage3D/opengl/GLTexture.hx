@@ -1,31 +1,22 @@
 package openfl._internal.stage3D.opengl;
 
 
-import haxe.io.Bytes;
+import lime.graphics.opengl.GL;
 import lime.utils.ArrayBufferView;
 import lime.utils.UInt8Array;
-import lime.graphics.opengl.GL;
 import openfl._internal.renderer.RenderSession;
-import openfl._internal.stage3D.atf.ATFReader;
 import openfl._internal.stage3D.GLUtils;
 import openfl._internal.stage3D.SamplerState;
-import openfl.display3D.textures.Texture;
-import openfl.display3D.textures.TextureBase;
-import openfl.display3D.Context3D;
+import openfl._internal.stage3D.atf.ATFReader;
 import openfl.display.BitmapData;
-import openfl.errors.IllegalOperationError;
+import openfl.display3D.Context3D;
+import openfl.display3D.textures.Texture;
 import openfl.utils.ByteArray;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 @:access(openfl._internal.stage3D.SamplerState)
 @:access(openfl.display3D.textures.Texture)
 @:access(openfl.display3D.Context3D)
-
-
 class GLTexture {
 	
 	

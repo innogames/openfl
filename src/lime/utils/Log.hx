@@ -5,12 +5,6 @@ import haxe.PosInfos;
 import js.Browser.console;
 #end
 
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
 class Log {
 	
 	

@@ -1,21 +1,11 @@
-package lime.graphics.opengl; #if (!js || !html5 || display)
+package lime.graphics.opengl;
 
-
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
+#if (js && html5)
+typedef GLShaderPrecisionFormat = js.html.webgl.ShaderPrecisionFormat;
+#else
 typedef GLShaderPrecisionFormat = {
-	
 	rangeMin:Int,
 	rangeMax:Int,
 	precision:Int
-	
-};
-
-
-#else
-typedef GLShaderPrecisionFormat = js.html.webgl.ShaderPrecisionFormat;
+}
 #end

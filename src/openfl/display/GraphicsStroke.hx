@@ -4,7 +4,7 @@ package openfl.display;
 import openfl.display.IGraphicsData;
 
 
-@:final class GraphicsStroke implements IGraphicsData implements IGraphicsStroke {
+final class GraphicsStroke implements IGraphicsData implements IGraphicsStroke {
 	
 	
 	public var caps:CapsStyle;

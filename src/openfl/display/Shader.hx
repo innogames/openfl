@@ -8,17 +8,10 @@ import openfl._internal.stage3D.GLUtils;
 import openfl.utils.ByteArray;
 import openfl.display.ShaderParameter;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 #if (!display && !macro)
 @:autoBuild(openfl._internal.macros.ShaderMacro.build())
 @:build(openfl._internal.macros.ShaderMacro.build())
 #end
-
-
 class Shader {
 	
 	
@@ -242,7 +235,7 @@ class Shader {
 		
 		if (__data == null) {
 			
-			__data = cast new ShaderData (null);
+			__data = new ShaderData ();
 			
 		}
 		

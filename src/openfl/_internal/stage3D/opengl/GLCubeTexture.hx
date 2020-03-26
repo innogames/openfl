@@ -1,37 +1,28 @@
 package openfl._internal.stage3D.opengl;
 
 
-import lime.utils.ArrayBufferView;
-import lime.utils.UInt8Array;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
+import lime.utils.ArrayBufferView;
+import lime.utils.UInt8Array;
 import openfl._internal.renderer.RenderSession;
-import openfl._internal.stage3D.atf.ATFReader;
-import openfl._internal.stage3D.atf.ATFGPUFormat;
 import openfl._internal.stage3D.GLUtils;
 import openfl._internal.stage3D.SamplerState;
-import openfl.display3D.textures.CubeTexture;
-import openfl.display3D.Context3D;
+import openfl._internal.stage3D.atf.ATFReader;
 import openfl.display.BitmapData;
+import openfl.display3D.Context3D;
+import openfl.display3D.textures.CubeTexture;
 import openfl.errors.IllegalOperationError;
 import openfl.utils.ByteArray;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 @:access(openfl._internal.stage3D.SamplerState)
 @:access(openfl.display3D.textures.CubeTexture)
 @:access(openfl.display3D.Context3D)
-
-
 class GLCubeTexture {
 	
 	
-	public static function create (cubeTexture:CubeTexture, renderSession:RenderSession):Void {
-		
-		var gl = renderSession.gl;
+	public static function create (cubeTexture:CubeTexture):Void {
 		
 		cubeTexture.__textureTarget = GL.TEXTURE_CUBE_MAP;
 		cubeTexture.__uploadedSides = 0;

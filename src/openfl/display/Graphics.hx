@@ -1,42 +1,34 @@
 package openfl.display;
 
 
-import openfl._internal.renderer.canvas.CanvasGraphics;
-import openfl._internal.renderer.RenderSession;
+import openfl.Vector;
 import openfl._internal.renderer.DrawCommandBuffer;
 import openfl._internal.renderer.DrawCommandReader;
-import openfl.errors.ArgumentError;
-import openfl.display.GraphicsPathCommand;
+import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.canvas.CanvasGraphics;
+import openfl._internal.renderer.opengl.batcher.BlendMode as BatcherBlendMode;
+import openfl._internal.renderer.opengl.batcher.Quad;
 import openfl.display.GraphicsBitmapFill;
 import openfl.display.GraphicsEndFill;
 import openfl.display.GraphicsGradientFill;
 import openfl.display.GraphicsPath;
+import openfl.display.GraphicsPathCommand;
 import openfl.display.GraphicsSolidFill;
 import openfl.display.GraphicsStroke;
+import openfl.errors.ArgumentError;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
-import openfl.Vector;
-
-import openfl._internal.renderer.opengl.batcher.Quad;
-import openfl._internal.renderer.opengl.batcher.BlendMode as BatcherBlendMode;
 
 #if (js && html5)
 import js.html.CanvasElement;
 import js.html.CanvasRenderingContext2D;
 #end
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl.display.DisplayObject)
 @:access(openfl.display.GraphicsPath)
 @:access(openfl.geom.Matrix)
 @:access(openfl.geom.Rectangle)
-
-
-@:final class Graphics {
+final class Graphics {
 	
 	
 	private static var maxTextureHeight:Null<Int> = null;

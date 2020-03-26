@@ -1,6 +1,5 @@
 package openfl.filters;
 
-
 import lime.graphics.utils.ImageDataUtil;
 import openfl.display.BitmapData;
 import openfl.geom.ColorTransform;
@@ -9,9 +8,7 @@ import openfl.geom.Rectangle;
 
 @:access(openfl.geom.Point)
 @:access(openfl.geom.Rectangle)
-
-
-@:final class GlowFilter extends BitmapFilter {
+final class GlowFilter extends BitmapFilter {
 	
 	
 	public var alpha (get, set):Float;

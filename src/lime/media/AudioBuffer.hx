@@ -3,7 +3,6 @@ package lime.media;
 
 import haxe.crypto.Base64;
 import haxe.io.Bytes;
-import haxe.io.Path;
 import lime.app.Future;
 import lime.app.Promise;
 import lime.utils.Log;
@@ -15,12 +14,6 @@ import lime.media.howlerjs.Howl;
 #if (js && html5)
 import js.html.Audio;
 #end
-
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 
 class AudioBuffer {
 	

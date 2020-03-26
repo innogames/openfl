@@ -1,12 +1,6 @@
 package lime.utils.compress;
 
-
 import haxe.io.Bytes;
-
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 class GZip {
 	

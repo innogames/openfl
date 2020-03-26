@@ -1,7 +1,7 @@
 package openfl.system;
 
 
-@:final class System {
+final class System {
 	
 	
 	public static var totalMemory (get, never):Int;

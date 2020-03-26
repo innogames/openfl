@@ -1,14 +1,5 @@
 package openfl.events;
 
-
-import openfl.display.InteractiveObject;
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
-
 class Event {
 	
 	

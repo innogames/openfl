@@ -6,17 +6,10 @@ import openfl.geom.ColorTransform;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl.display.TileArray)
 @:access(openfl.display.Tilemap)
 @:access(openfl.geom.ColorTransform)
 @:access(openfl.geom.Matrix)
-
-
 class Tile implements ITile {
 	
 	

@@ -15,8 +15,6 @@ class CanvasBlendModeManager extends AbstractBlendModeManager {
 	
 	public function new (renderSession:RenderSession) {
 		
-		super ();
-		
 		this.renderSession = renderSession;
 		
 	}

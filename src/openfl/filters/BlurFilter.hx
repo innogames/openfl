@@ -9,7 +9,7 @@ import openfl.geom.Rectangle;
 
 @:access(openfl.geom.Point)
 @:access(openfl.geom.Rectangle)
-@:final class BlurFilter extends BitmapFilter {
+final class BlurFilter extends BitmapFilter {
 	
 	
 	public var blurX (get, set):Float;

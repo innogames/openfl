@@ -2,23 +2,12 @@ package openfl.display;
 
 
 import lime.ui.MouseCursor;
-import openfl._internal.renderer.canvas.CanvasGraphics;
-import openfl._internal.renderer.canvas.CanvasShape;
-import openfl._internal.renderer.RenderSession;
-import openfl.geom.Matrix;
-import openfl.geom.Point;
 import openfl.geom.Rectangle;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 @:access(openfl.display.Graphics)
 @:access(openfl.display.Stage)
 @:access(openfl.geom.Point)
-
-
 class Sprite extends DisplayObjectContainer {
 	
 	

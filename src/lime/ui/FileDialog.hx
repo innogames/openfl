@@ -5,24 +5,12 @@ import haxe.io.Bytes;
 import haxe.io.Path;
 import lime.app.Event;
 import lime.graphics.Image;
-import lime.utils.ArrayBuffer;
-
-#if sys
-import sys.io.File;
-#end
 
 #if (js && html5)
 import js.html.Blob;
 #end
 
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(lime.graphics.Image)
-
-
 class FileDialog {
 	
 	

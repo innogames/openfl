@@ -11,18 +11,12 @@ import openfl._internal.renderer.opengl.stats.GLStats;
 import openfl._internal.renderer.opengl.stats.DrawCallContext;
 #end
 
-#if !openfl_debug
-@:fileXml(' tags="haxe,release" ')
-@:noDebug
-#end
 
 @:access(openfl.display.Bitmap)
 @:access(openfl.display.BitmapData)
 @:access(openfl.display.Stage)
 @:access(openfl.filters.BitmapFilter)
 @:access(openfl.geom.ColorTransform)
-
-
 class GLBitmap {
 	
 	

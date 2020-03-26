@@ -4,12 +4,9 @@ package openfl.media;
 import lime.media.AudioSource;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
-import openfl.media.Sound;
 
 @:access(openfl.media.SoundMixer)
-
-
-@:final @:keep class SoundChannel extends EventDispatcher {
+final class SoundChannel extends EventDispatcher {
 	
 	
 	public var leftPeak (default, null):Float;

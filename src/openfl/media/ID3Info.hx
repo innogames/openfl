@@ -1,9 +1,6 @@
 package openfl.media;
 
-
-@:final class ID3Info {
-	
-	
+final class ID3Info {
 	public var album:String;
 	public var artist:String;
 	public var comment:String;
@@ -11,13 +8,6 @@ package openfl.media;
 	public var songName:String;
 	public var track:String;
 	public var year:String;
-	
-	
-	public function new ():Void {
-		
-		
-		
-	}
-	
-	
+
+	public function new():Void {}
 }

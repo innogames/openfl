@@ -1,25 +1,17 @@
 package openfl._internal.renderer.opengl;
 
 
-import lime.utils.Float32Array;
 import lime.graphics.opengl.GL;
+import lime.utils.Float32Array;
 import openfl._internal.renderer.RenderSession;
 import openfl.display.Tilemap;
-import openfl.display.Tileset;
-import openfl.display.Tile;
-import openfl.geom.Matrix;
-import openfl.geom.Point;
 import openfl.geom.Rectangle;
 
 #if gl_stats
-import openfl._internal.renderer.opengl.stats.GLStats;
 import openfl._internal.renderer.opengl.stats.DrawCallContext;
+import openfl._internal.renderer.opengl.stats.GLStats;
 #end
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 @:access(openfl.display.Tilemap)
 @:access(openfl.display.Tileset)
@@ -29,8 +21,6 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 @:access(openfl.geom.ColorTransform)
 @:access(openfl.geom.Matrix)
 @:access(openfl.geom.Rectangle)
-
-
 class GLTilemap {
 	
 	

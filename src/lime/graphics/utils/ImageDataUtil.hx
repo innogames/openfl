@@ -1,8 +1,5 @@
 package lime.graphics.utils;
 
-
-import haxe.ds.Vector;
-import haxe.Int32;
 import haxe.io.Bytes;
 import lime.graphics.Image;
 import lime.graphics.ImageBuffer;
@@ -16,15 +13,8 @@ import lime.math.Vector2;
 import openfl.utils.Endian;
 import lime.utils.UInt8Array;
 
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(lime.graphics.ImageBuffer)
 @:access(lime.math.color.RGBA)
-
-
 class ImageDataUtil {
 	
 	

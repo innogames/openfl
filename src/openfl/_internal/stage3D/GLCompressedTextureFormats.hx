@@ -1,15 +1,8 @@
 package openfl._internal.stage3D;
 
 
-import lime.graphics.opengl.GL;
 import lime.graphics.GLRenderContext;
 import openfl._internal.stage3D.atf.ATFGPUFormat;
-import openfl.errors.IllegalOperationError;
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 class GLCompressedTextureFormats {
 	

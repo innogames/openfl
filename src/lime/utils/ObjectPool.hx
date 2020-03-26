@@ -1,13 +1,6 @@
 package lime.utils;
 
-
 import haxe.ds.ObjectMap;
-
-#if !lime_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 
 #if !js @:generic #end class ObjectPool<T> {
 	

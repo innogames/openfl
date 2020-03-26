@@ -8,7 +8,7 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 
 
-@:final class ColorMatrixFilter extends BitmapFilter {
+final class ColorMatrixFilter extends BitmapFilter {
 	
 	
 	//private static var __colorMatrixShader = new ColorMatrixShader ();

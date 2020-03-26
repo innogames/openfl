@@ -4,13 +4,10 @@ package openfl.display;
 import haxe.CallStack;
 import lime.app.Application;
 import lime.graphics.GLRenderContext;
-import lime.graphics.Renderer;
 import lime.ui.Touch;
 import lime.ui.Gamepad;
 import lime.ui.GamepadAxis;
 import lime.ui.GamepadButton;
-import lime.ui.Joystick;
-import lime.ui.JoystickHatPosition;
 import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 import lime.ui.Mouse in LimeMouse;
@@ -45,11 +42,6 @@ import openfl.profiler.Telemetry;
 import openfl._internal.renderer.opengl.stats.GLStats;
 #end
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 @:access(openfl._internal.renderer.AbstractRenderer)
 @:access(openfl.display.LoaderInfo)
 @:access(openfl.display.Sprite)
@@ -59,8 +51,6 @@ import openfl._internal.renderer.opengl.stats.GLStats;
 @:access(openfl.ui.GameInput)
 @:access(openfl.ui.Keyboard)
 @:access(openfl.ui.Mouse)
-
-
 class Stage extends DisplayObjectContainer {
 	
 	
@@ -171,7 +161,7 @@ class Stage extends DisplayObjectContainer {
 		#if mac
 		__macKeyboard = true;
 		#elseif (js && html5)
-		__macKeyboard = untyped __js__ ("/AppleWebKit/.test (navigator.userAgent) && /Mobile\\/\\w+/.test (navigator.userAgent) || /Mac/.test (navigator.platform)");
+		__macKeyboard = new js.RegExp("AppleWebKit").test(js.Browser.navigator.userAgent) && new js.RegExp("Mobile\\/\\w+").test(js.Browser.navigator.userAgent) || new js.RegExp("Mac").test(js.Browser.navigator.userAgent);
 		#end
 		
 		__clearBeforeRender = true;

@@ -8,9 +8,7 @@ private typedef CallbackCollection = haxe.DynamicAccess<Function>;
 
 @:access(openfl.display.Stage)
 @:access(lime.ui.Window)
-
-
-@:final class ExternalInterface {
+final class ExternalInterface {
 	
 	
 	public static var available (default, null) = #if (js && html5) true #else false #end;

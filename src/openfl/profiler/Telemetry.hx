@@ -8,9 +8,7 @@ import hxtelemetry.HxTelemetry;
 import openfl._internal.Lib;
 
 @:allow(openfl.display.Stage)
-
-
-@:final class Telemetry {
+final class Telemetry {
 	
 	
 	public static var connected (get, never):Bool;

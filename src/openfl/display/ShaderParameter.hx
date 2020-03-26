@@ -6,11 +6,6 @@ import lime.graphics.opengl.GLUniformLocation;
 import lime.graphics.opengl.GL;
 import lime.utils.Float32Array;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
-
 class ShaderParameter {
 	var name:String;
 	

@@ -1,10 +1,7 @@
 package openfl.media;
 
-
 @:access(openfl.media.SoundChannel)
-
-
-@:final class SoundMixer {
+final class SoundMixer {
 	
 	
 	private static inline var MAX_ACTIVE_CHANNELS = 32;

@@ -1,7 +1,6 @@
 package openfl.display;
 
 
-import haxe.io.Path;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.events.ProgressEvent;
@@ -13,20 +12,9 @@ import openfl.net.URLRequestMethod;
 import openfl.system.LoaderContext;
 import openfl.utils.ByteArray;
 
-#if (js && html5)
-import js.html.ScriptElement;
-import js.Browser;
-#end
-
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 @:access(openfl.display.LoaderInfo)
 @:access(openfl.events.Event)
-
-
 class Loader extends DisplayObjectContainer {
 	
 	
@@ -271,9 +259,6 @@ class Loader extends DisplayObjectContainer {
 			addChild (content);
 			
 			#if (js && html5)
-			//var script:ScriptElement = cast Browser.document.createElement ("script");
-			//script.innerHTML = loader.data;
-			//Browser.document.head.appendChild (script);
 			js.Lib.eval('(function () {' + loader.data + '})()');
 			#end
 			

@@ -20,10 +20,6 @@ import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
 import openfl.Vector;
 
-#if !openfl_debug
-@:fileXml('tags="haxe,release"')
-@:noDebug
-#end
 
 @:access(openfl.display3D.textures.CubeTexture)
 @:access(openfl.display3D.textures.RectangleTexture)
@@ -32,9 +28,7 @@ import openfl.Vector;
 @:access(openfl.display3D.IndexBuffer3D)
 @:access(openfl.display3D.Program3D)
 @:access(openfl.display3D.VertexBuffer3D)
-
-
-@:final class Context3D extends EventDispatcher {
+final class Context3D extends EventDispatcher {
 	
 	
 	public static var supportsVideoTexture (default, null):Bool = #if (js && html5) true #else false #end;
