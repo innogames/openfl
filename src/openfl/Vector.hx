@@ -25,6 +25,10 @@ abstract Vector<T>(IVector<T>) from IVector<T> {
 		return this.get(index);
 	}
 
+	public inline function contains(x:T):Bool {
+		return this.indexOf(x) != -1;
+	}
+
 	public inline function indexOf(x:T, ?from:Int = 0):Int {
 		return this.indexOf(x, from);
 	}
@@ -33,8 +37,12 @@ abstract Vector<T>(IVector<T>) from IVector<T> {
 		this.insertAt(index, element);
 	}
 
-	public inline function iterator():Iterator<T> {
-		return this.iterator();
+	public inline function iterator():VectorIterator<T> {
+		return new VectorIterator(this);
+	}
+
+	public inline function keyValueIterator():VectorKeyValueIterator<T> {
+		return new VectorKeyValueIterator(this);
 	}
 
 	public inline function join(sep:String = ","):String {
@@ -200,10 +208,6 @@ private class BoolVector implements IVector<Bool> {
 		if (!fixed || index < __array.length) {
 			__array.insert(index, element);
 		}
-	}
-
-	public function iterator():Iterator<Bool> {
-		return __array.iterator();
 	}
 
 	public function join(sep:String = ","):String {
@@ -378,10 +382,6 @@ private class FloatVector implements IVector<Float> {
 		if (!fixed || index < __array.length) {
 			__array.insert(index, element);
 		}
-	}
-
-	public function iterator():Iterator<Float> {
-		return __array.iterator();
 	}
 
 	public function join(sep:String = ","):String {
@@ -562,10 +562,6 @@ private class FunctionVector implements IVector<Function> {
 		}
 	}
 
-	public function iterator():Iterator<Function> {
-		return __array.iterator();
-	}
-
 	public function join(sep:String = ","):String {
 		return __array.join(sep);
 	}
@@ -738,10 +734,6 @@ private class IntVector implements IVector<Int> {
 		if (!fixed || index < __array.length) {
 			__array.insert(index, element);
 		}
-	}
-
-	public function iterator():Iterator<Int> {
-		return __array.iterator();
 	}
 
 	public function join(sep:String = ","):String {
@@ -918,10 +910,6 @@ private class ObjectVector<T> implements IVector<T> {
 		}
 	}
 
-	public function iterator():Iterator<T> {
-		return __array.iterator();
-	}
-
 	public function join(sep:String = ","):String {
 		return __array.join(sep);
 	}
@@ -1050,7 +1038,6 @@ private interface IVector<T> {
 	function get(index:Int):T;
 	function indexOf(x:T, ?from:Int = 0):Int;
 	function insertAt(index:Int, element:T):Void;
-	function iterator():Iterator<T>;
 	function join(sep:String = ","):String;
 	function lastIndexOf(x:T, ?from:Int = 0):Int;
 	function pop():Null<T>;
@@ -1066,4 +1053,36 @@ private interface IVector<T> {
 	function unshift(x:T):Void;
 
 	private function toJSON():Dynamic;
+}
+
+private class VectorIterator<T> {
+	final vector:IVector<T>;
+	var index:Int;
+	public inline function new(vector:IVector<T>) {
+		this.vector = vector;
+		index = 0;
+	}
+	public inline function hasNext():Bool {
+		return index < vector.length;
+	}
+	public inline function next():T {
+		return vector.get(index++);
+	}
+}
+
+private class VectorKeyValueIterator<T> {
+	final vector:IVector<T>;
+	var index:Int = 0;
+
+	public inline function new(vector:IVector<T>) {
+		this.vector = vector;
+	}
+
+	public inline function hasNext():Bool {
+		return index < vector.length;
+	}
+
+	public inline function next():{key:Int, value:T} {
+		return {key: index, value: vector.get(index++)};
+	}
 }
