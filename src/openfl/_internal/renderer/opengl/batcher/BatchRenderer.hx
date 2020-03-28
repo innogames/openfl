@@ -8,6 +8,7 @@ import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLTexture;
 import lime.graphics.opengl.GL;
+import openfl.errors.Error;
 import openfl.geom.Rectangle;
 import openfl._internal.renderer.opengl.GLBlendModeManager;
 import openfl._internal.renderer.opengl.GLShaderManager;
@@ -221,7 +222,7 @@ class BatchRenderer {
 						}
 					}
 					if (nextTexture.textureUnitId == -1) {
-						throw "Unable to find free texture unit for the batch render group! This should NOT happen!";
+						throw new Error("Unable to find free texture unit for the batch render group! This should NOT happen!");
 					}
 				}
 

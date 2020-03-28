@@ -8,6 +8,7 @@ import lime.graphics.opengl.GL;
 import lime.utils.Float32Array;
 import lime.utils.Int32Array;
 import lime.utils.Log;
+import openfl.errors.Error;
 
 class MultiTextureShader {
 	var program:GLProgram;
@@ -44,7 +45,7 @@ class MultiTextureShader {
 			}
 		}
 		if (program == null) {
-			throw "Could not compile a multi-texture shader for any number of textures, something must be horribly broken!";
+			throw new Error("Could not compile a multi-texture shader for any number of textures, something must be horribly broken!");
 		}
 		this.maxTextures = maxTextures;
 		this.positionScale = new Float32Array ([ 1.0, 1.0, 1.0, 1.0 ]);

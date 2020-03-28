@@ -7,6 +7,7 @@ import js.Browser;
 import js.html.CanvasElement;
 import openfl._internal.renderer.opengl.batcher.TextureData;
 import openfl._internal.renderer.opengl.batcher.QuadTextureData;
+import openfl.errors.Error;
 import openfl.geom.ColorTransform;
 import openfl.geom.Rectangle;
 import openfl.geom.Matrix;
@@ -100,7 +101,7 @@ class SubBitmapData extends BitmapData {
 	function unsupported() {
 		var message = "SubBitmapData does not support modification methods, please create a normal BitmapData object and draw into it";
 		#if debug
-		throw message;
+		throw new Error(message);
 		#else
 		#if (js && html5)
 		js.Browser.window.console.error(message);

@@ -35,7 +35,7 @@ class Log {
 			
 			if (throwErrors) {
 				
-				throw message;
+				throw new haxe.Exception(message);
 				
 			} else {
 				

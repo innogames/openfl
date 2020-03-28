@@ -5,6 +5,7 @@ import openfl.Vector;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.canvas.CanvasGraphics;
 import openfl.display.Stage;
+import openfl.errors.Error;
 import openfl.errors.ArgumentError;
 import openfl.errors.RangeError;
 import openfl.errors.TypeError;
@@ -68,7 +69,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		
 		if (index > __children.length || index < 0) {
 			
-			throw "Invalid index position " + index;
+			throw new Error("Invalid index position " + index);
 			
 		}
 		

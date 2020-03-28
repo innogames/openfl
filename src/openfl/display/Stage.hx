@@ -1,7 +1,6 @@
 package openfl.display;
 
 
-import haxe.CallStack;
 import lime.app.Application;
 import lime.graphics.GLRenderContext;
 import lime.ui.Touch;
@@ -242,7 +241,7 @@ class Stage extends DisplayObjectContainer {
 			
 			GameInput.__onGamepadAxisMove (gamepad, axis, value);
 			
-		} catch (e:Dynamic) {
+		} catch (e:WildcardError) {
 			
 			__handleError (e);
 			
@@ -257,7 +256,7 @@ class Stage extends DisplayObjectContainer {
 			
 			GameInput.__onGamepadButtonDown (gamepad, button);
 			
-		} catch (e:Dynamic) {
+		} catch (e:WildcardError) {
 			
 			__handleError (e);
 			
@@ -272,7 +271,7 @@ class Stage extends DisplayObjectContainer {
 			
 			GameInput.__onGamepadButtonUp (gamepad, button);
 			
-		} catch (e:Dynamic) {
+		} catch (e:WildcardError) {
 			
 			__handleError (e);
 			
@@ -287,7 +286,7 @@ class Stage extends DisplayObjectContainer {
 			
 			GameInput.__onGamepadConnect (gamepad);
 			
-		} catch (e:Dynamic) {
+		} catch (e:WildcardError) {
 			
 			__handleError (e);
 			
@@ -302,7 +301,7 @@ class Stage extends DisplayObjectContainer {
 			
 			GameInput.__onGamepadDisconnect (gamepad);
 			
-		} catch (e:Dynamic) {
+		} catch (e:WildcardError) {
 			
 			__handleError (e);
 			
@@ -648,7 +647,7 @@ class Stage extends DisplayObjectContainer {
 						
 						dispatcher.__dispatch (event);
 						
-					} catch (e:Dynamic) {
+					} catch (e:WildcardError) {
 						
 						__handleError (e);
 						
@@ -676,7 +675,7 @@ class Stage extends DisplayObjectContainer {
 			
 			return super.__dispatchEvent (event);
 			
-		} catch (e:Dynamic) {
+		} catch (e:WildcardError) {
 			
 			__handleError (e);
 			return false;
@@ -749,7 +748,7 @@ class Stage extends DisplayObjectContainer {
 				
 			}
 			
-		} catch (e:Dynamic) {
+		} catch (e:WildcardError) {
 			
 			__handleError (e);
 			
@@ -765,7 +764,7 @@ class Stage extends DisplayObjectContainer {
 			
 			return target.__dispatchEvent (event);
 			
-		} catch (e:Dynamic) {
+		} catch (e:WildcardError) {
 			
 			__handleError (e);
 			return false;
@@ -843,40 +842,43 @@ class Stage extends DisplayObjectContainer {
 	}
 	
 	
-	private function __handleError (e:Dynamic):Void {
+	private function __handleError (e:WildcardError):Void {
 		
 		var event = new UncaughtErrorEvent (UncaughtErrorEvent.UNCAUGHT_ERROR, true, true, e);
 		Lib.current.__loaderInfo.uncaughtErrorEvents.dispatchEvent (event);
 		
 		if (!event.__preventDefault) {
 			
-			#if mobile
-			Log.println (CallStack.toString (CallStack.exceptionStack ()));
-			Log.println (Std.string (e));
-			#end
-			
-			#if cpp
-			untyped __cpp__ ("throw e");
-			#elseif neko
-			neko.Lib.rethrow (e);
-			#elseif js
-			try {
-				#if (haxe < version("4.1.0-rc.1"))
-				var exc = @:privateAccess haxe.CallStack.lastException;
-				#else
-				var exc = @:privateAccess haxe.NativeStackTrace.lastError;
+			#if (haxe < version("4.1.0-rc.1"))
+				#if mobile
+				Log.println (haxe.CallStack.toString (haxe.CallStack.exceptionStack ()));
+				Log.println (Std.string (e));
 				#end
-				if (exc != null && Reflect.hasField (exc, "stack") && exc.stack != null && exc.stack != "") {
-					js.Browser.console.log(exc.stack);
-					e.stack = exc.stack;
-				} else {
-					var msg = CallStack.toString (CallStack.callStack ());
-					js.Browser.console.log(msg);
-				}
-			} catch (e2:Dynamic) {}
-			js.Syntax.code("throw {0}", e); // TODO: rethrow at the place of __handleError call instead
+				
+				#if cpp
+				untyped __cpp__ ("throw e");
+				#elseif neko
+				neko.Lib.rethrow (e);
+				#elseif js
+				try {
+					var exc = @:privateAccess haxe.CallStack.lastException;
+					if (exc != null && Reflect.hasField (exc, "stack") && exc.stack != null && exc.stack != "") {
+						js.Browser.console.log(exc.stack);
+						e.stack = exc.stack;
+					} else {
+						var msg = haxe.CallStack.toString (haxe.CallStack.callStack ());
+						js.Browser.console.log(msg);
+					}
+				} catch (e2:Dynamic) {}
+				js.Syntax.code("throw {0}", e); // TODO: rethrow at the place of __handleError call instead
+				#else
+				throw e;
+				#end
 			#else
-			throw e;
+				#if js
+				js.Browser.console.log(e.stack.toString());
+				#end
+				throw e;
 			#end
 			
 		}
@@ -1836,3 +1838,10 @@ class Stage extends DisplayObjectContainer {
 	
 	
 }
+
+private typedef WildcardError =
+	#if (haxe < version("4.1.0-rc.1"))
+	Dynamic;
+	#else
+	haxe.Exception;
+	#end
