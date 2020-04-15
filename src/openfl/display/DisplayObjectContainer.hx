@@ -197,40 +197,50 @@ class DisplayObjectContainer extends InteractiveObject {
 	
 	public function removeChild (child:DisplayObject):DisplayObject {
 		
-		if (child != null && child.parent == this) {
+		if (child == null) {
 			
-			child.__setTransformDirty ();
-			child.__setRenderDirty ();
-			__setRenderDirty();
+			var error = new TypeError ("Error #2007: Parameter child must be non-null.");
+			error.errorID = 2007;
+			throw error;
 			
-			var event = new Event (Event.REMOVED, true);
-			child.__dispatchWithCapture (event);
+		} else if (child.parent != this) {
 			
-			if (stage != null) {
-				
-				if (child.stage != null && stage.focus == child) {
-					
-					stage.focus = null;
-					
-				}
-				
-				var event = new Event (Event.REMOVED_FROM_STAGE, false, false);
-				child.__dispatchWithCapture (event);
-				child.__dispatchChildren (event);
-				child.__setStageReference (null);
-				
-			}
-			
-			child.parent = null;
-			__children.remove (child);
-			if (__removedChildren == null) {
-				__removedChildren = [child];
-			} else {
-				__removedChildren.push (child);
-			}
-			child.__setTransformDirty ();
+			var error = new ArgumentError ("Error #2025: The supplied DisplayObject must be a child of the caller.");
+			error.errorID = 2025;
+			throw error;
 			
 		}
+					
+		child.__setTransformDirty ();
+		child.__setRenderDirty ();
+		__setRenderDirty();
+		
+		var event = new Event (Event.REMOVED, true);
+		child.__dispatchWithCapture (event);
+		
+		if (stage != null) {
+			
+			if (child.stage != null && stage.focus == child) {
+				
+				stage.focus = null;
+				
+			}
+			
+			var event = new Event (Event.REMOVED_FROM_STAGE, false, false);
+			child.__dispatchWithCapture (event);
+			child.__dispatchChildren (event);
+			child.__setStageReference (null);
+			
+		}
+		
+		child.parent = null;
+		__children.remove (child);
+		if (__removedChildren == null) {
+			__removedChildren = [child];
+		} else {
+			__removedChildren.push (child);
+		}
+		child.__setTransformDirty ();
 		
 		return child;
 		
