@@ -505,6 +505,7 @@ class DisplayObjectContainer extends InteractiveObject {
 	private override function __hitTest (x:Float, y:Float, shapeFlag:Bool, stack:Array<DisplayObject>, interactiveOnly:Bool, hitObject:DisplayObject, hitTestWhenMouseDisabled:Bool = false):Bool {
 		
 		if (!hitObject.visible || __isMask || (!hitTestWhenMouseDisabled && interactiveOnly && !mouseEnabled && !mouseChildren)) return false;
+		if (!__hitTestBounds.contains(x, y)) return false;
 		if (mask != null && !mask.__hitTestMask (x, y)) return false;
 		
 		if (!__isPointInScrollRect (x, y)) {
@@ -867,9 +868,14 @@ class DisplayObjectContainer extends InteractiveObject {
 			
 		} else if (__updateTraverse) {
 			
+			__updateHitTestBounds ();
+			
 			for (child in __children) {
 				
 				child.__traverse ();
+
+				var childBounds = child.__hitTestBounds;
+				__hitTestBounds.__expand (childBounds.x, childBounds.y, childBounds.width, childBounds.height);
 				
 			}
 			
@@ -894,6 +900,9 @@ class DisplayObjectContainer extends InteractiveObject {
 		for (child in __children) {
 			
 			child.__update (resetUpdateDirty);
+			
+			var childBounds = child.__hitTestBounds;
+			__hitTestBounds.__expand (childBounds.x, childBounds.y, childBounds.width, childBounds.height);
 			
 		}
 		

@@ -82,6 +82,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	private var __children:Array<DisplayObject>;
 	private var __filters:Array<BitmapFilter>;
 	private var __graphics:Graphics;
+	private var __hitTestBounds:Rectangle;
 	private var __isMask:Bool;
 	private var __loaderInfo:LoaderInfo;
 	private var __mask:DisplayObject;
@@ -130,6 +131,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		__scaleX = 1;
 		__scaleY = 1;
 		
+		__hitTestBounds = new Rectangle ();
 		__worldAlpha = 1;
 		__worldBlendMode = NORMAL;
 		__worldTransform = new Matrix ();
@@ -481,11 +483,26 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	
 	private function __getBounds (rect:Rectangle, matrix:Matrix):Void {
 		
+		__getOwnBounds (rect, matrix);
+		
+	}
+	
+	
+	private function __getOwnBounds (rect:Rectangle, matrix:Matrix):Void {
+		
 		if (__graphics != null) {
 			
 			__graphics.__getBounds (rect, matrix);
 			
 		}
+		
+	}
+	
+	
+	function __updateHitTestBounds () {
+		
+		__hitTestBounds.setEmpty ();
+		__getOwnBounds (__hitTestBounds, __worldTransform);
 		
 	}
 	
@@ -634,6 +651,8 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	
 	
 	private function __hitTest (x:Float, y:Float, shapeFlag:Bool, stack:Array<DisplayObject>, interactiveOnly:Bool, hitObject:DisplayObject, hitTestWhenMouseDisabled:Bool = false):Bool {
+		
+		if (!__hitTestBounds.contains(x, y)) return false;
 		
 		if (__graphics != null) {
 			
@@ -1186,6 +1205,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 			
 			__calculateAbsoluteTransform (__transform, parent.__worldTransform, __worldTransform);
 			__calculateAbsoluteTransform (__transform, parent.__renderTransform, __renderTransform);
+			__updateHitTestBounds (); // TODO: scrollRect should clip this
 			
 		} else {
 			
