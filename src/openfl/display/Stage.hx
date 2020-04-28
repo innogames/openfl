@@ -3,18 +3,19 @@ package openfl.display;
 
 import haxe.CallStack;
 import lime.app.Application;
+import lime.app.Config;
 import lime.graphics.GLRenderContext;
-import lime.ui.Touch;
 import lime.ui.Gamepad;
 import lime.ui.GamepadAxis;
 import lime.ui.GamepadButton;
 import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 import lime.ui.Mouse in LimeMouse;
+import lime.ui.Touch;
 import lime.ui.Window;
+import openfl._internal.TouchData;
 import openfl._internal.renderer.opengl.GLRenderer;
 import openfl._internal.stage3D.opengl.GLTextureBase;
-import openfl._internal.TouchData;
 import openfl.display.DisplayObjectContainer;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
@@ -110,9 +111,21 @@ class Stage extends DisplayObjectContainer {
 	private var __touchData:Map<Int, TouchData>;
 	private var __transparent:Bool;
 	private var __wasFullscreen:Bool;
+
+	// TODO: this should be just a Stage constructor
+	public static function create(documentFactory:()->DisplayObject, windowConfig:WindowConfig):Stage {
+		var app = new lime.app.Application();
+		app.create({windows: [windowConfig]});
+		app.exec();
+
+		var stage = app.stage;
+		openfl.display.DisplayObject.__initStage = stage;
+		stage.addChild(documentFactory());
+
+		return stage;
+	}
 	
-	
-	public function new (window:Window, color:Null<Int> = null) {
+	function new (window:Window, color:Null<Int>) {
 		
 		#if hxtelemetry
 		Telemetry.__initialize ();

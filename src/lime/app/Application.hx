@@ -67,6 +67,7 @@ class Application {
 	
 	@:access(openfl.display.DisplayObject)
 	@:access(openfl.display.LoaderInfo)
+	@:access(openfl.display.Stage.new)
 	public function create (config:Config):Void {
 		this.config = config;
 
