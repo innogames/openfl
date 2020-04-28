@@ -9,7 +9,6 @@
 
 -D no-deprecation-warnings
 
--D webgl
 -D gl_stats
 -D vertex_array_object
 
