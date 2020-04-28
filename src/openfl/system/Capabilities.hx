@@ -26,12 +26,12 @@ final class Capabilities {
 	public static var isDebugger (default, null) = #if debug true #else false #end;
 	public static var isEmbeddedInAcrobat (default, null) = false;
 	public static var language (get, never):String;
-	public static var localFileReadDisable (default, null) = #if web true #else false #end;
+	public static var localFileReadDisable (default, null) = true;
 	public static var manufacturer (get, never):String;
 	public static var maxLevelIDC (default, null) = 0;
 	public static var os (get, never):String;
 	public static var pixelAspectRatio (get, never):Float;
-	public static var playerType (default, null) = #if web "PlugIn" #else "StandAlone" #end;
+	public static var playerType (default, null) = "PlugIn";
 	public static var screenColor (default, null) = "color";
 	public static var screenDPI (get, never):Float;
 	public static var screenResolutionX (get, never):Float;

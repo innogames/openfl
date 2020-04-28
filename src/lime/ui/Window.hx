@@ -72,9 +72,6 @@ class Window {
 		
 		if (Reflect.hasField (config, "width")) width = config.width;
 		if (Reflect.hasField (config, "height")) height = config.height;
-		#if !web
-		if (Reflect.hasField (config, "fullscreen")) __fullscreen = config.fullscreen;
-		#end
 		if (Reflect.hasField (config, "resizable")) __resizable = config.resizable;
 		if (Reflect.hasField (config, "title")) __title = config.title;
 		

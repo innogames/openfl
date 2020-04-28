@@ -103,7 +103,6 @@ typedef WindowConfig = {
 	#if (js && html5)
 	@:optional var element:js.html.Element;
 	#end
-	@:optional var fullscreen:Bool;
 	@:optional var hardware:Bool;
 	@:optional var height:Int;
 	@:optional var hidden:Bool;
