@@ -1,0 +1,19 @@
+-cp src
+-cp playground
+-main Main
+-debug
+-js playground.js
+-D js-es=6
+
+-D openfl
+
+-D no-deprecation-warnings
+
+-D webgl
+-D gl_stats
+-D vertex_array_object
+
+-D howlerjs
+-D lime-opengl
+-D html5
+-D web
