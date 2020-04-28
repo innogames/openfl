@@ -4,7 +4,6 @@
 -js openfl.js
 --no-output
 -D html5
--D lime_opengl
 -D howlerjs
 -D vertex_array_object
 -D gl_stats
