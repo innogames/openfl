@@ -345,7 +345,7 @@ class CanvasGraphics {
 						
 						endStroke ();
 						
-						if (hasStroke && (context:Dynamic).isPointInStroke (x, y)) {
+						if (hasStroke && context.isPointInStroke (x, y)) {
 							
 							data.destroy ();
 							graphics.__canvas = cacheCanvas;
@@ -372,7 +372,7 @@ class CanvasGraphics {
 						
 						endStroke ();
 						
-						if (hasStroke && (context:Dynamic).isPointInStroke (x, y)) {
+						if (hasStroke && context.isPointInStroke (x, y)) {
 							
 							data.destroy ();
 							graphics.__canvas = cacheCanvas;
@@ -461,7 +461,7 @@ class CanvasGraphics {
 				
 			}
 			
-			if (hasStroke && (context:Dynamic).isPointInStroke (x, y)) {
+			if (hasStroke && context.isPointInStroke (x, y)) {
 				
 				hitTest = true;
 				
@@ -1496,4 +1496,18 @@ class CanvasGraphics {
 	}
 	
 	
+	static function __init__() {
+		js.Syntax.code ("
+			if (CanvasRenderingContext2D.prototype.isPointInStroke == null) {
+				CanvasRenderingContext2D.prototype.isPointInStroke = function (path, x, y) {
+					return false;
+				};
+			}
+			if (CanvasRenderingContext2D.prototype.isPointInPath == null) {
+				CanvasRenderingContext2D.prototype.isPointInPath = function (path, x, y) {
+					return false;
+				};
+			}
+		");
+	}
 }
