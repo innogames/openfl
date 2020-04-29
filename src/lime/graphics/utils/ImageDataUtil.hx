@@ -1031,12 +1031,10 @@ class ImageDataUtil {
 		buffer.width = newWidth;
 		buffer.height = newHeight;
 		
-		#if (js && html5)
 		buffer.__srcImage = null;
 		buffer.__srcImageData = null;
 		buffer.__srcCanvas = null;
 		buffer.__srcContext = null;
-		#end
 		
 		image.dirty = true;
 		image.version++;

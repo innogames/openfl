@@ -20,8 +20,6 @@ class CanvasTilemap {
 	
 	public static inline function render (tilemap:Tilemap, renderSession:RenderSession):Void {
 		
-		#if (js && html5)
-		
 		if (!tilemap.__renderable || tilemap.__worldAlpha <= 0) return;
 		
 		tilemap.__updateTileArray ();
@@ -104,8 +102,6 @@ class CanvasTilemap {
 		
 		Rectangle.__pool.release (rect);
 		Rectangle.__pool.release (tileRect);
-		
-		#end
 		
 	}
 	

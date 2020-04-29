@@ -1,7 +1,6 @@
 package openfl._internal.renderer.canvas;
 
 
-import lime.graphics.utils.ImageCanvasUtil;
 import openfl._internal.renderer.RenderSession;
 import openfl.display.Bitmap;
 
@@ -14,7 +13,6 @@ class CanvasBitmap {
 	
 	public static inline function render (bitmap:Bitmap, renderSession:RenderSession):Void {
 		
-		#if (js && html5)
 		if (!bitmap.__renderable || bitmap.__worldAlpha <= 0) return;
 		
 		var context = renderSession.context;
@@ -42,7 +40,6 @@ class CanvasBitmap {
 			renderSession.maskManager.popObject (bitmap, false);
 			
 		}
-		#end
 		
 	}
 	

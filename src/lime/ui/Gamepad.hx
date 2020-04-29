@@ -59,24 +59,16 @@ class Gamepad {
 	
 	@:noCompletion private inline function get_guid ():String {
 		
-		#if (js && html5)
 		var devices = Joystick.__getDeviceData ();
 		return devices[this.id].id;
-		#else
-		return null;
-		#end
 		
 	}
 	
 	
 	@:noCompletion private inline function get_name ():String {
 		
-		#if (js && html5)
 		var devices = Joystick.__getDeviceData ();
 		return devices[this.id].id;
-		#else
-		return null;
-		#end
 		
 	}
 	

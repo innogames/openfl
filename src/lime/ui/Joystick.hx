@@ -55,13 +55,11 @@ class Joystick {
 	}
 	
 	
-	#if (js && html5)
 	@:noCompletion private static function __getDeviceData ():Array<Dynamic> {
 		
 		return (untyped navigator.getGamepads) ? untyped navigator.getGamepads () : (untyped navigator.webkitGetGamepads) ? untyped navigator.webkitGetGamepads () : null;
 		
 	}
-	#end
 	
 	
 	
@@ -73,48 +71,32 @@ class Joystick {
 	
 	@:noCompletion private inline function get_guid ():String {
 		
-		#if (js && html5)
 		var devices = __getDeviceData ();
 		return devices[this.id].id;
-		#else
-		return null;
-		#end
 		
 	}
 	
 	
 	@:noCompletion private inline function get_name ():String {
 		
-		#if (js && html5)
 		var devices = __getDeviceData ();
 		return devices[this.id].id;
-		#else
-		return null;
-		#end
 		
 	}
 	
 	
 	@:noCompletion private inline function get_numAxes ():Int {
 		
-		#if (js && html5)
 		var devices = __getDeviceData ();
 		return devices[this.id].axes.length;
-		#else
-		return 0;
-		#end
 		
 	}
 	
 	
 	@:noCompletion private inline function get_numButtons ():Int {
 		
-		#if (js && html5)
 		var devices = __getDeviceData ();
 		return devices[this.id].buttons.length;
-		#else
-		return 0;
-		#end
 		
 	}
 	

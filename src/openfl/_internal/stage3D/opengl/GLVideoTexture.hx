@@ -23,8 +23,6 @@ class GLVideoTexture {
 	
 	public static function getTexture (videoTexture:VideoTexture, renderSession:RenderSession):TextureData {
 		
-		#if (js && html5)
-		
 		if (!videoTexture.__netStream.__video.paused) {
 			
 			var gl = renderSession.gl;
@@ -36,8 +34,6 @@ class GLVideoTexture {
 			GLUtils.checkGLError (gl);
 			
 		}
-		
-		#end
 		
 		return videoTexture.__textureData;
 		
