@@ -1,3 +1,3 @@
 package lime.utils;
 
-typedef ArrayBuffer = js.html.ArrayBuffer;
+typedef ArrayBuffer = js.lib.ArrayBuffer;

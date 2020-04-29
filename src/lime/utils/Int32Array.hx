@@ -1,3 +1,3 @@
 package lime.utils;
 
-typedef Int32Array = js.html.Int32Array;
+typedef Int32Array = js.lib.Int32Array;

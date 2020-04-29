@@ -1,6 +1,6 @@
 package lime.utils.compress;
 
-import js.html.ArrayBuffer;
+import js.lib.ArrayBuffer;
 
 @:native("pako")
 extern class Pako {

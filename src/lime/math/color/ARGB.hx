@@ -2,7 +2,6 @@ package lime.math.color;
 
 
 import lime.graphics.PixelFormat;
-import lime.utils.UInt32Array;
 import lime.utils.UInt8Array;
 
 

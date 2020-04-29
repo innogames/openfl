@@ -1,3 +1,3 @@
 package lime.utils;
 
-typedef ArrayBufferView = js.html.ArrayBufferView;
+typedef ArrayBufferView = js.lib.ArrayBufferView;

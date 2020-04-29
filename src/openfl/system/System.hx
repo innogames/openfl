@@ -56,7 +56,7 @@ final class System {
 	
 	private static function get_totalMemory ():Int {
 		
-		return untyped __js__ ("(window.performance && window.performance.memory) ? window.performance.memory.usedJSHeapSize : 0");
+		return js.Syntax.code ("(window.performance && window.performance.memory) ? window.performance.memory.usedJSHeapSize : 0");
 		
 	}
 	

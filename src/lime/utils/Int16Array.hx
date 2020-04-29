@@ -1,3 +1,3 @@
 package lime.utils;
 
-typedef Int16Array = js.html.Int16Array;
+typedef Int16Array = js.lib.Int16Array;

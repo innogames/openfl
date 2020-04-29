@@ -166,7 +166,7 @@ class Stage extends DisplayObjectContainer {
 		softKeyboardRect = new Rectangle ();
 		stageFocusRect = true;
 
-		__macKeyboard = new js.RegExp("AppleWebKit").test(js.Browser.navigator.userAgent) && new js.RegExp("Mobile\\/\\w+").test(js.Browser.navigator.userAgent) || new js.RegExp("Mac").test(js.Browser.navigator.userAgent);
+		__macKeyboard = new js.lib.RegExp("AppleWebKit").test(js.Browser.navigator.userAgent) && new js.lib.RegExp("Mobile\\/\\w+").test(js.Browser.navigator.userAgent) || new js.lib.RegExp("Mac").test(js.Browser.navigator.userAgent);
 		
 		__clearBeforeRender = true;
 		__stack = [];

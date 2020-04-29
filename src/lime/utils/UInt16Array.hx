@@ -1,3 +1,3 @@
 package lime.utils;
 
-typedef UInt16Array = js.html.Uint16Array;
+typedef UInt16Array = js.lib.Uint16Array;

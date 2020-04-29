@@ -5,7 +5,7 @@ import js.Browser;
 import haxe.Constraints.Function;
 import haxe.Timer;
 import openfl._internal.Lib in InternalLib;
-import openfl.display.Application;
+import lime.app.Application;
 import openfl.display.MovieClip;
 import openfl.net.URLLoader;
 import openfl.net.URLRequest;

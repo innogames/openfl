@@ -18,7 +18,7 @@ import openfl.utils.IDataInput;
 import openfl.utils.IDataOutput;
 
 #if (js && html5)
-import js.html.ArrayBuffer;
+import js.lib.ArrayBuffer;
 import js.html.WebSocket;
 import js.Browser;
 #end

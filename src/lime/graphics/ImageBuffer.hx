@@ -6,7 +6,7 @@ import js.html.CanvasElement;
 import js.html.CanvasRenderingContext2D;
 import js.html.Image in HTMLImage;
 import js.html.ImageData;
-import js.html.Uint8ClampedArray;
+import js.lib.Uint8ClampedArray;
 import js.Browser;
 
 @:allow(lime.graphics.Image)

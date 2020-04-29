@@ -1,3 +1,3 @@
 package lime.utils;
 
-typedef UInt8Array = js.html.Uint8Array;
+typedef UInt8Array = js.lib.Uint8Array;
