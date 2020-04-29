@@ -59,6 +59,18 @@ class CanvasGraphics {
 			
 			hitTestCanvas = cast Browser.document.createElement ("canvas");
 			hitTestContext = hitTestCanvas.getContext ("2d");
+			js.Syntax.code ("
+			if (CanvasRenderingContext2D.prototype.isPointInStroke == null) {
+				CanvasRenderingContext2D.prototype.isPointInStroke = function (path, x, y) {
+					return false;
+				};
+			}
+			if (CanvasRenderingContext2D.prototype.isPointInPath == null) {
+				CanvasRenderingContext2D.prototype.isPointInPath = function (path, x, y) {
+					return false;
+				};
+			}
+			}");
 			
 		}
 		
@@ -1496,19 +1508,4 @@ class CanvasGraphics {
 	}
 	
 	
-	static function __init__() {
-		js.Syntax.code ("
-		if (typeof CanvasRenderingContext2D !== 'undefined') {
-			if (CanvasRenderingContext2D.prototype.isPointInStroke == null) {
-				CanvasRenderingContext2D.prototype.isPointInStroke = function (path, x, y) {
-					return false;
-				};
-			}
-			if (CanvasRenderingContext2D.prototype.isPointInPath == null) {
-				CanvasRenderingContext2D.prototype.isPointInPath = function (path, x, y) {
-					return false;
-				};
-			}
-		}");
-	}
 }
