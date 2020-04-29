@@ -1,5 +1,6 @@
 package lime.graphics.utils;
 
+import openfl.geom.Point;
 import haxe.io.Bytes;
 import lime.graphics.Image;
 import lime.graphics.ImageBuffer;
@@ -135,7 +136,7 @@ class ImageDataUtil {
 	}
 	
 	
-	public static function copyPixels (image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, alphaImage:Image = null, alphaPoint:Vector2 = null, mergeAlpha:Bool = false):Void {
+	public static function copyPixels (image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, alphaImage:Image = null, alphaPoint:Point = null, mergeAlpha:Bool = false):Void {
 		
 		if (image.width == sourceImage.width && image.height == sourceImage.height && sourceRect.width == sourceImage.width && sourceRect.height == sourceImage.height && sourceRect.x == 0 && sourceRect.y == 0 && destPoint.x == 0 && destPoint.y == 0 && alphaImage == null && alphaPoint == null && mergeAlpha == false && image.format == sourceImage.format) {
 			
@@ -247,7 +248,7 @@ class ImageDataUtil {
 				
 			} else {
 				
-				if (alphaPoint == null) alphaPoint = new Vector2 ();
+				if (alphaPoint == null) alphaPoint = new Point ();
 				
 				var alphaData = alphaImage.buffer.data;
 				var alphaFormat = alphaImage.buffer.format;

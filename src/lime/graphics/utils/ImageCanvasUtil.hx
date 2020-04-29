@@ -1,6 +1,7 @@
 package lime.graphics.utils;
 
 
+import openfl.geom.Point;
 import lime.graphics.Image;
 import lime.graphics.PixelFormat;
 import lime.math.Rectangle;
@@ -119,7 +120,7 @@ class ImageCanvasUtil {
 	}
 	
 	
-	public static function copyPixels (image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, alphaImage:Image = null, alphaPoint:Vector2 = null, mergeAlpha:Bool = false):Void {
+	public static function copyPixels (image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, alphaImage:Image = null, alphaPoint:Point = null, mergeAlpha:Bool = false):Void {
 		
 		if (destPoint == null || destPoint.x >= image.width || destPoint.y >= image.height || sourceRect == null || sourceRect.width < 1 || sourceRect.height < 1) {
 			
@@ -129,7 +130,7 @@ class ImageCanvasUtil {
 		
 		if (alphaImage != null && alphaImage.transparent) {
 			
-			if (alphaPoint == null) alphaPoint = new Vector2 ();
+			if (alphaPoint == null) alphaPoint = new Point ();
 			
 			// TODO: use faster method
 			

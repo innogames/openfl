@@ -12,6 +12,7 @@ import lime.graphics.utils.ImageDataUtil;
 import lime.math.ColorMatrix;
 import lime.math.Rectangle;
 import lime.math.Vector2;
+import openfl.geom.Point;
 import openfl.utils.Endian;
 import lime.utils.UInt8Array;
 
@@ -158,7 +159,7 @@ class Image {
 	}
 	
 	
-	public function copyPixels (sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, alphaImage:Image = null, alphaPoint:Vector2 = null, mergeAlpha:Bool = false):Void {
+	public function copyPixels (sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, alphaImage:Image = null, alphaPoint:Point = null, mergeAlpha:Bool = false):Void {
 		
 		if (buffer == null || sourceImage == null) return;
 		if (sourceRect.width <= 0 || sourceRect.height <= 0) return;

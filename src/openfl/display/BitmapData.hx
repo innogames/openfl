@@ -10,13 +10,11 @@ import lime.graphics.Image;
 import lime.graphics.ImageChannel;
 import lime.graphics.utils.ImageCanvasUtil;
 import lime.math.color.ARGB;
-import lime.math.Vector2;
 import lime.utils.Float32Array;
 import openfl._internal.renderer.canvas.CanvasBlendModeManager;
 import openfl._internal.renderer.canvas.CanvasMaskManager;
 import openfl._internal.renderer.canvas.CanvasSmoothing;
 import openfl._internal.renderer.RenderSession;
-import openfl._internal.renderer.opengl.GLRenderer;
 import openfl._internal.renderer.opengl.vao.IVertexArrayObjectContext;
 import openfl._internal.utils.PerlinNoise;
 import openfl.display3D.textures.TextureBase;
@@ -56,7 +54,6 @@ class BitmapData implements IBitmapDrawable {
 	
 	private static inline var __bufferStride = 26;
 	private static var __supportsBGRA:Null<Bool> = null;
-	private static var __tempVector:Vector2 = new Vector2 ();
 	private static var __textureFormat:Int;
 	private static var __textureInternalFormat:Int;
 	
@@ -362,14 +359,7 @@ class BitmapData implements IBitmapDrawable {
 		
 		if (!readable || sourceBitmapData == null || !sourceBitmapData.__prepareImage()) return;
 		
-		if (alphaPoint != null) {
-			
-			__tempVector.x = alphaPoint.x;
-			__tempVector.y = alphaPoint.y;
-			
-		}
-		
-		image.copyPixels (sourceBitmapData.image, sourceRect.__toLimeRectangle (), destPoint.__toLimeVector2 (), alphaBitmapData != null ? alphaBitmapData.image : null, alphaPoint != null ? __tempVector : null, mergeAlpha);
+		image.copyPixels (sourceBitmapData.image, sourceRect.__toLimeRectangle (), destPoint.__toLimeVector2 (), alphaBitmapData != null ? alphaBitmapData.image : null, alphaPoint, mergeAlpha);
 		
 		__markUsersRenderDirty ();
 		
