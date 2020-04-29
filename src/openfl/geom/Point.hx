@@ -121,11 +121,11 @@ class Point {
 	}
 	
 	
-	private function __toLimeVector2 ():Vector2 {
+	private function __toLimeVector2 ():Point {
 		
 		if (__limeVector2 == null) {
 			
-			__limeVector2 = new Vector2 ();
+			__limeVector2 = new Point ();
 			
 		}
 		

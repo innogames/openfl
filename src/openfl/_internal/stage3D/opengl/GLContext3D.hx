@@ -3,7 +3,6 @@ package openfl._internal.stage3D.opengl;
 
 import lime.graphics.opengl.GL;
 import lime.math.Rectangle in LimeRectangle;
-import lime.math.Vector2;
 import lime.utils.Float32Array;
 import openfl._internal.stage3D.GLUtils;
 import openfl._internal.stage3D.SamplerState;
@@ -29,6 +28,7 @@ import openfl.display.BitmapData;
 import openfl.display.Stage3D;
 import openfl.errors.Error;
 import openfl.errors.IllegalOperationError;
+import openfl.geom.Point;
 import openfl.geom.Matrix3D;
 import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
@@ -248,7 +248,7 @@ class GLContext3D {
 			var image = window.renderer.readPixels ();
 			var heightOffset = image.height - context.backBufferHeight;
 			
-			destination.image.copyPixels (image, new LimeRectangle (Std.int (context.__stage3D.x), Std.int (context.__stage3D.y + heightOffset), context.backBufferWidth, context.backBufferHeight), new Vector2 ());
+			destination.image.copyPixels (image, new LimeRectangle (Std.int (context.__stage3D.x), Std.int (context.__stage3D.y + heightOffset), context.backBufferWidth, context.backBufferHeight), new Point ());
 			
 		}
 		

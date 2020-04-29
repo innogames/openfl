@@ -481,7 +481,7 @@ class Image {
 			
 			case DATA:
 				
-				copyPixels (this, rect, new Vector2 (x, y));
+				copyPixels (this, rect, new Point (x, y));
 			
 		}
 		
