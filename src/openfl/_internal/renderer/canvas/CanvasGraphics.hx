@@ -1498,6 +1498,7 @@ class CanvasGraphics {
 	
 	static function __init__() {
 		js.Syntax.code ("
+		if (typeof CanvasRenderingContext2D !== 'undefined') {
 			if (CanvasRenderingContext2D.prototype.isPointInStroke == null) {
 				CanvasRenderingContext2D.prototype.isPointInStroke = function (path, x, y) {
 					return false;
@@ -1508,6 +1509,6 @@ class CanvasGraphics {
 					return false;
 				};
 			}
-		");
+		}");
 	}
 }
