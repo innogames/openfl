@@ -70,7 +70,7 @@ class CanvasGraphics {
 					return false;
 				};
 			}
-			}");
+			");
 			
 		}
 		
