@@ -158,24 +158,15 @@ class Stage extends DisplayObjectContainer {
 		this.stage = this;
 		
 		align = StageAlign.TOP_LEFT;
-		#if html5
 		allowsFullScreen = false;
 		allowsFullScreenInteractive = false;
-		#else
-		allowsFullScreen = true;
-		allowsFullScreenInteractive = true;
-		#end
 		quality = StageQuality.HIGH;
 		scaleMode = StageScaleMode.NO_SCALE;
 		showDefaultContextMenu = true;
 		softKeyboardRect = new Rectangle ();
 		stageFocusRect = true;
 
-		#if mac
-		__macKeyboard = true;
-		#elseif (js && html5)
 		__macKeyboard = new js.RegExp("AppleWebKit").test(js.Browser.navigator.userAgent) && new js.RegExp("Mobile\\/\\w+").test(js.Browser.navigator.userAgent) || new js.RegExp("Mac").test(js.Browser.navigator.userAgent);
-		#end
 		
 		__clearBeforeRender = true;
 		__stack = [];
@@ -1460,10 +1451,8 @@ class Stage extends DisplayObjectContainer {
 		var windowWidth = Std.int (window.width * window.scale);
 		var windowHeight = Std.int (window.height * window.scale);
 		
-		#if (js && html5)
 		__logicalWidth = window.width;
 		__logicalHeight = window.height;
-		#end
 		
 		__displayMatrix.identity ();
 		
@@ -1493,9 +1482,7 @@ class Stage extends DisplayObjectContainer {
 			
 			__contentsScaleFactor = window.scale;
 			
-			#if (js && html5)
-				@:privateAccess (__renderer.renderSession).pixelRatio = window.scale;
-			#end
+			@:privateAccess (__renderer.renderSession).pixelRatio = window.scale;
 			
 			__forceRenderDirty();
 			

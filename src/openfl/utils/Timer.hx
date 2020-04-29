@@ -1,14 +1,10 @@
 package openfl.utils;
 
 
-import haxe.Timer in HaxeTimer;
+import js.Browser;
 import openfl.errors.Error;
 import openfl.events.EventDispatcher;
 import openfl.events.TimerEvent;
-
-#if (js && html5)
-import js.Browser;
-#end
 
 class Timer extends EventDispatcher {
 	
@@ -20,7 +16,6 @@ class Timer extends EventDispatcher {
 	
 	private var __delay:Float;
 	private var __repeatCount:Int;
-	private var __timer:HaxeTimer;
 	private var __timerID:Int;
 	
 	
@@ -62,12 +57,7 @@ class Timer extends EventDispatcher {
 			
 			running = true;
 			
-			#if (js && html5)
-			__timerID = Browser.window.setInterval (timer_onTimer, Std.int (__delay));
-			#else
-			__timer = new HaxeTimer (Std.int (__delay));
-			__timer.run = timer_onTimer;
-			#end
+			__timerID = Browser.window.setInterval (timer_onTimer, __delay);
 			
 		}
 		
@@ -78,21 +68,12 @@ class Timer extends EventDispatcher {
 		
 		running = false;
 		
-		#if (js && html5)
 		if (__timerID != null) {
 			
 			Browser.window.clearInterval (__timerID);
 			__timerID = null;
 			
 		}
-		#else
-		if (__timer != null) {
-			
-			__timer.stop ();
-			__timer = null;
-			
-		}
-		#end
 		
 	}
 	

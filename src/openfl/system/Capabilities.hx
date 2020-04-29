@@ -16,13 +16,13 @@ final class Capabilities {
 	public static var hasEmbeddedVideo (default, null) = false;
 	public static var hasIME (default, null) = false;
 	public static var hasMP3 (default, null) = false;
-	public static var hasPrinting (default, null) = #if html5 true #else false #end;
+	public static var hasPrinting (default, null) = true;
 	public static var hasScreenBroadcast (default, null) = false;
 	public static var hasScreenPlayback (default, null) = false;
 	public static var hasStreamingAudio (default, null) = false;
 	public static var hasStreamingVideo (default, null) = false;
 	public static var hasTLS (default, null) = true;
-	public static var hasVideoEncoder (default, null) = #if html5 true #else false #end;
+	public static var hasVideoEncoder (default, null) = true;
 	public static var isDebugger (default, null) = #if debug true #else false #end;
 	public static var isEmbeddedInAcrobat (default, null) = false;
 	public static var language (get, never):String;
@@ -199,27 +199,7 @@ final class Capabilities {
 	
 	private static function get_version () {
 		
-		#if windows
-		var value = "WIN";
-		#elseif mac
-		var value = "MAC";
-		#elseif linux
-		var value = "LNX";
-		#elseif ios
-		var value = "IOS";
-		#elseif tvos
-		var value = "TVO";
-		#elseif android
-		var value = "AND";
-		#elseif blackberry
-		var value = "QNX";
-		#elseif firefox
-		var value = "MOZ";
-		#elseif html5
 		var value = "WEB";
-		#else
-		var value = "OFL";
-		#end
 		
 		if (Compiler.getDefine ("openfl") != null) {
 			

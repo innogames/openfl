@@ -11,27 +11,24 @@ private typedef CallbackCollection = haxe.DynamicAccess<Function>;
 final class ExternalInterface {
 	
 	
-	public static var available (default, null) = #if (js && html5) true #else false #end;
+	public static var available (default, null) = true;
 	public static var marshallExceptions = false;
 	public static var objectID (default, null):String;
 	
 	
 	public static function addCallback (functionName:String, closure:Function):Void {
 		
-		#if (js && html5)
 		if (Application.current.window.backend.element != null) {
 			
 			(cast Application.current.window.backend.element : CallbackCollection)[functionName] = closure;
 			
 		}
-		#end
 		
 	}
 	
 	
 	public static function call (functionName:String, ?p1:Dynamic, ?p2:Dynamic, ?p3:Dynamic, ?p4:Dynamic, ?p5:Dynamic):Dynamic {
 		
-		#if (js && html5)
 		var callResponse:Dynamic = null;
 		
 		if (!~/^\(.+\)$/.match(functionName)) {
@@ -86,9 +83,6 @@ final class ExternalInterface {
 		}
 		
 		return callResponse;
-		#else
-		return null;
-		#end
 		
 	}
 	

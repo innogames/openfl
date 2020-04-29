@@ -108,14 +108,12 @@ class Loader extends DisplayObjectContainer {
 			
 		}
 		
-		#if (js && html5)
 		if (contentLoaderInfo.contentType.indexOf ("image/") > -1 && request.method == URLRequestMethod.GET && (request.requestHeaders == null || request.requestHeaders.length == 0) && request.userAgent == null) {
 			
 			BitmapData.loadFromFile (request.url).onComplete (BitmapData_onLoad).onError (BitmapData_onError).onProgress (BitmapData_onProgress);
 			return;
 			
 		}
-		#end
 		
 		var loader = new URLLoader ();
 		loader.dataFormat = URLLoaderDataFormat.BINARY;
@@ -258,9 +256,7 @@ class Loader extends DisplayObjectContainer {
 			contentLoaderInfo.content = content;
 			addChild (content);
 			
-			#if (js && html5)
 			js.Lib.eval('(function () {' + loader.data + '})()');
-			#end
 			
 			contentLoaderInfo.dispatchEvent (new Event (Event.COMPLETE));
 			

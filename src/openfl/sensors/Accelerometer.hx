@@ -8,11 +8,6 @@ import openfl.errors.ArgumentError;
 import openfl.events.AccelerometerEvent;
 import openfl.events.EventDispatcher;
 
-#if (js && html5)
-import js.Browser;
-#end
-
-
 class Accelerometer extends EventDispatcher {
 	
 	

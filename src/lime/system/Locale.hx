@@ -52,13 +52,7 @@ abstract Locale(String) from String to String {
 		
 		if (__systemLocale == null) {
 			
-			var locale = null;
-			
-			#if (js && html5)
-			
-			locale = js.Browser.navigator.language;
-			
-			#end
+			var locale = js.Browser.navigator.language;
 			
 			if (locale != null) {
 				

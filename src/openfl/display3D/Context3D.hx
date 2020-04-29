@@ -12,7 +12,6 @@ import openfl.display3D.textures.Texture;
 import openfl.display3D.textures.VideoTexture;
 import openfl.display.BitmapData;
 import openfl.display.Stage3D;
-import openfl.errors.Error;
 import openfl.errors.IllegalOperationError;
 import openfl.events.EventDispatcher;
 import openfl.geom.Matrix3D;
@@ -31,7 +30,7 @@ import openfl.Vector;
 final class Context3D extends EventDispatcher {
 	
 	
-	public static var supportsVideoTexture (default, null):Bool = #if (js && html5) true #else false #end;
+	public static var supportsVideoTexture (default, null):Bool = true;
 	
 	private static inline var MAX_SAMPLERS = 8;
 	private static inline var MAX_ATTRIBUTES = 16;
@@ -152,11 +151,7 @@ final class Context3D extends EventDispatcher {
 	
 	public function createVideoTexture ():VideoTexture {
 		
-		#if (js && html5)
 		return new VideoTexture (this);
-		#else
-		throw new Error ("Video textures are not supported on this platform");
-		#end
 		
 	}
 	

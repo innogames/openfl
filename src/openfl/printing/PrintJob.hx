@@ -7,12 +7,10 @@ import openfl.display.BitmapData;
 import openfl.display.Sprite;
 import openfl.geom.Rectangle;
 
-#if (js && html5)
 import js.html.DivElement;
 import js.html.Image;
 import js.html.StyleElement;
 import js.Browser;
-#end
 
 @:access(lime.graphics.ImageBuffer)
 
@@ -20,7 +18,7 @@ import js.Browser;
 class PrintJob {
 	
 	
-	public static var isSupported (default, null) = #if (js && html5) true #else false #end;
+	public static var isSupported (default, null) = true;
 	
 	public var orientation:PrintJobOrientation;
 	public var pageHeight (default, null):Int;
@@ -60,8 +58,6 @@ class PrintJob {
 	public function send ():Void {
 		
 		if (!__started) return;
-		
-		#if (js && html5)
 		
 		var window = Browser.window.open ("", "", "width=500,height=500");
 		
@@ -115,8 +111,6 @@ class PrintJob {
 			}, 500);
 			
 		}
-		
-		#end
 		
 	}
 	

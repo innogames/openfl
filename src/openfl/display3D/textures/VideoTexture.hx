@@ -34,8 +34,6 @@ final class VideoTexture extends TextureBase {
 		
 		__netStream = netStream;
 		
-		#if (js && html5)
-		
 		if (__netStream.__video.readyState == 4) {
 			
 			Timer.delay (function () {
@@ -54,8 +52,6 @@ final class VideoTexture extends TextureBase {
 			
 		}
 		
-		#end
-		
 	}
 	
 	
@@ -68,12 +64,8 @@ final class VideoTexture extends TextureBase {
 	
 	private function __textureReady ():Void {
 		
-		#if (js && html5)
-		
 		videoWidth = __netStream.__video.videoWidth;
 		videoHeight = __netStream.__video.videoHeight;
-		
-		#end
 		
 		dispatchEvent (new Event (Event.TEXTURE_READY));
 		

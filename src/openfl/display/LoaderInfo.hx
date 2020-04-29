@@ -8,15 +8,13 @@ import openfl.events.UncaughtErrorEvents;
 import openfl.system.ApplicationDomain;
 import openfl.utils.ByteArray;
 
-#if (js && html5)
 import js.Browser;
-#end
 
 
 class LoaderInfo extends EventDispatcher {
 	
 	
-	private static var __rootURL = #if (js && html5) (Browser.supported ? Browser.document.URL : "") #else "" #end;
+	static final __rootURL = if (Browser.supported) Browser.document.URL else "";
 	
 	public var applicationDomain (default, null):ApplicationDomain;
 	public var bytes (default, null):ByteArray;

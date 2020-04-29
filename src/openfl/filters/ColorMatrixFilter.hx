@@ -41,10 +41,8 @@ final class ColorMatrixFilter extends BitmapFilter {
 		var sourceImage = sourceBitmapData.image; 
 		var image = destBitmapData.image;
 		
-		#if (js && html5)
 		ImageCanvasUtil.convertToData (sourceImage);
 		ImageCanvasUtil.convertToData (image);
-		#end
 		
 		var sourceData = sourceImage.data;
 		var destData = image.data;

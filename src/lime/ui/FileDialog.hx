@@ -6,9 +6,7 @@ import haxe.io.Path;
 import lime.app.Event;
 import lime.graphics.Image;
 
-#if (js && html5)
 import js.html.Blob;
-#end
 
 @:access(lime.graphics.Image)
 class FileDialog {
@@ -55,8 +53,6 @@ class FileDialog {
 			
 		}
 		
-		#if (js && html5)
-		
 		// TODO: Cleaner API for mimeType detection
 		
 		var type = "application/octet-stream";
@@ -90,13 +86,6 @@ class FileDialog {
 		untyped window.saveAs (new Blob ([ buffer ], { type: type }), path, true);
 		onSave.dispatch (path);
 		return true;
-		
-		#else
-		
-		onCancel.dispatch ();
-		return false;
-		
-		#end
 		
 	}
 	

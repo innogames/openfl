@@ -33,25 +33,13 @@ final class Multitouch {
 	
 	private static function get_supportsTouchEvents ():Bool {
 		
-		#if (js && html5)
-		
-		if (untyped __js__ ("('ontouchstart' in document.documentElement) || (window.DocumentTouch && document instanceof DocumentTouch)")) {
+		if (js.Syntax.code ("('ontouchstart' in document.documentElement) || (window.DocumentTouch && document instanceof DocumentTouch)")) {
 			
 			return true;
 			
 		}
 		
 		return false;
-		
-		#elseif !mac
-		
-		return true;
-		
-		#else
-		
-		return false;
-		
-		#end
 		
 	}
 	

@@ -100,9 +100,7 @@ typedef WindowConfig = {
 	@:optional var colorDepth:Int;
 	@:optional var depthBuffer:Bool;
 	@:optional var display:Int;
-	#if (js && html5)
 	@:optional var element:js.html.Element;
-	#end
 	@:optional var hardware:Bool;
 	@:optional var height:Int;
 	@:optional var hidden:Bool;

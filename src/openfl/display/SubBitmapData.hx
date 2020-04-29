@@ -19,9 +19,7 @@ import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.utils.ImageCanvasUtil;
 import lime.utils.Float32Array;
-#if (js && html5)
 import js.html.CanvasRenderingContext2D;
-#end
 #end
 
 @:access(openfl.geom.ColorTransform)
@@ -102,11 +100,7 @@ class SubBitmapData extends BitmapData {
 		#if debug
 		throw message;
 		#else
-		#if (js && html5)
 		js.Browser.window.console.error(message);
-		#else
-		trace(message);
-		#end
 		#end
 	}
 	override function applyFilter(sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, filter:BitmapFilter) unsupported();
@@ -501,7 +495,6 @@ class SubBitmapData extends BitmapData {
 		
 	}
 
-	#if (js && html5)
 	override function __canBeDrawnToCanvas ():Bool {
 		
 		return __parentBitmap.__canBeDrawnToCanvas ();
@@ -602,7 +595,6 @@ class SubBitmapData extends BitmapData {
 		context.drawImage (parentImage.src, sx, sy, w, h, dx, dy, w, h);
 
 	}
-	#end
 
 	#end
 	
