@@ -1,8 +1,6 @@
 package openfl.display;
 
-
 enum abstract BlendMode(Null<Int>) {
-	
 	public var ADD = 0;
 	public var ALPHA = 1;
 	public var DARKEN = 2;
@@ -18,11 +16,9 @@ enum abstract BlendMode(Null<Int>) {
 	public var SCREEN = 12;
 	public var SHADER = 13;
 	public var SUBTRACT = 14;
-	
-	@:from private static function fromString (value:String):BlendMode {
-		
+
+	@:from private static function fromString(value:String):BlendMode {
 		return switch (value) {
-			
 			case "add": ADD;
 			case "alpha": ALPHA;
 			case "darken": DARKEN;
@@ -39,15 +35,11 @@ enum abstract BlendMode(Null<Int>) {
 			case "shader": SHADER;
 			case "subtract": SUBTRACT;
 			default: null;
-			
 		}
-		
 	}
-	
-	@:to private function toString ():String {
-		
+
+	@:to private function toString():String {
 		return switch (cast this) {
-			
 			case BlendMode.ADD: "add";
 			case BlendMode.ALPHA: "alpha";
 			case BlendMode.DARKEN: "darken";
@@ -64,9 +56,6 @@ enum abstract BlendMode(Null<Int>) {
 			case BlendMode.SHADER: "shader";
 			case BlendMode.SUBTRACT: "subtract";
 			default: null;
-			
 		}
-		
 	}
-	
 }

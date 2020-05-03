@@ -3,8 +3,6 @@ package openfl.ui;
 import lime.ui.KeyCode;
 
 final class Keyboard {
-	
-	
 	public static inline var NUMBER_0 = 48;
 	public static inline var NUMBER_1 = 49;
 	public static inline var NUMBER_2 = 50;
@@ -13,7 +11,7 @@ final class Keyboard {
 	public static inline var NUMBER_5 = 53;
 	public static inline var NUMBER_6 = 54;
 	public static inline var NUMBER_7 = 55;
-	public static inline var NUMBER_8 = 56; 
+	public static inline var NUMBER_8 = 56;
 	public static inline var NUMBER_9 = 57;
 	public static inline var A = 65;
 	public static inline var B = 66;
@@ -106,23 +104,17 @@ final class Keyboard {
 	public static inline var BACKSLASH = 220;
 	public static inline var RIGHTBRACKET = 221;
 	public static inline var QUOTE = 222;
-	
-	public static var capsLock (default, null):Bool;
-	public static var numLock (default, null):Bool;
-	
-	
-	public static function isAccessible ():Bool {
-		
+
+	public static var capsLock(default, null):Bool;
+	public static var numLock(default, null):Bool;
+
+	public static function isAccessible():Bool {
 		// default browser security restrictions are always enforced
 		return false;
-		
 	}
-	
-	
-	private static inline function __convertKeyCode (key:KeyCode):Int {
-		
+
+	private static inline function __convertKeyCode(key:KeyCode):Int {
 		return switch (key) {
-			
 			case KeyCode.BACKSPACE: Keyboard.BACKSPACE;
 			case KeyCode.TAB: Keyboard.TAB;
 			case KeyCode.RETURN: Keyboard.ENTER;
@@ -138,7 +130,7 @@ final class Keyboard {
 			case KeyCode.LEFT_PARENTHESIS: Keyboard.NUMBER_9;
 			case KeyCode.RIGHT_PARENTHESIS: Keyboard.NUMBER_0;
 			case KeyCode.ASTERISK: Keyboard.NUMBER_8;
-			//case KeyCode.PLUS: 0x2B;
+			// case KeyCode.PLUS: 0x2B;
 			case KeyCode.COMMA: Keyboard.COMMA;
 			case KeyCode.MINUS: Keyboard.MINUS;
 			case KeyCode.PERIOD: Keyboard.PERIOD;
@@ -236,94 +228,94 @@ final class Keyboard {
 			case KeyCode.NUMPAD_0: Keyboard.NUMPAD_0;
 			case KeyCode.NUMPAD_PERIOD: Keyboard.NUMPAD_DECIMAL;
 			case KeyCode.APPLICATION: 302;
-			//case KeyCode.POWER: 0x40000066;
-			//case KeyCode.NUMPAD_EQUALS: 0x40000067;
+			// case KeyCode.POWER: 0x40000066;
+			// case KeyCode.NUMPAD_EQUALS: 0x40000067;
 			case KeyCode.F13: Keyboard.F13;
 			case KeyCode.F14: Keyboard.F14;
 			case KeyCode.F15: Keyboard.F15;
-			//case KeyCode.F16: 0x4000006B;
-			//case KeyCode.F17: 0x4000006C;
-			//case KeyCode.F18: 0x4000006D;
-			//case KeyCode.F19: 0x4000006E;
-			//case KeyCode.F20: 0x4000006F;
-			//case KeyCode.F21: 0x40000070;
-			//case KeyCode.F22: 0x40000071;
-			//case KeyCode.F23: 0x40000072;
-			//case KeyCode.F24: 0x40000073;
-			//case KeyCode.EXECUTE: 0x40000074;
-			//case KeyCode.HELP: 0x40000075;
-			//case KeyCode.MENU: 0x40000076;
-			//case KeyCode.SELECT: 0x40000077;
-			//case KeyCode.STOP: 0x40000078;
-			//case KeyCode.AGAIN: 0x40000079;
-			//case KeyCode.UNDO: 0x4000007A;
-			//case KeyCode.CUT: 0x4000007B;
-			//case KeyCode.COPY: 0x4000007C;
-			//case KeyCode.PASTE: 0x4000007D;
-			//case KeyCode.FIND: 0x4000007E;
-			//case KeyCode.MUTE: 0x4000007F;
-			//case KeyCode.VOLUME_UP: 0x40000080;
-			//case KeyCode.VOLUME_DOWN: 0x40000081;
-			//case KeyCode.NUMPAD_COMMA: 0x40000085;
+			// case KeyCode.F16: 0x4000006B;
+			// case KeyCode.F17: 0x4000006C;
+			// case KeyCode.F18: 0x4000006D;
+			// case KeyCode.F19: 0x4000006E;
+			// case KeyCode.F20: 0x4000006F;
+			// case KeyCode.F21: 0x40000070;
+			// case KeyCode.F22: 0x40000071;
+			// case KeyCode.F23: 0x40000072;
+			// case KeyCode.F24: 0x40000073;
+			// case KeyCode.EXECUTE: 0x40000074;
+			// case KeyCode.HELP: 0x40000075;
+			// case KeyCode.MENU: 0x40000076;
+			// case KeyCode.SELECT: 0x40000077;
+			// case KeyCode.STOP: 0x40000078;
+			// case KeyCode.AGAIN: 0x40000079;
+			// case KeyCode.UNDO: 0x4000007A;
+			// case KeyCode.CUT: 0x4000007B;
+			// case KeyCode.COPY: 0x4000007C;
+			// case KeyCode.PASTE: 0x4000007D;
+			// case KeyCode.FIND: 0x4000007E;
+			// case KeyCode.MUTE: 0x4000007F;
+			// case KeyCode.VOLUME_UP: 0x40000080;
+			// case KeyCode.VOLUME_DOWN: 0x40000081;
+			// case KeyCode.NUMPAD_COMMA: 0x40000085;
 			////case KeyCode.NUMPAD_EQUALS_AS400: 0x40000086;
-			//case KeyCode.ALT_ERASE: 0x40000099;
-			//case KeyCode.SYSTEM_REQUEST: 0x4000009A;
-			//case KeyCode.CANCEL: 0x4000009B;
-			//case KeyCode.CLEAR: 0x4000009C;
-			//case KeyCode.PRIOR: 0x4000009D;
+			// case KeyCode.ALT_ERASE: 0x40000099;
+			// case KeyCode.SYSTEM_REQUEST: 0x4000009A;
+			// case KeyCode.CANCEL: 0x4000009B;
+			// case KeyCode.CLEAR: 0x4000009C;
+			// case KeyCode.PRIOR: 0x4000009D;
 			case KeyCode.RETURN2: Keyboard.ENTER;
-			//case KeyCode.SEPARATOR: 0x4000009F;
-			//case KeyCode.OUT: 0x400000A0;
-			//case KeyCode.OPER: 0x400000A1;
-			//case KeyCode.CLEAR_AGAIN: 0x400000A2;
-			//case KeyCode.CRSEL: 0x400000A3;
-			//case KeyCode.EXSEL: 0x400000A4;
-			//case KeyCode.NUMPAD_00: 0x400000B0;
-			//case KeyCode.NUMPAD_000: 0x400000B1;
-			//case KeyCode.THOUSAND_SEPARATOR: 0x400000B2;
-			//case KeyCode.DECIMAL_SEPARATOR: 0x400000B3;
-			//case KeyCode.CURRENCY_UNIT: 0x400000B4;
-			//case KeyCode.CURRENCY_SUBUNIT: 0x400000B5;
-			//case KeyCode.NUMPAD_LEFT_PARENTHESIS: 0x400000B6;
-			//case KeyCode.NUMPAD_RIGHT_PARENTHESIS: 0x400000B7;
-			//case KeyCode.NUMPAD_LEFT_BRACE: 0x400000B8;
-			//case KeyCode.NUMPAD_RIGHT_BRACE: 0x400000B9;
-			//case KeyCode.NUMPAD_TAB: 0x400000BA;
-			//case KeyCode.NUMPAD_BACKSPACE: 0x400000BB;
-			//case KeyCode.NUMPAD_A: 0x400000BC;
-			//case KeyCode.NUMPAD_B: 0x400000BD;
-			//case KeyCode.NUMPAD_C: 0x400000BE;
-			//case KeyCode.NUMPAD_D: 0x400000BF;
-			//case KeyCode.NUMPAD_E: 0x400000C0;
-			//case KeyCode.NUMPAD_F: 0x400000C1;
-			//case KeyCode.NUMPAD_XOR: 0x400000C2;
-			//case KeyCode.NUMPAD_POWER: 0x400000C3;
-			//case KeyCode.NUMPAD_PERCENT: 0x400000C4;
-			//case KeyCode.NUMPAD_LESS_THAN: 0x400000C5;
-			//case KeyCode.NUMPAD_GREATER_THAN: 0x400000C6;
-			//case KeyCode.NUMPAD_AMPERSAND: 0x400000C7;
-			//case KeyCode.NUMPAD_DOUBLE_AMPERSAND: 0x400000C8;
-			//case KeyCode.NUMPAD_VERTICAL_BAR: 0x400000C9;
-			//case KeyCode.NUMPAD_DOUBLE_VERTICAL_BAR: 0x400000CA;
-			//case KeyCode.NUMPAD_COLON: 0x400000CB;
-			//case KeyCode.NUMPAD_HASH: 0x400000CC;
-			//case KeyCode.NUMPAD_SPACE: 0x400000CD;
-			//case KeyCode.NUMPAD_AT: 0x400000CE;
-			//case KeyCode.NUMPAD_EXCLAMATION: 0x400000CF;
-			//case KeyCode.NUMPAD_MEM_STORE: 0x400000D0;
-			//case KeyCode.NUMPAD_MEM_RECALL: 0x400000D1;
-			//case KeyCode.NUMPAD_MEM_CLEAR: 0x400000D2;
-			//case KeyCode.NUMPAD_MEM_ADD: 0x400000D3;
-			//case KeyCode.NUMPAD_MEM_SUBTRACT: 0x400000D4;
-			//case KeyCode.NUMPAD_MEM_MULTIPLY: 0x400000D5;
-			//case KeyCode.NUMPAD_MEM_DIVIDE: 0x400000D6;
-			//case KeyCode.NUMPAD_PLUS_MINUS: 0x400000D7;
-			//case KeyCode.NUMPAD_CLEAR: 0x400000D8;
-			//case KeyCode.NUMPAD_CLEAR_ENTRY: 0x400000D9;
-			//case KeyCode.NUMPAD_BINARY: 0x400000DA;
-			//case KeyCode.NUMPAD_OCTAL: 0x400000DB;
+			// case KeyCode.SEPARATOR: 0x4000009F;
+			// case KeyCode.OUT: 0x400000A0;
+			// case KeyCode.OPER: 0x400000A1;
+			// case KeyCode.CLEAR_AGAIN: 0x400000A2;
+			// case KeyCode.CRSEL: 0x400000A3;
+			// case KeyCode.EXSEL: 0x400000A4;
+			// case KeyCode.NUMPAD_00: 0x400000B0;
+			// case KeyCode.NUMPAD_000: 0x400000B1;
+			// case KeyCode.THOUSAND_SEPARATOR: 0x400000B2;
+			// case KeyCode.DECIMAL_SEPARATOR: 0x400000B3;
+			// case KeyCode.CURRENCY_UNIT: 0x400000B4;
+			// case KeyCode.CURRENCY_SUBUNIT: 0x400000B5;
+			// case KeyCode.NUMPAD_LEFT_PARENTHESIS: 0x400000B6;
+			// case KeyCode.NUMPAD_RIGHT_PARENTHESIS: 0x400000B7;
+			// case KeyCode.NUMPAD_LEFT_BRACE: 0x400000B8;
+			// case KeyCode.NUMPAD_RIGHT_BRACE: 0x400000B9;
+			// case KeyCode.NUMPAD_TAB: 0x400000BA;
+			// case KeyCode.NUMPAD_BACKSPACE: 0x400000BB;
+			// case KeyCode.NUMPAD_A: 0x400000BC;
+			// case KeyCode.NUMPAD_B: 0x400000BD;
+			// case KeyCode.NUMPAD_C: 0x400000BE;
+			// case KeyCode.NUMPAD_D: 0x400000BF;
+			// case KeyCode.NUMPAD_E: 0x400000C0;
+			// case KeyCode.NUMPAD_F: 0x400000C1;
+			// case KeyCode.NUMPAD_XOR: 0x400000C2;
+			// case KeyCode.NUMPAD_POWER: 0x400000C3;
+			// case KeyCode.NUMPAD_PERCENT: 0x400000C4;
+			// case KeyCode.NUMPAD_LESS_THAN: 0x400000C5;
+			// case KeyCode.NUMPAD_GREATER_THAN: 0x400000C6;
+			// case KeyCode.NUMPAD_AMPERSAND: 0x400000C7;
+			// case KeyCode.NUMPAD_DOUBLE_AMPERSAND: 0x400000C8;
+			// case KeyCode.NUMPAD_VERTICAL_BAR: 0x400000C9;
+			// case KeyCode.NUMPAD_DOUBLE_VERTICAL_BAR: 0x400000CA;
+			// case KeyCode.NUMPAD_COLON: 0x400000CB;
+			// case KeyCode.NUMPAD_HASH: 0x400000CC;
+			// case KeyCode.NUMPAD_SPACE: 0x400000CD;
+			// case KeyCode.NUMPAD_AT: 0x400000CE;
+			// case KeyCode.NUMPAD_EXCLAMATION: 0x400000CF;
+			// case KeyCode.NUMPAD_MEM_STORE: 0x400000D0;
+			// case KeyCode.NUMPAD_MEM_RECALL: 0x400000D1;
+			// case KeyCode.NUMPAD_MEM_CLEAR: 0x400000D2;
+			// case KeyCode.NUMPAD_MEM_ADD: 0x400000D3;
+			// case KeyCode.NUMPAD_MEM_SUBTRACT: 0x400000D4;
+			// case KeyCode.NUMPAD_MEM_MULTIPLY: 0x400000D5;
+			// case KeyCode.NUMPAD_MEM_DIVIDE: 0x400000D6;
+			// case KeyCode.NUMPAD_PLUS_MINUS: 0x400000D7;
+			// case KeyCode.NUMPAD_CLEAR: 0x400000D8;
+			// case KeyCode.NUMPAD_CLEAR_ENTRY: 0x400000D9;
+			// case KeyCode.NUMPAD_BINARY: 0x400000DA;
+			// case KeyCode.NUMPAD_OCTAL: 0x400000DB;
 			case KeyCode.NUMPAD_DECIMAL: Keyboard.NUMPAD_DECIMAL;
-			//case KeyCode.NUMPAD_HEXADECIMAL: 0x400000DD;
+			// case KeyCode.NUMPAD_HEXADECIMAL: 0x400000DD;
 			case KeyCode.LEFT_CTRL: Keyboard.CONTROL;
 			case KeyCode.LEFT_SHIFT: Keyboard.SHIFT;
 			case KeyCode.LEFT_ALT: Keyboard.ALTERNATE;
@@ -332,151 +324,166 @@ final class Keyboard {
 			case KeyCode.RIGHT_SHIFT: Keyboard.SHIFT;
 			case KeyCode.RIGHT_ALT: Keyboard.ALTERNATE;
 			case KeyCode.RIGHT_META: Keyboard.COMMAND;
-			//case KeyCode.MODE: 0x40000101;
-			//case KeyCode.AUDIO_NEXT: 0x40000102;
-			//case KeyCode.AUDIO_PREVIOUS: 0x40000103;
-			//case KeyCode.AUDIO_STOP: 0x40000104;
-			//case KeyCode.AUDIO_PLAY: 0x40000105;
-			//case KeyCode.AUDIO_MUTE: 0x40000106;
-			//case KeyCode.MEDIA_SELECT: 0x40000107;
-			//case KeyCode.WWW: 0x40000108;
-			//case KeyCode.MAIL: 0x40000109;
-			//case KeyCode.CALCULATOR: 0x4000010A;
-			//case KeyCode.COMPUTER: 0x4000010B;
-			//case KeyCode.APP_CONTROL_SEARCH: 0x4000010C;
-			//case KeyCode.APP_CONTROL_HOME: 0x4000010D;
-			//case KeyCode.APP_CONTROL_BACK: 0x4000010E;
-			//case KeyCode.APP_CONTROL_FORWARD: 0x4000010F;
-			//case KeyCode.APP_CONTROL_STOP: 0x40000110;
-			//case KeyCode.APP_CONTROL_REFRESH: 0x40000111;
-			//case KeyCode.APP_CONTROL_BOOKMARKS: 0x40000112;
-			//case KeyCode.BRIGHTNESS_DOWN: 0x40000113;
-			//case KeyCode.BRIGHTNESS_UP: 0x40000114;
-			//case KeyCode.DISPLAY_SWITCH: 0x40000115;
-			//case KeyCode.BACKLIGHT_TOGGLE: 0x40000116;
-			//case KeyCode.BACKLIGHT_DOWN: 0x40000117;
-			//case KeyCode.BACKLIGHT_UP: 0x40000118;
-			//case KeyCode.EJECT: 0x40000119;
-			//case KeyCode.SLEEP: 0x4000011A;
+			// case KeyCode.MODE: 0x40000101;
+			// case KeyCode.AUDIO_NEXT: 0x40000102;
+			// case KeyCode.AUDIO_PREVIOUS: 0x40000103;
+			// case KeyCode.AUDIO_STOP: 0x40000104;
+			// case KeyCode.AUDIO_PLAY: 0x40000105;
+			// case KeyCode.AUDIO_MUTE: 0x40000106;
+			// case KeyCode.MEDIA_SELECT: 0x40000107;
+			// case KeyCode.WWW: 0x40000108;
+			// case KeyCode.MAIL: 0x40000109;
+			// case KeyCode.CALCULATOR: 0x4000010A;
+			// case KeyCode.COMPUTER: 0x4000010B;
+			// case KeyCode.APP_CONTROL_SEARCH: 0x4000010C;
+			// case KeyCode.APP_CONTROL_HOME: 0x4000010D;
+			// case KeyCode.APP_CONTROL_BACK: 0x4000010E;
+			// case KeyCode.APP_CONTROL_FORWARD: 0x4000010F;
+			// case KeyCode.APP_CONTROL_STOP: 0x40000110;
+			// case KeyCode.APP_CONTROL_REFRESH: 0x40000111;
+			// case KeyCode.APP_CONTROL_BOOKMARKS: 0x40000112;
+			// case KeyCode.BRIGHTNESS_DOWN: 0x40000113;
+			// case KeyCode.BRIGHTNESS_UP: 0x40000114;
+			// case KeyCode.DISPLAY_SWITCH: 0x40000115;
+			// case KeyCode.BACKLIGHT_TOGGLE: 0x40000116;
+			// case KeyCode.BACKLIGHT_DOWN: 0x40000117;
+			// case KeyCode.BACKLIGHT_UP: 0x40000118;
+			// case KeyCode.EJECT: 0x40000119;
+			// case KeyCode.SLEEP: 0x4000011A;
 			default: cast key;
-			
 		}
-		
 	}
-	
-	
-	private static function __getCharCode (key:Int, shift:Bool = false):Int {
-		
+
+	private static function __getCharCode(key:Int, shift:Bool = false):Int {
 		if (!shift) {
-			
 			switch (key) {
-				
-				case Keyboard.BACKSPACE: return 8;
-				case Keyboard.TAB: return 9;
-				case Keyboard.ENTER: return 13;
-				case Keyboard.ESCAPE: return 27;
-				case Keyboard.SPACE: return 32;
-				case Keyboard.SEMICOLON: return 59;
-				case Keyboard.EQUAL: return 61;
-				case Keyboard.COMMA: return 44;
-				case Keyboard.MINUS: return 45;
-				case Keyboard.PERIOD: return 46;
-				case Keyboard.SLASH: return 47;
-				case Keyboard.BACKQUOTE: return 96;
-				case Keyboard.LEFTBRACKET: return 91;
-				case Keyboard.BACKSLASH: return 92;
-				case Keyboard.RIGHTBRACKET: return 93;
-				case Keyboard.QUOTE: return 39;
-				
+				case Keyboard.BACKSPACE:
+					return 8;
+				case Keyboard.TAB:
+					return 9;
+				case Keyboard.ENTER:
+					return 13;
+				case Keyboard.ESCAPE:
+					return 27;
+				case Keyboard.SPACE:
+					return 32;
+				case Keyboard.SEMICOLON:
+					return 59;
+				case Keyboard.EQUAL:
+					return 61;
+				case Keyboard.COMMA:
+					return 44;
+				case Keyboard.MINUS:
+					return 45;
+				case Keyboard.PERIOD:
+					return 46;
+				case Keyboard.SLASH:
+					return 47;
+				case Keyboard.BACKQUOTE:
+					return 96;
+				case Keyboard.LEFTBRACKET:
+					return 91;
+				case Keyboard.BACKSLASH:
+					return 92;
+				case Keyboard.RIGHTBRACKET:
+					return 93;
+				case Keyboard.QUOTE:
+					return 39;
 			}
-			
+
 			if (key >= Keyboard.NUMBER_0 && key <= Keyboard.NUMBER_9) {
-				
 				return key - Keyboard.NUMBER_0 + 48;
-				
 			}
-			
+
 			if (key >= Keyboard.A && key <= Keyboard.Z) {
-				
 				return key - Keyboard.A + 97;
-				
 			}
-			
 		} else {
-			
 			switch (key) {
-				
-				case Keyboard.NUMBER_0: return 41;
-				case Keyboard.NUMBER_1: return 33;
-				case Keyboard.NUMBER_2: return 64;
-				case Keyboard.NUMBER_3: return 35;
-				case Keyboard.NUMBER_4: return 36;
-				case Keyboard.NUMBER_5: return 37;
-				case Keyboard.NUMBER_6: return 94;
-				case Keyboard.NUMBER_7: return 38;
-				case Keyboard.NUMBER_8: return 42;
-				case Keyboard.NUMBER_9: return 40;
-				case Keyboard.SEMICOLON: return 58;
-				case Keyboard.EQUAL: return 43;
-				case Keyboard.COMMA: return 60;
-				case Keyboard.MINUS: return 95;
-				case Keyboard.PERIOD: return 62;
-				case Keyboard.SLASH: return 63;
-				case Keyboard.BACKQUOTE: return 126;
-				case Keyboard.LEFTBRACKET: return 123;
-				case Keyboard.BACKSLASH: return 124;
-				case Keyboard.RIGHTBRACKET: return 125;
-				case Keyboard.QUOTE: return 34;
-				
+				case Keyboard.NUMBER_0:
+					return 41;
+				case Keyboard.NUMBER_1:
+					return 33;
+				case Keyboard.NUMBER_2:
+					return 64;
+				case Keyboard.NUMBER_3:
+					return 35;
+				case Keyboard.NUMBER_4:
+					return 36;
+				case Keyboard.NUMBER_5:
+					return 37;
+				case Keyboard.NUMBER_6:
+					return 94;
+				case Keyboard.NUMBER_7:
+					return 38;
+				case Keyboard.NUMBER_8:
+					return 42;
+				case Keyboard.NUMBER_9:
+					return 40;
+				case Keyboard.SEMICOLON:
+					return 58;
+				case Keyboard.EQUAL:
+					return 43;
+				case Keyboard.COMMA:
+					return 60;
+				case Keyboard.MINUS:
+					return 95;
+				case Keyboard.PERIOD:
+					return 62;
+				case Keyboard.SLASH:
+					return 63;
+				case Keyboard.BACKQUOTE:
+					return 126;
+				case Keyboard.LEFTBRACKET:
+					return 123;
+				case Keyboard.BACKSLASH:
+					return 124;
+				case Keyboard.RIGHTBRACKET:
+					return 125;
+				case Keyboard.QUOTE:
+					return 34;
 			}
-			
+
 			if (key >= Keyboard.A && key <= Keyboard.Z) {
-				
 				return key - Keyboard.A + 65;
-				
 			}
-			
 		}
-		
+
 		if (key >= Keyboard.NUMPAD_0 && key <= Keyboard.NUMPAD_9) {
-			
 			return key - Keyboard.NUMPAD_0 + 48;
-			
 		}
-		
+
 		switch (key) {
-			
-			case Keyboard.NUMPAD_MULTIPLY: return 42;
-			case Keyboard.NUMPAD_ADD: return 43;
-			case Keyboard.NUMPAD_ENTER: return 44;
-			case Keyboard.NUMPAD_DECIMAL: return 45;
-			case Keyboard.NUMPAD_DIVIDE: return 46;
-			case Keyboard.DELETE: return 127;
-			case Keyboard.ENTER: return 13;
-			case Keyboard.BACKSPACE: return 8;
-			
+			case Keyboard.NUMPAD_MULTIPLY:
+				return 42;
+			case Keyboard.NUMPAD_ADD:
+				return 43;
+			case Keyboard.NUMPAD_ENTER:
+				return 44;
+			case Keyboard.NUMPAD_DECIMAL:
+				return 45;
+			case Keyboard.NUMPAD_DIVIDE:
+				return 46;
+			case Keyboard.DELETE:
+				return 127;
+			case Keyboard.ENTER:
+				return 13;
+			case Keyboard.BACKSPACE:
+				return 8;
 		}
-		
+
 		return 0;
-		
 	}
-	
-	
-	private static inline function __getKeyLocation (key:KeyCode):KeyLocation {
-		
+
+	private static inline function __getKeyLocation(key:KeyCode):KeyLocation {
 		return switch (key) {
-			
 			case KeyCode.LEFT_CTRL, KeyCode.LEFT_SHIFT, KeyCode.LEFT_ALT, KeyCode.LEFT_META: KeyLocation.LEFT;
 			case KeyCode.RIGHT_CTRL, KeyCode.RIGHT_SHIFT, KeyCode.RIGHT_ALT, KeyCode.RIGHT_META: KeyLocation.RIGHT;
-			case KeyCode.NUMPAD_DIVIDE, KeyCode.NUMPAD_MULTIPLY, KeyCode.NUMPAD_MINUS, KeyCode.NUMPAD_PLUS, KeyCode.NUMPAD_ENTER,
-				KeyCode.NUMPAD_1, KeyCode.NUMPAD_2, KeyCode.NUMPAD_3, KeyCode.NUMPAD_4, KeyCode.NUMPAD_5, KeyCode.NUMPAD_6,
-				KeyCode.NUMPAD_7, KeyCode.NUMPAD_8, KeyCode.NUMPAD_9, KeyCode.NUMPAD_0, KeyCode.NUMPAD_PERIOD, KeyCode.NUMPAD_DECIMAL:
-					KeyLocation.NUM_PAD;
+			case KeyCode.NUMPAD_DIVIDE, KeyCode.NUMPAD_MULTIPLY, KeyCode.NUMPAD_MINUS, KeyCode.NUMPAD_PLUS, KeyCode.NUMPAD_ENTER, KeyCode.NUMPAD_1,
+				KeyCode.NUMPAD_2, KeyCode.NUMPAD_3, KeyCode.NUMPAD_4, KeyCode.NUMPAD_5, KeyCode.NUMPAD_6, KeyCode.NUMPAD_7, KeyCode.NUMPAD_8,
+				KeyCode.NUMPAD_9, KeyCode.NUMPAD_0, KeyCode.NUMPAD_PERIOD, KeyCode.NUMPAD_DECIMAL:
+				KeyLocation.NUM_PAD;
 			default: KeyLocation.STANDARD;
-			
 		}
-		
 	}
-	
-	
 }

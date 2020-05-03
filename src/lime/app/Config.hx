@@ -1,8 +1,6 @@
 package lime.app;
 
-
 typedef Config = {
-	
 	/**
 	 * A build number
 	 *
@@ -15,83 +13,80 @@ typedef Config = {
 	 * the `<app build="" />` attribute
 	**/
 	@:optional var build:String;
-	
+
 	/**
 	 * A company name
 	 *
-	 * In the default generated config for Lime applications, this value 
+	 * In the default generated config for Lime applications, this value
 	 * corresponds to the `<meta company="" />` attribute in XML
 	**/
 	@:optional var company:String;
-	
+
 	/**
 	 * An application file name, without a file extension
 	 *
-	 * In the default generated config for Lime applications, this value 
+	 * In the default generated config for Lime applications, this value
 	 * corresponds to the `<app file="" />` attribute in XML
 	**/
 	@:optional var file:String;
-	
+
 	/**
 	 * A requested frame rate
 	 *
 	 * In the default generated config for Lime applications, the default value
-	 * is 30 FPS on many platforms, or vsync for HTML5. It can be overriden in 
+	 * is 30 FPS on many platforms, or vsync for HTML5. It can be overriden in
 	 * XML project files using the `<window fps="" />` attribute
 	**/
 	@:optional var fps:Int;
-	
+
 	/**
 	 * An application name, used as the default Window title
 	 *
-	 * In the default generated config for Lime applications, this value 
+	 * In the default generated config for Lime applications, this value
 	 * corresponds to the `<meta title="" />` attribute in XML
 	**/
 	@:optional var name:String;
-	
+
 	/**
 	 * An application orientation
 	 *
 	 * Expected values include "portrait", "landscape" or an empty string
 	 * for all orientations.
 	 *
-	 * In the default generated config for Lime applications, this value 
+	 * In the default generated config for Lime applications, this value
 	 * corresponds to the `<window orientation="" />` attribute in XML
 	**/
 	@:optional var orientation:String;
-	
+
 	/**
 	 * A package name, this usually corresponds to the unique ID used
 	 * in application stores to identify the current application
 	 *
-	 * In the default generated config for Lime applications, this value 
+	 * In the default generated config for Lime applications, this value
 	 * corresponds to the `<meta package="" />` attribute in XML
 	**/
 	@:optional var packageName:String;
-	
+
 	/**
 	 * A version number
 	 *
 	 * The version number is what normally corresponds to the user-facing
-	 * version for an application, such as "1.0.0" or "12.2.5". This is 
+	 * version for an application, such as "1.0.0" or "12.2.5". This is
 	 * distinct from the build number. Many application stores expect the
 	 * version number to include three segments.
 	 *
-	 * In the default generated config for Lime applications, this value 
+	 * In the default generated config for Lime applications, this value
 	 * corresponds to the `<meta title="" />` attribute in XML
 	**/
 	@:optional var version:String;
-	
+
 	/**
 	 * A set of configuration objects for each initial application Window
 	**/
 	@:optional var windows:Array<WindowConfig>;
-	
 }
 
-
-typedef WindowConfig = { 
-	
+typedef WindowConfig = {
 	@:optional var allowHighDPI:Bool;
 	@:optional var alwaysOnTop:Bool;
 	@:optional var antialiasing:Int;
@@ -115,5 +110,4 @@ typedef WindowConfig = {
 	@:optional var width:Int;
 	@:optional var x:Int;
 	@:optional var y:Int;
-	
 }

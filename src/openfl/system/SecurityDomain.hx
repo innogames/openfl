@@ -1,17 +1,7 @@
 package openfl.system;
 
-
 class SecurityDomain {
-	
-	
-	public static var currentDomain (default, null) = new SecurityDomain ();
-	
-	
-	private function new () {
-		
-		
-		
-	}
-	
-	
+	public static var currentDomain(default, null) = new SecurityDomain();
+
+	private function new() {}
 }

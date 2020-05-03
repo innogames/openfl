@@ -1,346 +1,249 @@
 package lime.graphics.utils;
 
-
 import openfl.geom.Point;
 import lime.graphics.Image;
 import lime.graphics.PixelFormat;
 import lime.math.Rectangle;
 import lime.math.Vector2;
 import lime.utils.UInt8Array;
-
 #if (js && html5)
 import js.Browser;
 #end
 
 @:access(lime.graphics.ImageBuffer)
-
-
 class ImageCanvasUtil {
-	
-	
-	public static function convertToCanvas (image:Image, clear:Bool = false):Void {
-		
+	public static function convertToCanvas(image:Image, clear:Bool = false):Void {
 		var buffer = image.buffer;
-		
+
 		#if (js && html5)
 		if (buffer.__srcImage != null) {
-			
 			if (buffer.__srcCanvas == null) {
-				
-				createCanvas (image, buffer.__srcImage.width, buffer.__srcImage.height);
-				buffer.__srcContext.drawImage (buffer.__srcImage, 0, 0);
-				
+				createCanvas(image, buffer.__srcImage.width, buffer.__srcImage.height);
+				buffer.__srcContext.drawImage(buffer.__srcImage, 0, 0);
 			}
-			
+
 			buffer.__srcImage = null;
-			
 		} else if (buffer.__srcCanvas == null && buffer.data != null) {
-			
 			image.transparent = true;
-			createCanvas (image, buffer.width, buffer.height);
-			createImageData (image);
-			
-			buffer.__srcContext.putImageData (buffer.__srcImageData, 0, 0);
-			
+			createCanvas(image, buffer.width, buffer.height);
+			createImageData(image);
+
+			buffer.__srcContext.putImageData(buffer.__srcImageData, 0, 0);
 		} else {
-			
 			if (image.type == DATA && buffer.__srcImageData != null && image.dirty) {
-				
-				buffer.__srcContext.putImageData (buffer.__srcImageData, 0, 0);
+				buffer.__srcContext.putImageData(buffer.__srcImageData, 0, 0);
 				image.dirty = false;
-				
 			}
-			
 		}
-		
+
 		if (clear) {
-			
 			buffer.data = null;
 			buffer.__srcImageData = null;
-			
 		} else {
-			
 			if (buffer.data == null && buffer.__srcImageData != null) {
-				
 				buffer.data = cast buffer.__srcImageData.data;
-				
 			}
-			
 		}
 		#end
-		
+
 		image.type = CANVAS;
-		
 	}
-	
-	
-	public static function convertToData (image:Image, clear:Bool = false):Void {
-		
+
+	public static function convertToData(image:Image, clear:Bool = false):Void {
 		var buffer = image.buffer;
-		
+
 		#if (js && html5)
 		if (buffer.__srcImage != null) {
-			
-			convertToCanvas (image);
-			
+			convertToCanvas(image);
 		}
-		
+
 		if (buffer.__srcCanvas != null && buffer.data == null) {
-			
-			createImageData (image);
-			if (image.type == CANVAS) image.dirty = false;
-			
+			createImageData(image);
+			if (image.type == CANVAS)
+				image.dirty = false;
 		} else if (image.type == CANVAS && buffer.__srcCanvas != null && image.dirty) {
-			
 			if (buffer.__srcImageData == null) {
-				
-				createImageData (image);
-				
+				createImageData(image);
 			} else {
-				
-				buffer.__srcImageData = buffer.__srcContext.getImageData (0, 0, buffer.width, buffer.height);
-				buffer.data = new UInt8Array (cast buffer.__srcImageData.data.buffer);
-				
+				buffer.__srcImageData = buffer.__srcContext.getImageData(0, 0, buffer.width, buffer.height);
+				buffer.data = new UInt8Array(cast buffer.__srcImageData.data.buffer);
 			}
-			
+
 			image.dirty = false;
-			
 		}
-		
+
 		if (clear) {
-			
 			image.buffer.__srcCanvas = null;
 			image.buffer.__srcContext = null;
-			
 		}
 		#end
-		
+
 		image.type = DATA;
-		
 	}
-	
-	
-	public static function copyPixels (image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, alphaImage:Image = null, alphaPoint:Point = null, mergeAlpha:Bool = false):Void {
-		
-		if (destPoint == null || destPoint.x >= image.width || destPoint.y >= image.height || sourceRect == null || sourceRect.width < 1 || sourceRect.height < 1) {
-			
+
+	public static function copyPixels(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, alphaImage:Image = null,
+			alphaPoint:Point = null, mergeAlpha:Bool = false):Void {
+		if (destPoint == null || destPoint.x >= image.width || destPoint.y >= image.height || sourceRect == null || sourceRect.width < 1
+			|| sourceRect.height < 1) {
 			return;
-			
 		}
-		
+
 		if (alphaImage != null && alphaImage.transparent) {
-			
-			if (alphaPoint == null) alphaPoint = new Point ();
-			
+			if (alphaPoint == null)
+				alphaPoint = new Point();
+
 			// TODO: use faster method
-			
-			var tempData = image.clone ();
-			tempData.copyChannel (alphaImage, new Rectangle (alphaPoint.x, alphaPoint.y, sourceRect.width, sourceRect.height), new Point (sourceRect.x, sourceRect.y), ImageChannel.ALPHA, ImageChannel.ALPHA);
+
+			var tempData = image.clone();
+			tempData.copyChannel(alphaImage, new Rectangle(alphaPoint.x, alphaPoint.y, sourceRect.width, sourceRect.height),
+				new Point(sourceRect.x, sourceRect.y), ImageChannel.ALPHA, ImageChannel.ALPHA);
 			sourceImage = tempData;
-			
 		}
-		
-		convertToCanvas (image, true);
-		
+
+		convertToCanvas(image, true);
+
 		if (!mergeAlpha) {
-			
 			if (image.transparent && sourceImage.transparent) {
-				
-				image.buffer.__srcContext.clearRect (destPoint.x, destPoint.y, sourceRect.width, sourceRect.height);
-				
+				image.buffer.__srcContext.clearRect(destPoint.x, destPoint.y, sourceRect.width, sourceRect.height);
 			}
-			
 		}
-		
-		convertToCanvas (sourceImage);
-		
+
+		convertToCanvas(sourceImage);
+
 		if (sourceImage.buffer.src != null) {
-			
 			// Set default composition (just in case it is different)
 			image.buffer.__srcContext.globalCompositeOperation = "source-over";
 
-			image.buffer.__srcContext.drawImage (sourceImage.buffer.src, Std.int (sourceRect.x), Std.int (sourceRect.y), Std.int (sourceRect.width), Std.int (sourceRect.height), Std.int (destPoint.x), Std.int (destPoint.y), Std.int (sourceRect.width), Std.int (sourceRect.height));
-			
+			image.buffer.__srcContext.drawImage(sourceImage.buffer.src, Std.int(sourceRect.x), Std.int(sourceRect.y), Std.int(sourceRect.width),
+				Std.int(sourceRect.height), Std.int(destPoint.x), Std.int(destPoint.y), Std.int(sourceRect.width), Std.int(sourceRect.height));
 		}
-		
+
 		image.dirty = true;
 		image.version++;
-		
 	}
-	
-	
-	public static function createCanvas (image:Image, width:Int, height:Int):Void {
-		
+
+	public static function createCanvas(image:Image, width:Int, height:Int):Void {
 		#if (js && html5)
 		var buffer = image.buffer;
-		
+
 		if (buffer.__srcCanvas == null) {
-			
-			buffer.__srcCanvas = cast Browser.document.createElement ("canvas");
+			buffer.__srcCanvas = cast Browser.document.createElement("canvas");
 			buffer.__srcCanvas.width = width;
 			buffer.__srcCanvas.height = height;
-			
+
 			if (!image.transparent) {
-				
-				if (!image.transparent) buffer.__srcCanvas.setAttribute ("moz-opaque", "true");
-				buffer.__srcContext = buffer.__srcCanvas.getContext ("2d", { alpha: false });
-				
+				if (!image.transparent)
+					buffer.__srcCanvas.setAttribute("moz-opaque", "true");
+				buffer.__srcContext = buffer.__srcCanvas.getContext("2d", {alpha: false});
 			} else {
-				
-				buffer.__srcContext = buffer.__srcCanvas.getContext ("2d");
-				
+				buffer.__srcContext = buffer.__srcCanvas.getContext("2d");
 			}
-			
-			openfl._internal.renderer.canvas.CanvasSmoothing.setEnabled (buffer.__srcContext, false);
-			
+
+			openfl._internal.renderer.canvas.CanvasSmoothing.setEnabled(buffer.__srcContext, false);
 		}
 		#end
-		
 	}
-	
-	
-	public static function createImageData (image:Image):Void {
-		
+
+	public static function createImageData(image:Image):Void {
 		#if (js && html5)
-		
 		var buffer = image.buffer;
-		
+
 		if (buffer.__srcImageData == null) {
-			
 			if (buffer.data == null) {
-				
-				buffer.__srcImageData = buffer.__srcContext.getImageData (0, 0, buffer.width, buffer.height);
-				
+				buffer.__srcImageData = buffer.__srcContext.getImageData(0, 0, buffer.width, buffer.height);
 			} else {
-				
-				buffer.__srcImageData = buffer.__srcContext.createImageData (buffer.width, buffer.height);
-				buffer.__srcImageData.data.set (cast buffer.data);
-				
+				buffer.__srcImageData = buffer.__srcContext.createImageData(buffer.width, buffer.height);
+				buffer.__srcImageData.data.set(cast buffer.data);
 			}
-			
-			buffer.data = new UInt8Array (cast buffer.__srcImageData.data.buffer);
-			
+
+			buffer.data = new UInt8Array(cast buffer.__srcImageData.data.buffer);
 		}
-		
 		#end
-		
 	}
-	
-	
-	public static function fillRect (image:Image, rect:Rectangle, color:Int, format:PixelFormat):Void {
-		
-		convertToCanvas (image);
-		
+
+	public static function fillRect(image:Image, rect:Rectangle, color:Int, format:PixelFormat):Void {
+		convertToCanvas(image);
+
 		var r, g, b, a;
-		
+
 		if (format == ARGB32) {
-			
 			r = (color >> 16) & 0xFF;
 			g = (color >> 8) & 0xFF;
 			b = color & 0xFF;
 			a = (image.transparent) ? (color >> 24) & 0xFF : 0xFF;
-			
 		} else {
-			
 			r = (color >> 24) & 0xFF;
 			g = (color >> 16) & 0xFF;
 			b = (color >> 8) & 0xFF;
 			a = (image.transparent) ? color & 0xFF : 0xFF;
-			
 		}
-		
+
 		if (rect.x == 0 && rect.y == 0 && rect.width == image.width && rect.height == image.height) {
-			
 			if (image.transparent && a == 0) {
-				
 				image.buffer.__srcCanvas.width = image.buffer.width;
 				return;
-				
 			}
-			
 		}
-		
+
 		if (a < 255) {
-			
-			image.buffer.__srcContext.clearRect (rect.x, rect.y, rect.width, rect.height);
-			
+			image.buffer.__srcContext.clearRect(rect.x, rect.y, rect.width, rect.height);
 		}
-		
+
 		if (a > 0) {
-			
 			image.buffer.__srcContext.fillStyle = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + (a / 255) + ')';
-			image.buffer.__srcContext.fillRect (rect.x, rect.y, rect.width, rect.height);
-			
+			image.buffer.__srcContext.fillRect(rect.x, rect.y, rect.width, rect.height);
 		}
-		
+
 		image.dirty = true;
 		image.version++;
-		
 	}
-	
-	
-	public static function resize (image:Image, newWidth:Int, newHeight:Int):Void {
-		
+
+	public static function resize(image:Image, newWidth:Int, newHeight:Int):Void {
 		var buffer = image.buffer;
-		
+
 		if (buffer.__srcCanvas == null) {
-			
-			createCanvas (image, newWidth, newHeight);
-			buffer.__srcContext.drawImage (buffer.src, 0, 0, newWidth, newHeight);
-			
+			createCanvas(image, newWidth, newHeight);
+			buffer.__srcContext.drawImage(buffer.src, 0, 0, newWidth, newHeight);
 		} else {
-			
-			convertToCanvas (image, true);
+			convertToCanvas(image, true);
 			var sourceCanvas = buffer.__srcCanvas;
 			buffer.__srcCanvas = null;
-			createCanvas (image, newWidth, newHeight);
-			buffer.__srcContext.drawImage (sourceCanvas, 0, 0, newWidth, newHeight);
-			
+			createCanvas(image, newWidth, newHeight);
+			buffer.__srcContext.drawImage(sourceCanvas, 0, 0, newWidth, newHeight);
 		}
-		
+
 		buffer.__srcImageData = null;
 		buffer.data = null;
-		
+
 		image.dirty = true;
 		image.version++;
-		
 	}
-	
-	
-	public static function scroll (image:Image, x:Int, y:Int):Void {
-		
-		if ((x % image.width == 0) && (y % image.height == 0)) return;
-		
-		var copy = image.clone ();
-		
-		convertToCanvas (image, true);
-		
-		image.buffer.__srcContext.clearRect (x, y, image.width, image.height);
-		image.buffer.__srcContext.drawImage (copy.src, x, y);
-		
+
+	public static function scroll(image:Image, x:Int, y:Int):Void {
+		if ((x % image.width == 0) && (y % image.height == 0))
+			return;
+
+		var copy = image.clone();
+
+		convertToCanvas(image, true);
+
+		image.buffer.__srcContext.clearRect(x, y, image.width, image.height);
+		image.buffer.__srcContext.drawImage(copy.src, x, y);
+
 		image.dirty = true;
 		image.version++;
-		
 	}
-	
-	
-	public static function sync (image:Image, clear:Bool):Void {
-		
-		if (image == null) return;
-		
+
+	public static function sync(image:Image, clear:Bool):Void {
+		if (image == null)
+			return;
+
 		#if (js && html5)
 		if (image.type == CANVAS) {
-			
-			convertToCanvas (image, clear);
-			
+			convertToCanvas(image, clear);
 		} else {
-			
-			convertToData (image, clear);
-			
+			convertToData(image, clear);
 		}
 		#end
-		
 	}
-	
-	
 }

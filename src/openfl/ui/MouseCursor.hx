@@ -1,17 +1,13 @@
 package openfl.ui;
 
-
 import lime.ui.MouseCursor in LimeMouseCursor;
 
-
 enum abstract MouseCursor(String) from String to String {
-	
 	public var ARROW = "arrow";
 	public var AUTO = "auto";
 	public var BUTTON = "button";
 	public var HAND = "hand";
 	public var IBEAM = "ibeam";
-	
 	private var __CROSSHAIR = "crosshair";
 	private var __CUSTOM = "custom";
 	private var __MOVE = "move";
@@ -21,11 +17,9 @@ enum abstract MouseCursor(String) from String to String {
 	private var __RESIZE_WE = "resize_we";
 	private var __WAIT = "wait";
 	private var __WAIT_ARROW = "waitarrow";
-	
-	@:from private static function fromLimeCursor (cursor:LimeMouseCursor):MouseCursor {
-		
+
+	@:from private static function fromLimeCursor(cursor:LimeMouseCursor):MouseCursor {
 		return switch (cursor) {
-			
 			case LimeMouseCursor.ARROW: MouseCursor.ARROW;
 			case LimeMouseCursor.DEFAULT: MouseCursor.AUTO;
 			case LimeMouseCursor.POINTER: MouseCursor.BUTTON;
@@ -40,9 +34,6 @@ enum abstract MouseCursor(String) from String to String {
 			case LimeMouseCursor.WAIT_ARROW: MouseCursor.__WAIT_ARROW;
 			case LimeMouseCursor.CUSTOM: MouseCursor.__CUSTOM;
 			default: MouseCursor.AUTO;
-			
 		}
-		
 	}
-	
 }

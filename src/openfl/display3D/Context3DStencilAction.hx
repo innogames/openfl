@@ -1,7 +1,6 @@
 package openfl.display3D;
 
 enum abstract Context3DStencilAction(Null<Int>) {
-	
 	public var DECREMENT_SATURATE = 0;
 	public var DECREMENT_WRAP = 1;
 	public var INCREMENT_SATURATE = 2;
@@ -10,11 +9,9 @@ enum abstract Context3DStencilAction(Null<Int>) {
 	public var KEEP = 5;
 	public var SET = 6;
 	public var ZERO = 7;
-	
-	@:from private static function fromString (value:String):Context3DStencilAction {
-		
+
+	@:from private static function fromString(value:String):Context3DStencilAction {
 		return switch (value) {
-			
 			case "decrementSaturate": DECREMENT_SATURATE;
 			case "decrementWrap": DECREMENT_WRAP;
 			case "incrementSaturate": INCREMENT_SATURATE;
@@ -24,15 +21,11 @@ enum abstract Context3DStencilAction(Null<Int>) {
 			case "set": SET;
 			case "zero": ZERO;
 			default: null;
-			
 		}
-		
 	}
-	
-	@:to private function toString ():String {
-		
+
+	@:to private function toString():String {
 		return switch (cast this) {
-			
 			case Context3DStencilAction.DECREMENT_SATURATE: "decrementSaturate";
 			case Context3DStencilAction.DECREMENT_WRAP: "decrementWrap";
 			case Context3DStencilAction.INCREMENT_SATURATE: "incrementSaturate";
@@ -42,9 +35,6 @@ enum abstract Context3DStencilAction(Null<Int>) {
 			case Context3DStencilAction.SET: "set";
 			case Context3DStencilAction.ZERO: "zero";
 			default: null;
-			
 		}
-		
 	}
-	
 }

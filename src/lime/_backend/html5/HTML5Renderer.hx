@@ -1,6 +1,5 @@
 package lime._backend.html5;
 
-
 import js.Browser;
 import lime.graphics.GLRenderContext;
 
@@ -8,13 +7,11 @@ import lime.graphics.GLRenderContext;
 // TODO: expose debug function at run-time
 // (and finally remove HTML5Renderer)
 class HTML5Renderer {
-	
-	
-	public static var context (default, null):GLRenderContext;
+	public static var context(default, null):GLRenderContext;
 
 	#if debug
 	static var __lastLoseContextExtension:Dynamic;
-	
+
 	@:expose("loseGLContext")
 	static function loseContext() {
 		var extension = context.getExtension('WEBGL_lose_context');
@@ -25,7 +22,7 @@ class HTML5Renderer {
 			__lastLoseContextExtension = extension;
 		}
 	}
-	
+
 	@:expose("restoreGLContext")
 	static function restoreContext() {
 		if (__lastLoseContextExtension == null) {
@@ -36,6 +33,4 @@ class HTML5Renderer {
 		}
 	}
 	#end
-	
-	
 }

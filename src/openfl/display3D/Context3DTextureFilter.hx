@@ -1,18 +1,15 @@
 package openfl.display3D;
 
 enum abstract Context3DTextureFilter(Null<Int>) {
-	
 	public var ANISOTROPIC16X = 0;
 	public var ANISOTROPIC2X = 1;
 	public var ANISOTROPIC4X = 2;
 	public var ANISOTROPIC8X = 3;
 	public var LINEAR = 4;
 	public var NEAREST = 5;
-	
-	@:from private static function fromString (value:String):Context3DTextureFilter {
-		
+
+	@:from private static function fromString(value:String):Context3DTextureFilter {
 		return switch (value) {
-			
 			case "anisotropic16x": ANISOTROPIC16X;
 			case "anisotropic2x": ANISOTROPIC2X;
 			case "anisotropic4x": ANISOTROPIC4X;
@@ -20,15 +17,11 @@ enum abstract Context3DTextureFilter(Null<Int>) {
 			case "linear": LINEAR;
 			case "nearest": NEAREST;
 			default: null;
-			
 		}
-		
 	}
-	
-	@:to private function toString ():String {
-		
+
+	@:to private function toString():String {
 		return switch (cast this) {
-			
 			case Context3DTextureFilter.ANISOTROPIC16X: "anisotropic16x";
 			case Context3DTextureFilter.ANISOTROPIC2X: "anisotropic2x";
 			case Context3DTextureFilter.ANISOTROPIC4X: "anisotropic4x";
@@ -36,9 +29,6 @@ enum abstract Context3DTextureFilter(Null<Int>) {
 			case Context3DTextureFilter.LINEAR: "linear";
 			case Context3DTextureFilter.NEAREST: "nearest";
 			default: null;
-			
 		}
-		
 	}
-	
 }

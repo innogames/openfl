@@ -1,8 +1,6 @@
 package openfl.display;
 
-
 enum abstract StageAlign(Null<Int>) {
-	
 	public var BOTTOM = 0;
 	public var BOTTOM_LEFT = 1;
 	public var BOTTOM_RIGHT = 2;
@@ -11,11 +9,9 @@ enum abstract StageAlign(Null<Int>) {
 	public var TOP = 5;
 	public var TOP_LEFT = 6;
 	public var TOP_RIGHT = 7;
-	
-	@:from private static function fromString (value:String):StageAlign {
-		
+
+	@:from private static function fromString(value:String):StageAlign {
 		return switch (value) {
-			
 			case "bottom": BOTTOM;
 			case "bottomLeft": BOTTOM_LEFT;
 			case "bottomRight": BOTTOM_RIGHT;
@@ -25,15 +21,11 @@ enum abstract StageAlign(Null<Int>) {
 			case "topLeft": TOP_LEFT;
 			case "topRight": TOP_RIGHT;
 			default: null;
-			
 		}
-		
 	}
-	
-	@:to private function toString ():String {
-		
+
+	@:to private function toString():String {
 		return switch (cast this) {
-			
 			case StageAlign.BOTTOM: "bottom";
 			case StageAlign.BOTTOM_LEFT: "bottomLeft";
 			case StageAlign.BOTTOM_RIGHT: "bottomRight";
@@ -43,9 +35,6 @@ enum abstract StageAlign(Null<Int>) {
 			case StageAlign.TOP_LEFT: "topLeft";
 			case StageAlign.TOP_RIGHT: "topRight";
 			default: null;
-			
 		}
-		
 	}
-	
 }

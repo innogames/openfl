@@ -1,7 +1,6 @@
 package openfl.display3D;
 
 enum abstract Context3DCompareMode(Null<Int>) {
-	
 	public var ALWAYS = 0;
 	public var EQUAL = 1;
 	public var GREATER = 2;
@@ -10,11 +9,9 @@ enum abstract Context3DCompareMode(Null<Int>) {
 	public var LESS_EQUAL = 5;
 	public var NEVER = 6;
 	public var NOT_EQUAL = 7;
-	
-	@:from private static function fromString (value:String):Context3DCompareMode {
-		
+
+	@:from private static function fromString(value:String):Context3DCompareMode {
 		return switch (value) {
-			
 			case "always": ALWAYS;
 			case "equal": EQUAL;
 			case "greater": GREATER;
@@ -24,15 +21,11 @@ enum abstract Context3DCompareMode(Null<Int>) {
 			case "never": NEVER;
 			case "notEqual": NOT_EQUAL;
 			default: null;
-			
 		}
-		
 	}
-	
-	@:to private function toString ():String {
-		
+
+	@:to private function toString():String {
 		return switch (cast this) {
-			
 			case Context3DCompareMode.ALWAYS: "always";
 			case Context3DCompareMode.EQUAL: "equal";
 			case Context3DCompareMode.GREATER: "greater";
@@ -42,9 +35,6 @@ enum abstract Context3DCompareMode(Null<Int>) {
 			case Context3DCompareMode.NEVER: "never";
 			case Context3DCompareMode.NOT_EQUAL: "notEqual";
 			default: null;
-			
 		}
-		
 	}
-	
 }

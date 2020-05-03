@@ -1,6 +1,5 @@
 package openfl.display3D.textures;
 
-
 import lime.graphics.GLRenderContext;
 import lime.graphics.Image;
 import lime.graphics.opengl.GLFramebuffer;
@@ -13,8 +12,6 @@ import openfl.events.EventDispatcher;
 
 @:access(openfl.display3D.Context3D)
 class TextureBase extends EventDispatcher {
-	
-	
 	private var __alphaTexture:Texture;
 	// private var __compressedMemoryUsage:Int;
 	private var __context:Context3D;
@@ -34,95 +31,58 @@ class TextureBase extends EventDispatcher {
 	private var __textureData:TextureData;
 	private var __textureTarget:Int;
 	private var __width:Int;
-	
-	
-	private function new (context:Context3D) {
-		
-		super ();
-		
+
+	private function new(context:Context3D) {
+		super();
+
 		__context = context;
-		//__textureTarget = target;
-		
-		GLTextureBase.create (this, __context.__renderSession);
-		
+		// __textureTarget = target;
+
+		GLTextureBase.create(this, __context.__renderSession);
+
 		// __memoryUsage = 0;
 		// __compressedMemoryUsage = 0;
-		
 	}
-	
-	
-	public function dispose ():Void {
-		
-		GLTextureBase.dispose (this, __context.__renderSession);
-		
+
+	public function dispose():Void {
+		GLTextureBase.dispose(this, __context.__renderSession);
 	}
-	
-	
-	private function __getImage (bitmapData:BitmapData):Image {
-		
-		return GLTextureBase.getImage (this, __context.__renderSession, bitmapData);
-		
+
+	private function __getImage(bitmapData:BitmapData):Image {
+		return GLTextureBase.getImage(this, __context.__renderSession, bitmapData);
 	}
-	
-	
-	private function __getTexture ():TextureData {
-		
+
+	private function __getTexture():TextureData {
 		return __textureData;
-		
 	}
-	
-	
-	private function __setSamplerState (state:SamplerState):Void {
-		
-		GLTextureBase.setSamplerState (this, __context.__renderSession, state);
-		
+
+	private function __setSamplerState(state:SamplerState):Void {
+		GLTextureBase.setSamplerState(this, __context.__renderSession, state);
 	}
-	
-	
+
 	// private function __trackCompressedMemoryUsage (memory:Int):Void {
-		
 	// 	if (__compressedMemoryUsage == 0) {
-			
 	// 		__context.__statsIncrement (Context3D.Context3DTelemetry.COUNT_TEXTURE_COMPRESSED);
-			
 	// 	}
-		
 	// 	__compressedMemoryUsage += memory;
 	// 	var currentCompressedMemory = __context.__statsAdd (Context3D.Context3DTelemetry.MEM_TEXTURE_COMPRESSED, memory);
-		
 	// 	#if debug
 	// 	if (__outputTextureMemoryUsage) {
-			
 	// 		trace (" + Texture Compressed GPU Memory (+" + memory + ") - Current Compressed Memory : " + currentCompressedMemory);
-			
 	// 	}
 	// 	#end
-		
 	// 	__trackMemoryUsage (memory);
-		
 	// }
-	
-	
 	// private function __trackMemoryUsage (memory:Int):Void {
-		
 	// 	if (__memoryUsage == 0) {
-			
 	// 		__context.__statsIncrement (Context3D.Context3DTelemetry.COUNT_TEXTURE);
-			
 	// 	}
-		
 	// 	__memoryUsage += memory;
 	// 	var currentMemory = __context.__statsAdd (Context3D.Context3DTelemetry.MEM_TEXTURE, memory);
-		
 	// 	#if debug
 	// 	if (__outputTextureMemoryUsage) {
-			
 	// 		trace (" + Texture GPU Memory (+" + memory + ") - Current Memory : " + currentMemory);
-			
 	// 	}
 	// 	#end
-		
 	// }
-	
-	
 }

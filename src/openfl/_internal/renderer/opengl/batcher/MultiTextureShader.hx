@@ -13,15 +13,15 @@ class MultiTextureShader {
 	var program:GLProgram;
 	var gl:GLRenderContext;
 
-	public var maxTextures(default,null):Int;
-	public var positionScale(default,null): Float32Array;
+	public var maxTextures(default, null):Int;
+	public var positionScale(default, null):Float32Array;
 
-	public var aVertexPosition(default,null):Int;
-	public var aTextureCoord(default,null):Int;
-	public var aTextureId(default,null):Int;
-	public var aColorOffset(default,null):Int;
-	public var aColorMultiplier(default,null):Int;
-	public var aPremultipliedAlpha(default,null):Int;
+	public var aVertexPosition(default, null):Int;
+	public var aTextureCoord(default, null):Int;
+	public var aTextureId(default, null):Int;
+	public var aColorOffset(default, null):Int;
+	public var aColorMultiplier(default, null):Int;
+	public var aPremultipliedAlpha(default, null):Int;
 
 	var uProjMatrix:GLUniformLocation;
 	var uPositionScale:GLUniformLocation;
@@ -47,8 +47,8 @@ class MultiTextureShader {
 			throw "Could not compile a multi-texture shader for any number of textures, something must be horribly broken!";
 		}
 		this.maxTextures = maxTextures;
-		this.positionScale = new Float32Array ([ 1.0, 1.0, 1.0, 1.0 ]);
-		
+		this.positionScale = new Float32Array([1.0, 1.0, 1.0, 1.0]);
+
 		aVertexPosition = gl.getAttribLocation(program, 'aVertexPosition');
 		aTextureCoord = gl.getAttribLocation(program, 'aTextureCoord');
 		aTextureId = gl.getAttribLocation(program, 'aTextureId');
@@ -73,24 +73,24 @@ class MultiTextureShader {
 		gl.enableVertexAttribArray(aPremultipliedAlpha);
 
 		gl.uniformMatrix4fv(uProjMatrix, false, projectionMatrix);
-		gl.uniform4fv (uPositionScale, positionScale);
+		gl.uniform4fv(uPositionScale, positionScale);
 	}
 
 	static function compileShader(gl:GLRenderContext, source:String, type:Int):Null<GLShader> {
 		var shader = gl.createShader(type);
 		gl.shaderSource(shader, source);
 		gl.compileShader(shader);
-		
+
 		if (gl.getShaderParameter(shader, GL.COMPILE_STATUS) == 0) {
 			var message = gl.getShaderInfoLog(shader);
 			gl.deleteShader(shader);
 			Log.warn(message);
 			return null;
 		}
-		
+
 		return shader;
 	}
-	
+
 	static function createProgram(gl:GLRenderContext, vertexSource:String, fragmentSource:String):Null<GLProgram> {
 		var vertexShader = compileShader(gl, vertexSource, GL.VERTEX_SHADER);
 		if (vertexShader == null) {
@@ -102,12 +102,12 @@ class MultiTextureShader {
 			gl.deleteShader(vertexShader);
 			return null;
 		}
-		
+
 		var program = gl.createProgram();
 		gl.attachShader(program, vertexShader);
 		gl.attachShader(program, fragmentShader);
 		gl.linkProgram(program);
-		
+
 		if (gl.getProgramParameter(program, GL.LINK_STATUS) == 0) {
 			var message = gl.getProgramInfoLog(program);
 			Log.warn(message);
@@ -116,15 +116,16 @@ class MultiTextureShader {
 			gl.deleteShader(fragmentShader);
 			return null;
 		}
-		
+
 		return program;
 	}
-	
+
 	static function generateMultiTextureFragmentShaderSource(numTextures:Int):String {
 		var select = [];
 		for (i in 0...numTextures) {
 			var cond = if (i > 0) "else " else "";
-			if (i < numTextures - 1) cond += 'if (textureId == $i.0) ';
+			if (i < numTextures - 1)
+				cond += 'if (textureId == $i.0) ';
 			select.push('\t\t\t\t${cond}color = texture2D(uSamplers[$i], vTextureCoord);');
 		}
 		return '
@@ -167,6 +168,7 @@ ${select.join("\n")}
 
 			}
 		';
+
 	}
 
 	static inline var vsSource = '

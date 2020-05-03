@@ -1,18 +1,15 @@
 package openfl.display3D;
 
 enum abstract Context3DProfile(Null<Int>) {
-	
 	public var BASELINE = 0;
 	public var BASELINE_CONSTRAINED = 1;
 	public var BASELINE_EXTENDED = 2;
 	public var STANDARD = 3;
 	public var STANDARD_CONSTRAINED = 4;
 	public var STANDARD_EXTENDED = 5;
-	
-	@:from private static function fromString (value:String):Context3DProfile {
-		
+
+	@:from private static function fromString(value:String):Context3DProfile {
 		return switch (value) {
-			
 			case "baseline": BASELINE;
 			case "baselineConstrained": BASELINE_CONSTRAINED;
 			case "baselineExtended": BASELINE_EXTENDED;
@@ -20,15 +17,11 @@ enum abstract Context3DProfile(Null<Int>) {
 			case "standardConstrained": STANDARD_CONSTRAINED;
 			case "standardExtended": STANDARD_EXTENDED;
 			default: null;
-			
 		}
-		
 	}
-	
-	@:to private function toString ():String {
-		
+
+	@:to private function toString():String {
 		return switch (cast this) {
-			
 			case Context3DProfile.BASELINE: "baseline";
 			case Context3DProfile.BASELINE_CONSTRAINED: "baselineConstrained";
 			case Context3DProfile.BASELINE_EXTENDED: "baselineExtended";
@@ -36,9 +29,6 @@ enum abstract Context3DProfile(Null<Int>) {
 			case Context3DProfile.STANDARD_CONSTRAINED: "standardConstrained";
 			case Context3DProfile.STANDARD_EXTENDED: "standardExtended";
 			default: null;
-			
 		}
-		
 	}
-	
 }

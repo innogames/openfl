@@ -1058,13 +1058,16 @@ private interface IVector<T> {
 private class VectorIterator<T> {
 	final vector:IVector<T>;
 	var index:Int;
+
 	public inline function new(vector:IVector<T>) {
 		this.vector = vector;
 		index = 0;
 	}
+
 	public inline function hasNext():Bool {
 		return index < vector.length;
 	}
+
 	public inline function next():T {
 		return vector.get(index++);
 	}

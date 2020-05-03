@@ -1,32 +1,22 @@
 package openfl.display3D;
 
 enum abstract Context3DBufferUsage(Null<Int>) {
-	
 	public var DYNAMIC_DRAW = 0;
 	public var STATIC_DRAW = 1;
-	
-	@:from private static function fromString (value:String):Context3DBufferUsage {
-		
+
+	@:from private static function fromString(value:String):Context3DBufferUsage {
 		return switch (value) {
-			
 			case "dynamicDraw": DYNAMIC_DRAW;
 			case "staticDraw": STATIC_DRAW;
 			default: null;
-			
 		}
-		
 	}
-	
-	@:to private function toString ():String {
-		
+
+	@:to private function toString():String {
 		return switch (cast this) {
-			
 			case Context3DBufferUsage.DYNAMIC_DRAW: "dynamicDraw";
 			case Context3DBufferUsage.STATIC_DRAW: "staticDraw";
 			default: null;
-			
 		}
-		
 	}
-	
 }

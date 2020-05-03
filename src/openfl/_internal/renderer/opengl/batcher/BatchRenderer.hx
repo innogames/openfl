@@ -1,7 +1,6 @@
 package openfl._internal.renderer.opengl.batcher;
 
 import haxe.ds.Vector;
-
 import lime.utils.Float32Array;
 import lime.utils.UInt16Array;
 import lime.graphics.GLRenderContext;
@@ -12,7 +11,6 @@ import openfl.geom.Rectangle;
 import openfl._internal.renderer.opengl.GLBlendModeManager;
 import openfl._internal.renderer.opengl.GLShaderManager;
 import openfl._internal.renderer.opengl.batcher.Quad;
-
 #if gl_stats
 import openfl._internal.renderer.opengl.stats.GLStats;
 import openfl._internal.renderer.opengl.stats.DrawCallContext;
@@ -146,7 +144,7 @@ class BatchRenderer {
 	public function render(quad:Quad) {
 		if (!isQuadWithinViewport(quad)) {
 			#if gl_stats
-				GLStats.skippedQuadCounter.increment();
+			GLStats.skippedQuadCounter.increment();
 			#end
 			return;
 		}
@@ -184,7 +182,6 @@ class BatchRenderer {
 			// that the texture was already enabled in the current group
 			// and we don't need to do anything, otherwise...
 			if (currentTexture.enabledTick != tick) {
-
 				// if the current group is already full of textures, finish it and start a new one
 				if (currentGroup.textureCount == maxTextures) {
 					finishCurrentGroup();
@@ -290,7 +287,7 @@ class BatchRenderer {
 
 		currentQuadIndex++;
 		#if gl_stats
-			GLStats.quadCounter.increment();
+		GLStats.quadCounter.increment();
 		#end
 	}
 
@@ -351,15 +348,15 @@ class BatchRenderer {
 				gl.bindTexture(GL.TEXTURE_2D, currentTexture.glTexture);
 
 				if (group.textureSmoothing[i]) {
-					gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
-					gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
+					gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
+					gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
 				} else {
-					gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
-					gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+					gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+					gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
 				}
 
-				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
-				gl.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
+				gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+				gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
 
 				currentTexture.textureUnitId = -1; // clear the binding for subsequent flush calls
 			}
@@ -370,12 +367,11 @@ class BatchRenderer {
 				lastBlendMode.apply(gl);
 			}
 
-
 			// draw this group's slice of vertices
 			gl.drawElements(GL.TRIANGLES, group.size * 6, GL.UNSIGNED_SHORT, group.start * 6 * UInt16Array.BYTES_PER_ELEMENT);
 
 			#if gl_stats
-				GLStats.incrementDrawCall (DrawCallContext.STAGE);
+			GLStats.incrementDrawCall(DrawCallContext.STAGE);
 			#end
 		}
 
@@ -422,5 +418,6 @@ private class RenderGroup {
 	public var size = 0;
 	public var start = 0;
 	public var blendMode:BlendMode;
+
 	public function new() {}
 }

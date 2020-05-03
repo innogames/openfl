@@ -1,9 +1,6 @@
 package lime.ui;
 
-
 enum abstract KeyCode(Int) from Int to Int from UInt to UInt {
-	
-	
 	var UNKNOWN = 0x00;
 	var BACKSPACE = 0x08;
 	var TAB = 0x09;
@@ -147,7 +144,7 @@ enum abstract KeyCode(Int) from Int to Int from UInt to UInt {
 	var VOLUME_UP = 0x40000080;
 	var VOLUME_DOWN = 0x40000081;
 	var NUMPAD_COMMA = 0x40000085;
-	//var NUMPAD_EQUALS_AS400 = 0x40000086;
+	// var NUMPAD_EQUALS_AS400 = 0x40000086;
 	var ALT_ERASE = 0x40000099;
 	var SYSTEM_REQUEST = 0x4000009A;
 	var CANCEL = 0x4000009B;
@@ -240,12 +237,24 @@ enum abstract KeyCode(Int) from Int to Int from UInt to UInt {
 	var BACKLIGHT_UP = 0x40000118;
 	var EJECT = 0x40000119;
 	var SLEEP = 0x4000011A;
-	
-	@:op(A > B) private static inline function gt (a:KeyCode, b:KeyCode):Bool { return (a:Int) > (b:Int); }
-	@:op(A >= B) private static inline function gte (a:KeyCode, b:KeyCode):Bool { return (a:Int) >= (b:Int); }
-	@:op(A < B) private static inline function lt (a:KeyCode, b:KeyCode):Bool { return (a:Int) < (b:Int); }
-	@:op(A <= B) private static inline function lte (a:KeyCode, b:KeyCode):Bool { return (a:Int) <= (b:Int); }
-	@:op(A + B) private static inline function plus (a:KeyCode, b:Int):KeyCode { return (a:Int) + b; }
-	
-	
+
+	@:op(A > B) private static inline function gt(a:KeyCode, b:KeyCode):Bool {
+		return (a : Int) > (b : Int);
+	}
+
+	@:op(A >= B) private static inline function gte(a:KeyCode, b:KeyCode):Bool {
+		return (a : Int) >= (b : Int);
+	}
+
+	@:op(A < B) private static inline function lt(a:KeyCode, b:KeyCode):Bool {
+		return (a : Int) < (b : Int);
+	}
+
+	@:op(A <= B) private static inline function lte(a:KeyCode, b:KeyCode):Bool {
+		return (a : Int) <= (b : Int);
+	}
+
+	@:op(A + B) private static inline function plus(a:KeyCode, b:Int):KeyCode {
+		return (a : Int) + b;
+	}
 }

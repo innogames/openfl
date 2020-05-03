@@ -1,19 +1,15 @@
 package openfl.text;
 
-
 enum abstract TextFormatAlign(Null<Int>) {
-	
 	public var CENTER = 0;
 	public var END = 1;
 	public var JUSTIFY = 2;
 	public var LEFT = 3;
 	public var RIGHT = 4;
 	public var START = 5;
-	
-	@:from private static function fromString (value:String):TextFormatAlign {
-		
+
+	@:from private static function fromString(value:String):TextFormatAlign {
 		return switch (value) {
-			
 			case "center": CENTER;
 			case "end": END;
 			case "justify": JUSTIFY;
@@ -21,15 +17,11 @@ enum abstract TextFormatAlign(Null<Int>) {
 			case "right": RIGHT;
 			case "start": START;
 			default: null;
-			
 		}
-		
 	}
-	
-	@:to private function toString ():String {
-		
+
+	@:to private function toString():String {
 		return switch (cast this) {
-			
 			case TextFormatAlign.CENTER: "center";
 			case TextFormatAlign.END: "end";
 			case TextFormatAlign.JUSTIFY: "justify";
@@ -37,9 +29,6 @@ enum abstract TextFormatAlign(Null<Int>) {
 			case TextFormatAlign.RIGHT: "right";
 			case TextFormatAlign.START: "start";
 			default: null;
-			
 		}
-		
 	}
-	
 }

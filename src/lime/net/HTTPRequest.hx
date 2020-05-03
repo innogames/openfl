@@ -20,42 +20,32 @@ class HTTPRequest {
 	public var uri:String;
 	public var userAgent:String;
 	public var withCredentials:Bool;
-	
+
 	private var backend:HTTPRequestBackend;
-	
-	public function new () {
-		
+
+	public function new() {
 		contentType = "application/x-www-form-urlencoded";
 		followRedirects = true;
 		enableResponseHeaders = false;
-		formData = new Map ();
+		formData = new Map();
 		headers = [];
 		method = GET;
-		timeout = #if lime_default_timeout Std.parseInt (haxe.macro.Compiler.getDefine ("lime-default-timeout")) #else 30000 #end;
+		timeout = #if lime_default_timeout Std.parseInt(haxe.macro.Compiler.getDefine("lime-default-timeout")) #else 30000 #end;
 		withCredentials = false;
-		
-		backend = new HTTPRequestBackend ();
-		backend.init (this);
-		
-	}
-	
-	
-	public function cancel ():Void {
-		
-		backend.cancel ();
-		
+
+		backend = new HTTPRequestBackend();
+		backend.init(this);
 	}
 
-	public function loadBytes ():Future<Bytes> {
-		
-		return backend.loadData (uri);
-		
-	}	
-
-	public function loadString ():Future<String> {
-		
-		return backend.loadText (uri);
-		
+	public function cancel():Void {
+		backend.cancel();
 	}
-	
+
+	public function loadBytes():Future<Bytes> {
+		return backend.loadData(uri);
+	}
+
+	public function loadString():Future<String> {
+		return backend.loadText(uri);
+	}
 }

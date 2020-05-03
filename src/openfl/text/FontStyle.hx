@@ -1,39 +1,28 @@
 package openfl.text;
 
-
 enum abstract FontStyle(Null<Int>) {
-	
 	public var BOLD = 0;
 	public var BOLD_ITALIC = 1;
 	public var ITALIC = 2;
 	public var REGULAR = 3;
-	
-	@:from private static function fromString (value:String):FontStyle {
-		
+
+	@:from private static function fromString(value:String):FontStyle {
 		return switch (value) {
-			
 			case "bold": BOLD;
 			case "boldItalic": BOLD_ITALIC;
 			case "italic": ITALIC;
 			case "regular": REGULAR;
 			default: null;
-			
 		}
-		
 	}
-	
-	@:to private function toString ():String {
-		
+
+	@:to private function toString():String {
 		return switch (cast this) {
-			
 			case FontStyle.BOLD: "bold";
 			case FontStyle.BOLD_ITALIC: "boldItalic";
 			case FontStyle.ITALIC: "italic";
 			case FontStyle.REGULAR: "regular";
 			default: null;
-			
 		}
-		
 	}
-	
 }

@@ -1,78 +1,59 @@
 package openfl.display;
 
-
 import openfl.geom.Rectangle;
-
 
 #if !flash
 @:access(openfl.geom.Rectangle)
 #end
 class Tileset {
-
-
-	public var bitmapData (get, set):BitmapData;
+	public var bitmapData(get, set):BitmapData;
 
 	private var __bitmapData:BitmapData;
 	private var __data:Array<TileData>;
 
-
 	// TODO: Add support for adding uniform tile rectangles (margin, spacing, width, height)
 
-	public function new (bitmapData:BitmapData, rects:Array<Rectangle> = null) {
-
-		__data = new Array ();
+	public function new(bitmapData:BitmapData, rects:Array<Rectangle> = null) {
+		__data = new Array();
 
 		__bitmapData = bitmapData;
 
 		if (rects != null) {
-
 			for (rect in rects) {
-				addRect (rect);
+				addRect(rect);
 			}
-
 		}
-
 	}
 
+	public function addRect(rect:Rectangle, offsetX:Int = 0, offsetY:Int = 0, rotated:Bool = false):Int {
+		if (rect == null)
+			return -1;
 
-	public function addRect (rect:Rectangle, offsetX:Int = 0, offsetY:Int = 0, rotated:Bool = false):Int {
-
-		if (rect == null) return -1;
-
-		var tileData = new TileData (rect, offsetX, offsetY, rotated);
-		tileData.__update (__bitmapData);
-		__data.push (tileData);
+		var tileData = new TileData(rect, offsetX, offsetY, rotated);
+		tileData.__update(__bitmapData);
+		__data.push(tileData);
 
 		return __data.length - 1;
-
 	}
 
-
-	public function clone ():Tileset {
-
-		var tileset = new Tileset (__bitmapData, null);
-		var rect = #if flash new Rectangle () #else Rectangle.__pool.get () #end;
+	public function clone():Tileset {
+		var tileset = new Tileset(__bitmapData, null);
+		var rect = #if flash new Rectangle() #else Rectangle.__pool.get() #end;
 
 		for (tileData in __data) {
-
-			rect.setTo (tileData.x, tileData.y, tileData.width, tileData.height);
-			tileset.addRect (rect);
-
+			rect.setTo(tileData.x, tileData.y, tileData.width, tileData.height);
+			tileset.addRect(rect);
 		}
 
 		#if !flash
-		Rectangle.__pool.release (rect);
+		Rectangle.__pool.release(rect);
 		#end
 
 		return tileset;
-
 	}
 
-
-	public function getRect (id:Int):Rectangle {
-
+	public function getRect(id:Int):Rectangle {
 		if (id < __data.length && id >= 0) {
-
 			var tileData = __data[id];
 			var width, height;
 			if (tileData.rotated) {
@@ -82,48 +63,30 @@ class Tileset {
 				width = tileData.width;
 				height = tileData.height;
 			}
-			return new Rectangle (tileData.x, tileData.y, width, height);
-
+			return new Rectangle(tileData.x, tileData.y, width, height);
 		}
 
 		return null;
-
 	}
-
-
-
 
 	// Get & Set Methods
 
-
-
-
-	private function get_bitmapData ():BitmapData {
-
+	private function get_bitmapData():BitmapData {
 		return __bitmapData;
-
 	}
 
-
-	private function set_bitmapData (value:BitmapData):BitmapData {
-
+	private function set_bitmapData(value:BitmapData):BitmapData {
 		__bitmapData = value;
 
 		for (data in __data) {
-			data.__update (__bitmapData);
+			data.__update(__bitmapData);
 		}
 
 		return value;
-
 	}
-
-
 }
 
-
 @:allow(openfl.display.Tileset) class TileData {
-
-
 	public var height:Int;
 	public var width:Int;
 	public var x:Int;
@@ -138,37 +101,29 @@ class Tileset {
 	public var __uvX:Float;
 	public var __uvY:Float;
 
-
-	public function new (rect:Rectangle, offsetX:Int, offsetY:Int, rotated:Bool) {
+	public function new(rect:Rectangle, offsetX:Int, offsetY:Int, rotated:Bool) {
 		if (rect != null) {
-			x = Std.int (rect.x);
-			y = Std.int (rect.y);
-			width = Std.int (rect.width);
-			height = Std.int (rect.height);
+			x = Std.int(rect.x);
+			y = Std.int(rect.y);
+			width = Std.int(rect.width);
+			height = Std.int(rect.height);
 		}
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
 		this.rotated = rotated;
 	}
 
-
-	private function __update (bitmapData:BitmapData):Void {
-
+	private function __update(bitmapData:BitmapData):Void {
 		if (bitmapData != null) {
-
 			__uvX = x / bitmapData.width;
 			__uvY = y / bitmapData.height;
 			__uvWidth = (x + width) / bitmapData.width;
 			__uvHeight = (y + height) / bitmapData.height;
 
 			#if flash
-			__bitmapData = new BitmapData (width, height);
-			__bitmapData.copyPixels (bitmapData, new Rectangle (x, y, width, height), new openfl.geom.Point ());
+			__bitmapData = new BitmapData(width, height);
+			__bitmapData.copyPixels(bitmapData, new Rectangle(x, y, width, height), new openfl.geom.Point());
 			#end
-
 		}
-
 	}
-
-
 }

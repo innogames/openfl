@@ -1,7 +1,6 @@
 package openfl.display3D;
 
 enum abstract Context3DBlendFactor(Null<Int>) {
-	
 	public var DESTINATION_ALPHA = 0;
 	public var DESTINATION_COLOR = 1;
 	public var ONE = 2;
@@ -12,11 +11,9 @@ enum abstract Context3DBlendFactor(Null<Int>) {
 	public var SOURCE_ALPHA = 7;
 	public var SOURCE_COLOR = 8;
 	public var ZERO = 9;
-	
-	@:from private static function fromString (value:String):Context3DBlendFactor {
-		
+
+	@:from private static function fromString(value:String):Context3DBlendFactor {
 		return switch (value) {
-			
 			case "destinationAlpha": DESTINATION_ALPHA;
 			case "destinationColor": DESTINATION_COLOR;
 			case "one": ONE;
@@ -28,15 +25,11 @@ enum abstract Context3DBlendFactor(Null<Int>) {
 			case "sourceColor": SOURCE_COLOR;
 			case "zero": ZERO;
 			default: null;
-			
 		}
-		
 	}
-	
-	@:to private function toString ():String {
-		
+
+	@:to private function toString():String {
 		return switch (cast this) {
-			
 			case Context3DBlendFactor.DESTINATION_ALPHA: "destinationAlpha";
 			case Context3DBlendFactor.DESTINATION_COLOR: "destinationColor";
 			case Context3DBlendFactor.ONE: "one";
@@ -48,9 +41,6 @@ enum abstract Context3DBlendFactor(Null<Int>) {
 			case Context3DBlendFactor.SOURCE_COLOR: "sourceColor";
 			case Context3DBlendFactor.ZERO: "zero";
 			default: null;
-			
 		}
-		
 	}
-	
 }
