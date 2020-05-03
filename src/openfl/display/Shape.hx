@@ -6,7 +6,6 @@ class Shape extends DisplayObject {
 	
 	
 	public var graphics (get, never):Graphics;
-	@:beta public var shader:Shader;
 	
 	
 	public function new () {

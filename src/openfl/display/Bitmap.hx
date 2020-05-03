@@ -22,7 +22,6 @@ class Bitmap extends DisplayObject {
 	
 	public var bitmapData (get, set):BitmapData;
 	public var pixelSnapping (get, set):PixelSnapping;
-	@:beta public var shader:Shader;
 	public var smoothing:Bool;
 	
 	#if (js && html5)

@@ -7,9 +7,10 @@ import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 import lime.ui.MouseCursor;
 import lime.ui.Window.CopyDataProvider;
-import openfl._internal.renderer.canvas.CanvasTextField;
-import openfl._internal.renderer.canvas.CanvasSmoothing;
+import openfl.Lib;
 import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.canvas.CanvasSmoothing;
+import openfl._internal.renderer.canvas.CanvasTextField;
 import openfl._internal.text.HTMLParser;
 import openfl._internal.text.TextEngine;
 import openfl._internal.text.TextFormatRange;
@@ -17,7 +18,6 @@ import openfl._internal.text.TextLayoutGroup;
 import openfl.display.DisplayObject;
 import openfl.display.Graphics;
 import openfl.display.InteractiveObject;
-import openfl.display.Shader;
 import openfl.events.Event;
 import openfl.events.FocusEvent;
 import openfl.events.KeyboardEvent;
@@ -27,7 +27,6 @@ import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
 import openfl.net.URLRequest;
 import openfl.ui.Keyboard;
-import openfl.Lib;
 
 
 @:access(openfl.display.Graphics)
@@ -68,7 +67,6 @@ class TextField extends InteractiveObject {
 	public var selectable (get, set):Bool;
 	public var selectionBeginIndex (get, never):Int;
 	public var selectionEndIndex (get, never):Int;
-	@:beta public var shader:Shader;
 	public var sharpness (get, set):Float;
 	public var text (get, set):String;
 	public var textColor (get, set):Int;
