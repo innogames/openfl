@@ -2,7 +2,7 @@ package openfl.display;
 
 import openfl.display.ShaderParameter;
 
-class ShaderData {
+final class ShaderData {
 	public var aAlpha:ShaderParameterAttrib;
 	public var aPosition:ShaderParameterAttrib;
 	public var aTexCoord:ShaderParameterAttrib;

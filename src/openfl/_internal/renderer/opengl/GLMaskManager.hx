@@ -7,7 +7,6 @@ import openfl.display.DisplayObject;
 import openfl.display.Shader;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
-import openfl.utils.ByteArray;
 
 @:access(openfl._internal.renderer.opengl.GLRenderer)
 @:access(openfl.display.DisplayObject)
@@ -180,7 +179,8 @@ class GLMaskManager extends AbstractMaskManager {
 }
 
 class GLMaskShader extends Shader {
-	@:glFragmentSource("varying vec2 vTexCoord;
+	override function __getGlFragmentSource() return "
+		varying vec2 vTexCoord;
 		
 		uniform sampler2D uImage0;
 		
@@ -198,8 +198,10 @@ class GLMaskShader extends Shader {
 				
 			}
 			
-		}")
-	@:glVertexSource("attribute vec4 aPosition;
+		}
+	";
+	override function __getGlVertexSource() return "
+		attribute vec4 aPosition;
 		attribute vec2 aTexCoord;
 		varying vec2 vTexCoord;
 		
@@ -211,8 +213,6 @@ class GLMaskShader extends Shader {
 			
 			gl_Position = uMatrix * aPosition;
 			
-		}")
-	public function new(code:ByteArray = null) {
-		super(code);
-	}
+		}
+	";
 }

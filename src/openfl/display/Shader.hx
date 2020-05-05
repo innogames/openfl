@@ -1,65 +1,26 @@
 package openfl.display;
 
 import lime.graphics.GLRenderContext;
-import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GL;
+import lime.graphics.opengl.GLProgram;
 import openfl._internal.stage3D.GLUtils;
-import openfl.utils.ByteArray;
 import openfl.display.ShaderParameter;
 
-#if (!display && !macro)
-@:autoBuild(openfl._internal.macros.ShaderMacro.build())
-@:build(openfl._internal.macros.ShaderMacro.build())
-#end
 class Shader {
-	public var byteCode(null, default):ByteArray;
-	public var data(get, set):ShaderData;
-	public var glFragmentSource(get, set):String;
+	public var data(get, never):ShaderData;
 	public var glProgram(default, null):GLProgram;
-	public var glVertexSource(get, set):String;
 	public var precisionHint:ShaderPrecision;
 
-	private var gl:GLRenderContext;
+	var gl:GLRenderContext;
 
-	private var __data:ShaderData;
-	private var __glFragmentSource:String;
-	private var __glSourceDirty:Bool;
-	private var __glVertexSource:String;
-	private var __inputBitmapData:Array<ShaderParameterSampler>;
-	private var __numPasses:Int;
-	private var __param:Array<ShaderParameter>;
-	private var __skipEnableVertexAttribArray:Bool;
+	final __data:ShaderData;
+	final __glFragmentSource:String;
+	final __glVertexSource:String;
+	var __inputBitmapData:Array<ShaderParameterSampler>;
+	var __param:Array<ShaderParameter>;
+	var __skipEnableVertexAttribArray:Bool;
 
-	@:glFragmentSource(#if emscripten "varying float vAlpha;
-		varying mat4 vColorMultipliers;
-		varying vec4 vColorOffsets;
-		varying vec2 vTexCoord;
-		
-		uniform bool uColorTransform;
-		uniform sampler2D uImage0;
-		
-		void main(void) {
-			
-			vec4 color = texture2D (uImage0, vTexCoord);
-			
-			if (color.a == 0.0) {
-				
-				gl_FragColor = vec4 (0.0, 0.0, 0.0, 0.0);
-				
-			} else if (uColorTransform) {
-				
-				color = vec4 (color.rgb / color.a, color.a);
-				color = vColorOffsets + (color * vColorMultipliers);
-				
-				gl_FragColor = vec4 (color.bgr * color.a * vAlpha, color.a * vAlpha);
-				
-			} else {
-				
-				gl_FragColor = color.bgra * vAlpha;
-				
-			}
-			
-		}" #else "varying float vAlpha;
+	function __getGlFragmentSource() return "varying float vAlpha;
 		varying vec4 vColorMultipliers0;
 		varying vec4 vColorMultipliers1;
 		varying vec4 vColorMultipliers2;
@@ -105,9 +66,8 @@ class Shader {
 				gl_FragColor = color * vAlpha;
 				
 			}
-			
-		}" #end)
-	@:glVertexSource("attribute float aAlpha;
+		}";
+	function __getGlVertexSource() return "attribute float aAlpha;
 		attribute vec4 aColorMultipliers0;
 		attribute vec4 aColorMultipliers1;
 		attribute vec4 aColorMultipliers2;
@@ -142,26 +102,25 @@ class Shader {
 			}
 			
 			gl_Position = uMatrix * aPosition;
-			
-		}")
-	public function new(code:ByteArray = null) {
-		byteCode = code;
-		precisionHint = FULL;
+		}";
 
+	public function new() {
+		precisionHint = FULL;
+		__data = new ShaderData();
+		__glVertexSource = __getGlVertexSource();
+		__glFragmentSource = __getGlFragmentSource();
 		__skipEnableVertexAttribArray = false;
-		__glSourceDirty = true;
-		__numPasses = 1;
 	}
 
-	private function __disable():Void {
+	function __disable() {
 		if (glProgram != null) {
 			__disableGL();
 		}
 	}
 
-	private function __disableGL():Void {
-		if (data.uImage0 != null) {
-			data.uImage0.input = null;
+	function __disableGL() {
+		if (__data.uImage0 != null) {
+			__data.uImage0.input = null;
 		}
 
 		for (parameter in __param) {
@@ -172,7 +131,7 @@ class Shader {
 		gl.bindTexture(GL.TEXTURE_2D, null);
 	}
 
-	private function __enable():Void {
+	function __enable() {
 		__init();
 
 		if (glProgram != null) {
@@ -180,33 +139,28 @@ class Shader {
 		}
 	}
 
-	private function __enableGL():Void {
+	function __enableGL() {
 		for (input in __inputBitmapData) {
 			input.enable(gl);
 		}
 	}
 
-	private function __init():Void {
-		if (__data == null) {
-			__data = new ShaderData();
-		}
-
-		if (__glFragmentSource != null && __glVertexSource != null && (glProgram == null || __glSourceDirty)) {
+	function __init() {
+		if (glProgram == null) {
 			__initGL();
 		}
 	}
 
-	private function __initGL():Void {
-		if (__glSourceDirty || __param == null) {
-			__glSourceDirty = false;
+	function __initGL() {
+		if (__param == null) {
 			glProgram = null;
 
 			__inputBitmapData = new Array();
 			__param = new Array();
 
-			__processGLData(glVertexSource, "attribute");
-			__processGLData(glVertexSource, "uniform");
-			__processGLData(glFragmentSource, "uniform");
+			__processGLData(__glVertexSource, "attribute");
+			__processGLData(__glVertexSource, "uniform");
+			__processGLData(__glFragmentSource, "uniform");
 		}
 
 		if (gl != null && glProgram == null) {
@@ -217,9 +171,9 @@ class Shader {
 				+ " float;
 				#endif
 				"
-				+ glFragmentSource;
+				+ __glFragmentSource;
 
-			glProgram = GLUtils.createProgram(gl, glVertexSource, fragment);
+			glProgram = GLUtils.createProgram(gl, __glVertexSource, fragment);
 
 			if (glProgram != null) {
 				for (input in __inputBitmapData) {
@@ -233,7 +187,7 @@ class Shader {
 		}
 	}
 
-	private function __processGLData(source:String, storageType:String):Void {
+	function __processGLData(source:String, storageType:String) {
 		var lastMatch = 0, position, regex, name, type;
 
 		var isUniform = storageType == "uniform";
@@ -252,7 +206,7 @@ class Shader {
 				var input = new ShaderParameterSampler(name, textureIndex);
 				textureIndex++;
 				__inputBitmapData.push(input);
-				Reflect.setField(data, name, input);
+				Reflect.setField(__data, name, input);
 			} else {
 				var parameter:ShaderParameter;
 				if (!isUniform) {
@@ -278,7 +232,7 @@ class Shader {
 					}
 				}
 				__param.push(parameter);
-				Reflect.setField(data, name, parameter);
+				Reflect.setField(__data, name, parameter);
 			}
 
 			position = regex.matchedPos();
@@ -286,13 +240,13 @@ class Shader {
 		}
 	}
 
-	private function __update():Void {
+	function __update() {
 		if (glProgram != null) {
 			__updateGL();
 		}
 	}
 
-	private function __updateGL():Void {
+	function __updateGL() {
 		for (input in __inputBitmapData) {
 			input.update(gl, false);
 		}
@@ -302,41 +256,8 @@ class Shader {
 		}
 	}
 
-	// Get & Set Methods
-
-	private function get_data():ShaderData {
-		if (__glSourceDirty || __data == null) {
-			__init();
-		}
-
+	function get_data():ShaderData {
+		__init();
 		return __data;
-	}
-
-	private function set_data(value:ShaderData):ShaderData {
-		return __data = cast value;
-	}
-
-	private function get_glFragmentSource():String {
-		return __glFragmentSource;
-	}
-
-	private function set_glFragmentSource(value:String):String {
-		if (value != __glFragmentSource) {
-			__glSourceDirty = true;
-		}
-
-		return __glFragmentSource = value;
-	}
-
-	private function get_glVertexSource():String {
-		return __glVertexSource;
-	}
-
-	private function set_glVertexSource(value:String):String {
-		if (value != __glVertexSource) {
-			__glSourceDirty = true;
-		}
-
-		return __glVertexSource = value;
 	}
 }
