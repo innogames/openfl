@@ -1,7 +1,8 @@
 package openfl.display;
 
 import haxe.Timer;
-import openfl._internal.renderer.RenderSession;
+import openfl.Vector;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.stage3D.opengl.GLStage3D;
 import openfl.display3D.Context3D;
 import openfl.display3D.Context3DProfile;
@@ -9,7 +10,6 @@ import openfl.display3D.Context3DRenderMode;
 import openfl.events.ErrorEvent;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
-import openfl.Vector;
 
 @:access(openfl.display3D.Context3D)
 class Stage3D extends EventDispatcher {
@@ -46,7 +46,7 @@ class Stage3D extends EventDispatcher {
 		requestContext3D();
 	}
 
-	private function __createContext(stage:Stage, renderSession:RenderSession):Void {
+	private function __createContext(stage:Stage, renderSession:GLRenderSession):Void {
 		__stage = stage;
 		context3D = new Context3D(this, renderSession);
 		__dispatchCreate();
@@ -64,7 +64,7 @@ class Stage3D extends EventDispatcher {
 		}
 	}
 
-	private function __renderGL(stage:Stage, renderSession:RenderSession):Void {
+	private function __renderGL(stage:Stage, renderSession:GLRenderSession):Void {
 		if (!visible)
 			return;
 

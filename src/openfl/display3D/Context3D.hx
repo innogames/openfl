@@ -1,22 +1,22 @@
 package openfl.display3D;
 
 import lime.utils.Float32Array;
-import openfl._internal.renderer.RenderSession;
-import openfl._internal.stage3D.opengl.GLContext3D;
+import openfl.Vector;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.stage3D.SamplerState;
-import openfl.display3D.textures.CubeTexture;
-import openfl.display3D.textures.RectangleTexture;
-import openfl.display3D.textures.TextureBase;
-import openfl.display3D.textures.Texture;
-import openfl.display3D.textures.VideoTexture;
+import openfl._internal.stage3D.opengl.GLContext3D;
 import openfl.display.BitmapData;
 import openfl.display.Stage3D;
+import openfl.display3D.textures.CubeTexture;
+import openfl.display3D.textures.RectangleTexture;
+import openfl.display3D.textures.Texture;
+import openfl.display3D.textures.TextureBase;
+import openfl.display3D.textures.VideoTexture;
 import openfl.errors.IllegalOperationError;
 import openfl.events.EventDispatcher;
 import openfl.geom.Matrix3D;
 import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
-import openfl.Vector;
 
 @:access(openfl.display3D.textures.CubeTexture)
 @:access(openfl.display3D.textures.RectangleTexture)
@@ -54,7 +54,7 @@ final class Context3D extends EventDispatcher {
 	private var __maxAnisotropyTexture2D:Int;
 	private var __positionScale:Float32Array;
 	private var __program:Program3D;
-	private var __renderSession:RenderSession;
+	private var __renderSession:GLRenderSession;
 	private var __renderToTexture:TextureBase;
 	private var __rttDepthAndStencil:Bool;
 	private var __samplerDirty:Int;
@@ -75,7 +75,7 @@ final class Context3D extends EventDispatcher {
 	// private var __statsValues:Array<Telemetry.Value>;
 	// private var __valueFrame:Telemetry.Value;
 	#end
-	private function new(stage3D:Stage3D, renderSession:RenderSession) {
+	private function new(stage3D:Stage3D, renderSession:GLRenderSession) {
 		super();
 
 		__stage3D = stage3D;

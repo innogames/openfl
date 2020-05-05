@@ -1,6 +1,5 @@
 package openfl._internal.renderer.opengl;
 
-import openfl._internal.renderer.opengl.batcher.BatchRenderer;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.math.Matrix4;
@@ -17,7 +16,7 @@ class GLRenderer {
 	public var projectionFlipped:Matrix4;
 
 	private var stage:Stage;
-	private var renderSession:RenderSession;
+	private var renderSession:GLRenderSession;
 	private var displayWidth:Int;
 	private var displayHeight:Int;
 	private var displayMatrix:Matrix;
@@ -39,18 +38,8 @@ class GLRenderer {
 
 		matrix = new Matrix4();
 
-		renderSession = new RenderSession();
-		renderSession.clearRenderDirty = true;
-		renderSession.gl = gl;
-		renderSession.renderer = this;
+		renderSession = new GLRenderSession(this, gl);
 		renderSession.pixelRatio = stage.window.scale;
-		var blendModeManager = new GLBlendModeManager(gl);
-		renderSession.blendModeManager = blendModeManager;
-		var shaderManager = new GLShaderManager(gl);
-		renderSession.shaderManager = shaderManager;
-		renderSession.maskManager = new GLMaskManager(renderSession);
-
-		renderSession.batcher = new BatchRenderer(gl, blendModeManager, shaderManager, 4096);
 
 		if (stage.window != null) {
 			if (stage.stage3Ds[0].context3D == null) {

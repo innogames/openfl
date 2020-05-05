@@ -1,7 +1,7 @@
 package openfl._internal.stage3D.opengl;
 
 import lime.graphics.opengl.GL;
-import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.renderer.opengl.batcher.TextureData;
 import openfl._internal.stage3D.GLUtils;
 import openfl.display3D.textures.VideoTexture;
@@ -9,12 +9,12 @@ import openfl.display3D.textures.VideoTexture;
 @:access(openfl.display3D.textures.VideoTexture)
 @:access(openfl.net.NetStream)
 class GLVideoTexture {
-	public static function create(videoTexture:VideoTexture, renderSession:RenderSession):Void {
+	public static function create(videoTexture:VideoTexture, renderSession:GLRenderSession):Void {
 		var gl = renderSession.gl;
 		videoTexture.__textureTarget = GL.TEXTURE_2D;
 	}
 
-	public static function getTexture(videoTexture:VideoTexture, renderSession:RenderSession):TextureData {
+	public static function getTexture(videoTexture:VideoTexture, renderSession:GLRenderSession):TextureData {
 		if (!videoTexture.__netStream.__video.paused) {
 			var gl = renderSession.gl;
 

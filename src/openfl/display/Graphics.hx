@@ -3,8 +3,8 @@ package openfl.display;
 import openfl.Vector;
 import openfl._internal.renderer.DrawCommandBuffer;
 import openfl._internal.renderer.DrawCommandReader;
-import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.canvas.CanvasGraphics;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.renderer.opengl.batcher.BlendMode as BatcherBlendMode;
 import openfl._internal.renderer.opengl.batcher.Quad;
 import openfl.display.GraphicsBitmapFill;
@@ -718,7 +718,7 @@ final class Graphics {
 	}
 
 	@:access(openfl.display.BitmapData.__fillBatchQuad)
-	function __getBatchQuad(renderSession:RenderSession, alpha, colorTransform, blendMode):Quad {
+	function __getBatchQuad(renderSession:GLRenderSession, alpha, colorTransform, blendMode):Quad {
 		if (__batchQuadDirty) {
 			if (__batchQuad == null) {
 				__batchQuad = Quad.pool.get();

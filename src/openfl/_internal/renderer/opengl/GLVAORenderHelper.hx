@@ -1,15 +1,17 @@
 package openfl._internal.renderer.opengl;
 
+#if vertex_array_object
+
 #if gl_stats
-import openfl._internal.renderer.opengl.stats.GLStats;
 import openfl._internal.renderer.opengl.stats.DrawCallContext;
+import openfl._internal.renderer.opengl.stats.GLStats;
 #end
-import openfl.display.BitmapData;
 import haxe.io.Float32Array;
-import openfl.display.Shader;
-import openfl.display.DisplayObject;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
+import openfl.display.BitmapData;
+import openfl.display.DisplayObject;
+import openfl.display.Shader;
 
 /**
  *  GLVAORenderHelper is a helper class facilitating a GL rendering using VertexArrayObjects. Since VertexArrayObjects are
@@ -32,7 +34,7 @@ class GLVAORenderHelper {
 		gl.enableVertexAttribArray(shader.data.aColorOffsets.index);
 	}
 
-	public static inline function renderDO(displayObject:DisplayObject, renderSession:RenderSession, shader:Shader, bitmapData:BitmapData):Bool {
+	public static inline function renderDO(displayObject:DisplayObject, renderSession:GLRenderSession, shader:Shader, bitmapData:BitmapData):Bool {
 		var gl = renderSession.gl;
 		var vaoContext = renderSession.vaoContext;
 
@@ -70,7 +72,7 @@ class GLVAORenderHelper {
 		return false;
 	}
 
-	public static inline function renderMask(displayObject:DisplayObject, renderSession:RenderSession, shader:Shader, bitmapData:BitmapData):Bool {
+	public static inline function renderMask(displayObject:DisplayObject, renderSession:GLRenderSession, shader:Shader, bitmapData:BitmapData):Bool {
 		var gl = renderSession.gl;
 		var vaoContext = renderSession.vaoContext;
 
@@ -126,3 +128,5 @@ class GLVAORenderHelper {
 		gl.vertexAttribPointer(shader.data.aColorOffsets.index, 4, GL.FLOAT, false, 26 * Float32Array.BYTES_PER_ELEMENT, 22 * Float32Array.BYTES_PER_ELEMENT);
 	}
 }
+
+#end

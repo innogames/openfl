@@ -1,6 +1,6 @@
 package openfl._internal.stage3D.opengl;
 
-import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.stage3D.GLUtils;
 import openfl.display.Stage3D;
 
@@ -8,7 +8,7 @@ import openfl.display.Stage3D;
 @:access(openfl.display3D.Context3D)
 @:access(openfl.display3D.Program3D)
 class GLStage3D {
-	public static inline function render(stage3D:Stage3D, renderSession:RenderSession):Void {
+	public static inline function render(stage3D:Stage3D, renderSession:GLRenderSession):Void {
 		if (stage3D.context3D != null) {
 			renderSession.blendModeManager.setBlendMode(null);
 

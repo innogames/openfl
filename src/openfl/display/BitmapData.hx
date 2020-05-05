@@ -1178,8 +1178,7 @@ class BitmapData implements IBitmapDrawable {
 
 		var buffer = image.buffer;
 
-		var renderSession = new RenderSession();
-		renderSession.clearRenderDirty = clearRenderDirty;
+		var renderSession = new RenderSession(clearRenderDirty);
 		renderSession.context = buffer.__srcContext;
 		renderSession.allowSmoothing = smoothing;
 		renderSession.pixelRatio = __pixelRatio;

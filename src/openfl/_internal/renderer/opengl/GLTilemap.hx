@@ -2,7 +2,6 @@ package openfl._internal.renderer.opengl;
 
 import lime.graphics.opengl.GL;
 import lime.utils.Float32Array;
-import openfl._internal.renderer.RenderSession;
 import openfl.display.Tilemap;
 import openfl.geom.Rectangle;
 #if gl_stats
@@ -21,7 +20,7 @@ import openfl._internal.renderer.opengl.stats.GLStats;
 class GLTilemap {
 	private static var __skippedTiles = new Map<Int, Bool>();
 
-	public static function render(tilemap:Tilemap, renderSession:RenderSession):Void {
+	public static function render(tilemap:Tilemap, renderSession:GLRenderSession):Void {
 		if (!tilemap.__renderable || tilemap.__worldAlpha <= 0)
 			return;
 
@@ -158,7 +157,7 @@ class GLTilemap {
 		Rectangle.__pool.release(rect);
 	}
 
-	public static function renderMask(tilemap:Tilemap, renderSession:RenderSession):Void {
+	public static function renderMask(tilemap:Tilemap, renderSession:GLRenderSession):Void {
 		tilemap.__updateTileArray();
 
 		if (tilemap.__tileArray == null || tilemap.__tileArray.length == 0)

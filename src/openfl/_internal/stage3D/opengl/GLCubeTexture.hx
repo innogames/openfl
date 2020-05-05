@@ -4,7 +4,7 @@ import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.utils.ArrayBufferView;
 import lime.utils.UInt8Array;
-import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.stage3D.GLUtils;
 import openfl._internal.stage3D.SamplerState;
 import openfl._internal.stage3D.atf.ATFReader;
@@ -23,7 +23,7 @@ class GLCubeTexture {
 		cubeTexture.__uploadedSides = 0;
 	}
 
-	public static function uploadCompressedTextureFromByteArray(cubeTexture:CubeTexture, renderSession:RenderSession, data:ByteArray,
+	public static function uploadCompressedTextureFromByteArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ByteArray,
 			byteArrayOffset:UInt):Void {
 		var reader = new ATFReader(data, byteArrayOffset);
 		var alpha = reader.readHeader(cubeTexture.__size, cubeTexture.__size, true);
@@ -64,7 +64,7 @@ class GLCubeTexture {
 		GLUtils.checkGLError(gl);
 	}
 
-	public static function uploadFromBitmapData(cubeTexture:CubeTexture, renderSession:RenderSession, source:BitmapData, side:UInt, miplevel:UInt = 0,
+	public static function uploadFromBitmapData(cubeTexture:CubeTexture, renderSession:GLRenderSession, source:BitmapData, side:UInt, miplevel:UInt = 0,
 			generateMipmap:Bool = false):Void {
 		var size = cubeTexture.__size >> miplevel;
 		if (size == 0)
@@ -83,7 +83,7 @@ class GLCubeTexture {
 		uploadFromTypedArray(cubeTexture, renderSession, image.data, side, miplevel);
 	}
 
-	public static function uploadFromByteArray(cubeTexture:CubeTexture, renderSession:RenderSession, data:ByteArray, byteArrayOffset:UInt, side:UInt,
+	public static function uploadFromByteArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt, side:UInt,
 			miplevel:UInt):Void {
 		#if js
 		if (byteArrayOffset == 0) {
@@ -95,7 +95,7 @@ class GLCubeTexture {
 		uploadFromTypedArray(cubeTexture, renderSession, new UInt8Array(data.toArrayBuffer(), byteArrayOffset), side, miplevel);
 	}
 
-	public static function uploadFromTypedArray(cubeTexture:CubeTexture, renderSession:RenderSession, data:ArrayBufferView, side:UInt, miplevel:UInt):Void {
+	public static function uploadFromTypedArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ArrayBufferView, side:UInt, miplevel:UInt):Void {
 		if (data == null)
 			return;
 		var gl = renderSession.gl;
@@ -121,7 +121,7 @@ class GLCubeTexture {
 		// __trackMemoryUsage (memUsage);
 	}
 
-	public static function setSamplerState(cubeTexture:CubeTexture, renderSession:RenderSession, state:SamplerState) {
+	public static function setSamplerState(cubeTexture:CubeTexture, renderSession:GLRenderSession, state:SamplerState) {
 		if (!state.equals(cubeTexture.__samplerState)) {
 			var gl = renderSession.gl;
 

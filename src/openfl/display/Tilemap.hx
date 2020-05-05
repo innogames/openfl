@@ -1,15 +1,16 @@
 package openfl.display;
 
+import openfl.Vector;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.canvas.CanvasBitmap;
 import openfl._internal.renderer.canvas.CanvasDisplayObject;
 import openfl._internal.renderer.canvas.CanvasTilemap;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLDisplayObject;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.renderer.opengl.GLTilemap;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
-import openfl.Vector;
 
 @:access(openfl.display.Tile)
 @:access(openfl.display.TileArray)
@@ -242,7 +243,7 @@ class Tilemap extends DisplayObject {
 		}
 	}
 
-	private override function __renderGL(renderSession:RenderSession):Void {
+	private override function __renderGL(renderSession:GLRenderSession):Void {
 		__updateCacheBitmap(renderSession, false);
 
 		if (__cacheBitmap != null && !__cacheBitmapRender) {
@@ -253,7 +254,7 @@ class Tilemap extends DisplayObject {
 		}
 	}
 
-	private override function __renderGLMask(renderSession:RenderSession):Void {
+	private override function __renderGLMask(renderSession:GLRenderSession):Void {
 		__updateCacheBitmap(renderSession, false);
 
 		if (__cacheBitmap != null && !__cacheBitmapRender) {

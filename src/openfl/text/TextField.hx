@@ -10,6 +10,7 @@ import openfl.Lib;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.canvas.CanvasSmoothing;
 import openfl._internal.renderer.canvas.CanvasTextField;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.text.HTMLParser;
 import openfl._internal.text.TextEngine;
 import openfl._internal.text.TextFormatRange;
@@ -930,7 +931,7 @@ class TextField extends InteractiveObject {
 		#end
 	}
 
-	private override function __renderGL(renderSession:RenderSession):Void {
+	private override function __renderGL(renderSession:GLRenderSession):Void {
 		__forceCachedBitmapUpdate = __forceCachedBitmapUpdate || __dirty;
 		#if (js && html5)
 		CanvasTextField.render(this, renderSession, __worldTransform);
@@ -939,7 +940,7 @@ class TextField extends InteractiveObject {
 		super.__renderGL(renderSession);
 	}
 
-	private override function __renderGLMask(renderSession:RenderSession):Void {
+	private override function __renderGLMask(renderSession:GLRenderSession):Void {
 		#if (js && html5)
 		CanvasTextField.render(this, renderSession, __worldTransform);
 		#end

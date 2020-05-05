@@ -1,13 +1,12 @@
 package openfl._internal.renderer.opengl;
 
-import lime.utils.Float32Array;
 import lime.graphics.opengl.GL;
+import lime.utils.Float32Array;
 import openfl._internal.renderer.canvas.CanvasGraphics;
-import openfl._internal.renderer.RenderSession;
 import openfl.display.DisplayObject;
 #if gl_stats
-import openfl._internal.renderer.opengl.stats.GLStats;
 import openfl._internal.renderer.opengl.stats.DrawCallContext;
+import openfl._internal.renderer.opengl.stats.GLStats;
 #end
 
 @:access(openfl.display.DisplayObject)
@@ -16,16 +15,14 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 @:access(openfl.filters.BitmapFilter)
 @:access(openfl.geom.ColorTransform)
 class GLShape {
-	public static function render(shape:DisplayObject, renderSession:RenderSession):Void {
+	public static function render(shape:DisplayObject, renderSession:GLRenderSession):Void {
 		if (!shape.__renderable || shape.__worldAlpha <= 0)
 			return;
 
 		var graphics = shape.__graphics;
 
 		if (graphics != null) {
-			#if (js && html5)
 			CanvasGraphics.render(graphics, renderSession);
-			#end
 
 			if (graphics.__bitmap != null && graphics.__visible) {
 				renderSession.maskManager.pushObject(shape);
@@ -35,17 +32,12 @@ class GLShape {
 		}
 	}
 
-	public static function renderMask(shape:DisplayObject, renderSession:RenderSession):Void {
+	public static function renderMask(shape:DisplayObject, renderSession:GLRenderSession):Void {
 		var graphics = shape.__graphics;
 
 		if (graphics != null) {
 			// TODO: Support invisible shapes
-
-			#if (js && html5)
 			CanvasGraphics.render(graphics, renderSession);
-			#end
-
-			var bounds = graphics.__bounds;
 
 			if (graphics.__bitmap != null) {
 				var renderer = renderSession.renderer;
@@ -60,10 +52,11 @@ class GLShape {
 				shader.data.uImage0.smoothing = renderSession.allowSmoothing;
 				shader.data.uMatrix.value = renderer.getMatrix(graphics.__worldTransform);
 
+				#if vertex_array_object
 				var vaoRendered = GLVAORenderHelper.renderMask(shape, renderSession, shader, graphics.__bitmap);
-
 				if (vaoRendered)
 					return;
+				#end
 
 				renderSession.shaderManager.updateShader(shader);
 

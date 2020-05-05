@@ -3,12 +3,12 @@ package openfl._internal.stage3D.opengl;
 import lime.graphics.opengl.GL;
 import lime.math.Rectangle in LimeRectangle;
 import lime.utils.Float32Array;
+import openfl.Vector;
 import openfl._internal.stage3D.GLUtils;
 import openfl._internal.stage3D.SamplerState;
-import openfl.display3D.textures.CubeTexture;
-import openfl.display3D.textures.RectangleTexture;
-import openfl.display3D.textures.TextureBase;
-import openfl.display3D.textures.Texture;
+import openfl.display.BitmapData;
+import openfl.display.Stage3D;
+import openfl.display3D.Context3D;
 import openfl.display3D.Context3DBlendFactor;
 import openfl.display3D.Context3DClearMask;
 import openfl.display3D.Context3DCompareMode;
@@ -19,22 +19,22 @@ import openfl.display3D.Context3DTextureFilter;
 import openfl.display3D.Context3DTriangleFace;
 import openfl.display3D.Context3DVertexBufferFormat;
 import openfl.display3D.Context3DWrapMode;
-import openfl.display3D.Context3D;
 import openfl.display3D.IndexBuffer3D;
 import openfl.display3D.Program3D;
 import openfl.display3D.VertexBuffer3D;
-import openfl.display.BitmapData;
-import openfl.display.Stage3D;
+import openfl.display3D.textures.CubeTexture;
+import openfl.display3D.textures.RectangleTexture;
+import openfl.display3D.textures.Texture;
+import openfl.display3D.textures.TextureBase;
 import openfl.errors.Error;
 import openfl.errors.IllegalOperationError;
-import openfl.geom.Point;
 import openfl.geom.Matrix3D;
+import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
-import openfl.Vector;
 #if gl_stats
-import openfl._internal.renderer.opengl.stats.GLStats;
 import openfl._internal.renderer.opengl.stats.DrawCallContext;
+import openfl._internal.renderer.opengl.stats.GLStats;
 #end
 
 @:access(openfl._internal.stage3D.GLUtils)

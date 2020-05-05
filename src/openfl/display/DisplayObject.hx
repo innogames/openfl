@@ -8,6 +8,7 @@ import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.canvas.CanvasBitmap;
 import openfl._internal.renderer.canvas.CanvasDisplayObject;
 import openfl._internal.renderer.canvas.CanvasGraphics;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLDisplayObject;
 import openfl.display.Stage;
@@ -537,7 +538,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		}
 	}
 
-	private function __renderGL(renderSession:RenderSession):Void {
+	private function __renderGL(renderSession:GLRenderSession):Void {
 		__updateCacheBitmap(renderSession, false);
 
 		if (__cacheBitmap != null && !__cacheBitmapRender) {
@@ -547,7 +548,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		}
 	}
 
-	private function __renderGLMask(renderSession:RenderSession):Void {
+	private function __renderGLMask(renderSession:GLRenderSession):Void {
 		__updateCacheBitmap(renderSession, false);
 
 		if (__cacheBitmap != null && !__cacheBitmapRender) {

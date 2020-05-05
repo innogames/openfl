@@ -1,12 +1,11 @@
 package openfl._internal.renderer.opengl;
 
-import lime.utils.Float32Array;
 import lime.graphics.opengl.GL;
-import openfl._internal.renderer.RenderSession;
+import lime.utils.Float32Array;
 import openfl.display.Bitmap;
 #if gl_stats
-import openfl._internal.renderer.opengl.stats.GLStats;
 import openfl._internal.renderer.opengl.stats.DrawCallContext;
+import openfl._internal.renderer.opengl.stats.GLStats;
 #end
 
 @:access(openfl.display.Bitmap)
@@ -15,7 +14,7 @@ import openfl._internal.renderer.opengl.stats.DrawCallContext;
 @:access(openfl.filters.BitmapFilter)
 @:access(openfl.geom.ColorTransform)
 class GLBitmap {
-	public static function render(bitmap:Bitmap, renderSession:RenderSession):Void {
+	public static function render(bitmap:Bitmap, renderSession:GLRenderSession):Void {
 		if (!bitmap.__renderable || bitmap.__worldAlpha <= 0)
 			return;
 
@@ -26,7 +25,7 @@ class GLBitmap {
 		}
 	}
 
-	public static function renderMask(bitmap:Bitmap, renderSession:RenderSession):Void {
+	public static function renderMask(bitmap:Bitmap, renderSession:GLRenderSession):Void {
 		if (bitmap.__bitmapData != null && bitmap.__bitmapData.__isValid) {
 			var renderer = renderSession.renderer;
 			var gl = renderSession.gl;
@@ -38,10 +37,11 @@ class GLBitmap {
 			shader.data.uImage0.smoothing = renderSession.allowSmoothing && (bitmap.smoothing || renderSession.forceSmoothing);
 			shader.data.uMatrix.value = renderer.getMatrix(bitmap.__renderTransform, bitmap.__snapToPixel());
 
+			#if vertex_array_object
 			var vaoRendered = GLVAORenderHelper.renderMask(bitmap, renderSession, shader, bitmap.__bitmapData);
-
 			if (vaoRendered)
 				return;
+			#end
 
 			renderSession.shaderManager.updateShader(shader);
 

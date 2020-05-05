@@ -15,6 +15,7 @@ import openfl.geom.Rectangle;
 class GLMaskManager extends AbstractMaskManager {
 	public var maskShader(default, null) = new GLMaskShader();
 
+	final renderSession:GLRenderSession;
 	private var clipRects:Array<Rectangle>;
 	private var gl:GLRenderContext;
 	private var maskObjects:Array<DisplayObject>;
@@ -22,9 +23,8 @@ class GLMaskManager extends AbstractMaskManager {
 	private var stencilReference:Int;
 	private var tempRect:Rectangle;
 
-	public function new(renderSession:RenderSession) {
-		super(renderSession);
-
+	public function new(renderSession:GLRenderSession) {
+		this.renderSession = renderSession;
 		this.gl = renderSession.gl;
 
 		clipRects = new Array();

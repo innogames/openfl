@@ -1,8 +1,7 @@
 package openfl._internal.renderer.opengl;
 
-import lime.math.color.ARGB;
 import lime.graphics.opengl.GL;
-import openfl._internal.renderer.RenderSession;
+import lime.math.color.ARGB;
 import openfl.display.DisplayObject;
 import openfl.geom.Rectangle;
 
@@ -10,7 +9,7 @@ import openfl.geom.Rectangle;
 @:access(openfl.geom.Matrix)
 @:access(openfl.geom.Rectangle)
 class GLDisplayObject {
-	public static inline function render(displayObject:DisplayObject, renderSession:RenderSession):Void {
+	public static inline function render(displayObject:DisplayObject, renderSession:GLRenderSession):Void {
 		if (displayObject.opaqueBackground == null && displayObject.__graphics == null)
 			return;
 		if (!displayObject.__renderable || displayObject.__worldAlpha <= 0)
@@ -44,7 +43,7 @@ class GLDisplayObject {
 		}
 	}
 
-	public static inline function renderMask(displayObject:DisplayObject, renderSession:RenderSession):Void {
+	public static inline function renderMask(displayObject:DisplayObject, renderSession:GLRenderSession):Void {
 		if (displayObject.opaqueBackground == null && displayObject.__graphics == null)
 			return;
 

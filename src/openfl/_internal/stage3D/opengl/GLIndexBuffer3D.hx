@@ -4,7 +4,7 @@ import lime.graphics.opengl.GL;
 import lime.utils.ArrayBufferView;
 import lime.utils.Int16Array;
 import openfl.Vector;
-import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.stage3D.GLUtils;
 import openfl.display3D.Context3DBufferUsage;
 import openfl.display3D.IndexBuffer3D;
@@ -12,7 +12,7 @@ import openfl.utils.ByteArray;
 
 @:access(openfl.display3D.IndexBuffer3D)
 class GLIndexBuffer3D {
-	public static function create(indexBuffer:IndexBuffer3D, renderSession:RenderSession, bufferUsage:Context3DBufferUsage):Void {
+	public static function create(indexBuffer:IndexBuffer3D, renderSession:GLRenderSession, bufferUsage:Context3DBufferUsage):Void {
 		var gl = renderSession.gl;
 
 		indexBuffer.__elementType = GL.UNSIGNED_SHORT;
@@ -26,7 +26,7 @@ class GLIndexBuffer3D {
 		// __memoryUsage = 0;
 	}
 
-	public static function dispose(indexBuffer:IndexBuffer3D, renderSession:RenderSession):Void {
+	public static function dispose(indexBuffer:IndexBuffer3D, renderSession:GLRenderSession):Void {
 		var gl = renderSession.gl;
 
 		if (gl.isBuffer(indexBuffer.__id)) { // prevent the warning when the id becomes invalid after context loss+restore
@@ -39,14 +39,14 @@ class GLIndexBuffer3D {
 		// __memoryUsage = 0;
 	}
 
-	public static function uploadFromByteArray(indexBuffer:IndexBuffer3D, renderSession:RenderSession, data:ByteArray, byteArrayOffset:Int, startOffset:Int,
+	public static function uploadFromByteArray(indexBuffer:IndexBuffer3D, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:Int, startOffset:Int,
 			count:Int):Void {
 		var offset = byteArrayOffset + startOffset * 2;
 
 		uploadFromTypedArray(indexBuffer, renderSession, new Int16Array(data.toArrayBuffer(), offset, count));
 	}
 
-	public static function uploadFromTypedArray(indexBuffer:IndexBuffer3D, renderSession:RenderSession, data:ArrayBufferView):Void {
+	public static function uploadFromTypedArray(indexBuffer:IndexBuffer3D, renderSession:GLRenderSession, data:ArrayBufferView):Void {
 		if (data == null)
 			return;
 		var gl = renderSession.gl;
@@ -65,7 +65,7 @@ class GLIndexBuffer3D {
 		// }
 	}
 
-	public static function uploadFromVector(indexBuffer:IndexBuffer3D, renderSession:RenderSession, data:Vector<UInt>, startOffset:Int, count:Int):Void {
+	public static function uploadFromVector(indexBuffer:IndexBuffer3D, renderSession:GLRenderSession, data:Vector<UInt>, startOffset:Int, count:Int):Void {
 		// TODO: Optimize more
 
 		if (data == null)

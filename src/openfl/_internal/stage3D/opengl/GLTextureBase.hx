@@ -1,15 +1,15 @@
 package openfl._internal.stage3D.opengl;
 
-import lime.graphics.utils.ImageCanvasUtil;
-import lime.graphics.opengl.GL;
 import lime.graphics.Image;
+import lime.graphics.opengl.GL;
+import lime.graphics.utils.ImageCanvasUtil;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.renderer.opengl.batcher.TextureData;
-import openfl._internal.renderer.RenderSession;
-import openfl._internal.stage3D.GLUtils;
 import openfl._internal.stage3D.GLCompressedTextureFormats;
+import openfl._internal.stage3D.GLUtils;
 import openfl._internal.stage3D.SamplerState;
-import openfl.display3D.textures.TextureBase;
 import openfl.display.BitmapData;
+import openfl.display3D.textures.TextureBase;
 
 @:access(openfl._internal.stage3D.SamplerState)
 @:access(openfl.display3D.textures.TextureBase)
@@ -26,7 +26,7 @@ class GLTextureBase {
 		__compressedTextureFormats = null;
 	}
 
-	public static function create(textureBase:TextureBase, renderSession:RenderSession):Void {
+	public static function create(textureBase:TextureBase, renderSession:GLRenderSession):Void {
 		var gl = renderSession.gl;
 
 		textureBase.__textureData = new TextureData(gl.createTexture());
@@ -61,7 +61,7 @@ class GLTextureBase {
 		textureBase.__format = __textureFormat;
 	}
 
-	public static function dispose(textureBase:TextureBase, renderSession:RenderSession):Void {
+	public static function dispose(textureBase:TextureBase, renderSession:GLRenderSession):Void {
 		var gl = renderSession.gl;
 
 		if (textureBase.__alphaTexture != null) {
@@ -121,7 +121,7 @@ class GLTextureBase {
 		// }
 	}
 
-	public static function getImage(textureBase:TextureBase, renderSession:RenderSession, bitmapData:BitmapData):Image {
+	public static function getImage(textureBase:TextureBase, renderSession:GLRenderSession, bitmapData:BitmapData):Image {
 		if (!bitmapData.__isValid || !bitmapData.__prepareImage()) {
 			return null;
 		}
@@ -166,7 +166,7 @@ class GLTextureBase {
 		return image;
 	}
 
-	public static function setSamplerState(textureBase:TextureBase, renderSession:RenderSession, state:SamplerState):Void {
+	public static function setSamplerState(textureBase:TextureBase, renderSession:GLRenderSession, state:SamplerState):Void {
 		if (!state.equals(textureBase.__samplerState)) {
 			var gl = renderSession.gl;
 

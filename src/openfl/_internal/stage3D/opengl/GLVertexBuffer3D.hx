@@ -4,7 +4,7 @@ import lime.graphics.opengl.GL;
 import lime.utils.ArrayBufferView;
 import lime.utils.Float32Array;
 import openfl.Vector;
-import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.stage3D.GLUtils;
 import openfl.display3D.Context3DBufferUsage;
 import openfl.display3D.VertexBuffer3D;
@@ -12,7 +12,7 @@ import openfl.utils.ByteArray;
 
 @:access(openfl.display3D.VertexBuffer3D)
 class GLVertexBuffer3D {
-	public static function create(vertexBuffer:VertexBuffer3D, renderSession:RenderSession, bufferUsage:Context3DBufferUsage) {
+	public static function create(vertexBuffer:VertexBuffer3D, renderSession:GLRenderSession, bufferUsage:Context3DBufferUsage) {
 		var gl = renderSession.gl;
 
 		vertexBuffer.__id = gl.createBuffer();
@@ -26,7 +26,7 @@ class GLVertexBuffer3D {
 		// __context.__statsIncrement (Context3D.Context3DTelemetry.COUNT_VERTEX_BUFFER);
 	}
 
-	public static function dispose(vertexBuffer:VertexBuffer3D, renderSession:RenderSession):Void {
+	public static function dispose(vertexBuffer:VertexBuffer3D, renderSession:GLRenderSession):Void {
 		var gl = renderSession.gl;
 
 		if (gl.isBuffer(vertexBuffer.__id)) { // prevent the warning when the id becomes invalid after context loss+restore
@@ -39,7 +39,7 @@ class GLVertexBuffer3D {
 		// __memoryUsage = 0;
 	}
 
-	public static function uploadFromByteArray(vertexBuffer:VertexBuffer3D, renderSession:RenderSession, data:ByteArray, byteArrayOffset:Int, startVertex:Int,
+	public static function uploadFromByteArray(vertexBuffer:VertexBuffer3D, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:Int, startVertex:Int,
 			numVertices:Int):Void {
 		var offset = byteArrayOffset + startVertex * vertexBuffer.__stride;
 		var length = numVertices * vertexBuffer.__vertexSize;
@@ -47,7 +47,7 @@ class GLVertexBuffer3D {
 		uploadFromTypedArray(vertexBuffer, renderSession, new Float32Array(data, offset, length));
 	}
 
-	public static function uploadFromTypedArray(vertexBuffer:VertexBuffer3D, renderSession:RenderSession, data:ArrayBufferView):Void {
+	public static function uploadFromTypedArray(vertexBuffer:VertexBuffer3D, renderSession:GLRenderSession, data:ArrayBufferView):Void {
 		if (data == null)
 			return;
 		var gl = renderSession.gl;
@@ -66,7 +66,7 @@ class GLVertexBuffer3D {
 		// }
 	}
 
-	public static function uploadFromVector(vertexBuffer:VertexBuffer3D, renderSession:RenderSession, data:Vector<Float>, startVertex:Int,
+	public static function uploadFromVector(vertexBuffer:VertexBuffer3D, renderSession:GLRenderSession, data:Vector<Float>, startVertex:Int,
 			numVertices:Int):Void {
 		if (data == null)
 			return;

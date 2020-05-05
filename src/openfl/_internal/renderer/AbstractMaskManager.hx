@@ -6,12 +6,6 @@ import openfl.geom.Matrix;
 
 @:access(openfl.display.DisplayObject)
 class AbstractMaskManager {
-	final renderSession:RenderSession;
-
-	public function new(renderSession:RenderSession) {
-		this.renderSession = renderSession;
-	}
-
 	public function pushMask(mask:DisplayObject) {}
 
 	public function pushObject(object:DisplayObject, handleScrollRect:Bool = true) {}

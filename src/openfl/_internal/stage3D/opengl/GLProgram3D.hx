@@ -1,10 +1,10 @@
 package openfl._internal.stage3D.opengl;
 
-import lime.graphics.opengl.GL;
 import lime.graphics.GLRenderContext;
+import lime.graphics.opengl.GL;
 import lime.utils.Float32Array;
 import lime.utils.Log;
-import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.stage3D.AGALConverter;
 import openfl._internal.stage3D.GLUtils;
 import openfl._internal.stage3D.SamplerState;
@@ -18,9 +18,9 @@ import openfl.utils.ByteArray;
 @:access(openfl.display3D.Program3D)
 class GLProgram3D {
 	private static var program:Program3D;
-	private static var renderSession:RenderSession;
+	private static var renderSession:GLRenderSession;
 
-	public static function dispose(program:Program3D, renderSession:RenderSession):Void {
+	public static function dispose(program:Program3D, renderSession:GLRenderSession):Void {
 		GLProgram3D.program = program;
 		GLProgram3D.renderSession = renderSession;
 
@@ -49,13 +49,13 @@ class GLProgram3D {
 		GLUtils.checkGLError(gl);
 	}
 
-	public static function setPositionScale(program:Program3D, renderSession:RenderSession, positionScale:Float32Array):Void {
+	public static function setPositionScale(program:Program3D, renderSession:GLRenderSession, positionScale:Float32Array):Void {
 		var gl = renderSession.gl;
 		gl.uniform4fv(program.__positionScale.location, positionScale);
 		GLUtils.checkGLError(gl);
 	}
 
-	public static function upload(program:Program3D, renderSession:RenderSession, vertexProgram:ByteArray, fragmentProgram:ByteArray):Void {
+	public static function upload(program:Program3D, renderSession:GLRenderSession, vertexProgram:ByteArray, fragmentProgram:ByteArray):Void {
 		GLProgram3D.program = program;
 		GLProgram3D.renderSession = renderSession;
 
@@ -72,7 +72,7 @@ class GLProgram3D {
 		}
 	}
 
-	public static function use(program:Program3D, renderSession:RenderSession):Void {
+	public static function use(program:Program3D, renderSession:GLRenderSession):Void {
 		var gl = renderSession.gl;
 
 		gl.useProgram(program.__programID);

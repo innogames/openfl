@@ -3,6 +3,7 @@ package openfl.display;
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.canvas.CanvasBitmap;
 import openfl._internal.renderer.opengl.GLBitmap;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.renderer.opengl.batcher.BlendMode as BatcherBlendMode;
 import openfl._internal.renderer.opengl.batcher.Quad;
 import openfl.geom.Matrix;
@@ -131,7 +132,7 @@ class Bitmap extends DisplayObject {
 		renderSession.context.rect(0, 0, __bitmapData.width, __bitmapData.height);
 	}
 
-	function __getBatchQuad(renderSession:RenderSession):Quad {
+	function __getBatchQuad(renderSession:GLRenderSession):Quad {
 		if (__batchQuadDirty) {
 			if (__batchQuad == null) {
 				__batchQuad = Quad.pool.get();
@@ -154,7 +155,7 @@ class Bitmap extends DisplayObject {
 		__batchQuadDirty = true;
 	}
 
-	private override function __renderGL(renderSession:RenderSession):Void {
+	private override function __renderGL(renderSession:GLRenderSession):Void {
 		__updateCacheBitmap(renderSession, false);
 
 		if (__cacheBitmap != null && !__cacheBitmapRender) {
@@ -164,7 +165,7 @@ class Bitmap extends DisplayObject {
 		}
 	}
 
-	private override function __renderGLMask(renderSession:RenderSession):Void {
+	private override function __renderGLMask(renderSession:GLRenderSession):Void {
 		__updateCacheBitmap(renderSession, false);
 
 		if (__cacheBitmap != null && !__cacheBitmapRender) {

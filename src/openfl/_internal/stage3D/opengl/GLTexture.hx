@@ -3,7 +3,7 @@ package openfl._internal.stage3D.opengl;
 import lime.graphics.opengl.GL;
 import lime.utils.ArrayBufferView;
 import lime.utils.UInt8Array;
-import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.stage3D.GLUtils;
 import openfl._internal.stage3D.SamplerState;
 import openfl._internal.stage3D.atf.ATFReader;
@@ -16,7 +16,7 @@ import openfl.utils.ByteArray;
 @:access(openfl.display3D.textures.Texture)
 @:access(openfl.display3D.Context3D)
 class GLTexture {
-	public static function create(texture:Texture, renderSession:RenderSession):Void {
+	public static function create(texture:Texture, renderSession:GLRenderSession):Void {
 		var gl = renderSession.gl;
 
 		texture.__textureTarget = GL.TEXTURE_2D;
@@ -32,7 +32,7 @@ class GLTexture {
 		uploadFromTypedArray(texture, renderSession, null);
 	}
 
-	public static function uploadCompressedTextureFromByteArray(texture:Texture, renderSession:RenderSession, data:ByteArray, byteArrayOffset:UInt):Void {
+	public static function uploadCompressedTextureFromByteArray(texture:Texture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt):Void {
 		var reader = new ATFReader(data, byteArrayOffset);
 		var alpha = reader.readHeader(texture.__width, texture.__height, false);
 
@@ -69,7 +69,7 @@ class GLTexture {
 		GLUtils.checkGLError(gl);
 	}
 
-	public static function uploadFromBitmapData(texture:Texture, renderSession:RenderSession, source:BitmapData, miplevel:UInt, generateMipmap:Bool):Void {
+	public static function uploadFromBitmapData(texture:Texture, renderSession:GLRenderSession, source:BitmapData, miplevel:UInt, generateMipmap:Bool):Void {
 		/* TODO
 			if (LowMemoryMode) {
 				// shrink bitmap data
@@ -105,7 +105,7 @@ class GLTexture {
 		uploadFromTypedArray(texture, renderSession, image.data, miplevel);
 	}
 
-	public static function uploadFromByteArray(texture:Texture, renderSession:RenderSession, data:ByteArray, byteArrayOffset:UInt, miplevel:UInt = 0):Void {
+	public static function uploadFromByteArray(texture:Texture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt, miplevel:UInt = 0):Void {
 		#if js
 		if (byteArrayOffset == 0) {
 			uploadFromTypedArray(texture, renderSession, @:privateAccess (data : ByteArrayData).b, miplevel);
@@ -116,7 +116,7 @@ class GLTexture {
 		uploadFromTypedArray(texture, renderSession, new UInt8Array(data.toArrayBuffer(), byteArrayOffset), miplevel);
 	}
 
-	public static function uploadFromTypedArray(texture:Texture, renderSession:RenderSession, data:ArrayBufferView, miplevel:UInt = 0):Void {
+	public static function uploadFromTypedArray(texture:Texture, renderSession:GLRenderSession, data:ArrayBufferView, miplevel:UInt = 0):Void {
 		if (data == null)
 			return;
 		var gl = renderSession.gl;
@@ -145,7 +145,7 @@ class GLTexture {
 		// __trackMemoryUsage (memUsage);
 	}
 
-	public static function setSamplerState(texture:Texture, renderSession:RenderSession, state:SamplerState) {
+	public static function setSamplerState(texture:Texture, renderSession:GLRenderSession, state:SamplerState) {
 		if (!state.equals(texture.__samplerState)) {
 			var gl = renderSession.gl;
 
