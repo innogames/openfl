@@ -2,7 +2,6 @@ package openfl._internal.renderer.canvas;
 
 import js.Browser;
 import js.html.CanvasRenderingContext2D;
-import openfl._internal.renderer.RenderSession;
 import openfl._internal.text.TextEngine;
 import openfl.display.BitmapData;
 import openfl.geom.Matrix;
@@ -15,11 +14,10 @@ import openfl.text.TextField;
 @:access(openfl.display.DisplayObject)
 @:access(openfl.text.TextField)
 class CanvasTextField {
-	public static function render(textField:TextField, renderSession:RenderSession, transform:Matrix):Void {
+	public static function render(textField:TextField, pixelRatio:Float, allowSmoothing:Bool, transform:Matrix):Void {
 		var textEngine = textField.__textEngine;
 		var bounds = textEngine.bounds;
 		var graphics = textField.__graphics;
-		var pixelRatio = renderSession.pixelRatio;
 
 		if (textField.__dirty) {
 			textField.__updateLayout();
@@ -74,7 +72,7 @@ class CanvasTextField {
 				if ((textEngine.text != null && textEngine.text != "") || textEngine.__hasFocus) {
 					var text = textEngine.text;
 
-					if (!renderSession.allowSmoothing || (textEngine.antiAliasType == ADVANCED && textEngine.sharpness == 400)) {
+					if (!allowSmoothing || (textEngine.antiAliasType == ADVANCED && textEngine.sharpness == 400)) {
 						CanvasSmoothing.setEnabled(context, false);
 					} else {
 						CanvasSmoothing.setEnabled(context, true);

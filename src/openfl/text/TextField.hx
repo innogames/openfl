@@ -918,7 +918,7 @@ class TextField extends InteractiveObject {
 		#if (js && html5)
 		__forceCachedBitmapUpdate = __forceCachedBitmapUpdate || __dirty;
 
-		CanvasTextField.render(this, renderSession, __worldTransform);
+		CanvasTextField.render(this, renderSession.pixelRatio, renderSession.allowSmoothing, __worldTransform);
 
 		if (__textEngine.antiAliasType == ADVANCED && __textEngine.gridFitType == PIXEL) {
 			CanvasSmoothing.setEnabled(renderSession.context, false);
@@ -935,7 +935,7 @@ class TextField extends InteractiveObject {
 	private override function __renderGL(renderSession:GLRenderSession):Void {
 		__forceCachedBitmapUpdate = __forceCachedBitmapUpdate || __dirty;
 		#if (js && html5)
-		CanvasTextField.render(this, renderSession, __worldTransform);
+		CanvasTextField.render(this, renderSession.pixelRatio, renderSession.allowSmoothing, __worldTransform);
 		#end
 
 		super.__renderGL(renderSession);
@@ -943,7 +943,7 @@ class TextField extends InteractiveObject {
 
 	private override function __renderGLMask(renderSession:GLRenderSession):Void {
 		#if (js && html5)
-		CanvasTextField.render(this, renderSession, __worldTransform);
+		CanvasTextField.render(this, renderSession.pixelRatio, renderSession.allowSmoothing, __worldTransform);
 		#end
 
 		super.__renderGLMask(renderSession);
