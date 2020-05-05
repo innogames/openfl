@@ -1,12 +1,11 @@
 package openfl._internal.renderer.canvas;
 
-import openfl._internal.renderer.RenderSession;
 import openfl.display.Bitmap;
 
 @:access(openfl.display.Bitmap)
 @:access(openfl.display.BitmapData)
 class CanvasBitmap {
-	public static inline function render(bitmap:Bitmap, renderSession:RenderSession):Void {
+	public static inline function render(bitmap:Bitmap, renderSession:CanvasRenderSession):Void {
 		if (!bitmap.__renderable || bitmap.__worldAlpha <= 0)
 			return;
 

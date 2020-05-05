@@ -6,14 +6,14 @@ import openfl.display.DisplayObject;
 @:access(openfl.display.Graphics)
 @:access(openfl.geom.Matrix)
 class CanvasShape {
-	public static inline function render(shape:DisplayObject, renderSession:RenderSession):Void {
+	public static inline function render(shape:DisplayObject, renderSession:CanvasRenderSession):Void {
 		if (!shape.__renderable || shape.__worldAlpha <= 0)
 			return;
 
 		var graphics = shape.__graphics;
 
 		if (graphics != null) {
-			CanvasGraphics.render(graphics, renderSession);
+			CanvasGraphics.render(graphics, renderSession.pixelRatio, renderSession.allowSmoothing);
 
 			var bounds = graphics.__bounds;
 			var width = graphics.__width;

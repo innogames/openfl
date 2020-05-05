@@ -1,18 +1,16 @@
 package openfl._internal.renderer.canvas;
 
-import openfl._internal.renderer.AbstractBlendModeManager;
-import openfl._internal.renderer.RenderSession;
 import openfl.display.BlendMode;
 
-class CanvasBlendModeManager extends AbstractBlendModeManager {
-	public var currentBlendMode:BlendMode;
-	public var renderSession:RenderSession;
+class CanvasBlendModeManager {
+	final renderSession:CanvasRenderSession;
+	var currentBlendMode:BlendMode;
 
-	public function new(renderSession:RenderSession) {
+	public function new(renderSession:CanvasRenderSession) {
 		this.renderSession = renderSession;
 	}
 
-	public override function setBlendMode(blendMode:BlendMode):Void {
+	public function setBlendMode(blendMode:BlendMode) {
 		if (currentBlendMode == blendMode)
 			return;
 

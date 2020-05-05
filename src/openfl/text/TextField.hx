@@ -8,6 +8,7 @@ import lime.ui.MouseCursor;
 import lime.ui.Window.CopyDataProvider;
 import openfl.Lib;
 import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.canvas.CanvasRenderSession;
 import openfl._internal.renderer.canvas.CanvasSmoothing;
 import openfl._internal.renderer.canvas.CanvasTextField;
 import openfl._internal.renderer.opengl.GLRenderSession;
@@ -913,7 +914,7 @@ class TextField extends InteractiveObject {
 		return false;
 	}
 
-	private override function __renderCanvas(renderSession:RenderSession):Void {
+	private override function __renderCanvas(renderSession:CanvasRenderSession):Void {
 		#if (js && html5)
 		__forceCachedBitmapUpdate = __forceCachedBitmapUpdate || __dirty;
 

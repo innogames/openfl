@@ -1,19 +1,20 @@
 package openfl.display;
 
 import lime.app.Future;
-import lime.graphics.opengl.GLBuffer;
-import lime.graphics.opengl.GLVertexArrayObject;
-import lime.graphics.opengl.GL;
 import lime.graphics.GLRenderContext;
 import lime.graphics.Image;
 import lime.graphics.ImageChannel;
+import lime.graphics.opengl.GL;
+import lime.graphics.opengl.GLBuffer;
+import lime.graphics.opengl.GLVertexArrayObject;
 import lime.graphics.utils.ImageCanvasUtil;
 import lime.math.color.ARGB;
 import lime.utils.Float32Array;
-import openfl._internal.renderer.canvas.CanvasBlendModeManager;
-import openfl._internal.renderer.canvas.CanvasMaskManager;
+import openfl.Vector;
+import openfl._internal.renderer.canvas.CanvasRenderSession;
 import openfl._internal.renderer.canvas.CanvasSmoothing;
-import openfl._internal.renderer.RenderSession;
+import openfl._internal.renderer.opengl.batcher.QuadTextureData;
+import openfl._internal.renderer.opengl.batcher.TextureData;
 import openfl._internal.renderer.opengl.vao.IVertexArrayObjectContext;
 import openfl._internal.utils.PerlinNoise;
 import openfl.display3D.textures.TextureBase;
@@ -25,9 +26,6 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
 import openfl.utils.Object;
-import openfl.Vector;
-import openfl._internal.renderer.opengl.batcher.TextureData;
-import openfl._internal.renderer.opengl.batcher.QuadTextureData;
 #if (js && html5)
 import js.html.CanvasElement;
 import js.html.CanvasRenderingContext2D;
@@ -1178,12 +1176,9 @@ class BitmapData implements IBitmapDrawable {
 
 		var buffer = image.buffer;
 
-		var renderSession = new RenderSession(clearRenderDirty);
-		renderSession.context = buffer.__srcContext;
+		var renderSession = new CanvasRenderSession(buffer.__srcContext, clearRenderDirty);
 		renderSession.allowSmoothing = smoothing;
 		renderSession.pixelRatio = __pixelRatio;
-		renderSession.maskManager = new CanvasMaskManager(renderSession);
-		renderSession.blendModeManager = new CanvasBlendModeManager(renderSession);
 
 		buffer.__srcContext.save();
 
@@ -1316,7 +1311,7 @@ class BitmapData implements IBitmapDrawable {
 	}
 	#end
 
-	private function __renderToBitmap(renderSession:RenderSession, matrix:Matrix, blendMode:BlendMode) {
+	private function __renderToBitmap(renderSession:CanvasRenderSession, matrix:Matrix, blendMode:BlendMode) {
 		renderSession.context.globalAlpha = 1;
 		renderSession.blendModeManager.setBlendMode(blendMode);
 		__drawToCanvas(renderSession.context, matrix, renderSession.roundPixels, renderSession.pixelRatio, null, false);

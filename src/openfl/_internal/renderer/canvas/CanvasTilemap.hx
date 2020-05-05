@@ -1,9 +1,6 @@
 package openfl._internal.renderer.canvas;
 
-import lime.graphics.utils.ImageCanvasUtil;
-import openfl._internal.renderer.RenderSession;
 import openfl.display.Tilemap;
-import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
 
 @:access(lime.graphics.ImageBuffer)
@@ -13,7 +10,7 @@ import openfl.geom.Rectangle;
 @:access(openfl.geom.Matrix)
 @:access(openfl.geom.Rectangle)
 class CanvasTilemap {
-	public static inline function render(tilemap:Tilemap, renderSession:RenderSession):Void {
+	public static inline function render(tilemap:Tilemap, renderSession:CanvasRenderSession):Void {
 		if (!tilemap.__renderable || tilemap.__worldAlpha <= 0)
 			return;
 

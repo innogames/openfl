@@ -2,6 +2,7 @@ package openfl.display;
 
 import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.canvas.CanvasBitmap;
+import openfl._internal.renderer.canvas.CanvasRenderSession;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.renderer.opengl.batcher.BlendMode as BatcherBlendMode;
@@ -118,7 +119,7 @@ class Bitmap extends DisplayObject {
 		return false;
 	}
 
-	private override function __renderCanvas(renderSession:RenderSession):Void {
+	private override function __renderCanvas(renderSession:CanvasRenderSession):Void {
 		__updateCacheBitmap(renderSession, !__worldColorTransform.__isDefault());
 
 		if (__cacheBitmap != null && !__cacheBitmapRender) {
@@ -128,7 +129,7 @@ class Bitmap extends DisplayObject {
 		}
 	}
 
-	private override function __renderCanvasMask(renderSession:RenderSession):Void {
+	private override function __renderCanvasMask(renderSession:CanvasRenderSession):Void {
 		renderSession.context.rect(0, 0, __bitmapData.width, __bitmapData.height);
 	}
 

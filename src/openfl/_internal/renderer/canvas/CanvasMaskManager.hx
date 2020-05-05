@@ -6,8 +6,8 @@ import openfl.geom.*;
 
 @:access(openfl.display.DisplayObject)
 class CanvasMaskManager extends AbstractMaskManager {
-	final renderSession:RenderSession;
-	public function new(renderSession:RenderSession) {
+	final renderSession:CanvasRenderSession;
+	public function new(renderSession:CanvasRenderSession) {
 		this.renderSession = renderSession;
 	}
 

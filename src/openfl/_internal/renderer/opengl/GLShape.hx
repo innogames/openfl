@@ -22,7 +22,7 @@ class GLShape {
 		var graphics = shape.__graphics;
 
 		if (graphics != null) {
-			CanvasGraphics.render(graphics, renderSession);
+			CanvasGraphics.render(graphics, renderSession.pixelRatio, renderSession.allowSmoothing);
 
 			if (graphics.__bitmap != null && graphics.__visible) {
 				renderSession.maskManager.pushObject(shape);
@@ -37,7 +37,7 @@ class GLShape {
 
 		if (graphics != null) {
 			// TODO: Support invisible shapes
-			CanvasGraphics.render(graphics, renderSession);
+			CanvasGraphics.render(graphics, renderSession.pixelRatio, renderSession.allowSmoothing);
 
 			if (graphics.__bitmap != null) {
 				var renderer = renderSession.renderer;

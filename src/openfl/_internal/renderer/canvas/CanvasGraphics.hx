@@ -1,16 +1,16 @@
 package openfl._internal.renderer.canvas;
 
+import js.Browser;
 import js.html.CanvasElement;
 import js.html.CanvasGradient;
 import js.html.CanvasRenderingContext2D;
 import js.html.CanvasWindingRule;
-import js.Browser;
 import lime.graphics.utils.ImageCanvasUtil;
-import openfl._internal.renderer.RenderSession;
-import openfl.display.BitmapData;
-import openfl.display.CapsStyle;
+import openfl.Vector;
 import openfl._internal.renderer.DrawCommandBuffer;
 import openfl._internal.renderer.DrawCommandReader;
+import openfl.display.BitmapData;
+import openfl.display.CapsStyle;
 import openfl.display.GradientType;
 import openfl.display.Graphics;
 import openfl.display.InterpolationMethod;
@@ -18,7 +18,6 @@ import openfl.display.SpreadMethod;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
-import openfl.Vector;
 
 @:access(openfl.display.DisplayObject)
 @:access(openfl.display.BitmapData)
@@ -909,16 +908,15 @@ class CanvasGraphics {
 		}
 	}
 
-	public static function render(graphics:Graphics, renderSession:RenderSession):Void {
+	public static function render(graphics:Graphics, pixelRatio:Float, allowSmoothing:Bool):Void {
 		graphics.__update();
 
-		var dirty = graphics.__dirty
-			|| (graphics.__bitmap != null && @:privateAccess graphics.__bitmap.__pixelRatio != renderSession.pixelRatio);
+		var dirty = graphics.__dirty || (graphics.__bitmap != null && @:privateAccess graphics.__bitmap.__pixelRatio != pixelRatio);
 		if (dirty) {
 			hitTesting = false;
 
 			CanvasGraphics.graphics = graphics;
-			CanvasGraphics.allowSmoothing = renderSession.allowSmoothing;
+			CanvasGraphics.allowSmoothing = allowSmoothing;
 			bounds = graphics.__bounds;
 
 			var width = graphics.__width;
@@ -942,7 +940,6 @@ class CanvasGraphics {
 				var transform = graphics.__renderTransform;
 				var canvas = graphics.__canvas;
 
-				var pixelRatio = renderSession.pixelRatio;
 				var scaledWidth = Std.int(width * pixelRatio);
 				var scaledHeight = Std.int(height * pixelRatio);
 
@@ -956,8 +953,7 @@ class CanvasGraphics {
 				}
 
 				var transform = graphics.__renderTransform;
-				context.setTransform(transform.a * pixelRatio, transform.b, transform.c, transform.d * pixelRatio, transform.tx * pixelRatio,
-					transform.ty * pixelRatio);
+				context.setTransform(transform.a * pixelRatio, transform.b, transform.c, transform.d * pixelRatio, transform.tx * pixelRatio, transform.ty * pixelRatio);
 
 				fillCommands.clear();
 				strokeCommands.clear();
@@ -1158,7 +1154,7 @@ class CanvasGraphics {
 		}
 	}
 
-	public static function renderMask(graphics:Graphics, renderSession:RenderSession) {
+	public static function renderMask(graphics:Graphics, renderSession:CanvasRenderSession) {
 		if (graphics.__commands.length != 0) {
 			context = renderSession.context;
 

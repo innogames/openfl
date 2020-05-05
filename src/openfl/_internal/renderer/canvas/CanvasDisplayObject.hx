@@ -6,7 +6,7 @@ import openfl.display.DisplayObject;
 @:access(openfl.display.DisplayObject)
 @:access(openfl.geom.Matrix)
 class CanvasDisplayObject {
-	public static inline function render(displayObject:DisplayObject, renderSession:RenderSession):Void {
+	public static inline function render(displayObject:DisplayObject, renderSession:CanvasRenderSession):Void {
 		if (displayObject.opaqueBackground == null && displayObject.__graphics == null)
 			return;
 		if (!displayObject.__renderable || displayObject.__worldAlpha <= 0)

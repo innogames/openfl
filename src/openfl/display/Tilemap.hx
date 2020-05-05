@@ -1,9 +1,9 @@
 package openfl.display;
 
 import openfl.Vector;
-import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.canvas.CanvasBitmap;
 import openfl._internal.renderer.canvas.CanvasDisplayObject;
+import openfl._internal.renderer.canvas.CanvasRenderSession;
 import openfl._internal.renderer.canvas.CanvasTilemap;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLDisplayObject;
@@ -232,7 +232,7 @@ class Tilemap extends DisplayObject {
 		return false;
 	}
 
-	private override function __renderCanvas(renderSession:RenderSession):Void {
+	private override function __renderCanvas(renderSession:CanvasRenderSession):Void {
 		__updateCacheBitmap(renderSession, !__worldColorTransform.__isDefault());
 
 		if (__cacheBitmap != null && !__cacheBitmapRender) {

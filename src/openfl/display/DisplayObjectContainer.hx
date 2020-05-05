@@ -1,8 +1,8 @@
 package openfl.display;
 
 import openfl.Vector;
-import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.canvas.CanvasGraphics;
+import openfl._internal.renderer.canvas.CanvasRenderSession;
 import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl.display.Stage;
 import openfl.errors.ArgumentError;
@@ -477,7 +477,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		}
 	}
 
-	private override function __renderCanvas(renderSession:RenderSession):Void {
+	private override function __renderCanvas(renderSession:CanvasRenderSession):Void {
 		__cleanupRemovedChildren();
 
 		if (!__renderable || __worldAlpha <= 0 || (mask != null && (mask.width <= 0 || mask.height <= 0)))
@@ -508,7 +508,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		#end
 	}
 
-	private override function __renderCanvasMask(renderSession:RenderSession):Void {
+	private override function __renderCanvasMask(renderSession:CanvasRenderSession):Void {
 		if (__graphics != null) {
 			CanvasGraphics.renderMask(__graphics, renderSession);
 		}

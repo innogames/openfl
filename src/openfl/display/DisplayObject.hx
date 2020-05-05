@@ -8,9 +8,10 @@ import openfl._internal.renderer.RenderSession;
 import openfl._internal.renderer.canvas.CanvasBitmap;
 import openfl._internal.renderer.canvas.CanvasDisplayObject;
 import openfl._internal.renderer.canvas.CanvasGraphics;
-import openfl._internal.renderer.opengl.GLRenderSession;
+import openfl._internal.renderer.canvas.CanvasRenderSession;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLDisplayObject;
+import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl.display.Stage;
 import openfl.errors.TypeError;
 import openfl.events.Event;
@@ -520,7 +521,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		}
 	}
 
-	private function __renderCanvas(renderSession:RenderSession):Void {
+	private function __renderCanvas(renderSession:CanvasRenderSession):Void {
 		if (mask == null || (mask.width > 0 && mask.height > 0)) {
 			__updateCacheBitmap(renderSession, !__worldColorTransform.__isDefault());
 
@@ -532,7 +533,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		}
 	}
 
-	private function __renderCanvasMask(renderSession:RenderSession):Void {
+	private function __renderCanvasMask(renderSession:CanvasRenderSession):Void {
 		if (__graphics != null) {
 			CanvasGraphics.renderMask(__graphics, renderSession);
 		}
@@ -834,7 +835,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 			|| !__cacheBitmapColorTransform.__equals(__worldColorTransform);
 	}
 
-	private function __renderToBitmap(renderSession:RenderSession, matrix:Matrix, blendMode:BlendMode) {
+	private function __renderToBitmap(renderSession:CanvasRenderSession, matrix:Matrix, blendMode:BlendMode) {
 		var cacheIsMask = __isMask;
 		var cacheVisible = __visible;
 		var cacheRenderable = __renderable;

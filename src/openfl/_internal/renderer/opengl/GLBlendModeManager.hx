@@ -2,12 +2,11 @@ package openfl._internal.renderer.opengl;
 
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
-import openfl._internal.renderer.AbstractBlendModeManager;
 import openfl.display.BlendMode;
 
-class GLBlendModeManager extends AbstractBlendModeManager {
-	private var currentBlendMode:BlendMode;
-	private var gl:GLRenderContext;
+class GLBlendModeManager {
+	final gl:GLRenderContext;
+	var currentBlendMode:BlendMode;
 
 	public function new(gl:GLRenderContext) {
 		this.gl = gl;
@@ -16,7 +15,7 @@ class GLBlendModeManager extends AbstractBlendModeManager {
 		gl.enable(GL.BLEND);
 	}
 
-	public override function setBlendMode(blendMode:BlendMode):Void {
+	public function setBlendMode(blendMode:BlendMode) {
 		if (currentBlendMode == blendMode)
 			return;
 

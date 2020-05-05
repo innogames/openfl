@@ -12,6 +12,8 @@ class GLRenderSession extends RenderSession {
 	public final gl:GLRenderContext;
 	public final shaderManager:GLShaderManager;
 	public final batcher:BatchRenderer;
+	public final blendModeManager:GLBlendModeManager;
+	public final maskManager:GLMaskManager;
 
 	#if vertex_array_object
 	public final vaoContext:Null<IVertexArrayObjectContext>;
@@ -19,17 +21,13 @@ class GLRenderSession extends RenderSession {
 
 	public function new(renderer, gl) {
 		super(true);
+		
 		this.renderer = renderer;
 		this.gl = gl;
 
 		maskManager = new GLMaskManager(this);
-		
-		var blendModeManager = new GLBlendModeManager(gl);
-		this.blendModeManager = blendModeManager;
-
-		var shaderManager = new GLShaderManager(gl);
-		this.shaderManager = shaderManager;
-
+		blendModeManager = new GLBlendModeManager(gl);
+		shaderManager = new GLShaderManager(gl);
 		batcher = new BatchRenderer(gl, blendModeManager, shaderManager, 4096);
 
 		#if vertex_array_object
