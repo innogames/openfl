@@ -1,17 +1,16 @@
 package openfl._internal.renderer.canvas;
 
-import openfl._internal.renderer.AbstractMaskManager;
 import openfl.display.*;
 import openfl.geom.*;
 
 @:access(openfl.display.DisplayObject)
-class CanvasMaskManager extends AbstractMaskManager {
+class CanvasMaskManager {
 	final renderSession:CanvasRenderSession;
 	public function new(renderSession:CanvasRenderSession) {
 		this.renderSession = renderSession;
 	}
 
-	public override function pushMask(mask:DisplayObject):Void {
+	function pushMask(mask:DisplayObject) {
 		var context = renderSession.context;
 
 		context.save();
@@ -30,7 +29,7 @@ class CanvasMaskManager extends AbstractMaskManager {
 		// mask.worldAlpha = cacheAlpha;
 	}
 
-	public override function pushObject(object:DisplayObject, handleScrollRect:Bool = true):Void {
+	public function pushObject(object:DisplayObject, handleScrollRect:Bool = true) {
 		if (handleScrollRect && object.__scrollRect != null) {
 			pushRect(object.__scrollRect, object.__renderTransform);
 		}
@@ -40,7 +39,7 @@ class CanvasMaskManager extends AbstractMaskManager {
 		}
 	}
 
-	public override function pushRect(rect:Rectangle, transform:Matrix):Void {
+	public function pushRect(rect:Rectangle, transform:Matrix) {
 		var context = renderSession.context;
 		context.save();
 
@@ -53,11 +52,11 @@ class CanvasMaskManager extends AbstractMaskManager {
 		context.clip();
 	}
 
-	public override function popMask():Void {
+	function popMask() {
 		renderSession.context.restore();
 	}
 
-	public override function popObject(object:DisplayObject, handleScrollRect:Bool = true):Void {
+	public function popObject(object:DisplayObject, handleScrollRect:Bool = true) {
 		if (!object.__cacheBitmapRender && object.__mask != null) {
 			popMask();
 		}
@@ -67,7 +66,7 @@ class CanvasMaskManager extends AbstractMaskManager {
 		}
 	}
 
-	public override function popRect():Void {
+	public function popRect() {
 		renderSession.context.restore();
 	}
 }

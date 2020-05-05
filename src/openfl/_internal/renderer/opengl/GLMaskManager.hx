@@ -2,7 +2,6 @@ package openfl._internal.renderer.opengl;
 
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
-import openfl._internal.renderer.AbstractMaskManager;
 import openfl.display.DisplayObject;
 import openfl.display.Shader;
 import openfl.geom.Matrix;
@@ -12,16 +11,16 @@ import openfl.geom.Rectangle;
 @:access(openfl.display.DisplayObject)
 @:access(openfl.geom.Matrix)
 @:access(openfl.geom.Rectangle)
-class GLMaskManager extends AbstractMaskManager {
+class GLMaskManager {
 	public var maskShader(default, null) = new GLMaskShader();
 
 	final renderSession:GLRenderSession;
-	private var clipRects:Array<Rectangle>;
-	private var gl:GLRenderContext;
-	private var maskObjects:Array<DisplayObject>;
-	private var numClipRects:Int;
-	private var stencilReference:Int;
-	private var tempRect:Rectangle;
+	var clipRects:Array<Rectangle>;
+	var gl:GLRenderContext;
+	var maskObjects:Array<DisplayObject>;
+	var numClipRects:Int;
+	var stencilReference:Int;
+	var tempRect:Rectangle;
 
 	public function new(renderSession:GLRenderSession) {
 		this.renderSession = renderSession;
@@ -34,7 +33,7 @@ class GLMaskManager extends AbstractMaskManager {
 		tempRect = new Rectangle();
 	}
 
-	public override function pushMask(mask:DisplayObject):Void {
+	function pushMask(mask:DisplayObject) {
 		// flush everything in the current batch, since we're rendering stuff differently now
 		renderSession.batcher.flush();
 
@@ -61,8 +60,8 @@ class GLMaskManager extends AbstractMaskManager {
 		gl.colorMask(true, true, true, true);
 	}
 
-	public override function pushObject(object:DisplayObject, handleScrollRect:Bool = true):Void {
-		if (handleScrollRect && object.__scrollRect != null) {
+	public function pushObject(object:DisplayObject) {
+		if (object.__scrollRect != null) {
 			pushRect(object.__scrollRect, object.__renderTransform);
 		}
 
@@ -71,7 +70,7 @@ class GLMaskManager extends AbstractMaskManager {
 		}
 	}
 
-	public override function pushRect(rect:Rectangle, transform:Matrix):Void {
+	public function pushRect(rect:Rectangle, transform:Matrix) {
 		// TODO: Handle rotation?
 
 		if (numClipRects == clipRects.length) {
@@ -98,7 +97,7 @@ class GLMaskManager extends AbstractMaskManager {
 		numClipRects++;
 	}
 
-	public override function popMask():Void {
+	function popMask() {
 		if (stencilReference == 0)
 			return;
 
@@ -127,17 +126,17 @@ class GLMaskManager extends AbstractMaskManager {
 		}
 	}
 
-	public override function popObject(object:DisplayObject, handleScrollRect:Bool = true):Void {
+	public function popObject(object:DisplayObject) {
 		if (object.__mask != null) {
 			popMask();
 		}
 
-		if (handleScrollRect && object.__scrollRect != null) {
+		if (object.__scrollRect != null) {
 			popRect();
 		}
 	}
 
-	public override function popRect():Void {
+	public function popRect() {
 		if (numClipRects > 0) {
 			numClipRects--;
 
@@ -149,7 +148,7 @@ class GLMaskManager extends AbstractMaskManager {
 		}
 	}
 
-	private function scissorRect(rect:Rectangle = null):Void {
+	function scissorRect(rect:Rectangle = null) {
 		// flush batched renders so they are drawn before the scissor call
 		renderSession.batcher.flush();
 
