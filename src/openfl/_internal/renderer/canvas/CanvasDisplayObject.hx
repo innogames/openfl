@@ -17,23 +17,25 @@ class CanvasDisplayObject {
 			&& displayObject.width > 0
 			&& displayObject.height > 0) {
 			renderSession.blendModeManager.setBlendMode(displayObject.__worldBlendMode);
-			renderSession.maskManager.pushObject(displayObject);
 
-			var context = renderSession.context;
-			var transform = displayObject.__renderTransform;
-			var pixelRatio = renderSession.pixelRatio;
+			var needRender = renderSession.maskManager.pushObject(displayObject);
+			if (needRender) {
+				var context = renderSession.context;
+				var transform = displayObject.__renderTransform;
+				var pixelRatio = renderSession.pixelRatio;
 
-			if (renderSession.roundPixels) {
-				context.setTransform(transform.a * pixelRatio, transform.b, transform.c, transform.d * pixelRatio, Math.round(transform.tx * pixelRatio),
-					Math.round(transform.ty * pixelRatio));
-			} else {
-				context.setTransform(transform.a * pixelRatio, transform.b, transform.c, transform.d * pixelRatio, transform.tx * pixelRatio,
-					transform.ty * pixelRatio);
+				if (renderSession.roundPixels) {
+					context.setTransform(transform.a * pixelRatio, transform.b, transform.c, transform.d * pixelRatio, Math.round(transform.tx * pixelRatio),
+						Math.round(transform.ty * pixelRatio));
+				} else {
+					context.setTransform(transform.a * pixelRatio, transform.b, transform.c, transform.d * pixelRatio, transform.tx * pixelRatio,
+						transform.ty * pixelRatio);
+				}
+
+				var color:ARGB = (displayObject.opaqueBackground : ARGB);
+				context.fillStyle = 'rgb(${color.r},${color.g},${color.b})';
+				context.fillRect(0, 0, displayObject.width, displayObject.height);
 			}
-
-			var color:ARGB = (displayObject.opaqueBackground : ARGB);
-			context.fillStyle = 'rgb(${color.r},${color.g},${color.b})';
-			context.fillRect(0, 0, displayObject.width, displayObject.height);
 
 			renderSession.maskManager.popObject(displayObject);
 		}

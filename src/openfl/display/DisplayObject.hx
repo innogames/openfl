@@ -624,7 +624,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		var renderParent:DisplayObject = parent;
 		if (__isMask && renderParent == null)
 			renderParent = __maskTarget;
-		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
+		__renderable = (visible && !__isScaledToZero() && !__isMask && (renderParent == null || !renderParent.__isMask));
 		__updateTransforms();
 
 		if (!__worldColorTransform.__equals(transform.colorTransform)) {
@@ -649,6 +649,10 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		if (mask != null) {
 			mask.__update(resetUpdateDirty);
 		}
+	}
+
+	public inline function __isScaledToZero():Bool {
+		return __scaleX == 0 || __scaleY == 0;
 	}
 
 	private function __updateCacheBitmap(renderSession:RenderSession, force:Bool):Bool {

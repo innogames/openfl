@@ -308,7 +308,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		var childWorldTransform = Matrix.__pool.get();
 
 		for (child in __children) {
-			if (child.__scaleX == 0 || child.__scaleY == 0)
+			if (child.__isScaledToZero())
 				continue;
 
 			DisplayObject.__calculateAbsoluteTransform(child.__transform, matrix, childWorldTransform);
@@ -328,7 +328,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		var childWorldTransform = Matrix.__pool.get();
 
 		for (child in __children) {
-			if (child.__scaleX == 0 || child.__scaleY == 0 || child.__isMask)
+			if (child.__isScaledToZero() || child.__isMask)
 				continue;
 
 			DisplayObject.__calculateAbsoluteTransform(child.__transform, matrix, childWorldTransform);
@@ -353,7 +353,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		var childWorldTransform = Matrix.__pool.get();
 
 		for (child in __children) {
-			if (child.__scaleX == 0 || child.__scaleY == 0 || child.__isMask)
+			if (child.__isScaledToZero() || child.__isMask)
 				continue;
 
 			DisplayObject.__calculateAbsoluteTransform(child.__transform, matrix, childWorldTransform);
@@ -489,18 +489,23 @@ class DisplayObjectContainer extends InteractiveObject {
 		if (__cacheBitmap != null && !__cacheBitmapRender)
 			return;
 
-		renderSession.maskManager.pushObject(this);
+		var needRender = renderSession.maskManager.pushObject(this);
+		if (needRender) {
+			if (renderSession.clearRenderDirty) {
+				for (child in __children) {
+					child.__renderCanvas(renderSession);
+					child.__renderDirty = false;
+				}
 
-		if (renderSession.clearRenderDirty) {
-			for (child in __children) {
-				child.__renderCanvas(renderSession);
-				child.__renderDirty = false;
+				__renderDirty = false;
+			} else {
+				for (child in __children) {
+					child.__renderCanvas(renderSession);
+				}
 			}
-
-			__renderDirty = false;
-		} else {
+		} else if (renderSession.clearRenderDirty) {
 			for (child in __children) {
-				child.__renderCanvas(renderSession);
+				child.__renderDirty = false;
 			}
 		}
 

@@ -25,23 +25,25 @@ class CanvasShape {
 
 				if (width > 0 && height > 0 && (scrollRect == null || (scrollRect.width > 0 && scrollRect.height > 0))) {
 					renderSession.blendModeManager.setBlendMode(shape.__worldBlendMode);
-					renderSession.maskManager.pushObject(shape);
 
-					context.globalAlpha = shape.__worldAlpha;
+					var needRender = renderSession.maskManager.pushObject(shape);
+					if (needRender) {
+						context.globalAlpha = shape.__worldAlpha;
 
-					var transform = graphics.__worldTransform;
-					var pixelRatio = renderSession.pixelRatio;
-					var scale = 1; // As opposed of CanvasBitmap, canvases have the same pixelRatio as display, therefore we don't need to scale them and so scale is always 1
+						var transform = graphics.__worldTransform;
+						var pixelRatio = renderSession.pixelRatio;
+						var scale = 1; // As opposed of CanvasBitmap, canvases have the same pixelRatio as display, therefore we don't need to scale them and so scale is always 1
 
-					if (renderSession.roundPixels) {
-						context.setTransform(transform.a * scale, transform.b, transform.c, transform.d * scale, Math.round(transform.tx * pixelRatio),
-							Math.round(transform.ty * pixelRatio));
-					} else {
-						context.setTransform(transform.a * scale, transform.b, transform.c, transform.d * scale, transform.tx * pixelRatio,
-							transform.ty * pixelRatio);
+						if (renderSession.roundPixels) {
+							context.setTransform(transform.a * scale, transform.b, transform.c, transform.d * scale, Math.round(transform.tx * pixelRatio),
+								Math.round(transform.ty * pixelRatio));
+						} else {
+							context.setTransform(transform.a * scale, transform.b, transform.c, transform.d * scale, transform.tx * pixelRatio,
+								transform.ty * pixelRatio);
+						}
+
+						context.drawImage(graphics.__canvas, 0, 0);
 					}
-
-					context.drawImage(graphics.__canvas, 0, 0);
 
 					renderSession.maskManager.popObject(shape);
 				}

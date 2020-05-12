@@ -10,7 +10,11 @@ class CanvasMaskManager {
 		this.renderSession = renderSession;
 	}
 
-	function pushMask(mask:DisplayObject) {
+	function pushMask(mask:DisplayObject):Bool {
+		if (mask.__isScaledToZero()) {
+			return false;
+		}
+
 		var context = renderSession.context;
 
 		context.save();
@@ -27,16 +31,20 @@ class CanvasMaskManager {
 		context.clip();
 
 		// mask.worldAlpha = cacheAlpha;
+
+		return true;
 	}
 
-	public function pushObject(object:DisplayObject, handleScrollRect:Bool = true) {
+	public function pushObject(object:DisplayObject, handleScrollRect:Bool = true):Bool {
 		if (handleScrollRect && object.__scrollRect != null) {
 			pushRect(object.__scrollRect, object.__renderTransform);
 		}
 
 		if (!object.__cacheBitmapRender && object.__mask != null) {
-			pushMask(object.__mask);
+			return pushMask(object.__mask);
 		}
+
+		return true;
 	}
 
 	public function pushRect(rect:Rectangle, transform:Matrix) {
