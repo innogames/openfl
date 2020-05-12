@@ -507,6 +507,7 @@ class DisplayObjectContainer extends InteractiveObject {
 			for (child in __children) {
 				child.__renderDirty = false;
 			}
+			__renderDirty = false;
 		}
 
 		renderSession.maskManager.popObject(this);
