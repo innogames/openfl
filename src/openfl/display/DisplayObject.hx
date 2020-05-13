@@ -571,7 +571,13 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	private inline function __setRenderDirty():Void {
 		if (!__renderDirty) {
 			__renderDirty = true;
-			__setParentRenderDirty();
+			if (__maskTarget != null) {
+				// we want to re-render the mask target as well as update it
+				// so it recalculates its `__renderable` considering mask's visibility
+				__maskTarget.__setRenderDirty();
+			} else {
+				__setParentRenderDirty();
+			}
 		}
 		__setUpdateDirty();
 	}
@@ -624,7 +630,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		var renderParent:DisplayObject = parent;
 		if (__isMask && renderParent == null)
 			renderParent = __maskTarget;
-		__renderable = (visible && __scaleX != 0 && __scaleY != 0 && !__isMask && (renderParent == null || !renderParent.__isMask));
+		__renderable = (visible && !__isScaledToZero() && !__isMask && (renderParent == null || !renderParent.__isMask) && (__mask == null || !__mask.__isScaledToZero()));
 		__updateTransforms();
 
 		if (!__worldColorTransform.__equals(transform.colorTransform)) {
@@ -649,6 +655,10 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		if (mask != null) {
 			mask.__update(resetUpdateDirty);
 		}
+	}
+
+	inline function __isScaledToZero():Bool {
+		return __scaleX == 0 || __scaleY == 0;
 	}
 
 	private function __updateCacheBitmap(renderSession:RenderSession, force:Bool):Bool {
