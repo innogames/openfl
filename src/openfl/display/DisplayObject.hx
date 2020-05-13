@@ -84,7 +84,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	private var __children:Array<DisplayObject>;
 	private var __filters:Array<BitmapFilter>;
 	private var __graphics:Graphics;
-	private var __isMask:Bool;
+	private var __isMask(get,never):Bool;
 	private var __loaderInfo:LoaderInfo;
 	private var __mask:DisplayObject;
 	private var __maskTarget:DisplayObject;
@@ -835,8 +835,12 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 			|| !__cacheBitmapColorTransform.__equals(__worldColorTransform);
 	}
 
+	extern inline function get___isMask():Bool {
+		return __maskTarget != null;
+	}
+
 	private function __renderToBitmap(renderSession:CanvasRenderSession, matrix:Matrix, blendMode:BlendMode) {
-		var cacheIsMask = __isMask;
+		var cacheMaskTarget = __maskTarget;
 		var cacheVisible = __visible;
 		var cacheRenderable = __renderable;
 		var cacheWorldAlpha = __worldAlpha;
@@ -847,7 +851,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		cacheWorldTransform.copyFrom(__worldTransform);
 		cacheRenderTransform.copyFrom(__renderTransform);
 
-		__isMask = false;
+		__maskTarget = null;
 		__visible = true;
 		__renderable = true;
 		__worldAlpha = 1;
@@ -859,7 +863,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		__updateChildrenForRenderToBitmap();
 		__renderCanvas(renderSession);
 
-		__isMask = cacheIsMask;
+		__maskTarget = cacheMaskTarget;
 		__visible = cacheVisible;
 		__renderable = cacheRenderable;
 		__worldAlpha = cacheWorldAlpha;
@@ -1032,14 +1036,12 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		}
 
 		if (__mask != null) {
-			__mask.__isMask = false;
 			__mask.__maskTarget = null;
 			__mask.__setTransformDirty();
 			__mask.__setRenderDirty();
 		}
 
 		if (value != null) {
-			value.__isMask = true;
 			value.__maskTarget = this;
 			value.__setWorldTransformInvalid();
 		}
