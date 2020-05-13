@@ -1,3 +1,4 @@
 {
-	"files.trimTrailingWhitespace": false
+	"files.trimTrailingWhitespace": true,
+	"editor.insertSpaces": false
 }
