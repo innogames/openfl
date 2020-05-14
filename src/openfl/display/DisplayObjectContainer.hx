@@ -308,7 +308,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		var childWorldTransform = Matrix.__pool.get();
 
 		for (child in __children) {
-			if (child.__scaleX == 0 || child.__scaleY == 0)
+			if (child.__isScaledToZero())
 				continue;
 
 			DisplayObject.__calculateAbsoluteTransform(child.__transform, matrix, childWorldTransform);
@@ -328,7 +328,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		var childWorldTransform = Matrix.__pool.get();
 
 		for (child in __children) {
-			if (child.__scaleX == 0 || child.__scaleY == 0 || child.__isMask)
+			if (child.__isScaledToZero() || child.__isMask)
 				continue;
 
 			DisplayObject.__calculateAbsoluteTransform(child.__transform, matrix, childWorldTransform);
@@ -353,7 +353,7 @@ class DisplayObjectContainer extends InteractiveObject {
 		var childWorldTransform = Matrix.__pool.get();
 
 		for (child in __children) {
-			if (child.__scaleX == 0 || child.__scaleY == 0 || child.__isMask)
+			if (child.__isScaledToZero() || child.__isMask)
 				continue;
 
 			DisplayObject.__calculateAbsoluteTransform(child.__transform, matrix, childWorldTransform);
