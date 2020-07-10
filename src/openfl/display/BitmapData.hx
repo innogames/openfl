@@ -495,7 +495,12 @@ class BitmapData implements IBitmapDrawable {
 	}
 
 	public function generateFilterRect(sourceRect:Rectangle, filter:BitmapFilter):Rectangle {
-		return sourceRect.clone();
+		var rect = sourceRect.clone();
+		rect.x -= filter.__leftExtension;
+		rect.y -= filter.__topExtension;
+		rect.width += filter.__leftExtension + filter.__rightExtension;
+		rect.height += filter.__topExtension + filter.__bottomExtension;
+		return rect;
 	}
 
 	public function isBufferDirty(gl:GLRenderContext, alpha:Float, colorTransform:ColorTransform):Bool {
