@@ -97,36 +97,36 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 		#end
 	}
 
-	@:to @:noCompletion public static function toArrayBuffer(byteArray:ByteArray):ArrayBuffer {
+	@:to @:noCompletion public function toArrayBuffer():ArrayBuffer {
 		#if display
 		return null;
 		#elseif js
-		return (byteArray : ByteArrayData).getData();
+		return this.getData();
 		#elseif flash
-		return Bytes.ofData(byteArray);
+		return Bytes.ofData(this);
 		#else
-		return (byteArray : ByteArrayData);
+		return this;
 		#end
 	}
 
-	@:to @:noCompletion private static function toBytes(byteArray:ByteArray):Bytes {
+	@:to @:noCompletion private function toBytes():Bytes {
 		#if display
 		return null;
 		#elseif flash
-		return Bytes.ofData(byteArray);
+		return Bytes.ofData(this);
 		#else
-		return (byteArray : ByteArrayData);
+		return this;
 		#end
 	}
 
 	#if !display
-	@:to @:noCompletion private static function toBytesData(byteArray:ByteArray):BytesData {
+	@:to @:noCompletion private function toBytesData():BytesData {
 		#if display
 		return null;
 		#elseif flash
-		return byteArray;
+		return this;
 		#else
-		return (byteArray : ByteArrayData).getData();
+		return this.getData();
 		#end
 	}
 	#end
