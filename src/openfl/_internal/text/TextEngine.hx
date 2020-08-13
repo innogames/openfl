@@ -591,9 +591,7 @@ class TextEngine {
 		nextFormatRange();
 
 		lineFormat = formatRange.format;
-		var wrap;
-		var maxLoops = text.length +
-			1; // Do an extra iteration to ensure a LayoutGroup is created in case the last line is empty (multiline or trailing line break).
+		var maxLoops = text.length + 1; // Do an extra iteration to ensure a LayoutGroup is created in case the last line is empty (multiline or trailing line break).
 
 		while (textIndex < maxLoops) {
 			if ((breakIndex > -1) && (spaceIndex == -1 || breakIndex < spaceIndex) && (formatRange.end >= breakIndex)) {
@@ -650,7 +648,7 @@ class TextEngine {
 					layoutGroup = null;
 				}
 
-				wrap = false;
+				var wrap = false;
 
 				while (true) {
 					if (textIndex == formatRange.end)
