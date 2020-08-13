@@ -223,16 +223,14 @@ class TextEngine {
 			else hyphen;
 	}
 
-	public function getLineBreakIndex(startIndex:Int = 0):Int {
+	public function getLineBreakIndex(startIndex:Int):Int {
 		var cr = text.indexOf("\n", startIndex);
 		var lf = text.indexOf("\r", startIndex);
-
-		if (cr == -1)
-			return lf;
-		if (lf == -1)
-			return cr;
-
-		return cr < lf ? cr : lf;
+		return
+			if (cr == -1) lf
+			else if (lf == -1) cr
+			else if (cr < lf) cr
+			else lf;
 	}
 
 	private function getLineMeasurements():Void {
@@ -394,7 +392,7 @@ class TextEngine {
 
 		var previousSpaceIndex = -2; // -1 equals not found, -2 saves extra comparison in `breakIndex == previousSpaceIndex`
 		var spaceIndex = getWordSeparatorIndex(0);
-		var breakIndex = getLineBreakIndex();
+		var breakIndex = getLineBreakIndex(0);
 
 		var offsetX = GUTTER;
 		var offsetY = GUTTER;

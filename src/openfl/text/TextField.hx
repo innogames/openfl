@@ -207,7 +207,7 @@ class TextField extends InteractiveObject {
 		if (charIndex < 0 || charIndex > __text.length - 1)
 			return 0;
 
-		var index = __textEngine.getLineBreakIndex();
+		var index = __textEngine.getLineBreakIndex(0);
 		var startIndex = 0;
 
 		while (index > -1) {
