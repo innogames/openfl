@@ -537,6 +537,15 @@ class TextEngine {
 				var wrapCharOffset = charIndex + 1;
 				var groupEndIndex = textIndex + wrapCharOffset;
 
+				// try to find a hyphen in the textIndex...groupEndIndex range
+				// and if there's one - use it instead of the last character that fits
+				var lastHyphenIndex = text.lastIndexOf("-", groupEndIndex);
+				if (lastHyphenIndex >= textIndex) {
+					var afterHyphenIndex = lastHyphenIndex + 1;
+					wrapCharOffset = afterHyphenIndex - textIndex;
+					groupEndIndex = afterHyphenIndex;
+				}
+
 				if (groupEndIndex == textIndex) {
 					if (positions.length > 0 && positions[0] > width - 2 * GUTTER) {
 						// if the textfield is smaller than a single character and
