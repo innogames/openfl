@@ -214,15 +214,13 @@ class TextEngine {
 	}
 
 	public function getLineBreakIndex(startIndex:Int = 0):Int {
-		var cr = text.indexOf("\n", startIndex);
-		var lf = text.indexOf("\r", startIndex);
-
-		if (cr == -1)
-			return lf;
-		if (lf == -1)
-			return cr;
-
-		return cr < lf ? cr : lf;
+		var cr = text.indexOf("\r", startIndex);
+		var lf = text.indexOf("\n", startIndex);
+		return
+			if (cr == -1) lf
+			else if (lf == -1) cr
+			else if (cr < lf) cr
+			else lf;
 	}
 
 	private function getLineMeasurements():Void {
@@ -583,9 +581,7 @@ class TextEngine {
 		nextFormatRange();
 
 		lineFormat = formatRange.format;
-		var wrap;
-		var maxLoops = text.length +
-			1; // Do an extra iteration to ensure a LayoutGroup is created in case the last line is empty (multiline or trailing line break).
+		var maxLoops = text.length + 1; // Do an extra iteration to ensure a LayoutGroup is created in case the last line is empty (multiline or trailing line break).
 
 		while (textIndex < maxLoops) {
 			if ((breakIndex > -1) && (spaceIndex == -1 || breakIndex < spaceIndex) && (formatRange.end >= breakIndex)) {
@@ -642,7 +638,7 @@ class TextEngine {
 					layoutGroup = null;
 				}
 
-				wrap = false;
+				var wrap = false;
 
 				while (true) {
 					if (textIndex == formatRange.end)
