@@ -531,13 +531,11 @@ class TextEngine {
 		}
 
 		inline function breakLongWords(endIndex:Int):Void {
-			var groupEndIndex = endIndex;
-
 			while (offsetX + widthValue > width - GUTTER) {
 				var charIndex = getCharIndexAtWidth(positions, width - offsetX - GUTTER);
 				// Since the charIndex is zero-based, we add 1 to get the char offset
 				var wrapCharOffset = charIndex + 1;
-				groupEndIndex = textIndex + wrapCharOffset;
+				var groupEndIndex = textIndex + wrapCharOffset;
 
 				if (groupEndIndex == textIndex) {
 					if (positions.length > 0 && positions[0] > width - 2 * GUTTER) {
@@ -572,8 +570,6 @@ class TextEngine {
 					widthValue = getPositionsWidth(positions);
 
 					textIndex = groupEndIndex;
-
-					groupEndIndex = endIndex;
 				}
 			}
 		}
