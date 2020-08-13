@@ -213,6 +213,16 @@ class TextEngine {
 		}
 	}
 
+	function getWordSeparatorIndex(startIndex:Int):Int {
+		var space = text.indexOf(" ", startIndex);
+		var hyphen = text.indexOf("-", startIndex);
+		return
+			if (space == -1) hyphen
+			else if (hyphen == -1) space
+			else if (space < hyphen) space
+			else hyphen;
+	}
+
 	public function getLineBreakIndex(startIndex:Int = 0):Int {
 		var cr = text.indexOf("\n", startIndex);
 		var lf = text.indexOf("\r", startIndex);
@@ -383,7 +393,7 @@ class TextEngine {
 		var widthValue = 0.0, heightValue = 0.0, maxHeightValue = 0.0;
 
 		var previousSpaceIndex = -2; // -1 equals not found, -2 saves extra comparison in `breakIndex == previousSpaceIndex`
-		var spaceIndex = text.indexOf(" ");
+		var spaceIndex = getWordSeparatorIndex(0);
 		var breakIndex = getLineBreakIndex();
 
 		var offsetX = GUTTER;
@@ -803,7 +813,7 @@ class TextEngine {
 						textIndex = endIndex;
 					}
 
-					var nextSpaceIndex = text.indexOf(" ", textIndex);
+					var nextSpaceIndex = getWordSeparatorIndex(textIndex);
 
 					if (formatRange.end <= previousSpaceIndex) {
 						layoutGroup = null;
