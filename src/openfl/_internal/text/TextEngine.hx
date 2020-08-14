@@ -458,7 +458,7 @@ class TextEngine {
 			return charIndex;
 		}
 
-		inline function nextLayoutGroup(startIndex, endIndex):Void {
+		inline function nextLayoutGroup(startIndex, endIndex) {
 			if (layoutGroup == null || layoutGroup.startIndex != layoutGroup.endIndex) {
 				layoutGroup = new TextLayoutGroup(formatRange.format, startIndex, endIndex);
 				layoutGroups.push(layoutGroup);
@@ -469,7 +469,7 @@ class TextEngine {
 			}
 		}
 
-		inline function nextFormatRange():Void {
+		inline function nextFormatRange() {
 			if (rangeIndex < textFormatRanges.length - 1) {
 				rangeIndex++;
 				formatRange = textFormatRanges[rangeIndex];
@@ -634,8 +634,6 @@ class TextEngine {
 					layoutGroup = null;
 				}
 
-				var wrap = false;
-
 				while (true) {
 					if (textIndex == formatRange.end)
 						break;
@@ -678,6 +676,7 @@ class TextEngine {
 						}
 					}
 
+					var wrap = false;
 					if (wordWrap) {
 						if (offsetX + widthValue > width - GUTTER) {
 							wrap = true;
