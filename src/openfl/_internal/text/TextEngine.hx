@@ -380,8 +380,8 @@ class TextEngine {
 		var layoutGroup:TextLayoutGroup = null, positions = null;
 		var widthValue = 0.0, heightValue = 0.0, maxHeightValue = 0.0;
 
-		var previousSpaceIndex = -2; // -1 equals not found, -2 saves extra comparison in `breakIndex == previousSpaceIndex`
-		var spaceIndex = text.indexOf(" ");
+		var previousWordSeparator = new WordSeparator(-2, false); // -1 equals not found, -2 saves extra comparison in `breakIndex == previousSpaceIndex`
+		var wordSeparator = WordSeparator.find(text, 0);
 		var breakIndex = getLineBreakIndex();
 
 		var offsetX = GUTTER;
@@ -580,14 +580,14 @@ class TextEngine {
 		var maxLoops = text.length + 1; // Do an extra iteration to ensure a LayoutGroup is created in case the last line is empty (multiline or trailing line break).
 
 		while (textIndex < maxLoops) {
-			if ((breakIndex > -1) && (spaceIndex == -1 || breakIndex < spaceIndex) && (formatRange.end >= breakIndex)) {
+			if ((breakIndex > -1) && (wordSeparator.index == -1 || breakIndex < wordSeparator.index) && (formatRange.end >= breakIndex)) {
 				// if a line break is the next thing that needs to be dealt with
 
 				if (textIndex <= breakIndex) {
 					positions = getPositions(text, textIndex, breakIndex);
 					widthValue = getPositionsWidth(positions);
 
-					if (wordWrap && previousSpaceIndex <= textIndex && width >= 4) {
+					if (wordWrap && previousWordSeparator.index <= textIndex && width >= 4) {
 						breakLongWords(breakIndex);
 					}
 
@@ -606,7 +606,7 @@ class TextEngine {
 					layoutGroup = null;
 				} else if (layoutGroup != null && layoutGroup.startIndex != layoutGroup.endIndex) {
 					// Trim the last space from the line width, for correct TextFormatAlign.RIGHT alignment
-					if (layoutGroup.endIndex == spaceIndex) {
+					if (layoutGroup.endIndex == wordSeparator.index && !wordSeparator.render) {
 						layoutGroup.width -= layoutGroup.getAdvance(layoutGroup.positions.length - 1);
 					}
 
@@ -627,7 +627,7 @@ class TextEngine {
 
 				textIndex = breakIndex + 1;
 				breakIndex = getLineBreakIndex(textIndex);
-			} else if (formatRange.end >= spaceIndex && spaceIndex > -1 && textIndex < formatRange.end) {
+			} else if (formatRange.end >= wordSeparator.index && wordSeparator.index > -1 && textIndex < formatRange.end) {
 				// if a space is the next thing that needs to be dealt with
 
 				if (layoutGroup != null && layoutGroup.startIndex != layoutGroup.endIndex) {
@@ -640,10 +640,10 @@ class TextEngine {
 
 					var endIndex = -1;
 
-					if (spaceIndex == -1) {
+					if (wordSeparator.index == -1) {
 						endIndex = breakIndex;
 					} else {
-						endIndex = spaceIndex + 1;
+						endIndex = wordSeparator.index + 1;
 
 						if (breakIndex > -1 && breakIndex < endIndex) {
 							endIndex = breakIndex;
@@ -658,7 +658,7 @@ class TextEngine {
 					widthValue = getPositionsWidth(positions);
 
 					if (lineFormat.align == JUSTIFY) {
-						if (positions.length > 0 && textIndex == previousSpaceIndex) {
+						if (positions.length > 0 && textIndex == previousWordSeparator.index && !previousWordSeparator.render) {
 							// Trim left space of this word
 							textIndex++;
 
@@ -667,7 +667,7 @@ class TextEngine {
 							offsetX += spaceWidth;
 						}
 
-						if (positions.length > 0 && endIndex == spaceIndex + 1) {
+						if (positions.length > 0 && endIndex == wordSeparator.index + 1 && !wordSeparator.render) {
 							// Trim right space of this word
 							endIndex--;
 
@@ -681,7 +681,7 @@ class TextEngine {
 						if (offsetX + widthValue > width - GUTTER) {
 							wrap = true;
 
-							if (positions.length > 0 && endIndex == spaceIndex + 1) {
+							if (positions.length > 0 && endIndex == wordSeparator.index + 1 && !wordSeparator.render) {
 								// if last letter is a space, avoid word wrap if possible
 								// TODO: Handle multiple spaces
 
@@ -702,9 +702,11 @@ class TextEngine {
 								previous = layoutGroups[layoutGroups.length - 1];
 							}
 
-							// For correct selection rectangles and alignment, trim the trailing space of the previous line:
-							previous.width -= previous.getAdvance(previous.positions.length - 1);
-							previous.endIndex--;
+							if (!previousWordSeparator.render) {
+								// For correct selection rectangles and alignment, trim the trailing space of the previous line:
+								previous.width -= previous.getAdvance(previous.positions.length - 1);
+								previous.endIndex--;
+							}
 						}
 
 						var i = layoutGroups.length - 1;
@@ -713,7 +715,7 @@ class TextEngine {
 						while (true) {
 							layoutGroup = layoutGroups[i];
 
-							if (i > 0 && layoutGroup.startIndex > previousSpaceIndex) {
+							if (i > 0 && layoutGroup.startIndex > previousWordSeparator.index) {
 								offsetCount++;
 							} else {
 								break;
@@ -722,7 +724,7 @@ class TextEngine {
 							i--;
 						}
 
-						if (textIndex == previousSpaceIndex + 1) {
+						if (textIndex == previousWordSeparator.index + 1) {
 							alignBaseline();
 						}
 
@@ -761,9 +763,9 @@ class TextEngine {
 
 						wrap = false;
 					} else {
-						if (layoutGroup != null && textIndex == spaceIndex) {
+						if (layoutGroup != null && textIndex == wordSeparator.index) {
 							if (lineFormat.align != JUSTIFY) {
-								layoutGroup.endIndex = spaceIndex;
+								layoutGroup.endIndex = wordSeparator.index;
 								layoutGroup.positions = layoutGroup.positions.concat(positions);
 								layoutGroup.width += widthValue;
 							}
@@ -794,9 +796,9 @@ class TextEngine {
 						textIndex = endIndex;
 					}
 
-					var nextSpaceIndex = text.indexOf(" ", textIndex);
+					var nextWordSeparator = WordSeparator.find(text, textIndex);
 
-					if (formatRange.end <= previousSpaceIndex) {
+					if (formatRange.end <= previousWordSeparator.index) {
 						layoutGroup = null;
 						textIndex = formatRange.end;
 						nextFormatRange();
@@ -804,7 +806,7 @@ class TextEngine {
 						// Check if we can continue wrapping this line until the next line-break or end-of-String.
 						// When `previousSpaceIndex == breakIndex`, the loop has finished growing layoutGroup.endIndex until the end of this line.
 
-						if (breakIndex == previousSpaceIndex) {
+						if (breakIndex == previousWordSeparator.index) {
 							layoutGroup.endIndex = breakIndex;
 
 							if (breakIndex - layoutGroup.startIndex - layoutGroup.positions.length < 0) {
@@ -815,13 +817,13 @@ class TextEngine {
 							textIndex = breakIndex + 1;
 						}
 
-						previousSpaceIndex = spaceIndex;
-						spaceIndex = nextSpaceIndex;
+						previousWordSeparator.setFrom(wordSeparator);
+						wordSeparator.setFrom(nextWordSeparator);
 					}
 
-					if ((breakIndex > -1 && breakIndex <= textIndex && (spaceIndex > breakIndex || spaceIndex == -1))
+					if ((breakIndex > -1 && breakIndex <= textIndex && (wordSeparator.index > breakIndex || wordSeparator.index == -1))
 						|| textIndex > text.length
-						|| spaceIndex > formatRange.end) {
+						|| wordSeparator.index > formatRange.end) {
 						break;
 					}
 				}
@@ -1010,5 +1012,36 @@ class TextEngine {
 		text = value;
 
 		return text;
+	}
+}
+
+// this is a helper class for dealing with word separators
+// it's forced to be inline (so always stack-allocated)
+private class WordSeparator {
+	public var index(default,null):Int;
+	public var render(default,null):Bool;
+
+	public extern inline function new(index, render) {
+		this.index = index;
+		this.render = render;
+	}
+
+	public extern inline function setFrom(other:WordSeparator) {
+		this.index = other.index;
+		this.render = other.render;
+	}
+
+	public static extern inline function find(text:String, startIndex:Int):WordSeparator {
+		var index = -1;
+		var render = false;
+		var space = text.indexOf(" ", startIndex);
+		var hyphen = text.indexOf("-", startIndex);
+		if (hyphen != -1 && (space == -1 || hyphen < space)) {
+			index = hyphen;
+			render = true;
+		} else {
+			index = space;
+		}
+		return new WordSeparator(index, render);
 	}
 }
