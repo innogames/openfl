@@ -609,7 +609,7 @@ class GLContext3D {
 
 	public static function setScissorRectangle(context:Context3D, rectangle:Rectangle):Void {
 		if (rectangle != null) {
-			var scale = context.__stage3D.__stage.window.scale;
+			var scale = if (context.__renderToTexture == null) context.__stage3D.__stage.window.scale else 1.0;
 			__setScissorRectangle(context, Std.int(rectangle.x * scale), Std.int(rectangle.y * scale), Std.int(rectangle.width * scale),
 				Std.int(rectangle.height * scale));
 		} else {
