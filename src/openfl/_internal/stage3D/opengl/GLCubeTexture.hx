@@ -41,7 +41,7 @@ class GLCubeTexture {
 				return;
 
 			hasTexture = true;
-			var target = __sideToTarget(gl, side);
+			var target = __sideToTarget(side);
 
 			cubeTexture.__format = format;
 
@@ -54,7 +54,7 @@ class GLCubeTexture {
 		if (!hasTexture) {
 			for (side in 0...6) {
 				var data = new UInt8Array(cubeTexture.__size * cubeTexture.__size * 4);
-				gl.texImage2D(__sideToTarget(gl, side), 0, cubeTexture.__internalFormat, cubeTexture.__size, cubeTexture.__size, 0, cubeTexture.__format,
+				gl.texImage2D(__sideToTarget(side), 0, cubeTexture.__internalFormat, cubeTexture.__size, cubeTexture.__size, 0, cubeTexture.__format,
 					GL.UNSIGNED_BYTE, data);
 				GLUtils.checkGLError(gl);
 			}
@@ -80,7 +80,7 @@ class GLCubeTexture {
 
 		var image = cubeTexture.__getImage(source);
 
-		uploadFromTypedArray(cubeTexture, renderSession, image.data, side, miplevel);
+		GLTextureBase.uploadFromImage(renderSession.gl, cubeTexture, image, miplevel, size, size, __sideToTarget(side));
 	}
 
 	public static function uploadFromByteArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt, side:UInt,
@@ -104,7 +104,7 @@ class GLCubeTexture {
 		if (size == 0)
 			return;
 
-		var target = __sideToTarget(gl, side);
+		var target = __sideToTarget(side);
 
 		gl.bindTexture(GL.TEXTURE_CUBE_MAP, cubeTexture.__textureData.glTexture);
 		GLUtils.checkGLError(gl);
@@ -141,7 +141,7 @@ class GLCubeTexture {
 		GLTextureBase.setSamplerState(cubeTexture, renderSession, state);
 	}
 
-	private static function __sideToTarget(gl:GLRenderContext, side:UInt) {
+	static function __sideToTarget(side:UInt) {
 		return switch (side) {
 			case 0: GL.TEXTURE_CUBE_MAP_NEGATIVE_X;
 			case 1: GL.TEXTURE_CUBE_MAP_POSITIVE_X;

@@ -101,8 +101,7 @@ class GLTexture {
 		}
 
 		var image = texture.__getImage(source);
-
-		uploadFromTypedArray(texture, renderSession, image.data, miplevel);
+		GLTextureBase.uploadFromImage(renderSession.gl, texture, image, miplevel, width, height);
 	}
 
 	public static function uploadFromByteArray(texture:Texture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt, miplevel:UInt = 0):Void {
