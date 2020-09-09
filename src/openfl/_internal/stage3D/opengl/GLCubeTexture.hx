@@ -81,6 +81,7 @@ class GLCubeTexture {
 		var image = cubeTexture.__getImage(source);
 
 		GLTextureBase.uploadFromImage(renderSession.gl, cubeTexture, image, miplevel, size, size, __sideToTarget(side));
+		cubeTexture.__uploadedSides |= 1 << side;
 	}
 
 	public static function uploadFromByteArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt, side:UInt,
@@ -106,7 +107,7 @@ class GLCubeTexture {
 
 		var target = __sideToTarget(side);
 
-		gl.bindTexture(GL.TEXTURE_CUBE_MAP, cubeTexture.__textureData.glTexture);
+		gl.bindTexture(cubeTexture.__textureTarget, cubeTexture.__textureData.glTexture);
 		GLUtils.checkGLError(gl);
 
 		gl.texImage2D(target, miplevel, cubeTexture.__internalFormat, size, size, 0, cubeTexture.__format, GL.UNSIGNED_BYTE, data);
