@@ -73,8 +73,8 @@ final class DropShadowFilter extends BitmapFilter {
 		var b = __color & 0xFF;
 		sourceBitmapData.colorTransform(sourceBitmapData.rect, new ColorTransform(0, 0, 0, __alpha, r, g, b, 0));
 
-		destPoint.x += __offsetX;
-		destPoint.y += __offsetY;
+		destPoint.x += __offsetX * pixelRatio;
+		destPoint.y += __offsetY * pixelRatio;
 
 		var finalImage = ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint.__toLimeVector2(),
 			__blurX * pixelRatio, __blurY * pixelRatio, __quality, __strength);
