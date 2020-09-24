@@ -1,6 +1,5 @@
 package openfl._internal.stage3D.opengl;
 
-import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.utils.ArrayBufferView;
 import lime.utils.UInt8Array;
@@ -41,11 +40,9 @@ class GLCubeTexture {
 				return;
 
 			hasTexture = true;
-			var target = __sideToTarget(side);
-
 			cubeTexture.__format = format;
 
-			gl.compressedTexImage2D(target, level, cubeTexture.__internalFormat, width, height, 0, bytes, 0, blockLength);
+			gl.compressedTexImage2D(__sideToTarget(side), level, cubeTexture.__internalFormat, width, height, 0, bytes, 0, blockLength);
 			GLUtils.checkGLError(gl);
 
 			// __trackCompressedMemoryUsage (blockLength);
@@ -66,6 +63,9 @@ class GLCubeTexture {
 
 	public static function uploadFromBitmapData(cubeTexture:CubeTexture, renderSession:GLRenderSession, source:BitmapData, side:UInt, miplevel:UInt = 0,
 			generateMipmap:Bool = false):Void {
+		if (source == null)
+			return;
+
 		var size = cubeTexture.__size >> miplevel;
 		if (size == 0)
 			return;
@@ -79,13 +79,12 @@ class GLCubeTexture {
 		// }
 
 		var image = cubeTexture.__getImage(source);
-
 		GLTextureBase.uploadFromImage(renderSession.gl, cubeTexture, image, miplevel, size, size, __sideToTarget(side));
 		cubeTexture.__uploadedSides |= 1 << side;
 	}
 
 	public static function uploadFromByteArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt, side:UInt,
-			miplevel:UInt):Void {
+			miplevel:UInt = 0):Void {
 		#if js
 		if (byteArrayOffset == 0) {
 			uploadFromTypedArray(cubeTexture, renderSession, @:privateAccess (data : ByteArrayData).b, side, miplevel);
@@ -96,9 +95,11 @@ class GLCubeTexture {
 		uploadFromTypedArray(cubeTexture, renderSession, new UInt8Array(data.toArrayBuffer(), byteArrayOffset), side, miplevel);
 	}
 
-	public static function uploadFromTypedArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ArrayBufferView, side:UInt, miplevel:UInt):Void {
+	public static function uploadFromTypedArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ArrayBufferView, side:UInt,
+			miplevel:UInt = 0):Void {
 		if (data == null)
 			return;
+
 		var gl = renderSession.gl;
 
 		var size = cubeTexture.__size >> miplevel;

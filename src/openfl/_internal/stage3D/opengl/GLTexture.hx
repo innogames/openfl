@@ -69,17 +69,8 @@ class GLTexture {
 		GLUtils.checkGLError(gl);
 	}
 
-	public static function uploadFromBitmapData(texture:Texture, renderSession:GLRenderSession, source:BitmapData, miplevel:UInt, generateMipmap:Bool):Void {
-		/* TODO
-			if (LowMemoryMode) {
-				// shrink bitmap data
-				source = source.shrinkToHalfResolution();
-				// shrink our dimensions for upload
-				width = source.width;
-				height = source.height;
-			}
-		 */
-
+	public static function uploadFromBitmapData(texture:Texture, renderSession:GLRenderSession, source:BitmapData, miplevel:UInt = 0,
+			generateMipmap:Bool = false):Void {
 		if (source == null)
 			return;
 
@@ -118,6 +109,7 @@ class GLTexture {
 	public static function uploadFromTypedArray(texture:Texture, renderSession:GLRenderSession, data:ArrayBufferView, miplevel:UInt = 0):Void {
 		if (data == null)
 			return;
+
 		var gl = renderSession.gl;
 
 		var width = texture.__width >> miplevel;
