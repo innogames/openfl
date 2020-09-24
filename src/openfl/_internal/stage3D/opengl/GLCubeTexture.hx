@@ -46,6 +46,8 @@ class GLCubeTexture {
 			gl.compressedTexImage2D(__sideToTarget(side), level, cubeTexture.__internalFormat, width, height, 0, bytes, 0, blockLength);
 			GLUtils.checkGLError(gl);
 
+			cubeTexture.__uploadedSides |= 1 << side;
+
 			// __trackCompressedMemoryUsage (blockLength);
 		});
 
@@ -55,6 +57,8 @@ class GLCubeTexture {
 				gl.texImage2D(__sideToTarget(side), 0, cubeTexture.__internalFormat, cubeTexture.__size, cubeTexture.__size, 0, cubeTexture.__format,
 					GL.UNSIGNED_BYTE, data);
 				GLUtils.checkGLError(gl);
+
+				cubeTexture.__uploadedSides |= 1 << side;
 			}
 		}
 
