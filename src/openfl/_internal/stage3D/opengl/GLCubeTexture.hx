@@ -41,6 +41,7 @@ class GLCubeTexture {
 
 			hasTexture = true;
 			cubeTexture.__format = format;
+			cubeTexture.__internalFormat = format;
 
 			gl.compressedTexImage2D(__sideToTarget(side), level, cubeTexture.__internalFormat, width, height, 0, bytes, 0, blockLength);
 			GLUtils.checkGLError(gl);
