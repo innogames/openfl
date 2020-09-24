@@ -75,13 +75,11 @@ class GLCubeTexture {
 		if (size == 0)
 			return;
 
-		// if (source.width != size || source.height != size) {
-		//
-		// var copy = new BitmapData (size, size, true, 0);
-		// copy.draw (source);
-		// source = copy;
-		//
-		// }
+		if (source.width != size || source.height != size) {
+			var copy = new BitmapData(size, size, true, 0);
+			copy.draw(source);
+			source = copy;
+		}
 
 		var image = cubeTexture.__getImage(source);
 		GLTextureBase.uploadFromImage(renderSession.gl, cubeTexture, image, miplevel, size, size, __sideToTarget(side));
