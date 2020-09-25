@@ -34,16 +34,19 @@ class GLCubeTexture {
 
 		var hasTexture = false;
 
-		reader.readTextures(function(side, level, gpuFormat, width, height, blockLength, bytes) {
+		reader.readTextures(function(side, level, gpuFormat, size, unused, blockLength, bytes) {
 			var format = GLTextureBase.__compressedTextureFormats.toTextureFormat(alpha, gpuFormat);
 			if (format == 0)
+				return;
+
+			if (size == 0)
 				return;
 
 			hasTexture = true;
 			cubeTexture.__format = format;
 			cubeTexture.__internalFormat = format;
 
-			gl.compressedTexImage2D(__sideToTarget(side), level, cubeTexture.__internalFormat, width, height, 0, bytes, 0, blockLength);
+			gl.compressedTexImage2D(__sideToTarget(side), level, cubeTexture.__internalFormat, size, size, 0, bytes, 0, blockLength);
 			GLUtils.checkGLError(gl);
 
 			cubeTexture.__uploadedSides |= 1 << side;

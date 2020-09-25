@@ -32,10 +32,18 @@ class GLTexture {
 
 		var hasTexture = false;
 
-		reader.readTextures(function(target, level, gpuFormat, width, height, blockLength, bytes) {
+		reader.readTextures(function(unused, level, gpuFormat, width, height, blockLength, bytes) {
 			var format = GLTextureBase.__compressedTextureFormats.toTextureFormat(alpha, gpuFormat);
 			if (format == 0)
 				return;
+
+			if (width == 0 && height == 0)
+				return;
+
+			if (width == 0)
+				width = 1;
+			if (height == 0)
+				height = 1;
 
 			hasTexture = true;
 			texture.__format = format;
