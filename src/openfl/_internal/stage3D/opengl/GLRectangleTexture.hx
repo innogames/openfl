@@ -16,8 +16,6 @@ import openfl.utils.ByteArray;
 @:access(openfl.display3D.Context3D)
 class GLRectangleTexture {
 	public static function create(rectangleTexture:RectangleTexture, renderSession:GLRenderSession):Void {
-		var gl = renderSession.gl;
-
 		rectangleTexture.__textureTarget = GL.TEXTURE_2D;
 		uploadFromTypedArray(rectangleTexture, renderSession, null);
 	}

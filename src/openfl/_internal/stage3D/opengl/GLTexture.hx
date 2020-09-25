@@ -17,18 +17,7 @@ import openfl.utils.ByteArray;
 @:access(openfl.display3D.Context3D)
 class GLTexture {
 	public static function create(texture:Texture, renderSession:GLRenderSession):Void {
-		var gl = renderSession.gl;
-
 		texture.__textureTarget = GL.TEXTURE_2D;
-
-		gl.bindTexture(texture.__textureTarget, texture.__textureData.glTexture);
-		GLUtils.checkGLError(gl);
-
-		gl.texImage2D(texture.__textureTarget, 0, texture.__internalFormat, texture.__width, texture.__height, 0, texture.__format, GL.UNSIGNED_BYTE, null);
-		GLUtils.checkGLError(gl);
-
-		gl.bindTexture(texture.__textureTarget, null);
-
 		uploadFromTypedArray(texture, renderSession, null);
 	}
 
