@@ -96,6 +96,9 @@ class GLTexture {
 	}
 
 	public static function uploadFromByteArray(texture:Texture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt, miplevel:UInt = 0):Void {
+		if (data == null)
+			return;
+
 		#if js
 		if (byteArrayOffset == 0) {
 			uploadFromTypedArray(texture, renderSession, @:privateAccess (data : ByteArrayData).b, miplevel);
@@ -107,9 +110,6 @@ class GLTexture {
 	}
 
 	public static function uploadFromTypedArray(texture:Texture, renderSession:GLRenderSession, data:ArrayBufferView, miplevel:UInt = 0):Void {
-		if (data == null)
-			return;
-
 		var gl = renderSession.gl;
 
 		var width = texture.__width >> miplevel;

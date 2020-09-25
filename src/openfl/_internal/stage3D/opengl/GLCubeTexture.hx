@@ -89,6 +89,9 @@ class GLCubeTexture {
 
 	public static function uploadFromByteArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt, side:UInt,
 			miplevel:UInt = 0):Void {
+		if (data == null)
+			return;
+
 		#if js
 		if (byteArrayOffset == 0) {
 			uploadFromTypedArray(cubeTexture, renderSession, @:privateAccess (data : ByteArrayData).b, side, miplevel);
@@ -101,9 +104,6 @@ class GLCubeTexture {
 
 	public static function uploadFromTypedArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ArrayBufferView, side:UInt,
 			miplevel:UInt = 0):Void {
-		if (data == null)
-			return;
-
 		var gl = renderSession.gl;
 
 		var size = cubeTexture.__size >> miplevel;

@@ -34,6 +34,9 @@ class GLRectangleTexture {
 	}
 
 	public static function uploadFromByteArray(rectangleTexture:RectangleTexture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt):Void {
+		if (data == null)
+			return;
+
 		#if js
 		if (byteArrayOffset == 0) {
 			uploadFromTypedArray(rectangleTexture, renderSession, @:privateAccess (data : ByteArrayData).b);
@@ -45,9 +48,6 @@ class GLRectangleTexture {
 	}
 
 	public static function uploadFromTypedArray(rectangleTexture:RectangleTexture, renderSession:GLRenderSession, data:ArrayBufferView):Void {
-		if (data == null)
-			return;
-
 		var gl = renderSession.gl;
 
 		var width = rectangleTexture.__width;
