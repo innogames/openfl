@@ -41,6 +41,9 @@ class GLVertexBuffer3D {
 
 	public static function uploadFromByteArray(vertexBuffer:VertexBuffer3D, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:Int, startVertex:Int,
 			numVertices:Int):Void {
+		if (data == null)
+			return;
+
 		var offset = byteArrayOffset + startVertex * vertexBuffer.__stride;
 		var length = numVertices * vertexBuffer.__vertexSize;
 
@@ -48,9 +51,6 @@ class GLVertexBuffer3D {
 	}
 
 	public static function uploadFromTypedArray(vertexBuffer:VertexBuffer3D, renderSession:GLRenderSession, data:ArrayBufferView):Void {
-		if (data == null)
-			return;
-
 		var gl = renderSession.gl;
 
 		gl.bindBuffer(GL.ARRAY_BUFFER, vertexBuffer.__id);

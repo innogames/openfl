@@ -41,15 +41,15 @@ class GLIndexBuffer3D {
 
 	public static function uploadFromByteArray(indexBuffer:IndexBuffer3D, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:Int, startOffset:Int,
 			count:Int):Void {
+		if (data == null)
+			return;
+
 		var offset = byteArrayOffset + startOffset * 2;
 
 		uploadFromTypedArray(indexBuffer, renderSession, new Int16Array(data, offset, count));
 	}
 
 	public static function uploadFromTypedArray(indexBuffer:IndexBuffer3D, renderSession:GLRenderSession, data:ArrayBufferView):Void {
-		if (data == null)
-			return;
-
 		var gl = renderSession.gl;
 
 		gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, indexBuffer.__id);
