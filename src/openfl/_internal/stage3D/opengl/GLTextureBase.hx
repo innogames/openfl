@@ -192,6 +192,9 @@ class GLTextureBase {
 	}
 
 	public static function uploadFromImage(gl:GL, texture:TextureBase, image:Image, miplevel:Int, width:Int, height:Int, uploadTarget:Int = -1) {
+		if (image == null)
+			return;
+
 		if (uploadTarget == -1) uploadTarget = texture.__textureTarget;
 
 		gl.bindTexture(texture.__textureTarget, texture.__textureData.glTexture);

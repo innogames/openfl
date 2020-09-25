@@ -72,6 +72,7 @@ class GLCubeTexture {
 			return;
 
 		var size = cubeTexture.__size >> miplevel;
+
 		if (size == 0)
 			return;
 
@@ -106,6 +107,7 @@ class GLCubeTexture {
 		var gl = renderSession.gl;
 
 		var size = cubeTexture.__size >> miplevel;
+
 		if (size == 0)
 			return;
 
@@ -122,7 +124,7 @@ class GLCubeTexture {
 
 		cubeTexture.__uploadedSides |= 1 << side;
 
-		// var memUsage = (__size * __size) * 4;
+		// var memUsage = (size * size) * 4;
 		// __trackMemoryUsage (memUsage);
 	}
 

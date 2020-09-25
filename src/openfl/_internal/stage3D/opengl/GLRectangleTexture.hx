@@ -27,10 +27,6 @@ class GLRectangleTexture {
 			return;
 
 		var image = rectangleTexture.__getImage(source);
-
-		if (image == null)
-			return;
-
 		GLTextureBase.uploadFromImage(renderSession.gl, rectangleTexture, image, 0, rectangleTexture.__width, rectangleTexture.__height);
 	}
 
@@ -46,11 +42,8 @@ class GLRectangleTexture {
 	}
 
 	public static function uploadFromTypedArray(rectangleTexture:RectangleTexture, renderSession:GLRenderSession, data:ArrayBufferView):Void {
-		// if (__format != Context3DTextureFormat.BGRA) {
-		//
-		// throw new IllegalOperationError ();
-		//
-		// }
+		if (data == null)
+			return;
 
 		var gl = renderSession.gl;
 
