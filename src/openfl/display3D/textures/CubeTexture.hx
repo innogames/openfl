@@ -37,8 +37,6 @@ final class CubeTexture extends TextureBase {
 	}
 
 	public function uploadFromBitmapData(source:BitmapData, side:UInt, miplevel:UInt = 0, generateMipmap:Bool = false):Void {
-		if (source == null)
-			return;
 		GLCubeTexture.uploadFromBitmapData(this, __context.__renderSession, source, side, miplevel, generateMipmap);
 	}
 
@@ -47,8 +45,6 @@ final class CubeTexture extends TextureBase {
 	}
 
 	public function uploadFromTypedArray(data:ArrayBufferView, side:UInt, miplevel:UInt = 0):Void {
-		if (data == null)
-			return;
 		GLCubeTexture.uploadFromTypedArray(this, __context.__renderSession, data, side, miplevel);
 	}
 
