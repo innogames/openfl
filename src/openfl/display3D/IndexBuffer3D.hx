@@ -3,12 +3,12 @@ package openfl.display3D;
 import lime.graphics.opengl.GLBuffer;
 import lime.utils.ArrayBufferView;
 import lime.utils.Int16Array;
+import openfl.Vector;
 import openfl._internal.stage3D.opengl.GLIndexBuffer3D;
 import openfl.utils.ByteArray;
-import openfl.Vector;
 
 @:access(openfl.display3D.Context3D)
-final class IndexBuffer3D {
+class IndexBuffer3D {
 	private var __context:Context3D;
 	private var __elementType:Int;
 	private var __id:GLBuffer;

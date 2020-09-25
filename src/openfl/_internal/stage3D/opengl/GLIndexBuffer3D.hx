@@ -34,8 +34,8 @@ class GLIndexBuffer3D {
 			gl.deleteBuffer(indexBuffer.__id);
 		}
 
-		// __context.__statsDecrement(Context3D.Context3DTelemetry.COUNT_INDEX_BUFFER);
-		// __context.__statsSubtract(Context3D.Context3DTelemetry.MEM_INDEX_BUFFER, __memoryUsage);
+		// __context.__statsDecrement (Context3D.Context3DTelemetry.COUNT_INDEX_BUFFER);
+		// __context.__statsSubtract (Context3D.Context3DTelemetry.MEM_INDEX_BUFFER, __memoryUsage);
 		// __memoryUsage = 0;
 	}
 
@@ -43,12 +43,13 @@ class GLIndexBuffer3D {
 			count:Int):Void {
 		var offset = byteArrayOffset + startOffset * 2;
 
-		uploadFromTypedArray(indexBuffer, renderSession, new Int16Array(data.toArrayBuffer(), offset, count));
+		uploadFromTypedArray(indexBuffer, renderSession, new Int16Array(data, offset, count));
 	}
 
 	public static function uploadFromTypedArray(indexBuffer:IndexBuffer3D, renderSession:GLRenderSession, data:ArrayBufferView):Void {
 		if (data == null)
 			return;
+
 		var gl = renderSession.gl;
 
 		gl.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, indexBuffer.__id);
@@ -66,15 +67,16 @@ class GLIndexBuffer3D {
 	}
 
 	public static function uploadFromVector(indexBuffer:IndexBuffer3D, renderSession:GLRenderSession, data:Vector<UInt>, startOffset:Int, count:Int):Void {
-		// TODO: Optimize more
-
 		if (data == null)
 			return;
+
 		var gl = renderSession.gl;
 
-		var length = startOffset + count;
-		var existingInt16Array = indexBuffer.__tempInt16Array;
+		// TODO: Optimize more
 
+		var length = startOffset + count;
+
+		var existingInt16Array = indexBuffer.__tempInt16Array;
 		if (indexBuffer.__tempInt16Array == null || indexBuffer.__tempInt16Array.length < count) {
 			indexBuffer.__tempInt16Array = new Int16Array(count);
 
