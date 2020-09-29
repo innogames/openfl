@@ -26,8 +26,11 @@ class GLRectangleTexture {
 		if (source == null)
 			return;
 
+		var width = rectangleTexture.__width;
+		var height = rectangleTexture.__height;
+
 		var image = rectangleTexture.__getImage(source);
-		GLTextureBase.uploadFromImage(renderSession.gl, rectangleTexture, image, 0, rectangleTexture.__width, rectangleTexture.__height);
+		GLTextureBase.uploadFromImage(renderSession.gl, rectangleTexture, image, 0, width, height);
 	}
 
 	public static function uploadFromByteArray(rectangleTexture:RectangleTexture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt):Void {
@@ -47,17 +50,20 @@ class GLRectangleTexture {
 
 		var gl = renderSession.gl;
 
+		var width = rectangleTexture.__width;
+		var height = rectangleTexture.__height;
+
 		gl.bindTexture(rectangleTexture.__textureTarget, rectangleTexture.__textureData.glTexture);
 		GLUtils.checkGLError(gl);
 
-		gl.texImage2D(rectangleTexture.__textureTarget, 0, rectangleTexture.__internalFormat, rectangleTexture.__width, rectangleTexture.__height, 0,
-			rectangleTexture.__format, GL.UNSIGNED_BYTE, data);
+		gl.texImage2D(rectangleTexture.__textureTarget, 0, rectangleTexture.__internalFormat, width, height, 0, rectangleTexture.__format, GL.UNSIGNED_BYTE,
+			data);
 		GLUtils.checkGLError(gl);
 
 		gl.bindTexture(rectangleTexture.__textureTarget, null);
 		GLUtils.checkGLError(gl);
 
-		// var memUsage = (__width * __height) * 4;
+		// var memUsage = (width * height) * 4;
 		// __trackMemoryUsage (memUsage);
 	}
 
