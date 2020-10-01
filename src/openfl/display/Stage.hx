@@ -476,7 +476,6 @@ class Stage extends DisplayObjectContainer {
 			if (!Stage3D.__active) {
 				__renderer.clear();
 			}
-
 			__renderer.render();
 		}
 
@@ -1112,9 +1111,6 @@ class Stage extends DisplayObjectContainer {
 
 		if (__contentsScaleFactor != window.scale && __renderer != null) {
 			__contentsScaleFactor = window.scale;
-
-			@:privateAccess (__renderer.renderSession).pixelRatio = window.scale;
-
 			__forceRenderDirty();
 		}
 
@@ -1130,8 +1126,6 @@ class Stage extends DisplayObjectContainer {
 	private function __setLogicalSize(width:Int, height:Int):Void {
 		__logicalWidth = width;
 		__logicalHeight = height;
-
-		__resize();
 	}
 
 	private function __startDrag(sprite:Sprite, lockCenter:Bool, bounds:Rectangle):Void {

@@ -32,28 +32,28 @@ class GLRenderer {
 		width = stage.stageWidth;
 		height = stage.stageHeight;
 
-		if (Graphics.maxTextureWidth == null) {
-			Graphics.maxTextureWidth = Graphics.maxTextureHeight = gl.getParameter(GL.MAX_TEXTURE_SIZE);
-		}
-
 		matrix = new Matrix4();
 
-		renderSession = new GLRenderSession(this, gl);
-		renderSession.pixelRatio = stage.window.scale;
-
-		if (stage.window != null) {
-			if (stage.stage3Ds[0].context3D == null) {
-				stage.stage3Ds[0].__createContext(stage, renderSession);
+		if (gl != null) {
+			if (Graphics.maxTextureWidth == null) {
+				Graphics.maxTextureWidth = Graphics.maxTextureHeight = gl.getParameter(GL.MAX_TEXTURE_SIZE);
 			}
-
-			var width = Math.ceil(stage.window.width * stage.window.scale);
-			var height = Math.ceil(stage.window.height * stage.window.scale);
-
-			resize(width, height);
+			renderSession = new GLRenderSession(this, gl);
 		}
+
+		if (stage.stage3Ds[0].context3D == null) {
+			stage.stage3Ds[0].__createContext(stage, renderSession);
+		}
+
+		var width = Std.int(stage.window.width * stage.window.scale);
+		var height = Std.int(stage.window.height * stage.window.scale);
+
+		resize(width, height);
 	}
 
 	public function clear():Void {
+		if (gl == null) return;
+
 		if (stage.__transparent) {
 			gl.clearColor(0, 0, 0, 0);
 		} else {
@@ -94,7 +94,11 @@ class GLRenderer {
 	}
 
 	public function render():Void {
+		if (gl == null) return;
+
 		gl.viewport(offsetX, offsetY, displayWidth, displayHeight);
+
+		renderSession.pixelRatio = stage.window.scale;
 
 		renderSession.allowSmoothing = (stage.quality != LOW);
 		renderSession.forceSmoothing = #if always_smooth_on_upscale (displayMatrix.a != 1 || displayMatrix.d != 1); #else false; #end
