@@ -48,8 +48,13 @@ class Stage3D extends EventDispatcher {
 
 	private function __createContext(stage:Stage, renderSession:GLRenderSession):Void {
 		__stage = stage;
-		context3D = new Context3D(this, renderSession);
-		__dispatchCreate();
+		if (renderSession != null) {
+			context3D = new Context3D(this, renderSession);
+			__active = true;
+			__dispatchCreate();
+		} else {
+			__dispatchError();
+		}
 	}
 
 	private function __dispatchError():Void {
@@ -73,14 +78,9 @@ class Stage3D extends EventDispatcher {
 		}
 
 		if (context3D != null) {
-			__resetContext3DStates();
+			context3D.__updateBackbufferViewport();
 			GLStage3D.render(this, renderSession);
 		}
-	}
-
-	private function __resetContext3DStates():Void {
-		// TODO: Better viewport fix
-		context3D.__updateBackbufferViewport();
 	}
 
 	private function __loseContext():Void {
@@ -89,6 +89,7 @@ class Stage3D extends EventDispatcher {
 		}
 
 		context3D = null;
+		__active = false;
 	}
 
 	private function get_x():Float {
