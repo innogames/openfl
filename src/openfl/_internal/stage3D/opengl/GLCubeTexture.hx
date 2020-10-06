@@ -34,7 +34,7 @@ class GLCubeTexture {
 
 		var hasTexture = false;
 
-		reader.readTextures(function(side, level, gpuFormat, size, unused, blockLength, bytes) {
+		reader.readTextures(function(side, level, gpuFormat, size, _, blockLength, bytes) {
 			var format = GLTextureBase.__compressedTextureFormats.toTextureFormat(alpha, gpuFormat);
 			if (format == 0)
 				return;
