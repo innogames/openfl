@@ -110,4 +110,5 @@ typedef WindowConfig = {
 	@:optional var width:Int;
 	@:optional var x:Int;
 	@:optional var y:Int;
+	@:optional var failIfMajorPerformanceCaveat:Bool;
 }

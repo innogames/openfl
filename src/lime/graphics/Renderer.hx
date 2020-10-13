@@ -36,7 +36,8 @@ class Renderer {
 				depth: Reflect.hasField(window.config, "depthBuffer") ? window.config.depthBuffer : true,
 				premultipliedAlpha: true,
 				stencil: Reflect.hasField(window.config, "stencilBuffer") ? window.config.stencilBuffer : false,
-				preserveDrawingBuffer: false
+				preserveDrawingBuffer: false,
+				failIfMajorPerformanceCaveat: Reflect.hasField(window.config, "failIfMajorPerformanceCaveat") ? window.config.failIfMajorPerformanceCaveat : false
 			};
 
 			for (name in ["webgl2", "webgl", "experimental-webgl"]) {
