@@ -1,6 +1,7 @@
 package lime.graphics;
 
 import js.Browser;
+import lime.app.Config;
 import lime.app.Event;
 import lime.math.Rectangle;
 import lime.ui.Window;
@@ -26,11 +27,7 @@ class Renderer {
 		window.backend.canvas.addEventListener("webglcontextrestored", handleEvent, false);
 	}
 
-	private function createContext():Void {
-		if (window.backend.canvas == null) {
-			return;
-		}
-
+	private function createGLContext(failIfMajorPerformanceCaveat:Bool):Void {
 		var transparentBackground = Reflect.hasField(window.config, "background") && window.config.background == null;
 		var colorDepth = Reflect.hasField(window.config, "colorDepth") ? window.config.colorDepth : 16;
 
@@ -41,20 +38,33 @@ class Renderer {
 			premultipliedAlpha: true,
 			stencil: Reflect.hasField(window.config, "stencilBuffer") ? window.config.stencilBuffer : false,
 			preserveDrawingBuffer: false,
-			failIfMajorPerformanceCaveat: true
+			failIfMajorPerformanceCaveat: failIfMajorPerformanceCaveat
 		};
 
-		for (highPerf in [true, false]) {
-			options.failIfMajorPerformanceCaveat = highPerf;
-			hasMajorPerformanceCaveat = !highPerf;
-
-			for (name in ["webgl2", "webgl", "experimental-webgl"]) {
-				var webgl = window.backend.canvas.getContext(name, options);
-				if (webgl != null) {
-					context = HTML5Renderer.context = webgl;
-					return;
-				}
+		for (name in ["webgl2", "webgl", "experimental-webgl"]) {
+			var webgl = window.backend.canvas.getContext(name, options);
+			if (webgl != null) {
+				context = HTML5Renderer.context = webgl;
+				return;
 			}
+		}
+	}
+
+	private function createContext():Void {
+		if (window.backend.canvas == null) {
+			return;
+		}
+
+		var test:MajorPerformanceCaveatTest = Reflect.hasField(window.config, "majorPerformanceCaveatTest") ?
+			window.config.majorPerformanceCaveatTest : SKIP;
+
+		if (test != SKIP) {
+			createGLContext(true);
+			hasMajorPerformanceCaveat = context == null; // true if hardware context fails
+		}
+
+		if (context == null && test != FAIL_IF) {
+			createGLContext(false);
 		}
 	}
 
