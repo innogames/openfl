@@ -57,7 +57,7 @@ final class GlowFilter extends BitmapFilter {
 		var b = __color & 0xFF;
 		sourceBitmapData.colorTransform(sourceBitmapData.rect, new ColorTransform(0, 0, 0, __alpha, r, g, b, 0));
 
-		var finalImage = ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint.__toLimeVector2(),
+		var finalImage = ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint,
 			__blurX * pixelRatio, __blurY * pixelRatio, __quality, __strength);
 
 		if (finalImage == bitmapData.image)

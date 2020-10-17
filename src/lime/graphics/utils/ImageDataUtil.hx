@@ -10,7 +10,6 @@ import lime.math.color.BGRA;
 import lime.math.color.RGBA;
 import lime.math.ColorMatrix;
 import lime.math.Rectangle;
-import lime.math.Vector2;
 import openfl.utils.Endian;
 import lime.utils.UInt8Array;
 
@@ -50,7 +49,7 @@ class ImageDataUtil {
 		image.version++;
 	}
 
-	public static function copyChannel(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, sourceChannel:ImageChannel,
+	public static function copyChannel(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, sourceChannel:ImageChannel,
 			destChannel:ImageChannel):Void {
 		var destIdx = switch (destChannel) {
 			case RED: 0;
@@ -127,7 +126,7 @@ class ImageDataUtil {
 		image.version++;
 	}
 
-	public static function copyPixels(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, alphaImage:Image = null,
+	public static function copyPixels(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, alphaImage:Image = null,
 			alphaPoint:Point = null, mergeAlpha:Bool = false):Void {
 		if (image.width == sourceImage.width
 			&& image.height == sourceImage.height
@@ -422,7 +421,7 @@ class ImageDataUtil {
 		image.version++;
 	}
 
-	public static function gaussianBlur(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, blurX:Float = 4, blurY:Float = 4,
+	public static function gaussianBlur(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, blurX:Float = 4, blurY:Float = 4,
 			quality:Int = 1, strength:Float = 1):Image {
 		// TODO: Support sourceRect better, do not modify sourceImage, create C++ implementation for native
 
@@ -591,14 +590,14 @@ class ImageDataUtil {
 	 * Returns: the offset for translated coordinate in the source image or -1 if the source the coordinate out of the source or destination bounds
 	 * Note: destX and destY should be valid coordinates
 	**/
-	inline private static function calculateSourceOffset(sourceRect:Rectangle, destPoint:Vector2, destX:Int, destY:Int):Int {
+	inline private static function calculateSourceOffset(sourceRect:Rectangle, destPoint:Point, destX:Int, destY:Int):Int {
 		var sourceX:Int = destX - Std.int(destPoint.x);
 		var sourceY:Int = destY - Std.int(destPoint.y);
 		return if (sourceX < 0 || sourceY < 0 || sourceX >= sourceRect.width || sourceY >= sourceRect.height)
 			-1 else 4 * (sourceY * Std.int(sourceRect.width) + sourceX);
 	}
 
-	inline private static function translatePixel(imgB:UInt8Array, sourceRect:Rectangle, destRect:Rectangle, destPoint:Vector2, destX:Int, destY:Int,
+	inline private static function translatePixel(imgB:UInt8Array, sourceRect:Rectangle, destRect:Rectangle, destPoint:Point, destX:Int, destY:Int,
 			strength:Float) {
 		var d = 4 * (destY * Std.int(destRect.width) + destX);
 		var s = calculateSourceOffset(sourceRect, destPoint, destX, destY);
@@ -825,7 +824,7 @@ class ImageDataUtil {
 		return bytes;
 	}
 
-	public static function merge(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, redMultiplier:Int, greenMultiplier:Int,
+	public static function merge(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, redMultiplier:Int, greenMultiplier:Int,
 			blueMultiplier:Int, alphaMultiplier:Int):Void {
 		if (image.buffer.data == null || sourceImage.buffer.data == null)
 			return;
@@ -1141,7 +1140,7 @@ class ImageDataUtil {
 		image.version++;
 	}
 
-	public static function threshold(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, operation:String, threshold:Int, color:Int,
+	public static function threshold(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, operation:String, threshold:Int, color:Int,
 			mask:Int, copySource:Bool, format:PixelFormat):Int {
 		var _color:RGBA, _mask:RGBA, _threshold:RGBA;
 

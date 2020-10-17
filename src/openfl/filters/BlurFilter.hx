@@ -35,7 +35,7 @@ final class BlurFilter extends BitmapFilter {
 
 	private override function __applyFilter(bitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point):BitmapData {
 		@:privateAccess var pixelRatio = sourceBitmapData.__pixelRatio;
-		var finalImage = ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint.__toLimeVector2(),
+		var finalImage = ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint,
 			__blurX * pixelRatio, __blurY * pixelRatio, __quality);
 		if (finalImage == bitmapData.image)
 			return bitmapData;
