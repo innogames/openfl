@@ -747,10 +747,11 @@ class Stage extends DisplayObjectContainer {
 				if (__mouseDownLeft != null) {
 					MouseEvent.__buttonDown = false;
 
-					if (__mouseX < 0 || __mouseY < 0 || __mouseX > stageWidth || __mouseY > stageHeight) {
-						__dispatchEvent(MouseEvent.__create(MouseEvent.RELEASE_OUTSIDE, 1, __mouseX, __mouseY, new Point(__mouseX, __mouseY), this));
-					} else if (__mouseDownLeft == target) {
+					if (__mouseDownLeft == target) {
 						clickType = MouseEvent.CLICK;
+					} else {
+						__mouseDownLeft.dispatchEvent(MouseEvent.__create(MouseEvent.RELEASE_OUTSIDE, 1, __mouseX, __mouseY, new Point(__mouseX, __mouseY),
+							this));
 					}
 
 					__mouseDownLeft = null;
