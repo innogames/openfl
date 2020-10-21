@@ -6,21 +6,25 @@ import openfl.utils.Object;
 class StyleSheet extends EventDispatcher {
 	public var styleNames(get, never):Array<String>;
 
+	private var __styles = new Map<String, Object>();
+
 	public function new() {
 		super(this);
 	}
 
 	private function get_styleNames():Array<String> {
-		// stub
-		return null;
+		return [for (n in __styles.keys()) n];
 	}
 
 	public function clear():Void {
-		// stub
+		__styles.clear();
 	}
 
 	public function getStyle(styleName:String):Object {
-		// stub
+		var styleObject = __styles[styleName];
+		if (styleObject != null) {
+			return styleObject; // TODO: clone!
+		}
 		return null;
 	}
 
@@ -29,7 +33,11 @@ class StyleSheet extends EventDispatcher {
 	}
 
 	public function setStyle(styleName:String, styleObject:Object):Void {
-		// stub
+		if (styleObject != null) {
+			__styles[styleName] = styleObject; // TODO: clone!
+		} else {
+			__styles.remove(styleName);
+		}
 	}
 
 	public function transform(formatObject:Object):TextFormat {
