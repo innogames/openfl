@@ -1124,7 +1124,7 @@ class Stage extends DisplayObjectContainer #if lime implements IModule #end
 		`Security.allowDomain()` method.
 
 	**/
-	public override function invalidate():Void
+	public function invalidate():Void
 	{
 		__invalidated = true;
 
