@@ -20,7 +20,7 @@ class EventDispatcher implements IEventDispatcher
 		}
 	}
 
-	public function addEventListener<T>(type:EventType<T>, listener:T->Void, useCapture:Bool = false, priority:Int = 0, useWeakReference:Bool = false):Void
+	public function addEventListener<T>(type:EventType<T>, listener:Dynamic->Void, useCapture:Bool = false, priority:Int = 0, useWeakReference:Bool = false):Void
 	{
 		if (listener == null) return;
 
@@ -84,7 +84,7 @@ class EventDispatcher implements IEventDispatcher
 		return __eventMap.exists(type);
 	}
 
-	public function removeEventListener<T>(type:EventType<T>, listener:T->Void, useCapture:Bool = false):Void
+	public function removeEventListener<T>(type:EventType<T>, listener:Dynamic->Void, useCapture:Bool = false):Void
 	{
 		if (__eventMap == null || listener == null) return;
 

@@ -309,7 +309,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 	}
 
 	@SuppressWarnings("checkstyle:Dynamic")
-	public override function addEventListener<T>(type:EventType<T>, listener:T->Void, useCapture:Bool = false, priority:Int = 0,
+	public override function addEventListener<T>(type:EventType<T>, listener:Dynamic->Void, useCapture:Bool = false, priority:Int = 0,
 			useWeakReference:Bool = false):Void
 	{
 		switch (type)
@@ -443,7 +443,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable #if (open
 	// @:noCompletion @:dox(hide) @:require(flash10) public function local3DToGlobal (point3d:Vector3D):Point;
 
 	@SuppressWarnings("checkstyle:Dynamic")
-	public override function removeEventListener<T>(type:EventType<T>, listener:T->Void, useCapture:Bool = false):Void
+	public override function removeEventListener<T>(type:EventType<T>, listener:Dynamic->Void, useCapture:Bool = false):Void
 	{
 		super.removeEventListener(type, listener, useCapture);
 

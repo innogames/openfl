@@ -84,6 +84,7 @@ import haxe.Constraints.Function;
 #end
 abstract Vector<T>(IVector<T>)
 {
+	public static function isVector(v:Dynamic):Bool return Std.is(v, IVector);
 	/**
 		Indicates whether the `length` property of the Vector can be changed. If the
 		value is `true`, the `length` property can't be changed. This means the
@@ -533,9 +534,17 @@ abstract Vector<T>(IVector<T>)
 		@param	vec	A Vector object to cast
 		@return	The casted Vector object
 	**/
-	public inline static function convert<T, U>(vec:IVector<T>):IVector<U>
+	public inline static function convert<T, U>(vec:Vector<T>):Vector<U>
 	{
 		return cast vec;
+	}
+
+	public inline function contains(x:T):Bool {
+		return this.indexOf(x) != -1;
+	}
+
+	public inline function keyValueIterator():VectorKeyValueIterator<T> {
+		return new VectorKeyValueIterator(this);
 	}
 
 	#if !flash
@@ -2677,3 +2686,21 @@ abstract Vector<T>(VectorData<T>)
 
 private typedef VectorData<T> = flash.Vector<T>;
 #end
+
+
+private class VectorKeyValueIterator<T> {
+	final vector:IVector<T>;
+	var index:Int = 0;
+
+	public inline function new(vector:IVector<T>) {
+		this.vector = vector;
+	}
+
+	public inline function hasNext():Bool {
+		return index < vector.length;
+	}
+
+	public inline function next():{key:Int, value:T} {
+		return {key: index, value: vector.get(index++)};
+	}
+}
