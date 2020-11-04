@@ -33,6 +33,10 @@ import lime.graphics.WebGLRenderContext;
 import lime.math.Rectangle as LimeRectangle;
 import lime.math.Vector2;
 #end
+#if gl_stats
+import openfl.display._internal.stats.Context3DStats;
+import openfl.display._internal.stats.DrawCallContext;
+#end
 
 /**
 	The Context3D class provides a context for rendering geometrically defined graphics.
@@ -1196,6 +1200,10 @@ import lime.math.Vector2;
 
 		__bindGLElementArrayBuffer(indexBuffer.__id);
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, firstIndex * 2);
+
+		#if gl_stats
+		Context3DStats.incrementDrawCall(DrawCallContext.STAGE3D);
+		#end
 	}
 
 	/**
