@@ -86,7 +86,14 @@ typedef Config = {
 	@:optional var windows:Array<WindowConfig>;
 }
 
+enum MajorPerformanceCaveatTest {
+	FAIL_IF;
+	ALLOW_IF;
+	SKIP;
+}
+
 typedef WindowConfig = {
+	@:optional var majorPerformanceCaveatTest:MajorPerformanceCaveatTest;
 	@:optional var allowHighDPI:Bool;
 	@:optional var alwaysOnTop:Bool;
 	@:optional var antialiasing:Int;
