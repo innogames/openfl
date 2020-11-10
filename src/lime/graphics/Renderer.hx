@@ -59,7 +59,7 @@ class Renderer {
 			window.config.failIfMajorPerformanceCaveat : false;
 
 		createGLContext(true);
-		failIfMajorPerformanceCaveat = context == null; // true if hardware context fails
+		hasMajorPerformanceCaveat = context == null; // true if hardware context fails
 
 		if (context == null && !failIfMajorPerformanceCaveat) {
 			createGLContext(false);
