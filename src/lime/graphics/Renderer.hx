@@ -55,15 +55,13 @@ class Renderer {
 			return;
 		}
 
-		var test:MajorPerformanceCaveatTest = Reflect.hasField(window.config, "majorPerformanceCaveatTest") ?
-			window.config.majorPerformanceCaveatTest : SKIP;
+		var failIfMajorPerformanceCaveat = Reflect.hasField(window.config, "failIfMajorPerformanceCaveat") ?
+			window.config.failIfMajorPerformanceCaveat : false;
 
-		if (test != SKIP) {
-			createGLContext(true);
-			hasMajorPerformanceCaveat = context == null; // true if hardware context fails
-		}
+		createGLContext(true);
+		failIfMajorPerformanceCaveat = context == null; // true if hardware context fails
 
-		if (context == null && test != FAIL_IF) {
+		if (context == null && !failIfMajorPerformanceCaveat) {
 			createGLContext(false);
 		}
 	}
