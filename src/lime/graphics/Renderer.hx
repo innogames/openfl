@@ -61,7 +61,7 @@ class Renderer {
 		createGLContext(true);
 		hasMajorPerformanceCaveat = context == null; // true if hardware context fails
 
-		if (context == null && !failIfMajorPerformanceCaveat) {
+		if (hasMajorPerformanceCaveat && !failIfMajorPerformanceCaveat) {
 			createGLContext(false);
 		}
 	}
