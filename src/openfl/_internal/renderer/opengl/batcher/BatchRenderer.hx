@@ -49,14 +49,14 @@ class BatchRenderer {
 
 	static inline var floatsPerQuad = MultiTextureShader.floatsPerVertex * 4;
 
-	public function new(gl:GLRenderContext, blendModeManager:GLBlendModeManager, shaderManager:GLShaderManager, maxQuads:Int) {
+	public function new(gl:GLRenderContext, blendModeManager:GLBlendModeManager, shaderManager:GLShaderManager, maxQuads:Int, maxTexturesLimit:Int) {
 		this.gl = gl;
 		this.blendModeManager = blendModeManager;
 		this.shaderManager = shaderManager;
 		this.maxQuads = maxQuads;
 
 		// determine amount of textures we can draw at once and generate a shader for that
-		shader = new MultiTextureShader(gl);
+		shader = new MultiTextureShader(gl, maxTexturesLimit);
 		maxTextures = shader.maxTextures;
 
 		emptyTexture = gl.createTexture();
