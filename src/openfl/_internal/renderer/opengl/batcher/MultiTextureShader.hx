@@ -29,10 +29,13 @@ class MultiTextureShader {
 	// x, y, u, v, texId, alpha, colorMult, colorOfs
 	public static inline var floatsPerVertex = 2 + 2 + 1 + 4 + 4 + 1;
 
-	public function new(gl:GLRenderContext) {
+	public function new(gl:GLRenderContext, maxTexturesLimit:Int) {
 		this.gl = gl;
 
 		var maxTextures = gl.getParameter(GL.MAX_TEXTURE_IMAGE_UNITS);
+		if (maxTexturesLimit > 0 && maxTextures > maxTexturesLimit)  {
+			maxTextures = maxTexturesLimit;
+		}
 		while (maxTextures >= 1) {
 			var fsSource = generateMultiTextureFragmentShaderSource(maxTextures);
 			program = createProgram(gl, vsSource, fsSource);
@@ -149,14 +152,14 @@ ${select.join("\n")}
 					gl_FragColor = vec4 (0.0, 0.0, 0.0, 0.0);
 
 				} else {
-						/** mix is a linear interpolation function that interpolates between first and second 
+						/** mix is a linear interpolation function that interpolates between first and second
 						*   parameter, controlled by the third one. The function looks like this:
 						*
 						*   mix (x, y, a) = x * (1.0 - a) + y * a
 						*
-						*  As vPremultipliedAlpha is 0.0 or 1.0 we basically switch on/off first or the second paramter 
+						*  As vPremultipliedAlpha is 0.0 or 1.0 we basically switch on/off first or the second paramter
 						*  respectively
-						*/ 
+						*/
 
 						color = vec4 (color.rgb / mix (1.0, color.a, vPremultipliedAlpha), color.a);
 

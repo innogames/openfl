@@ -38,7 +38,8 @@ class GLRenderer {
 			if (Graphics.maxTextureWidth == null) {
 				Graphics.maxTextureWidth = Graphics.maxTextureHeight = gl.getParameter(GL.MAX_TEXTURE_SIZE);
 			}
-			renderSession = new GLRenderSession(this, gl);
+			var maxTexturesLimit = if (stage.window.renderer.hasMajorPerformanceCaveat) 1 else -1;
+			renderSession = new GLRenderSession(this, gl, maxTexturesLimit);
 		}
 
 		if (stage.stage3Ds[0].context3D == null) {
