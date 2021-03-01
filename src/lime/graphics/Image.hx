@@ -51,7 +51,11 @@ class Image {
 		version = 0;
 
 		if (type == null) {
+			#if hxnodejs
+			type = DATA;
+			#else
 			type = CANVAS;
+			#end
 		}
 
 		this.type = type;
