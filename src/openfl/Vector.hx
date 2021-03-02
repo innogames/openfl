@@ -1,5 +1,9 @@
 package openfl;
 
+#if macro
+import haxe.macro.Context;
+import haxe.macro.Expr;
+#end
 import haxe.Constraints.Function;
 
 @:multiType(T)
@@ -95,6 +99,10 @@ abstract Vector<T>(IVector<T>) from IVector<T> {
 
 	public inline function unshift(x:T):Void {
 		this.unshift(x);
+	}
+
+	public inline function toArray():Array<T> {
+		return this.toArray();
 	}
 
 	public inline static function ofArray<T>(a:Array<T>):Vector<T> {
@@ -297,6 +305,10 @@ private class BoolVector implements IVector<Bool> {
 		}
 	}
 
+	public function toArray():Array<Bool> {
+		return __array;
+	}
+
 	// Getters & Setters
 
 	@:noCompletion private function get_length():Int {
@@ -469,6 +481,10 @@ private class FloatVector implements IVector<Float> {
 		if (!fixed) {
 			__array.unshift(x);
 		}
+	}
+
+	public function toArray():Array<Float> {
+		return __array;
 	}
 
 	// Getters & Setters
@@ -649,6 +665,10 @@ private class FunctionVector implements IVector<Function> {
 		}
 	}
 
+	public function toArray():Array<Function> {
+		return __array;
+	}
+
 	// Getters & Setters
 
 	@:noCompletion private function get_length():Int {
@@ -821,6 +841,10 @@ private class IntVector implements IVector<Int> {
 		if (!fixed) {
 			__array.unshift(x);
 		}
+	}
+
+	public function toArray():Array<Int> {
+		return __array;
 	}
 
 	// Getters & Setters
@@ -997,6 +1021,10 @@ private class ObjectVector<T> implements IVector<T> {
 		}
 	}
 
+	public function toArray():Array<T> {
+		return __array;
+	}
+
 	// Getters & Setters
 
 	@:noCompletion private function get_length():Int {
@@ -1051,6 +1079,7 @@ private interface IVector<T> {
 	function splice(pos:Int, len:Int):IVector<T>;
 	function toString():String;
 	function unshift(x:T):Void;
+	function toArray():Array<T>;
 
 	private function toJSON():Dynamic;
 }
