@@ -1,9 +1,5 @@
 package openfl;
 
-#if macro
-import haxe.macro.Context;
-import haxe.macro.Expr;
-#end
 import haxe.Constraints.Function;
 
 @:multiType(T)
