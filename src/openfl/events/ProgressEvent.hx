@@ -1,8 +1,8 @@
 package openfl.events;
 
 class ProgressEvent extends Event {
-	public static inline var PROGRESS = "progress";
-	public static inline var SOCKET_DATA = "socketData";
+	public static inline var PROGRESS:EventType<ProgressEvent> = "progress";
+	public static inline var SOCKET_DATA:EventType<ProgressEvent> = "socketData";
 
 	public var bytesLoaded:Float;
 	public var bytesTotal:Float;

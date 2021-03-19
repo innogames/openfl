@@ -3,8 +3,8 @@ package openfl.events;
 import openfl.net.URLRequestHeader;
 
 class HTTPStatusEvent extends Event {
-	public static inline var HTTP_RESPONSE_STATUS = "httpResponseStatus";
-	public static inline var HTTP_STATUS = "httpStatus";
+	public static inline var HTTP_RESPONSE_STATUS:EventType<HTTPStatusEvent> = "httpResponseStatus";
+	public static inline var HTTP_STATUS:EventType<HTTPStatusEvent> = "httpStatus";
 
 	public var redirected:Bool;
 	public var responseHeaders:Array<URLRequestHeader>;

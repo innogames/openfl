@@ -1,7 +1,7 @@
 package openfl.events;
 
 class NetStatusEvent extends Event {
-	public static inline var NET_STATUS = "netStatus";
+	public static inline var NET_STATUS:EventType<NetStatusEvent> = "netStatus";
 
 	public var info:Dynamic;
 

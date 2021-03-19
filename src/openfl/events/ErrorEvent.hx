@@ -1,7 +1,7 @@
 package openfl.events;
 
 class ErrorEvent extends TextEvent {
-	public static inline var ERROR = "error";
+	public static inline var ERROR:EventType<ErrorEvent> = "error";
 
 	public var errorID(default, null):Int;
 

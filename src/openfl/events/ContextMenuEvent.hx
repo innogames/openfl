@@ -3,8 +3,8 @@ package openfl.events;
 import openfl.display.InteractiveObject;
 
 class ContextMenuEvent extends Event {
-	public static inline var MENU_ITEM_SELECT = "menuItemSelect";
-	public static inline var MENU_SELECT = "menuSelect";
+	public static inline var MENU_ITEM_SELECT:EventType<ContextMenuEvent> = "menuItemSelect";
+	public static inline var MENU_SELECT:EventType<ContextMenuEvent> = "menuSelect";
 
 	public var contextMenuOwner:InteractiveObject;
 	public var mouseTarget:InteractiveObject;

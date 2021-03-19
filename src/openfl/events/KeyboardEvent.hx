@@ -3,8 +3,8 @@ package openfl.events;
 import openfl.ui.KeyLocation;
 
 class KeyboardEvent extends Event {
-	public static inline var KEY_DOWN = "keyDown";
-	public static inline var KEY_UP = "keyUp";
+	public static inline var KEY_DOWN:EventType<KeyboardEvent> = "keyDown";
+	public static inline var KEY_UP:EventType<KeyboardEvent> = "keyUp";
 
 	public var altKey:Bool;
 	public var charCode:Int;

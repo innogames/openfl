@@ -17,6 +17,7 @@ import openfl.errors.TypeError;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
 import openfl.events.EventPhase;
+import openfl.events.EventType;
 import openfl.events.MouseEvent;
 import openfl.events.TouchEvent;
 import openfl.filters.BitmapFilter;
@@ -138,7 +139,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		name = "instance" + (++__instanceCount);
 	}
 
-	public override function addEventListener(type:String, listener:Dynamic->Void, useCapture:Bool = false, priority:Int = 0,
+	public override function addEventListener<T:Event>(type:EventType<T>, listener:T->Void, useCapture:Bool = false, priority:Int = 0,
 			useWeakReference:Bool = false):Void {
 		switch (type) {
 			case Event.ACTIVATE, Event.DEACTIVATE, Event.ENTER_FRAME, Event.EXIT_FRAME, Event.FRAME_CONSTRUCTED, Event.RENDER:
@@ -230,7 +231,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		return __getRenderTransform().transformPoint(point);
 	}
 
-	public override function removeEventListener(type:String, listener:Dynamic->Void, useCapture:Bool = false):Void {
+	public override function removeEventListener<T:Event>(type:EventType<T>, listener:T->Void, useCapture:Bool = false):Void {
 		super.removeEventListener(type, listener, useCapture);
 
 		switch (type) {
