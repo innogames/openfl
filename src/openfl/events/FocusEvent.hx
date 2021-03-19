@@ -21,7 +21,7 @@ class FocusEvent extends Event {
 		this.relatedObject = relatedObject;
 	}
 
-	public override function clone():Event {
+	public override function clone():FocusEvent {
 		var event = new FocusEvent(type, bubbles, cancelable, relatedObject, shiftKey, keyCode);
 		event.target = target;
 		event.currentTarget = currentTarget;

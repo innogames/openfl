@@ -7,7 +7,7 @@ class SecurityErrorEvent extends ErrorEvent {
 		super(type, bubbles, cancelable, text, id);
 	}
 
-	public override function clone():Event {
+	public override function clone():SecurityErrorEvent {
 		var event = new SecurityErrorEvent(type, bubbles, cancelable, text, errorID);
 		event.target = target;
 		event.currentTarget = currentTarget;

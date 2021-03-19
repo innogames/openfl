@@ -18,7 +18,7 @@ class AccelerometerEvent extends Event {
 		this.accelerationZ = accelerationZ;
 	}
 
-	public override function clone():Event {
+	public override function clone():AccelerometerEvent {
 		var event = new AccelerometerEvent(type, bubbles, cancelable, timestamp, accelerationX, accelerationY, accelerationZ);
 		event.target = target;
 		event.currentTarget = currentTarget;

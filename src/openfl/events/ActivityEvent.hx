@@ -11,7 +11,7 @@ class ActivityEvent extends Event {
 		this.activating = activating;
 	}
 
-	public override function clone():Event {
+	public override function clone():ActivityEvent {
 		var event = new ActivityEvent(type, bubbles, cancelable, activating);
 		event.target = target;
 		event.currentTarget = currentTarget;

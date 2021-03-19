@@ -11,7 +11,7 @@ class NetStatusEvent extends Event {
 		super(type, bubbles, cancelable);
 	}
 
-	public override function clone():Event {
+	public override function clone():NetStatusEvent {
 		var event = new NetStatusEvent(type, bubbles, cancelable, info);
 		event.target = target;
 		event.currentTarget = currentTarget;

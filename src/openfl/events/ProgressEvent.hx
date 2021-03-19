@@ -14,7 +14,7 @@ class ProgressEvent extends Event {
 		this.bytesTotal = bytesTotal;
 	}
 
-	public override function clone():Event {
+	public override function clone():ProgressEvent {
 		var event = new ProgressEvent(type, bubbles, cancelable, bytesLoaded, bytesTotal);
 		event.target = target;
 		event.currentTarget = currentTarget;

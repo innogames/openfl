@@ -17,7 +17,7 @@ class SampleDataEvent extends Event {
 		position = 0.0;
 	}
 
-	public override function clone():Event {
+	public override function clone():SampleDataEvent {
 		var event = new SampleDataEvent(type, bubbles, cancelable);
 		event.target = target;
 		event.currentTarget = currentTarget;

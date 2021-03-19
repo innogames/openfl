@@ -7,7 +7,7 @@ class IOErrorEvent extends ErrorEvent {
 		super(type, bubbles, cancelable, text, id);
 	}
 
-	public override function clone():Event {
+	public override function clone():IOErrorEvent {
 		var event = new IOErrorEvent(type, bubbles, cancelable, text, errorID);
 		event.target = target;
 		event.currentTarget = currentTarget;

@@ -12,7 +12,7 @@ class TextEvent extends Event {
 		this.text = text;
 	}
 
-	public override function clone():Event {
+	public override function clone():TextEvent {
 		var event = new TextEvent(type, bubbles, cancelable, text);
 		event.target = target;
 		event.currentTarget = currentTarget;

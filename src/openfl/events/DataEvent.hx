@@ -12,7 +12,7 @@ class DataEvent extends TextEvent {
 		this.data = data;
 	}
 
-	public override function clone():Event {
+	public override function clone():DataEvent {
 		var event = new DataEvent(type, bubbles, cancelable, data);
 		event.target = target;
 		event.currentTarget = currentTarget;

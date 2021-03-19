@@ -55,7 +55,7 @@ class TouchEvent extends Event {
 		stageY = Math.NaN;
 	}
 
-	public override function clone():Event {
+	public override function clone():TouchEvent {
 		var event = new TouchEvent(type, bubbles, cancelable, touchPointID, isPrimaryTouchPoint, localX, localY, sizeX, sizeY, pressure, relatedObject,
 			ctrlKey, altKey, shiftKey, commandKey, controlKey);
 		event.target = target;

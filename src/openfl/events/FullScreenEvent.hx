@@ -16,7 +16,7 @@ class FullScreenEvent extends ActivityEvent {
 		this.interactive = interactive;
 	}
 
-	public override function clone():Event {
+	public override function clone():FullScreenEvent {
 		var event = new FullScreenEvent(type, bubbles, cancelable, fullScreen, interactive);
 		event.target = target;
 		event.currentTarget = currentTarget;

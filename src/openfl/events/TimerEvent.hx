@@ -8,7 +8,7 @@ class TimerEvent extends Event {
 		super(type, bubbles, cancelable);
 	}
 
-	public override function clone():Event {
+	public override function clone():TimerEvent {
 		var event = new TimerEvent(type, bubbles, cancelable);
 		event.target = target;
 		event.currentTarget = currentTarget;

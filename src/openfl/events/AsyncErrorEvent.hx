@@ -14,7 +14,7 @@ class AsyncErrorEvent extends ErrorEvent {
 		this.error = error;
 	}
 
-	public override function clone():Event {
+	public override function clone():AsyncErrorEvent {
 		var event = new AsyncErrorEvent(type, bubbles, cancelable, text, error);
 		event.target = target;
 		event.currentTarget = currentTarget;

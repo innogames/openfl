@@ -73,7 +73,7 @@ class MouseEvent extends Event {
 		return event;
 	}
 
-	public override function clone():Event {
+	public override function clone():MouseEvent {
 		var event = new MouseEvent(type, bubbles, cancelable, localX, localY, relatedObject, ctrlKey, altKey, shiftKey, buttonDown, delta, commandKey,
 			clickCount);
 		event.target = target;

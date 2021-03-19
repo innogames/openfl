@@ -15,7 +15,7 @@ final class GameInputEvent extends Event {
 		this.device = device;
 	}
 
-	public override function clone():Event {
+	public override function clone():GameInputEvent {
 		var event = new GameInputEvent(type, bubbles, cancelable, device);
 		event.target = target;
 		event.currentTarget = currentTarget;

@@ -17,7 +17,7 @@ class ContextMenuEvent extends Event {
 		this.contextMenuOwner = contextMenuOwner;
 	}
 
-	public override function clone():Event {
+	public override function clone():ContextMenuEvent {
 		var event = new ContextMenuEvent(type, bubbles, cancelable, mouseTarget, contextMenuOwner);
 		event.target = target;
 		event.currentTarget = currentTarget;

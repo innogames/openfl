@@ -11,7 +11,7 @@ class UncaughtErrorEvent extends ErrorEvent {
 		this.error = error;
 	}
 
-	public override function clone():Event {
+	public override function clone():UncaughtErrorEvent {
 		var event = new UncaughtErrorEvent(type, bubbles, cancelable, error);
 		event.target = target;
 		event.currentTarget = currentTarget;
