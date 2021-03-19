@@ -62,7 +62,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	public var parent(default, null):DisplayObjectContainer;
 	public var root(get, never):DisplayObject;
 	@:keep public var rotation(get, set):Float;
-	public var scale9Grid:Rectangle;
+	public var scale9Grid(get,set):Rectangle;
 	@:keep public var scaleX(get, set):Float;
 	@:keep public var scaleY(get, set):Float;
 	public var scrollRect(get, set):Rectangle;
@@ -1296,5 +1296,13 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		if (value != __transform.ty)
 			__setTransformDirty();
 		return __transform.ty = value;
+	}
+
+	function get_scale9Grid():Rectangle {
+		return null; // not implemented
+	}
+
+	function set_scale9Grid(value:Rectangle):Rectangle {
+		return value; // not implemented
 	}
 }
