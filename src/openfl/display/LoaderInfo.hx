@@ -26,7 +26,7 @@ class LoaderInfo extends EventDispatcher {
 	public var parentAllowsChild(default, null):Bool;
 	public var sameDomain(default, null):Bool;
 	public var sharedEvents(default, null):EventDispatcher;
-	public var uncaughtErrorEvents(default, null):UncaughtErrorEvents;
+	public var uncaughtErrorEvents(get, never):UncaughtErrorEvents;
 	public var url(default, null):String;
 	public var width(default, null):Int;
 
@@ -45,7 +45,6 @@ class LoaderInfo extends EventDispatcher {
 
 	public static function create(loader:Loader):LoaderInfo {
 		var loaderInfo = new LoaderInfo();
-		loaderInfo.uncaughtErrorEvents = new UncaughtErrorEvents();
 
 		if (loader != null) {
 			loaderInfo.loader = loader;
@@ -75,4 +74,6 @@ class LoaderInfo extends EventDispatcher {
 
 		dispatchEvent(new ProgressEvent(ProgressEvent.PROGRESS, false, false, bytesLoaded, bytesTotal));
 	}
+
+	inline function get_uncaughtErrorEvents() return UncaughtErrorEvents.instance;
 }

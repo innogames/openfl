@@ -99,7 +99,6 @@ class Stage extends DisplayObjectContainer {
 	private var __mouseY:Float;
 	private var __primaryTouch:Touch;
 	private var __renderer:GLRenderer;
-	private var __rendering:Bool;
 	private var __rollOutStack:Array<DisplayObject>;
 	private var __mouseOutStack:Array<DisplayObject>;
 	private var __stack:Array<DisplayObject>;
@@ -221,43 +220,23 @@ class Stage extends DisplayObjectContainer {
 	}
 
 	public function onGamepadAxisMove(gamepad:Gamepad, axis:GamepadAxis, value:Float):Void {
-		try {
-			GameInput.__onGamepadAxisMove(gamepad, axis, value);
-		} catch (e:Dynamic) {
-			__handleError(e);
-		}
+		GameInput.__onGamepadAxisMove(gamepad, axis, value);
 	}
 
 	public function onGamepadButtonDown(gamepad:Gamepad, button:GamepadButton):Void {
-		try {
-			GameInput.__onGamepadButtonDown(gamepad, button);
-		} catch (e:Dynamic) {
-			__handleError(e);
-		}
+		GameInput.__onGamepadButtonDown(gamepad, button);
 	}
 
 	public function onGamepadButtonUp(gamepad:Gamepad, button:GamepadButton):Void {
-		try {
-			GameInput.__onGamepadButtonUp(gamepad, button);
-		} catch (e:Dynamic) {
-			__handleError(e);
-		}
+		GameInput.__onGamepadButtonUp(gamepad, button);
 	}
 
 	public function onGamepadConnect(gamepad:Gamepad):Void {
-		try {
-			GameInput.__onGamepadConnect(gamepad);
-		} catch (e:Dynamic) {
-			__handleError(e);
-		}
+		GameInput.__onGamepadConnect(gamepad);
 	}
 
 	public function onGamepadDisconnect(gamepad:Gamepad):Void {
-		try {
-			GameInput.__onGamepadDisconnect(gamepad);
-		} catch (e:Dynamic) {
-			__handleError(e);
-		}
+		GameInput.__onGamepadDisconnect(gamepad);
 	}
 
 	public function onKeyDown(keyCode:KeyCode, modifier:KeyModifier):Void {
@@ -434,10 +413,6 @@ class Stage extends DisplayObjectContainer {
 	@:noCompletion public function __onFrame(deltaTime:Int):Void {
 		dispatchPendingMouseMove();
 
-		if (__rendering)
-			return;
-		__rendering = true;
-
 		#if hxtelemetry
 		Telemetry.__advanceFrame();
 		#end
@@ -483,8 +458,6 @@ class Stage extends DisplayObjectContainer {
 		Telemetry.__endTiming(TelemetryCommandName.RENDER);
 		Telemetry.__rewindStack(stack);
 		#end
-
-		__rendering = false;
 	}
 
 	private function __broadcastEvent(event:Event):Void {
@@ -496,11 +469,7 @@ class Stage extends DisplayObjectContainer {
 				// and there are multiple stage objects running in HTML5?
 
 				if (dispatcher.stage == this || dispatcher.stage == null) {
-					try {
-						dispatcher.__dispatch(event);
-					} catch (e:Dynamic) {
-						__handleError(e);
-					}
+					dispatcher.__dispatch(event);
 				}
 			}
 		}
@@ -510,71 +479,53 @@ class Stage extends DisplayObjectContainer {
 		__renderer = new GLRenderer(this, window.renderer.context);
 	}
 
-	private override function __dispatchEvent(event:Event):Bool {
-		try {
-			return super.__dispatchEvent(event);
-		} catch (e:Dynamic) {
-			__handleError(e);
-			return false;
-		}
-	}
-
 	private function __dispatchStack(event:Event, stack:Array<DisplayObject>):Void {
-		try {
-			var target:DisplayObject;
-			var length = stack.length;
+		var target:DisplayObject;
+		var length = stack.length;
 
-			if (length == 0) {
-				event.eventPhase = EventPhase.AT_TARGET;
-				target = cast event.target;
-				target.__dispatch(event);
-			} else {
-				event.eventPhase = EventPhase.CAPTURING_PHASE;
-				event.target = stack[stack.length - 1];
+		if (length == 0) {
+			event.eventPhase = EventPhase.AT_TARGET;
+			target = cast event.target;
+			target.__dispatch(event);
+		} else {
+			event.eventPhase = EventPhase.CAPTURING_PHASE;
+			event.target = stack[stack.length - 1];
 
-				for (i in 0...length - 1) {
+			for (i in 0...length - 1) {
+				stack[i].__dispatch(event);
+
+				if (event.__isCanceled) {
+					return;
+				}
+			}
+
+			event.eventPhase = EventPhase.AT_TARGET;
+			target = cast event.target;
+			target.__dispatch(event);
+
+			if (event.__isCanceled) {
+				return;
+			}
+
+			if (event.bubbles) {
+				event.eventPhase = EventPhase.BUBBLING_PHASE;
+				var i = length - 2;
+
+				while (i >= 0) {
 					stack[i].__dispatch(event);
 
 					if (event.__isCanceled) {
 						return;
 					}
-				}
 
-				event.eventPhase = EventPhase.AT_TARGET;
-				target = cast event.target;
-				target.__dispatch(event);
-
-				if (event.__isCanceled) {
-					return;
-				}
-
-				if (event.bubbles) {
-					event.eventPhase = EventPhase.BUBBLING_PHASE;
-					var i = length - 2;
-
-					while (i >= 0) {
-						stack[i].__dispatch(event);
-
-						if (event.__isCanceled) {
-							return;
-						}
-
-						i--;
-					}
+					i--;
 				}
 			}
-		} catch (e:Dynamic) {
-			__handleError(e);
 		}
 	}
 
-	private function __dispatchTarget(target:EventDispatcher, event:Event):Bool {
-		try {
-			return target.__dispatchEvent(event);
-		} catch (e:Dynamic) {
-			__handleError(e);
-			return false;
-		}
+	inline function __dispatchTarget(target:EventDispatcher, event:Event):Bool {
+		return target.__dispatchEvent(event);
 	}
 
 	private function __drag(mouse:Point):Void {
@@ -618,42 +569,6 @@ class Stage extends DisplayObjectContainer {
 		}
 
 		return local;
-	}
-
-	private function __handleError(e:Dynamic):Void {
-		var event = new UncaughtErrorEvent(UncaughtErrorEvent.UNCAUGHT_ERROR, true, true, e);
-		Lib.current.__loaderInfo.uncaughtErrorEvents.dispatchEvent(event);
-
-		if (!event.__preventDefault) {
-			#if mobile
-			Log.println(CallStack.toString(CallStack.exceptionStack()));
-			Log.println(Std.string(e));
-			#end
-
-			#if cpp
-			untyped __cpp__("throw e");
-			#elseif neko
-			neko.Lib.rethrow(e);
-			#elseif js
-			try {
-				#if (haxe >= version("4.1.0-rc.1"))
-				var exc = @:privateAccess haxe.NativeStackTrace.lastError;
-				#else
-				var exc = @:privateAccess haxe.CallStack.lastException;
-				#end
-				if (exc != null && Reflect.hasField(exc, "stack") && exc.stack != null && exc.stack != "") {
-					js.Browser.console.log(exc.stack);
-					e.stack = exc.stack;
-				} else {
-					var msg = CallStack.toString(CallStack.callStack());
-					js.Browser.console.log(msg);
-				}
-			} catch (e2:Dynamic) {}
-			js.Syntax.code("throw {0}", e); // TODO: rethrow at the place of __handleError call instead
-			#else
-			throw e;
-			#end
-		}
 	}
 
 	private function __onKey(type:String, keyCode:KeyCode, modifier:KeyModifier):Void {

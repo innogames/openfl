@@ -120,6 +120,8 @@ class Application {
 			return; // app is closing
 		}
 
+		Browser.window.requestAnimationFrame(handleApplicationEvent);
+
 		window.backend.updateSize();
 
 		updateGameDevices();
@@ -145,8 +147,6 @@ class Application {
 
 			lastUpdate = currentUpdate;
 		}
-
-		Browser.window.requestAnimationFrame(handleApplicationEvent);
 	}
 
 	private function handleWindowEvent(event:js.html.Event):Void {
