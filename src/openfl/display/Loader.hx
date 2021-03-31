@@ -16,7 +16,7 @@ import openfl.utils.ByteArray;
 class Loader extends DisplayObjectContainer {
 	public var content(default, null):DisplayObject;
 	public var contentLoaderInfo(default, null):LoaderInfo;
-	public var uncaughtErrorEvents(default, null):UncaughtErrorEvents;
+	public var uncaughtErrorEvents(get, never):UncaughtErrorEvents;
 
 	private var __path:String;
 	private var __unloaded:Bool;
@@ -25,7 +25,6 @@ class Loader extends DisplayObjectContainer {
 		super();
 
 		contentLoaderInfo = LoaderInfo.create(this);
-		uncaughtErrorEvents = contentLoaderInfo.uncaughtErrorEvents;
 	}
 
 	public function close():Void {
@@ -211,4 +210,6 @@ class Loader extends DisplayObjectContainer {
 		event.target = contentLoaderInfo;
 		contentLoaderInfo.dispatchEvent(event);
 	}
+
+	inline function get_uncaughtErrorEvents() return contentLoaderInfo.uncaughtErrorEvents;
 }
