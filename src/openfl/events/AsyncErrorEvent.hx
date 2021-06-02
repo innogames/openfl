@@ -3,7 +3,7 @@ package openfl.events;
 import haxe.io.Error;
 
 class AsyncErrorEvent extends ErrorEvent {
-	public static inline var ASYNC_ERROR = "asyncError";
+	public static inline var ASYNC_ERROR:EventType<AsyncErrorEvent> = "asyncError";
 
 	public var error:Error;
 
@@ -14,7 +14,7 @@ class AsyncErrorEvent extends ErrorEvent {
 		this.error = error;
 	}
 
-	public override function clone():Event {
+	public override function clone():AsyncErrorEvent {
 		var event = new AsyncErrorEvent(type, bubbles, cancelable, text, error);
 		event.target = target;
 		event.currentTarget = currentTarget;

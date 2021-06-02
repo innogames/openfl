@@ -5,6 +5,7 @@ import lime.ui.GamepadAxis;
 import lime.ui.GamepadButton;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
+import openfl.events.EventType;
 import openfl.events.GameInputEvent;
 
 @:access(openfl.ui.GameInputControl)
@@ -23,7 +24,7 @@ final class GameInput extends EventDispatcher {
 		__instances.push(this);
 	}
 
-	public override function addEventListener(type:String, listener:Dynamic->Void, useCapture:Bool = false, priority:Int = 0,
+	public override function addEventListener<T:Event>(type:EventType<T>, listener:T->Void, useCapture:Bool = false, priority:Int = 0,
 			useWeakReference:Bool = false):Void {
 		super.addEventListener(type, listener, useCapture, priority, useWeakReference);
 

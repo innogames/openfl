@@ -7,6 +7,7 @@ haxe:
 install:
  - haxelib install travix
  - haxelib run travix install
+ - haxelib git utest https://github.com/haxe-utest/utest
 
 script:
  - haxe build.hxml

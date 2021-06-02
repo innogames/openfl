@@ -3,10 +3,10 @@ package openfl.events;
 import openfl.display.InteractiveObject;
 
 class FocusEvent extends Event {
-	public static inline var FOCUS_IN = "focusIn";
-	public static inline var FOCUS_OUT = "focusOut";
-	public static inline var KEY_FOCUS_CHANGE = "keyFocusChange";
-	public static inline var MOUSE_FOCUS_CHANGE = "mouseFocusChange";
+	public static inline var FOCUS_IN:EventType<FocusEvent> = "focusIn";
+	public static inline var FOCUS_OUT:EventType<FocusEvent> = "focusOut";
+	public static inline var KEY_FOCUS_CHANGE:EventType<FocusEvent> = "keyFocusChange";
+	public static inline var MOUSE_FOCUS_CHANGE:EventType<FocusEvent> = "mouseFocusChange";
 
 	public var keyCode:Int;
 	public var relatedObject:InteractiveObject;
@@ -21,7 +21,7 @@ class FocusEvent extends Event {
 		this.relatedObject = relatedObject;
 	}
 
-	public override function clone():Event {
+	public override function clone():FocusEvent {
 		var event = new FocusEvent(type, bubbles, cancelable, relatedObject, shiftKey, keyCode);
 		event.target = target;
 		event.currentTarget = currentTarget;

@@ -5,14 +5,14 @@ import openfl.geom.Point;
 import openfl.utils.ByteArray;
 
 class TouchEvent extends Event {
-	public static inline var TOUCH_BEGIN = "touchBegin";
-	public static inline var TOUCH_END = "touchEnd";
-	public static inline var TOUCH_MOVE = "touchMove";
-	public static inline var TOUCH_OUT = "touchOut";
-	public static inline var TOUCH_OVER = "touchOver";
-	public static inline var TOUCH_ROLL_OUT = "touchRollOut";
-	public static inline var TOUCH_ROLL_OVER = "touchRollOver";
-	public static inline var TOUCH_TAP = "touchTap";
+	public static inline var TOUCH_BEGIN:EventType<TouchEvent> = "touchBegin";
+	public static inline var TOUCH_END:EventType<TouchEvent> = "touchEnd";
+	public static inline var TOUCH_MOVE:EventType<TouchEvent> = "touchMove";
+	public static inline var TOUCH_OUT:EventType<TouchEvent> = "touchOut";
+	public static inline var TOUCH_OVER:EventType<TouchEvent> = "touchOver";
+	public static inline var TOUCH_ROLL_OUT:EventType<TouchEvent> = "touchRollOut";
+	public static inline var TOUCH_ROLL_OVER:EventType<TouchEvent> = "touchRollOver";
+	public static inline var TOUCH_TAP:EventType<TouchEvent> = "touchTap";
 
 	public var altKey:Bool;
 	public var commandKey:Bool;
@@ -55,7 +55,7 @@ class TouchEvent extends Event {
 		stageY = Math.NaN;
 	}
 
-	public override function clone():Event {
+	public override function clone():TouchEvent {
 		var event = new TouchEvent(type, bubbles, cancelable, touchPointID, isPrimaryTouchPoint, localX, localY, sizeX, sizeY, pressure, relatedObject,
 			ctrlKey, altKey, shiftKey, commandKey, controlKey);
 		event.target = target;

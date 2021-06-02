@@ -105,9 +105,12 @@ import openfl.net.URLRequest;
 		return id;
 	}
 
-	public static function setTimeout(closure:Function, delay:Int, args:Array<Dynamic>):UInt {
+	static final NO_ARGS:Array<Dynamic> = [];
+
+	public static function setTimeout(closure:Function, delay:Int, ?args:Array<Dynamic>):UInt {
+		if (args == null) args = NO_ARGS;
 		var id = ++__lastTimerID;
-		__timers[id] = Timer.delay(function() {
+		__timers[id] = Timer.delay(function () {
 			Reflect.callMethod(closure, closure, args);
 		}, delay);
 		return id;

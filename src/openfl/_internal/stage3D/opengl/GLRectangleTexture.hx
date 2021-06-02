@@ -31,7 +31,7 @@ class GLRectangleTexture {
 		if (image == null)
 			return;
 
-		uploadFromTypedArray(rectangleTexture, renderSession, image.data);
+		GLTextureBase.uploadFromImage(renderSession.gl, rectangleTexture, image, 0, rectangleTexture.__width, rectangleTexture.__height);
 	}
 
 	public static function uploadFromByteArray(rectangleTexture:RectangleTexture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt):Void {

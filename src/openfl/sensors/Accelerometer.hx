@@ -5,7 +5,9 @@ import lime.system.Sensor;
 import lime.system.SensorType;
 import openfl.errors.ArgumentError;
 import openfl.events.AccelerometerEvent;
+import openfl.events.Event;
 import openfl.events.EventDispatcher;
+import openfl.events.EventType;
 
 class Accelerometer extends EventDispatcher {
 	private static var currentX = 0.0;
@@ -34,7 +36,7 @@ class Accelerometer extends EventDispatcher {
 		setRequestedUpdateInterval(defaultInterval);
 	}
 
-	override public function addEventListener(type:String, listener:Dynamic->Void, useCapture:Bool = false, priority:Int = 0,
+	override public function addEventListener<T:Event>(type:EventType<T>, listener:T->Void, useCapture:Bool = false, priority:Int = 0,
 			useWeakReference:Bool = false):Void {
 		super.addEventListener(type, listener, useCapture, priority, useWeakReference);
 		update();

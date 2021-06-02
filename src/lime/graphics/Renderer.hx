@@ -1,6 +1,7 @@
 package lime.graphics;
 
 import js.Browser;
+import lime.app.Config;
 import lime.app.Event;
 import lime.math.Rectangle;
 import lime.ui.Window;
@@ -13,6 +14,7 @@ class Renderer {
 	public var onContextLost = new Event<Void->Void>();
 	public var onContextRestored = new Event<GLRenderContext->Void>();
 	public var window:Window;
+	public var hasMajorPerformanceCaveat:Bool;
 
 	public function new(window:Window) {
 		this.window = window;
@@ -25,27 +27,42 @@ class Renderer {
 		window.backend.canvas.addEventListener("webglcontextrestored", handleEvent, false);
 	}
 
-	private function createContext():Void {
-		if (window.backend.canvas != null) {
-			var transparentBackground = Reflect.hasField(window.config, "background") && window.config.background == null;
-			var colorDepth = Reflect.hasField(window.config, "colorDepth") ? window.config.colorDepth : 16;
+	private function createGLContext(failIfMajorPerformanceCaveat:Bool):Void {
+		var transparentBackground = Reflect.hasField(window.config, "background") && window.config.background == null;
+		var colorDepth = Reflect.hasField(window.config, "colorDepth") ? window.config.colorDepth : 16;
 
-			var options = {
-				alpha: (transparentBackground || colorDepth > 16) ? true : false,
-				antialias: Reflect.hasField(window.config, "antialiasing") ? window.config.antialiasing > 0 : false,
-				depth: Reflect.hasField(window.config, "depthBuffer") ? window.config.depthBuffer : true,
-				premultipliedAlpha: true,
-				stencil: Reflect.hasField(window.config, "stencilBuffer") ? window.config.stencilBuffer : false,
-				preserveDrawingBuffer: false
-			};
+		var options = {
+			alpha: (transparentBackground || colorDepth > 16) ? true : false,
+			antialias: Reflect.hasField(window.config, "antialiasing") ? window.config.antialiasing > 0 : false,
+			depth: Reflect.hasField(window.config, "depthBuffer") ? window.config.depthBuffer : true,
+			premultipliedAlpha: true,
+			stencil: Reflect.hasField(window.config, "stencilBuffer") ? window.config.stencilBuffer : false,
+			preserveDrawingBuffer: false,
+			failIfMajorPerformanceCaveat: failIfMajorPerformanceCaveat
+		};
 
-			for (name in ["webgl2", "webgl", "experimental-webgl"]) {
-				var webgl = window.backend.canvas.getContext(name, options);
-				if (webgl != null) {
-					context = HTML5Renderer.context = webgl;
-					break;
-				}
+		for (name in ["webgl2", "webgl", "experimental-webgl"]) {
+			var webgl = window.backend.canvas.getContext(name, options);
+			if (webgl != null) {
+				context = HTML5Renderer.context = webgl;
+				return;
 			}
+		}
+	}
+
+	private function createContext():Void {
+		if (window.backend.canvas == null) {
+			return;
+		}
+
+		var failIfMajorPerformanceCaveat = Reflect.hasField(window.config, "failIfMajorPerformanceCaveat") ?
+			window.config.failIfMajorPerformanceCaveat : false;
+
+		createGLContext(true);
+		hasMajorPerformanceCaveat = context == null; // true if hardware context fails
+
+		if (hasMajorPerformanceCaveat && !failIfMajorPerformanceCaveat) {
+			createGLContext(false);
 		}
 	}
 

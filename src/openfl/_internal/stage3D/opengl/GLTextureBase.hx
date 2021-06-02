@@ -190,4 +190,21 @@ class GLTextureBase {
 			textureBase.__samplerState.__samplerDirty = false;
 		}
 	}
+
+	public static function uploadFromImage(gl:GL, texture:TextureBase, image:Image, miplevel:Int, width:Int, height:Int, uploadTarget:Int = -1) {
+		if (uploadTarget == -1) uploadTarget = texture.__textureTarget;
+
+		gl.bindTexture(texture.__textureTarget, texture.__textureData.glTexture);
+		GLUtils.checkGLError(gl);
+
+		if (image.type == DATA) {
+			gl.texImage2D(uploadTarget, miplevel, texture.__internalFormat, width, height, 0, texture.__format, GL.UNSIGNED_BYTE, image.data);
+		} else {
+			gl.texImage2D(uploadTarget, miplevel, texture.__internalFormat, texture.__format, GL.UNSIGNED_BYTE, image.src);
+		}
+		GLUtils.checkGLError(gl);
+
+		gl.bindTexture(texture.__textureTarget, null);
+		GLUtils.checkGLError(gl);
+	}
 }

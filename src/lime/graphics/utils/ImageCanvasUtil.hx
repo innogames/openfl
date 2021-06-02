@@ -4,7 +4,6 @@ import openfl.geom.Point;
 import lime.graphics.Image;
 import lime.graphics.PixelFormat;
 import lime.math.Rectangle;
-import lime.math.Vector2;
 import lime.utils.UInt8Array;
 #if (js && html5)
 import js.Browser;
@@ -81,7 +80,7 @@ class ImageCanvasUtil {
 		image.type = DATA;
 	}
 
-	public static function copyPixels(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, alphaImage:Image = null,
+	public static function copyPixels(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, alphaImage:Image = null,
 			alphaPoint:Point = null, mergeAlpha:Bool = false):Void {
 		if (destPoint == null || destPoint.x >= image.width || destPoint.y >= image.height || sourceRect == null || sourceRect.width < 1
 			|| sourceRect.height < 1) {

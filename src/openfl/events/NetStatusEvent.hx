@@ -1,7 +1,7 @@
 package openfl.events;
 
 class NetStatusEvent extends Event {
-	public static inline var NET_STATUS = "netStatus";
+	public static inline var NET_STATUS:EventType<NetStatusEvent> = "netStatus";
 
 	public var info:Dynamic;
 
@@ -11,7 +11,7 @@ class NetStatusEvent extends Event {
 		super(type, bubbles, cancelable);
 	}
 
-	public override function clone():Event {
+	public override function clone():NetStatusEvent {
 		var event = new NetStatusEvent(type, bubbles, cancelable, info);
 		event.target = target;
 		event.currentTarget = currentTarget;

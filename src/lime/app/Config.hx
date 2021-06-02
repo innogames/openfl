@@ -87,6 +87,7 @@ typedef Config = {
 }
 
 typedef WindowConfig = {
+	@:optional var failIfMajorPerformanceCaveat:Bool;
 	@:optional var allowHighDPI:Bool;
 	@:optional var alwaysOnTop:Bool;
 	@:optional var antialiasing:Int;

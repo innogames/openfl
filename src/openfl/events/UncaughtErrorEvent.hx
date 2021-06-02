@@ -1,7 +1,7 @@
 package openfl.events;
 
 class UncaughtErrorEvent extends ErrorEvent {
-	public static inline var UNCAUGHT_ERROR = "uncaughtError";
+	public static inline var UNCAUGHT_ERROR:EventType<UncaughtErrorEvent> = "uncaughtError";
 
 	public var error(default, null):Dynamic;
 
@@ -11,7 +11,7 @@ class UncaughtErrorEvent extends ErrorEvent {
 		this.error = error;
 	}
 
-	public override function clone():Event {
+	public override function clone():UncaughtErrorEvent {
 		var event = new UncaughtErrorEvent(type, bubbles, cancelable, error);
 		event.target = target;
 		event.currentTarget = currentTarget;

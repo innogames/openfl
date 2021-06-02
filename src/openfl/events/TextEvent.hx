@@ -1,8 +1,8 @@
 package openfl.events;
 
 class TextEvent extends Event {
-	public static inline var LINK = "link";
-	public static inline var TEXT_INPUT = "textInput";
+	public static inline var LINK:EventType<TextEvent> = "link";
+	public static inline var TEXT_INPUT:EventType<TextEvent> = "textInput";
 
 	public var text:String;
 
@@ -12,7 +12,7 @@ class TextEvent extends Event {
 		this.text = text;
 	}
 
-	public override function clone():Event {
+	public override function clone():TextEvent {
 		var event = new TextEvent(type, bubbles, cancelable, text);
 		event.target = target;
 		event.currentTarget = currentTarget;

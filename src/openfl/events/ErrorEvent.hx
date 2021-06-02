@@ -1,7 +1,7 @@
 package openfl.events;
 
 class ErrorEvent extends TextEvent {
-	public static inline var ERROR = "error";
+	public static inline var ERROR:EventType<ErrorEvent> = "error";
 
 	public var errorID(default, null):Int;
 
@@ -10,7 +10,7 @@ class ErrorEvent extends TextEvent {
 		errorID = id;
 	}
 
-	public override function clone():Event {
+	public override function clone():ErrorEvent {
 		var event = new ErrorEvent(type, bubbles, cancelable, text, errorID);
 		event.target = target;
 		event.currentTarget = currentTarget;

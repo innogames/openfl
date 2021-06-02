@@ -3,8 +3,8 @@ package openfl.events;
 import openfl.net.URLRequestHeader;
 
 class HTTPStatusEvent extends Event {
-	public static inline var HTTP_RESPONSE_STATUS = "httpResponseStatus";
-	public static inline var HTTP_STATUS = "httpStatus";
+	public static inline var HTTP_RESPONSE_STATUS:EventType<HTTPStatusEvent> = "httpResponseStatus";
+	public static inline var HTTP_STATUS:EventType<HTTPStatusEvent> = "httpStatus";
 
 	public var redirected:Bool;
 	public var responseHeaders:Array<URLRequestHeader>;
@@ -18,7 +18,7 @@ class HTTPStatusEvent extends Event {
 		super(type, bubbles, cancelable);
 	}
 
-	public override function clone():Event {
+	public override function clone():HTTPStatusEvent {
 		var event = new HTTPStatusEvent(type, bubbles, status, redirected);
 		event.target = target;
 		event.currentTarget = currentTarget;

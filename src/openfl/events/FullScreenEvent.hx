@@ -1,8 +1,8 @@
 package openfl.events;
 
 class FullScreenEvent extends ActivityEvent {
-	public static inline var FULL_SCREEN = "fullScreen";
-	public static inline var FULL_SCREEN_INTERACTIVE_ACCEPTED = "fullScreenInteractiveAccepted";
+	public static inline var FULL_SCREEN:EventType<FullScreenEvent> = "fullScreen";
+	public static inline var FULL_SCREEN_INTERACTIVE_ACCEPTED:EventType<FullScreenEvent> = "fullScreenInteractiveAccepted";
 
 	public var fullScreen:Bool;
 	public var interactive:Bool;
@@ -16,7 +16,7 @@ class FullScreenEvent extends ActivityEvent {
 		this.interactive = interactive;
 	}
 
-	public override function clone():Event {
+	public override function clone():FullScreenEvent {
 		var event = new FullScreenEvent(type, bubbles, cancelable, fullScreen, interactive);
 		event.target = target;
 		event.currentTarget = currentTarget;

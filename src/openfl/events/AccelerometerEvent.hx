@@ -1,9 +1,7 @@
 package openfl.events;
 
-import openfl.events.Event;
-
 class AccelerometerEvent extends Event {
-	public static inline var UPDATE = "update";
+	public static inline var UPDATE:EventType<AccelerometerEvent> = "update";
 
 	public var accelerationX:Float;
 	public var accelerationY:Float;
@@ -20,7 +18,7 @@ class AccelerometerEvent extends Event {
 		this.accelerationZ = accelerationZ;
 	}
 
-	public override function clone():Event {
+	public override function clone():AccelerometerEvent {
 		var event = new AccelerometerEvent(type, bubbles, cancelable, timestamp, accelerationX, accelerationY, accelerationZ);
 		event.target = target;
 		event.currentTarget = currentTarget;

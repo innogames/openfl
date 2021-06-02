@@ -3,9 +3,9 @@ package openfl.events;
 import openfl.ui.GameInputDevice;
 
 final class GameInputEvent extends Event {
-	public static inline var DEVICE_ADDED = "deviceAdded";
-	public static inline var DEVICE_REMOVED = "deviceRemoved";
-	public static inline var DEVICE_UNUSABLE = "deviceUnusable";
+	public static inline var DEVICE_ADDED:EventType<GameInputEvent> = "deviceAdded";
+	public static inline var DEVICE_REMOVED:EventType<GameInputEvent> = "deviceRemoved";
+	public static inline var DEVICE_UNUSABLE:EventType<GameInputEvent> = "deviceUnusable";
 
 	public var device(default, null):GameInputDevice;
 
@@ -15,7 +15,7 @@ final class GameInputEvent extends Event {
 		this.device = device;
 	}
 
-	public override function clone():Event {
+	public override function clone():GameInputEvent {
 		var event = new GameInputEvent(type, bubbles, cancelable, device);
 		event.target = target;
 		event.currentTarget = currentTarget;

@@ -1,6 +1,5 @@
 package openfl._internal.stage3D.opengl;
 
-import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.utils.ArrayBufferView;
 import lime.utils.UInt8Array;
@@ -41,12 +40,13 @@ class GLCubeTexture {
 				return;
 
 			hasTexture = true;
-			var target = __sideToTarget(gl, side);
-
 			cubeTexture.__format = format;
+			cubeTexture.__internalFormat = format;
 
-			gl.compressedTexImage2D(target, level, cubeTexture.__internalFormat, width, height, 0, bytes, 0, blockLength);
+			gl.compressedTexImage2D(__sideToTarget(side), level, cubeTexture.__internalFormat, width, height, 0, bytes, 0, blockLength);
 			GLUtils.checkGLError(gl);
+
+			cubeTexture.__uploadedSides |= 1 << side;
 
 			// __trackCompressedMemoryUsage (blockLength);
 		});
@@ -54,9 +54,11 @@ class GLCubeTexture {
 		if (!hasTexture) {
 			for (side in 0...6) {
 				var data = new UInt8Array(cubeTexture.__size * cubeTexture.__size * 4);
-				gl.texImage2D(__sideToTarget(gl, side), 0, cubeTexture.__internalFormat, cubeTexture.__size, cubeTexture.__size, 0, cubeTexture.__format,
+				gl.texImage2D(__sideToTarget(side), 0, cubeTexture.__internalFormat, cubeTexture.__size, cubeTexture.__size, 0, cubeTexture.__format,
 					GL.UNSIGNED_BYTE, data);
 				GLUtils.checkGLError(gl);
+
+				cubeTexture.__uploadedSides |= 1 << side;
 			}
 		}
 
@@ -66,25 +68,26 @@ class GLCubeTexture {
 
 	public static function uploadFromBitmapData(cubeTexture:CubeTexture, renderSession:GLRenderSession, source:BitmapData, side:UInt, miplevel:UInt = 0,
 			generateMipmap:Bool = false):Void {
+		if (source == null)
+			return;
+
 		var size = cubeTexture.__size >> miplevel;
 		if (size == 0)
 			return;
 
-		// if (source.width != size || source.height != size) {
-		//
-		// var copy = new BitmapData (size, size, true, 0);
-		// copy.draw (source);
-		// source = copy;
-		//
-		// }
+		if (source.width != size || source.height != size) {
+			var copy = new BitmapData(size, size, true, 0);
+			copy.draw(source);
+			source = copy;
+		}
 
 		var image = cubeTexture.__getImage(source);
-
-		uploadFromTypedArray(cubeTexture, renderSession, image.data, side, miplevel);
+		GLTextureBase.uploadFromImage(renderSession.gl, cubeTexture, image, miplevel, size, size, __sideToTarget(side));
+		cubeTexture.__uploadedSides |= 1 << side;
 	}
 
 	public static function uploadFromByteArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt, side:UInt,
-			miplevel:UInt):Void {
+			miplevel:UInt = 0):Void {
 		#if js
 		if (byteArrayOffset == 0) {
 			uploadFromTypedArray(cubeTexture, renderSession, @:privateAccess (data : ByteArrayData).b, side, miplevel);
@@ -95,18 +98,20 @@ class GLCubeTexture {
 		uploadFromTypedArray(cubeTexture, renderSession, new UInt8Array(data.toArrayBuffer(), byteArrayOffset), side, miplevel);
 	}
 
-	public static function uploadFromTypedArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ArrayBufferView, side:UInt, miplevel:UInt):Void {
+	public static function uploadFromTypedArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ArrayBufferView, side:UInt,
+			miplevel:UInt = 0):Void {
 		if (data == null)
 			return;
+
 		var gl = renderSession.gl;
 
 		var size = cubeTexture.__size >> miplevel;
 		if (size == 0)
 			return;
 
-		var target = __sideToTarget(gl, side);
+		var target = __sideToTarget(side);
 
-		gl.bindTexture(GL.TEXTURE_CUBE_MAP, cubeTexture.__textureData.glTexture);
+		gl.bindTexture(cubeTexture.__textureTarget, cubeTexture.__textureData.glTexture);
 		GLUtils.checkGLError(gl);
 
 		gl.texImage2D(target, miplevel, cubeTexture.__internalFormat, size, size, 0, cubeTexture.__format, GL.UNSIGNED_BYTE, data);
@@ -141,7 +146,7 @@ class GLCubeTexture {
 		GLTextureBase.setSamplerState(cubeTexture, renderSession, state);
 	}
 
-	private static function __sideToTarget(gl:GLRenderContext, side:UInt) {
+	static function __sideToTarget(side:UInt) {
 		return switch (side) {
 			case 0: GL.TEXTURE_CUBE_MAP_NEGATIVE_X;
 			case 1: GL.TEXTURE_CUBE_MAP_POSITIVE_X;

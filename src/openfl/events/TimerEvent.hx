@@ -1,14 +1,14 @@
 package openfl.events;
 
 class TimerEvent extends Event {
-	public static inline var TIMER = "timer";
-	public static inline var TIMER_COMPLETE = "timerComplete";
+	public static inline var TIMER:EventType<TimerEvent> = "timer";
+	public static inline var TIMER_COMPLETE:EventType<TimerEvent> = "timerComplete";
 
 	public function new(type:String, bubbles:Bool = false, cancelable:Bool = false):Void {
 		super(type, bubbles, cancelable);
 	}
 
-	public override function clone():Event {
+	public override function clone():TimerEvent {
 		var event = new TimerEvent(type, bubbles, cancelable);
 		event.target = target;
 		event.currentTarget = currentTarget;

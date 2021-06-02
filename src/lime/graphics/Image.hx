@@ -10,7 +10,6 @@ import lime.graphics.utils.ImageCanvasUtil;
 import lime.graphics.utils.ImageDataUtil;
 import lime.math.ColorMatrix;
 import lime.math.Rectangle;
-import lime.math.Vector2;
 import openfl.geom.Point;
 import openfl.utils.Endian;
 import lime.utils.UInt8Array;
@@ -52,7 +51,11 @@ class Image {
 		version = 0;
 
 		if (type == null) {
+			#if hxnodejs
+			type = DATA;
+			#else
 			type = CANVAS;
+			#end
 		}
 
 		this.type = type;
@@ -106,7 +109,7 @@ class Image {
 		ImageDataUtil.colorTransform(this, rect, colorMatrix);
 	}
 
-	public function copyChannel(sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, sourceChannel:ImageChannel, destChannel:ImageChannel):Void {
+	public function copyChannel(sourceImage:Image, sourceRect:Rectangle, destPoint:Point, sourceChannel:ImageChannel, destChannel:ImageChannel):Void {
 		sourceRect = __clipRect(sourceRect);
 		if (buffer == null || sourceRect == null)
 			return;
@@ -125,7 +128,7 @@ class Image {
 		ImageDataUtil.copyChannel(this, sourceImage, sourceRect, destPoint, sourceChannel, destChannel);
 	}
 
-	public function copyPixels(sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, alphaImage:Image = null, alphaPoint:Point = null,
+	public function copyPixels(sourceImage:Image, sourceRect:Rectangle, destPoint:Point, alphaImage:Image = null, alphaPoint:Point = null,
 			mergeAlpha:Bool = false):Void {
 		if (buffer == null || sourceImage == null)
 			return;
@@ -359,7 +362,7 @@ class Image {
 		return HTML5HTTPRequest.loadImage(path);
 	}
 
-	public function merge(sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, redMultiplier:Int, greenMultiplier:Int, blueMultiplier:Int,
+	public function merge(sourceImage:Image, sourceRect:Rectangle, destPoint:Point, redMultiplier:Int, greenMultiplier:Int, blueMultiplier:Int,
 			alphaMultiplier:Int):Void {
 		if (buffer == null || sourceImage == null)
 			return;
@@ -418,7 +421,7 @@ class Image {
 		ImageDataUtil.setPixels(this, rect, bytes, dataPosition, format, endian);
 	}
 
-	public function threshold(sourceImage:Image, sourceRect:Rectangle, destPoint:Vector2, operation:String, threshold:Int, color:Int = 0x00000000,
+	public function threshold(sourceImage:Image, sourceRect:Rectangle, destPoint:Point, operation:String, threshold:Int, color:Int = 0x00000000,
 			mask:Int = 0xFFFFFFFF, copySource:Bool = false, format:PixelFormat = null):Int {
 		if (buffer == null || sourceImage == null || sourceRect == null)
 			return 0;

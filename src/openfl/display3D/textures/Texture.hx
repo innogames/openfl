@@ -10,8 +10,6 @@ import openfl.utils.ByteArray;
 
 @:access(openfl.display3D.Context3D)
 final class Texture extends TextureBase {
-	private static var __lowMemoryMode:Bool = false;
-
 	private function new(context:Context3D, width:Int, height:Int, format:Context3DTextureFormat, optimizeForRenderToTexture:Bool, streamingLevels:Int) {
 		super(context);
 

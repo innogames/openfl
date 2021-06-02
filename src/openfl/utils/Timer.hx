@@ -1,6 +1,5 @@
 package openfl.utils;
 
-import js.Browser;
 import openfl.errors.Error;
 import openfl.events.EventDispatcher;
 import openfl.events.TimerEvent;
@@ -11,9 +10,9 @@ class Timer extends EventDispatcher {
 	public var repeatCount(get, set):Int;
 	public var running(default, null):Bool;
 
-	private var __delay:Float;
-	private var __repeatCount:Int;
-	private var __timerID:Int;
+	var __delay:Float;
+	var __repeatCount:Int;
+	var __interval:Interval;
 
 	public function new(delay:Float, repeatCount:Int = 0):Void {
 		if (Math.isNaN(delay) || delay < 0) {
@@ -41,16 +40,16 @@ class Timer extends EventDispatcher {
 		if (!running) {
 			running = true;
 
-			__timerID = Browser.window.setInterval(timer_onTimer, __delay);
+			__interval = new Interval(timer_onTimer, __delay);
 		}
 	}
 
 	public function stop():Void {
 		running = false;
 
-		if (__timerID != null) {
-			Browser.window.clearInterval(__timerID);
-			__timerID = null;
+		if (__interval != null) {
+			__interval.clear();
+			__interval = null;
 		}
 	}
 
@@ -97,3 +96,23 @@ class Timer extends EventDispatcher {
 		}
 	}
 }
+
+#if hxnodejs
+private abstract Interval(js.node.Timers.Timeout) {
+	public inline function new(callback:()->Void, delay:Float) {
+		this = js.node.Timers.setInterval(callback, Std.int(delay));
+	}
+	public inline function clear() {
+		js.node.Timers.clearInterval(this);
+	}
+}
+#else
+private abstract Interval(Int) {
+	public inline function new(callback:()->Void, delay:Float) {
+		this = js.Browser.window.setInterval(callback, delay);
+	}
+	public inline function clear() {
+		js.Browser.window.clearInterval(this);
+	}
+}
+#end

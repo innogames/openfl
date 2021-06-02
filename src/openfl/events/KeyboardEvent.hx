@@ -3,8 +3,8 @@ package openfl.events;
 import openfl.ui.KeyLocation;
 
 class KeyboardEvent extends Event {
-	public static inline var KEY_DOWN = "keyDown";
-	public static inline var KEY_UP = "keyUp";
+	public static inline var KEY_DOWN:EventType<KeyboardEvent> = "keyDown";
+	public static inline var KEY_UP:EventType<KeyboardEvent> = "keyUp";
 
 	public var altKey:Bool;
 	public var charCode:Int;
@@ -30,7 +30,7 @@ class KeyboardEvent extends Event {
 		commandKey = commandKeyValue;
 	}
 
-	public override function clone():Event {
+	public override function clone():KeyboardEvent {
 		var event = new KeyboardEvent(type, bubbles, cancelable, charCode, keyCode, keyLocation, ctrlKey, altKey, shiftKey, controlKey, commandKey);
 		event.target = target;
 		event.currentTarget = currentTarget;

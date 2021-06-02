@@ -1,13 +1,13 @@
 package openfl.events;
 
 class IOErrorEvent extends ErrorEvent {
-	public static inline var IO_ERROR = "ioError";
+	public static inline var IO_ERROR:EventType<IOErrorEvent> = "ioError";
 
 	public function new(type:String, bubbles:Bool = true, cancelable:Bool = false, text:String = "", id:Int = 0) {
 		super(type, bubbles, cancelable, text, id);
 	}
 
-	public override function clone():Event {
+	public override function clone():IOErrorEvent {
 		var event = new IOErrorEvent(type, bubbles, cancelable, text, errorID);
 		event.target = target;
 		event.currentTarget = currentTarget;

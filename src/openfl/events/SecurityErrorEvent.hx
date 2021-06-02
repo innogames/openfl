@@ -1,13 +1,13 @@
 package openfl.events;
 
 class SecurityErrorEvent extends ErrorEvent {
-	public static inline var SECURITY_ERROR = "securityError";
+	public static inline var SECURITY_ERROR:EventType<SecurityErrorEvent> = "securityError";
 
 	public function new(type:String, bubbles:Bool = false, cancelable:Bool = false, text:String = "", id:Int = 0) {
 		super(type, bubbles, cancelable, text, id);
 	}
 
-	public override function clone():Event {
+	public override function clone():SecurityErrorEvent {
 		var event = new SecurityErrorEvent(type, bubbles, cancelable, text, errorID);
 		event.target = target;
 		event.currentTarget = currentTarget;

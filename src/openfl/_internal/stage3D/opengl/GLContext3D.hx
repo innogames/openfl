@@ -609,7 +609,7 @@ class GLContext3D {
 
 	public static function setScissorRectangle(context:Context3D, rectangle:Rectangle):Void {
 		if (rectangle != null) {
-			var scale = context.__stage3D.__stage.window.scale;
+			var scale = if (context.__renderToTexture == null) context.__stage3D.__stage.window.scale else 1.0;
 			__setScissorRectangle(context, Std.int(rectangle.x * scale), Std.int(rectangle.y * scale), Std.int(rectangle.width * scale),
 				Std.int(rectangle.height * scale));
 		} else {
@@ -895,11 +895,6 @@ class GLContext3D {
 	}
 
 	public static function __updateBackbufferViewport(context:Context3D):Void {
-		if (!Stage3D.__active) {
-			Stage3D.__active = true;
-			context.__renderSession.renderer.clear();
-		}
-
 		if (context.__renderToTexture == null && context.backBufferWidth > 0 && context.backBufferHeight > 0) {
 			__setViewport(context.__renderSession.gl, Std.int(context.__stage3D.x), Std.int(context.__stage3D.y), context.backBufferWidth,
 				context.backBufferHeight);

@@ -4,7 +4,7 @@ import openfl.utils.ByteArray;
 import openfl.utils.Endian;
 
 class SampleDataEvent extends Event {
-	public static inline var SAMPLE_DATA = "sampleData";
+	public static inline var SAMPLE_DATA:EventType<SampleDataEvent> = "sampleData";
 
 	public var data:ByteArray;
 	public var position:Float;
@@ -17,7 +17,7 @@ class SampleDataEvent extends Event {
 		position = 0.0;
 	}
 
-	public override function clone():Event {
+	public override function clone():SampleDataEvent {
 		var event = new SampleDataEvent(type, bubbles, cancelable);
 		event.target = target;
 		event.currentTarget = currentTarget;

@@ -1,10 +1,9 @@
 package openfl.geom;
 
-import lime.math.Vector2;
 import lime.utils.ObjectPool;
 
 class Point {
-	private static var __limeVector2:Vector2;
+	private static var __tempCopy:Point;
 	private static var __pool = new ObjectPool<Point>(function() return new Point(), function(p) p.setTo(0, 0));
 
 	public var length(get, never):Float;
@@ -75,16 +74,13 @@ class Point {
 		return '(x=$x, y=$y)';
 	}
 
-	private function __toLimeVector2():Point {
-		if (__limeVector2 == null) {
-			__limeVector2 = new Point();
+	private function __toTempCopy():Point {
+		if (__tempCopy == null) {
+			__tempCopy = new Point();
 		}
-
-		__limeVector2.setTo(x, y);
-		return __limeVector2;
+		__tempCopy.setTo(x, y);
+		return __tempCopy;
 	}
-
-	// Getters & Setters
 
 	private function get_length():Float {
 		return Math.sqrt(x * x + y * y);
