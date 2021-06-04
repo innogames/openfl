@@ -93,7 +93,7 @@ enum MajorPerformanceCaveatTest {
 }
 
 typedef WindowConfig = {
-	@:optional var majorPerformanceCaveatTest:MajorPerformanceCaveatTest;
+	@:optional var failIfMajorPerformanceCaveat:Bool;
 	@:optional var allowHighDPI:Bool;
 	@:optional var alwaysOnTop:Bool;
 	@:optional var antialiasing:Int;

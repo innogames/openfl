@@ -76,7 +76,7 @@ final class DropShadowFilter extends BitmapFilter {
 		destPoint.x += __offsetX * pixelRatio;
 		destPoint.y += __offsetY * pixelRatio;
 
-		var finalImage = ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint.__toLimeVector2(),
+		var finalImage = ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint,
 			__blurX * pixelRatio, __blurY * pixelRatio, __quality, __strength);
 
 		if (finalImage == bitmapData.image)

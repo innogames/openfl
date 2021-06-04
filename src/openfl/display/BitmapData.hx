@@ -286,7 +286,7 @@ class BitmapData implements IBitmapDrawable {
 			default: return;
 		}
 
-		image.copyChannel(sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint.__toLimeVector2(), sourceChannel, destChannel);
+		image.copyChannel(sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint, sourceChannel, destChannel);
 
 		__markUsersRenderDirty();
 	}
@@ -296,7 +296,7 @@ class BitmapData implements IBitmapDrawable {
 		if (!readable || sourceBitmapData == null || !sourceBitmapData.__prepareImage())
 			return;
 
-		image.copyPixels(sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint.__toLimeVector2(),
+		image.copyPixels(sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint.__toTempCopy(),
 			alphaBitmapData != null ? alphaBitmapData.image : null, alphaPoint, mergeAlpha);
 
 		__markUsersRenderDirty();
@@ -978,8 +978,7 @@ class BitmapData implements IBitmapDrawable {
 			alphaMultiplier:UInt):Void {
 		if (!readable || sourceBitmapData == null || !sourceBitmapData.readable || sourceRect == null || destPoint == null)
 			return;
-		image.merge(sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint.__toLimeVector2(), redMultiplier, greenMultiplier, blueMultiplier,
-			alphaMultiplier);
+		image.merge(sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint, redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier);
 		__markUsersRenderDirty();
 	}
 
@@ -1133,7 +1132,7 @@ class BitmapData implements IBitmapDrawable {
 			|| destPoint.y > height)
 			return 0;
 
-		return image.threshold(sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint.__toLimeVector2(), operation, threshold, color, mask,
+		return image.threshold(sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint, operation, threshold, color, mask,
 			copySource, ARGB32);
 	}
 

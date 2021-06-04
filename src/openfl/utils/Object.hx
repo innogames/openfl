@@ -1,6 +1,8 @@
 package openfl.utils;
 
-@:forward() abstract Object(ObjectType) from ObjectType {
+@:transitive
+@:forward
+abstract Object(ObjectType) from ObjectType {
 	public inline function new() {
 		this = {};
 	}

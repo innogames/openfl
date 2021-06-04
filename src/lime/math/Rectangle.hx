@@ -1,5 +1,7 @@
 package lime.math;
 
+import openfl.geom.Point as Vector2;
+
 class Rectangle {
 	public var bottom(get, set):Float;
 	public var bottomRight(get, set):Vector2;

@@ -19,16 +19,16 @@ class GLRenderSession extends RenderSession {
 	public final vaoContext:Null<IVertexArrayObjectContext>;
 	#end
 
-	public function new(renderer, gl) {
+	public function new(renderer, gl, maxTexturesLimit) {
 		super(true);
-		
+
 		this.renderer = renderer;
 		this.gl = gl;
 
 		maskManager = new GLMaskManager(this);
 		blendModeManager = new GLBlendModeManager(gl);
 		shaderManager = new GLShaderManager(gl);
-		batcher = new BatchRenderer(gl, blendModeManager, shaderManager, 4096);
+		batcher = new BatchRenderer(gl, blendModeManager, shaderManager, 4096, maxTexturesLimit);
 
 		#if vertex_array_object
 		vaoContext = initVao();
