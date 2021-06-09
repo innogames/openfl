@@ -876,7 +876,7 @@ class TextEngine {
 		var lineIndex = -1;
 		var offsetX = 0.0;
 		var totalWidth = this.width - 4;
-		var group, lineLength;
+		var group, spacesInLine, layoutGroupsInLine;
 
 		for (i in 0...layoutGroups.length) {
 			group = layoutGroups[i];
@@ -901,35 +901,40 @@ class TextEngine {
 
 					case JUSTIFY:
 						if (lineWidths[lineIndex] < totalWidth) {
-							lineLength = 1;
-
+							spacesInLine = 1;
+							layoutGroupsInLine = 1;
 							for (j in (i + 1)...layoutGroups.length) {
 								if (layoutGroups[j].lineIndex == lineIndex) {
 									if (j == 0 || text.charCodeAt(layoutGroups[j].startIndex - 1) == " ".code) {
-										lineLength++;
+										spacesInLine++;
 									}
+									layoutGroupsInLine++;
 								} else {
 									break;
 								}
 							}
 
-							if (lineLength > 1) {
-								group = layoutGroups[i + lineLength - 1];
-
+							if (spacesInLine > 1) {
+								group = layoutGroups[i + layoutGroupsInLine - 1];
 								var endChar = text.charCodeAt(group.endIndex);
+								// Normal line ending if it's the end of a) text or b) paragrpah - No spreading out of the words.
 								if (group.endIndex < text.length && endChar != "\n".code && endChar != "\r".code) {
-									offsetX = (totalWidth - lineWidths[lineIndex]) / (lineLength - 1);
-
-									var j = 0;
+									offsetX = (totalWidth - lineWidths[lineIndex]) / (spacesInLine - 1);
+									var j = 1;
+									var k = 1;
 									do {
-										if (j > 1 && text.charCodeAt(layoutGroups[j].startIndex - 1) != " ".code) {
-											layoutGroups[i + j].offsetX += (offsetX * (j - 1));
+										if (text.charCodeAt(layoutGroups[i + j].startIndex - 1) != " ".code) {
+											layoutGroups[i + j].offsetX += (offsetX * (k - 1));
 											j++;
 										}
-
-										layoutGroups[i + j].offsetX += (offsetX * j);
-									} while (++j < lineLength);
+										if (j < layoutGroupsInLine) {
+											layoutGroups[i + j].offsetX += (offsetX * k);
+										}
+										k++;
+									} while (++j < layoutGroupsInLine);
 								}
+							} else {
+								group.offsetX = GUTTER;
 							}
 						}
 
