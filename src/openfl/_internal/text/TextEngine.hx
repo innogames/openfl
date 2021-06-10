@@ -1040,10 +1040,9 @@ private class WordSeparator {
 		var index = -1;
 		var render = false;
 		var space = text.indexOf(" ", startIndex);
-		var hyphenRegExp = ~/(?<=\S)-(?=\S)/;
+		var hyphenRegExp = ~/\b\-\b/;
 		var match = hyphenRegExp.match(text.substr(startIndex));
 		var hyphen = (match) ? hyphenRegExp.matchedPos().pos + startIndex : -1;
-		trace (hyphen);
 		if (hyphen != -1 && (space == -1 || hyphen < space)) {
 			index = hyphen;
 			render = true;
