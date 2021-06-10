@@ -66,6 +66,7 @@ class TextField extends InteractiveObject {
 	public var selectionBeginIndex(get, never):Int;
 	public var selectionEndIndex(get, never):Int;
 	public var sharpness(get, set):Float;
+	public var styleSheet:StyleSheet;
 	public var text(get, set):String;
 	public var textColor(get, set):Int;
 	public var textHeight(get, never):Float;
