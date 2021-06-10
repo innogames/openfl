@@ -27,7 +27,7 @@ class HTML5Window {
 	private static var dummyCharacter = String.fromCharCode(127);
 	private static var textInput:InputElement;
 	private static var windowID:Int = 0;
-	private static var scrollLineHeight = getScrollLineHeight();
+	private static var scrollLineHeight:Int;
 
 	public var canvas:CanvasElement;
 	public var element:Element;
@@ -49,6 +49,7 @@ class HTML5Window {
 	private var unusedTouchesPool = new List<Touch>();
 
 	public function new(parent:Window) {
+		scrollLineHeight = getScrollLineHeight();
 		this.parent = parent;
 
 		if (parent.config != null && Reflect.hasField(parent.config, "element")) {
