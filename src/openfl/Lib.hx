@@ -17,7 +17,7 @@ import openfl.net.URLRequest;
 	private static var __timers = new Map<UInt, Timer>();
 
 	public static /* inline */ function as<T>(v:Dynamic, c:Class<T>):Null<T> {
-		return Std.is(v, c) ? v : null;
+		return Std.isOfType(v, c) ? v : null;
 	}
 
 	public static function clearInterval(id:UInt):Void {
