@@ -31,7 +31,7 @@ class ImageDataUtil {
 		var greenTable = colorMatrix.getGreenTable();
 		var blueTable = colorMatrix.getBlueTable();
 
-		var row, offset, pixel:RGBA;
+		var row, offset, pixel:RGBA = 0;
 
 		for (y in 0...dataView.height) {
 			row = dataView.row(y);
@@ -81,8 +81,8 @@ class ImageDataUtil {
 
 		var srcPosition,
 			destPosition,
-			srcPixel:RGBA,
-			destPixel:RGBA,
+			srcPixel:RGBA = 0,
+			destPixel:RGBA = 0,
 			value = 0;
 
 		for (y in 0...destView.height) {
@@ -157,7 +157,7 @@ class ImageDataUtil {
 
 			var sourcePosition, destPosition;
 			var sourceAlpha, destAlpha, oneMinusSourceAlpha, blendAlpha;
-			var sourcePixel:RGBA, destPixel:RGBA;
+			var sourcePixel:RGBA = 0, destPixel:RGBA = 0;
 
 			var sourcePremultiplied = sourceImage.buffer.premultiplied;
 			var destPremultiplied = image.buffer.premultiplied;
@@ -237,7 +237,7 @@ class ImageDataUtil {
 
 				var alphaData = alphaImage.buffer.data;
 				var alphaFormat = alphaImage.buffer.format;
-				var alphaPosition, alphaPixel:RGBA;
+				var alphaPosition, alphaPixel:RGBA = 0;
 
 				var alphaView = new ImageDataView(alphaImage, new Rectangle(alphaPoint.x, alphaPoint.y, alphaImage.width, alphaImage.height));
 				alphaView.offset(sourceView.x, sourceView.y);
@@ -360,7 +360,7 @@ class ImageDataUtil {
 
 		var fillColor:RGBA = color;
 
-		var hitColor:RGBA;
+		var hitColor:RGBA = 0;
 		hitColor.readUInt8(data, (y * (image.buffer.width * 4)) + (x * 4), format, premultiplied);
 
 		if (!image.transparent) {
@@ -391,7 +391,7 @@ class ImageDataUtil {
 			nextPointX,
 			nextPointY,
 			nextPointOffset,
-			readColor:RGBA;
+			readColor:RGBA = 0;
 
 		while (queue.length > 0) {
 			curPointY = queue.pop();
@@ -751,7 +751,7 @@ class ImageDataUtil {
 	}
 
 	public static function getPixel(image:Image, x:Int, y:Int, format:PixelFormat):Int {
-		var pixel:RGBA;
+		var pixel:RGBA = 0;
 
 		pixel.readUInt8(image.buffer.data, (4 * y * image.buffer.width + x * 4), image.buffer.format, image.buffer.premultiplied);
 		pixel.a = 0;
@@ -767,7 +767,7 @@ class ImageDataUtil {
 	}
 
 	public static function getPixel32(image:Image, x:Int, y:Int, format:PixelFormat):Int {
-		var pixel:RGBA;
+		var pixel:RGBA = 0;
 
 		pixel.readUInt8(image.buffer.data, (4 * y * image.buffer.width + x * 4), image.buffer.format, image.buffer.premultiplied);
 
@@ -793,7 +793,7 @@ class ImageDataUtil {
 		var premultiplied = image.buffer.premultiplied;
 
 		var dataView = new ImageDataView(image, rect);
-		var position, argb:ARGB, bgra:BGRA, pixel:RGBA;
+		var position, argb:ARGB, bgra:BGRA, pixel:RGBA = 0;
 		var destPosition = 0;
 
 		for (y in 0...dataView.height) {
@@ -839,7 +839,7 @@ class ImageDataUtil {
 		var sourcePremultiplied = sourceImage.buffer.premultiplied;
 		var destPremultiplied = image.buffer.premultiplied;
 
-		var sourcePosition, destPosition, sourcePixel:RGBA, destPixel:RGBA;
+		var sourcePosition, destPosition, sourcePixel:RGBA = 0, destPixel:RGBA = 0;
 
 		for (y in 0...destView.height) {
 			sourcePosition = sourceView.row(y);
@@ -872,7 +872,7 @@ class ImageDataUtil {
 
 		var format = image.buffer.format;
 		var length = Std.int(data.length / 4);
-		var pixel:RGBA;
+		var pixel:RGBA = 0;
 
 		for (i in 0...length) {
 			pixel.readUInt8(data, i * 4, format, false);
@@ -1053,7 +1053,7 @@ class ImageDataUtil {
 	}
 
 	public static function setPixel(image:Image, x:Int, y:Int, color:Int, format:PixelFormat):Void {
-		var pixel:RGBA;
+		var pixel:RGBA = 0;
 
 		switch (format) {
 			case ARGB32:
@@ -1077,7 +1077,7 @@ class ImageDataUtil {
 	}
 
 	public static function setPixel32(image:Image, x:Int, y:Int, color:Int, format:PixelFormat):Void {
-		var pixel:RGBA;
+		var pixel:RGBA = 0;
 
 		switch (format) {
 			case ARGB32:
@@ -1104,7 +1104,7 @@ class ImageDataUtil {
 		var sourceFormat = image.buffer.format;
 		var premultiplied = image.buffer.premultiplied;
 		var dataView = new ImageDataView(image, rect);
-		var row, color, pixel:RGBA;
+		var row, color, pixel:RGBA = 0;
 		var transparent = image.transparent;
 		var littleEndian = (endian != BIG_ENDIAN);
 
@@ -1142,7 +1142,7 @@ class ImageDataUtil {
 
 	public static function threshold(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, operation:String, threshold:Int, color:Int,
 			mask:Int, copySource:Bool, format:PixelFormat):Int {
-		var _color:RGBA, _mask:RGBA, _threshold:RGBA;
+		var _color:RGBA = 0, _mask:RGBA = 0, _threshold:RGBA = 0;
 
 		switch (format) {
 			case ARGB32:
@@ -1192,8 +1192,8 @@ class ImageDataUtil {
 
 		var srcPosition,
 			destPosition,
-			srcPixel:RGBA,
-			destPixel:RGBA,
+			srcPixel:RGBA = 0,
+			destPixel:RGBA = 0,
 			pixelMask:UInt,
 			test:Bool,
 			value:Int;
@@ -1246,7 +1246,7 @@ class ImageDataUtil {
 
 		var format = image.buffer.format;
 		var length = Std.int(data.length / 4);
-		var pixel:RGBA;
+		var pixel:RGBA = 0;
 
 		for (i in 0...length) {
 			pixel.readUInt8(data, i * 4, format, true);

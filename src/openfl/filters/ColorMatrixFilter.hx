@@ -44,7 +44,7 @@ final class ColorMatrixFilter extends BitmapFilter {
 		var sourcePremultiplied = sourceImage.buffer.premultiplied;
 		var destPremultiplied = image.buffer.premultiplied;
 
-		var sourcePixel:RGBA, destPixel:RGBA = 0;
+		var sourcePixel:RGBA = 0, destPixel:RGBA = 0;
 		var sourceOffset:Int, destOffset:Int;
 
 		for (row in Std.int(sourceRect.y)...Std.int(sourceRect.height)) {
