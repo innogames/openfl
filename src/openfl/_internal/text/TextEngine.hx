@@ -922,16 +922,12 @@ class TextEngine {
 								if (group.endIndex < text.length && endChar != UTF8_ENDLINE && endChar != UTF8_CARRIAGE_RETURN) {
 									offsetX = (totalWidth - lineWidths[lineIndex]) / (spacesInLine - 1);
 									var j = 1;
-									var k = 1;
+									var k = 0;
 									do {
-										if (text.charCodeAt(layoutGroups[i + j].startIndex - 1) != UTF8_SPACE) {
-											layoutGroups[i + j].offsetX += (offsetX * (k - 1));
-											j++;
+										if (text.charCodeAt(layoutGroups[i + j].startIndex - 1) == UTF8_SPACE) {
+											k++;
 										}
-										if (j < layoutGroupsInLine) {
-											layoutGroups[i + j].offsetX += (offsetX * k);
-										}
-										k++;
+										layoutGroups[i + j].offsetX += (offsetX * k);
 									} while (++j < layoutGroupsInLine);
 								}
 							} else {
