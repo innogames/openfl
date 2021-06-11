@@ -18,6 +18,7 @@ class TextEngine {
 	private static inline var GUTTER = 2.0;
 	private static inline var UTF8_TAB = 9;
 	private static inline var UTF8_ENDLINE = 10;
+	private static inline var UTF8_CARRIAGE_RETURN = 13;
 	private static inline var UTF8_SPACE = 32;
 	private static inline var UTF8_HYPHEN = 0x2D;
 
@@ -905,7 +906,7 @@ class TextEngine {
 							layoutGroupsInLine = 1;
 							for (j in (i + 1)...layoutGroups.length) {
 								if (layoutGroups[j].lineIndex == lineIndex) {
-									if (j == 0 || text.charCodeAt(layoutGroups[j].startIndex - 1) == " ".code) {
+									if (text.charCodeAt(layoutGroups[j].startIndex - 1) == UTF8_SPACE) {
 										spacesInLine++;
 									}
 									layoutGroupsInLine++;
@@ -918,12 +919,12 @@ class TextEngine {
 								group = layoutGroups[i + layoutGroupsInLine - 1];
 								var endChar = text.charCodeAt(group.endIndex);
 								// Normal line ending if it's the end of a) text or b) paragrpah - No spreading out of the words.
-								if (group.endIndex < text.length && endChar != "\n".code && endChar != "\r".code) {
+								if (group.endIndex < text.length && endChar != UTF8_ENDLINE && endChar != UTF8_CARRIAGE_RETURN) {
 									offsetX = (totalWidth - lineWidths[lineIndex]) / (spacesInLine - 1);
 									var j = 1;
 									var k = 1;
 									do {
-										if (text.charCodeAt(layoutGroups[i + j].startIndex - 1) != " ".code) {
+										if (text.charCodeAt(layoutGroups[i + j].startIndex - 1) != UTF8_SPACE) {
 											layoutGroups[i + j].offsetX += (offsetX * (k - 1));
 											j++;
 										}
