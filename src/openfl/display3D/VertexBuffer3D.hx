@@ -10,11 +10,10 @@ import openfl.utils.ByteArray;
 @:access(openfl.display3D.Context3D)
 class VertexBuffer3D {
 	private var __context:Context3D;
-	private var __data:Vector<Float>;
+	private var __stride:Int;
 	private var __id:GLBuffer;
 	private var __memoryUsage:Int;
 	private var __numVertices:Int;
-	private var __stride:Int;
 	private var __tempFloat32Array:Float32Array;
 	private var __usage:Int;
 	private var __vertexSize:Int;

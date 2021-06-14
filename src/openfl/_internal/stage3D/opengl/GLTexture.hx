@@ -17,18 +17,7 @@ import openfl.utils.ByteArray;
 @:access(openfl.display3D.Context3D)
 class GLTexture {
 	public static function create(texture:Texture, renderSession:GLRenderSession):Void {
-		var gl = renderSession.gl;
-
 		texture.__textureTarget = GL.TEXTURE_2D;
-
-		gl.bindTexture(texture.__textureTarget, texture.__textureData.glTexture);
-		GLUtils.checkGLError(gl);
-
-		gl.texImage2D(texture.__textureTarget, 0, texture.__internalFormat, texture.__width, texture.__height, 0, texture.__format, GL.UNSIGNED_BYTE, null);
-		GLUtils.checkGLError(gl);
-
-		gl.bindTexture(texture.__textureTarget, null);
-
 		uploadFromTypedArray(texture, renderSession, null);
 	}
 
@@ -43,10 +32,18 @@ class GLTexture {
 
 		var hasTexture = false;
 
-		reader.readTextures(function(target, level, gpuFormat, width, height, blockLength, bytes) {
+		reader.readTextures(function(_, level, gpuFormat, width, height, blockLength, bytes) {
 			var format = GLTextureBase.__compressedTextureFormats.toTextureFormat(alpha, gpuFormat);
 			if (format == 0)
 				return;
+
+			if (width == 0 && height == 0)
+				return;
+
+			if (width == 0)
+				width = 1;
+			if (height == 0)
+				height = 1;
 
 			hasTexture = true;
 			texture.__format = format;
@@ -96,6 +93,9 @@ class GLTexture {
 	}
 
 	public static function uploadFromByteArray(texture:Texture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt, miplevel:UInt = 0):Void {
+		if (data == null)
+			return;
+
 		#if js
 		if (byteArrayOffset == 0) {
 			uploadFromTypedArray(texture, renderSession, @:privateAccess (data : ByteArrayData).b, miplevel);
@@ -107,9 +107,6 @@ class GLTexture {
 	}
 
 	public static function uploadFromTypedArray(texture:Texture, renderSession:GLRenderSession, data:ArrayBufferView, miplevel:UInt = 0):Void {
-		if (data == null)
-			return;
-
 		var gl = renderSession.gl;
 
 		var width = texture.__width >> miplevel;

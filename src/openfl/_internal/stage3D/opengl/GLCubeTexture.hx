@@ -34,16 +34,19 @@ class GLCubeTexture {
 
 		var hasTexture = false;
 
-		reader.readTextures(function(side, level, gpuFormat, width, height, blockLength, bytes) {
+		reader.readTextures(function(side, level, gpuFormat, size, _, blockLength, bytes) {
 			var format = GLTextureBase.__compressedTextureFormats.toTextureFormat(alpha, gpuFormat);
 			if (format == 0)
+				return;
+
+			if (size == 0)
 				return;
 
 			hasTexture = true;
 			cubeTexture.__format = format;
 			cubeTexture.__internalFormat = format;
 
-			gl.compressedTexImage2D(__sideToTarget(side), level, cubeTexture.__internalFormat, width, height, 0, bytes, 0, blockLength);
+			gl.compressedTexImage2D(__sideToTarget(side), level, cubeTexture.__internalFormat, size, size, 0, bytes, 0, blockLength);
 			GLUtils.checkGLError(gl);
 
 			cubeTexture.__uploadedSides |= 1 << side;
@@ -72,6 +75,7 @@ class GLCubeTexture {
 			return;
 
 		var size = cubeTexture.__size >> miplevel;
+
 		if (size == 0)
 			return;
 
@@ -88,6 +92,9 @@ class GLCubeTexture {
 
 	public static function uploadFromByteArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:UInt, side:UInt,
 			miplevel:UInt = 0):Void {
+		if (data == null)
+			return;
+
 		#if js
 		if (byteArrayOffset == 0) {
 			uploadFromTypedArray(cubeTexture, renderSession, @:privateAccess (data : ByteArrayData).b, side, miplevel);
@@ -100,12 +107,10 @@ class GLCubeTexture {
 
 	public static function uploadFromTypedArray(cubeTexture:CubeTexture, renderSession:GLRenderSession, data:ArrayBufferView, side:UInt,
 			miplevel:UInt = 0):Void {
-		if (data == null)
-			return;
-
 		var gl = renderSession.gl;
 
 		var size = cubeTexture.__size >> miplevel;
+
 		if (size == 0)
 			return;
 
@@ -122,7 +127,7 @@ class GLCubeTexture {
 
 		cubeTexture.__uploadedSides |= 1 << side;
 
-		// var memUsage = (__size * __size) * 4;
+		// var memUsage = (size * size) * 4;
 		// __trackMemoryUsage (memUsage);
 	}
 
