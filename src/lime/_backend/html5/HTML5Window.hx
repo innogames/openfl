@@ -334,7 +334,8 @@ class HTML5Window {
 					Math.round(event.deltaY);
 
 				case WheelEvent.DOM_DELTA_PIXEL:
-					Math.round(event.deltaY / (scrollLineHeight * scale));
+					var operation = if (event.deltaY < 0) Math.floor else Math.ceil;
+					operation(event.deltaY / (scrollLineHeight * scale));
 
 				case _: // WheelEvent.DOM_DELTA_PAGE and weird unknown ones
 
