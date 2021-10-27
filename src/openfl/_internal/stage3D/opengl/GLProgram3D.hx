@@ -56,19 +56,24 @@ class GLProgram3D {
 	}
 
 	public static function upload(program:Program3D, renderSession:GLRenderSession, vertexProgram:ByteArray, fragmentProgram:ByteArray):Void {
-		GLProgram3D.program = program;
-		GLProgram3D.renderSession = renderSession;
-
-		// var samplerStates = new Vector<SamplerState> (Context3D.MAX_SAMPLERS);
 		var samplerStates = new Array<SamplerState>();
 
 		var glslVertex = AGALConverter.convertToGLSL(renderSession.gl, vertexProgram, null);
 		var glslFragment = AGALConverter.convertToGLSL(renderSession.gl, fragmentProgram, samplerStates);
 
-		__uploadFromGLSL(glslVertex, glslFragment);
+		uploadSources(program, renderSession, glslVertex, glslFragment, samplerStates);
+	}
 
-		for (i in 0...samplerStates.length) {
-			program.__samplerStates[i] = samplerStates[i];
+	public static function uploadSources(program:Program3D, renderSession:GLRenderSession, vertexSource:String, fragmentSource:String, samplerStates:Null<Array<SamplerState>>):Void {
+		GLProgram3D.program = program;
+		GLProgram3D.renderSession = renderSession;
+
+		__uploadFromGLSL(vertexSource, fragmentSource);
+
+		if (samplerStates != null) {
+			for (i in 0...samplerStates.length) {
+				program.__samplerStates[i] = samplerStates[i];
+			}
 		}
 	}
 
