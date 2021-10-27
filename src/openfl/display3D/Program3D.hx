@@ -49,6 +49,12 @@ final class Program3D {
 		GLProgram3D.upload(this, __context.__renderSession, vertexProgram, fragmentProgram);
 	}
 
+	// TODO: SamplerState is currently _internal, it can be used but is not exactly a part of public API,
+	// we should either make it public or have another (structure?) type for initializing sampler states
+	public function uploadSources(vertexSource:String, fragmentSource:String, ?samplerStates:Array<SamplerState>):Void {
+		GLProgram3D.uploadSources(this, __context.__renderSession, vertexSource, fragmentSource, samplerStates);
+	}
+
 	private function __flush():Void {
 		__vertexUniformMap.flush();
 		__fragmentUniformMap.flush();
