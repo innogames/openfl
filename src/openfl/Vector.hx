@@ -101,7 +101,7 @@ abstract Vector<T>(IVector<T>) from IVector<T> {
 		this.unshift(x);
 	}
 
-	public inline function toArray():Array<T> {
+	@:to public inline function toArray():Array<T> {
 		return this.toArray();
 	}
 
