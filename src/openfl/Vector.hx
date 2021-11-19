@@ -97,18 +97,6 @@ abstract Vector<T>(IVector<T>) from IVector<T> {
 		this.unshift(x);
 	}
 
-	@:to public inline function toArray():Array<T> {
-		return this.toArray();
-	}
-
-	public inline static function ofArray<T>(a:Array<T>):Vector<T> {
-		var vector = new Vector<T>();
-		for (i in 0...a.length) {
-			vector[i] = a[i];
-		}
-		return vector;
-	}
-
 	public inline static function isVector(obj:Any):Bool {
 		return Std.is(obj, IVector);
 	}
@@ -151,6 +139,18 @@ abstract Vector<T>(IVector<T>) from IVector<T> {
 
 	inline function set_length(value:Int):Int {
 		return this.length = value;
+	}
+
+	@:to public inline function toArray():Array<T> {
+		return this.toArray();
+	}
+
+	@:generic public static function ofArray<T>(a:Array<T>):Vector<T> {
+		var vector = new Vector<T>();
+		for (i in 0...a.length) {
+			vector[i] = a[i];
+		}
+		return vector;
 	}
 }
 
