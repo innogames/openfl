@@ -34,6 +34,7 @@ class HTML5Window {
 
 	private var cacheElementHeight:Float;
 	private var cacheElementWidth:Float;
+	private var cacheScale:Float;
 	private var cacheMouseX:Float;
 	private var cacheMouseY:Float;
 	private var currentTouches = new Map<Int, Touch>();
@@ -55,8 +56,13 @@ class HTML5Window {
 			element = parent.config.element;
 		}
 
-		updateScale();
+		if (parent.config != null && Reflect.hasField(parent.config, "allowHighDPI") && parent.config.allowHighDPI) {
+			scale = Browser.window.devicePixelRatio;
+		}
 
+		parent.scale = scale;
+
+		cacheScale = scale;
 		cacheMouseX = 0;
 		cacheMouseY = 0;
 	}
@@ -385,7 +391,6 @@ class HTML5Window {
 
 	private function handleResizeEvent(event:js.html.Event):Void {
 		primaryTouch = null;
-		updateScale();
 		updateSize();
 	}
 
@@ -646,14 +651,6 @@ class HTML5Window {
 		return value;
 	}
 
-	private function updateScale():Void {
-		if (parent.config != null && Reflect.hasField(parent.config, "allowHighDPI") && parent.config.allowHighDPI) {
-			scale = Browser.window.devicePixelRatio;
-		}
-
-		parent.scale = scale;
-	}
-
 	private function updateSize():Void {
 		if (!parent.__resizable)
 			return;
@@ -668,17 +665,22 @@ class HTML5Window {
 			elementHeight = Browser.window.innerHeight;
 		}
 
-		if (elementWidth != cacheElementWidth || elementHeight != cacheElementHeight) {
+		if (parent.config != null && Reflect.hasField(parent.config, "allowHighDPI") && parent.config.allowHighDPI) {
+			scale = Browser.window.devicePixelRatio;
+		}
+
+		if (elementWidth != cacheElementWidth || elementHeight != cacheElementHeight || scale != cacheScale) {
 			cacheElementWidth = elementWidth;
 			cacheElementHeight = elementHeight;
-
-			var stretch = resizeElement || (setWidth == 0 && setHeight == 0);
+			cacheScale = scale;
 
 			if (element != null) {
+				var stretch = resizeElement || (setWidth == 0 && setHeight == 0);
 				if (stretch) {
-					if (parent.width != elementWidth || parent.height != elementHeight) {
+					if (parent.width != elementWidth || parent.height != elementHeight || parent.scale != scale) {
 						parent.width = elementWidth;
 						parent.height = elementHeight;
+						parent.scale = scale;
 
 						if (canvas != null) {
 							if (element != cast canvas) {
