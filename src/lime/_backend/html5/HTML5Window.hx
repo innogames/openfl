@@ -24,30 +24,31 @@ import lime.ui.Window;
 @:access(lime.ui.Joystick)
 @:access(lime.ui.Window)
 class HTML5Window {
-	private static var dummyCharacter = String.fromCharCode(127);
-	private static var textInput:InputElement;
-	private static var windowID:Int = 0;
-	private static var scrollLineHeight = getScrollLineHeight();
+	static final dummyCharacter = String.fromCharCode(127);
+	static var textInput:InputElement;
+	static var windowID:Int = 0;
+	static final scrollLineHeight = getScrollLineHeight();
 
 	public var canvas:CanvasElement;
-	public var element:Element;
+	public final element:Element;
 
-	private var cacheElementHeight:Float;
-	private var cacheElementWidth:Float;
-	private var cacheScale:Float;
-	private var cacheMouseX:Float;
-	private var cacheMouseY:Float;
-	private var currentTouches = new Map<Int, Touch>();
-	private var enableTextEvents:Bool;
-	private var isFullscreen:Bool;
-	private var parent:Window;
-	private var primaryTouch:Touch;
-	private var requestedFullscreen:Bool;
-	private var resizeElement:Bool;
-	private var scale = 1.0;
-	private var setHeight:Int;
-	private var setWidth:Int;
-	private var unusedTouchesPool = new List<Touch>();
+	var cacheElementHeight:Float;
+	var cacheElementWidth:Float;
+	var cacheScale:Float;
+	var cacheMouseX:Float;
+	var cacheMouseY:Float;
+	final currentTouches = new Map<Int, Touch>();
+	var enableTextEvents:Bool;
+	var isFullscreen:Bool;
+	final parent:Window;
+	var primaryTouch:Touch;
+	var requestedFullscreen:Bool;
+	var resizeElement:Bool;
+	var scale = 1.0;
+	var setHeight:Int;
+	var setWidth:Int;
+	final unusedTouchesPool = new List<Touch>();
+	final allowHighDPI:Bool;
 
 	public function new(parent:Window) {
 		this.parent = parent;
@@ -56,7 +57,8 @@ class HTML5Window {
 			element = parent.config.element;
 		}
 
-		if (parent.config != null && Reflect.hasField(parent.config, "allowHighDPI") && parent.config.allowHighDPI) {
+		allowHighDPI = parent.config != null && Reflect.hasField(parent.config, "allowHighDPI") && parent.config.allowHighDPI;
+		if (allowHighDPI) {
 			scale = Browser.window.devicePixelRatio;
 		}
 
@@ -665,7 +667,7 @@ class HTML5Window {
 			elementHeight = Browser.window.innerHeight;
 		}
 
-		if (parent.config != null && Reflect.hasField(parent.config, "allowHighDPI") && parent.config.allowHighDPI) {
+		if (allowHighDPI) {
 			scale = Browser.window.devicePixelRatio;
 		}
 
