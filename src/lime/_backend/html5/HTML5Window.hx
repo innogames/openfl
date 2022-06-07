@@ -1,17 +1,21 @@
 package lime._backend.html5;
 
+import haxe.Constraints.Function;
 import haxe.Timer;
+import js.Browser;
 import js.html.CanvasElement;
+import js.html.ClipboardEvent;
+import js.html.DragEvent;
 import js.html.Element;
+import js.html.EventTarget;
 import js.html.FocusEvent;
-import js.html.InputElement;
 import js.html.IFrameElement;
+import js.html.InputElement;
 import js.html.InputEvent;
 import js.html.MouseEvent;
+import js.html.Node;
 import js.html.TouchEvent;
-import js.html.ClipboardEvent;
 import js.html.WheelEvent;
-import js.Browser;
 import lime.app.Application;
 import lime.system.Clipboard;
 import lime.ui.Gamepad;
@@ -49,6 +53,7 @@ class HTML5Window {
 	var setWidth:Int;
 	final unusedTouchesPool = new List<Touch>();
 	final allowHighDPI:Bool;
+	final htmlListeners:Array<{target:EventTarget, type:String, listener:Function, useCapture:Bool}> = [];
 
 	public function new(parent:Window) {
 		this.parent = parent;
@@ -122,28 +127,38 @@ class HTML5Window {
 			var events = ["mousedown", "mouseenter", "mouseleave", "mousemove", "mouseup", "wheel"];
 
 			for (event in events) {
-				element.addEventListener(event, handleMouseEvent, true);
+				addHtmlListener(element, event, handleMouseEvent, true);
 			}
 
 			// Disable image drag on Firefox
-			Browser.document.addEventListener("dragstart", function(e) {
-				if (e.target.nodeName.toLowerCase() == "img") {
+			addHtmlListener(Browser.document, "dragstart", function(e:DragEvent) {
+				if ((cast e.target : Node).nodeName.toLowerCase() == "img") {
 					e.preventDefault();
 					return false;
 				}
 				return true;
 			}, false);
 
-			element.addEventListener("contextmenu", handleContextMenuEvent, true);
+			addHtmlListener(element, "contextmenu", handleContextMenuEvent, true);
 
-			element.addEventListener("touchstart", handleTouchEvent, true);
-			element.addEventListener("touchmove", handleTouchEvent, true);
-			element.addEventListener("touchend", handleTouchEvent, true);
-			element.addEventListener("touchcancel", handleTouchEvent, true);
+			addHtmlListener(element, "touchstart", handleTouchEvent, true);
+			addHtmlListener(element, "touchmove", handleTouchEvent, true);
+			addHtmlListener(element, "touchend", handleTouchEvent, true);
+			addHtmlListener(element, "touchcancel", handleTouchEvent, true);
 
-			element.addEventListener("gamepadconnected", handleGamepadEvent, true);
-			element.addEventListener("gamepaddisconnected", handleGamepadEvent, true);
+			addHtmlListener(element, "gamepadconnected", handleGamepadEvent, true);
+			addHtmlListener(element, "gamepaddisconnected", handleGamepadEvent, true);
 		}
+	}
+
+	function addHtmlListener(target:EventTarget, type:String, listener:Function, useCapture:Bool) {
+		target.addEventListener(type, listener, useCapture);
+		htmlListeners.push({
+			target: target,
+			type: type,
+			listener: listener,
+			useCapture: useCapture
+		});
 	}
 
 	public function getEnableTextEvents():Bool {
@@ -203,24 +218,48 @@ class HTML5Window {
 			parent.__fullscreen = false;
 
 			parent.onRestore.dispatch();
+			removeFullscreenChangeEvents();
+		}
+	}
 
-			var changeEvents = [
-				"fullscreenchange",
-				"mozfullscreenchange",
-				"webkitfullscreenchange",
-				"MSFullscreenChange"
-			];
-			var errorEvents = [
-				"fullscreenerror",
-				"mozfullscreenerror",
-				"webkitfullscreenerror",
-				"MSFullscreenError"
-			];
+	// TODO: extact these into some FullscreenHandler interface with different implementations for different browsers
+	function addFullscreenChangeEvents() {
+		if ((cast element).requestFullscreen) {
+			Browser.document.addEventListener("fullscreenchange", handleFullscreenEvent, false);
+			Browser.document.addEventListener("fullscreenerror", handleFullscreenEvent, false);
+			(cast element).requestFullscreen();
+		} else if ((cast element).mozRequestFullScreen) {
+			Browser.document.addEventListener("mozfullscreenchange", handleFullscreenEvent, false);
+			Browser.document.addEventListener("mozfullscreenerror", handleFullscreenEvent, false);
+			(cast element).mozRequestFullScreen();
+		} else if ((cast element).webkitRequestFullscreen) {
+			Browser.document.addEventListener("webkitfullscreenchange", handleFullscreenEvent, false);
+			Browser.document.addEventListener("webkitfullscreenerror", handleFullscreenEvent, false);
+			(cast element).webkitRequestFullscreen();
+		} else if ((cast element).msRequestFullscreen) {
+			Browser.document.addEventListener("MSFullscreenChange", handleFullscreenEvent, false);
+			Browser.document.addEventListener("MSFullscreenError", handleFullscreenEvent, false);
+			(cast element).msRequestFullscreen();
+		}
+	}
 
-			for (i in 0...changeEvents.length) {
-				Browser.document.removeEventListener(changeEvents[i], handleFullscreenEvent, false);
-				Browser.document.removeEventListener(errorEvents[i], handleFullscreenEvent, false);
-			}
+	function removeFullscreenChangeEvents() {
+		var changeEvents = [
+			"fullscreenchange",
+			"mozfullscreenchange",
+			"webkitfullscreenchange",
+			"MSFullscreenChange"
+		];
+		var errorEvents = [
+			"fullscreenerror",
+			"mozfullscreenerror",
+			"webkitfullscreenerror",
+			"MSFullscreenError"
+		];
+
+		for (i in 0...changeEvents.length) {
+			Browser.document.removeEventListener(changeEvents[i], handleFullscreenEvent, false);
+			Browser.document.removeEventListener(errorEvents[i], handleFullscreenEvent, false);
 		}
 	}
 
@@ -606,26 +645,7 @@ class HTML5Window {
 		if (value) {
 			if (!requestedFullscreen && !isFullscreen) {
 				requestedFullscreen = true;
-
-				untyped {
-					if (element.requestFullscreen) {
-						document.addEventListener("fullscreenchange", handleFullscreenEvent, false);
-						document.addEventListener("fullscreenerror", handleFullscreenEvent, false);
-						element.requestFullscreen();
-					} else if (element.mozRequestFullScreen) {
-						document.addEventListener("mozfullscreenchange", handleFullscreenEvent, false);
-						document.addEventListener("mozfullscreenerror", handleFullscreenEvent, false);
-						element.mozRequestFullScreen();
-					} else if (element.webkitRequestFullscreen) {
-						document.addEventListener("webkitfullscreenchange", handleFullscreenEvent, false);
-						document.addEventListener("webkitfullscreenerror", handleFullscreenEvent, false);
-						element.webkitRequestFullscreen();
-					} else if (element.msRequestFullscreen) {
-						document.addEventListener("MSFullscreenChange", handleFullscreenEvent, false);
-						document.addEventListener("MSFullscreenError", handleFullscreenEvent, false);
-						element.msRequestFullscreen();
-					}
-				}
+				addFullscreenChangeEvents();
 			}
 		} else if (isFullscreen) {
 			requestedFullscreen = false;
@@ -727,11 +747,13 @@ class HTML5Window {
 	}
 
 	function close() {
-		for (event in ["mousedown", "mouseenter", "mouseleave", "mousemove", "mouseup", "wheel"]) {
-			element.removeEventListener(event, handleMouseEvent, true);
+		for (entry in htmlListeners) {
+			entry.target.removeEventListener(entry.type, entry.listener, entry.useCapture);
 		}
 
 		Browser.window.removeEventListener("mouseup", handleMouseEvent);
+
+		removeFullscreenChangeEvents();
 
 		parent.onClose.dispatch();
 	}
