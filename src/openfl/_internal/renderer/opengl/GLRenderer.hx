@@ -31,6 +31,7 @@ class GLRenderer {
 
 		width = stage.stageWidth;
 		height = stage.stageHeight;
+		displayMatrix = stage.__displayMatrix;
 
 		matrix = new Matrix4();
 
@@ -147,8 +148,6 @@ class GLRenderer {
 	public function resize(width:Int, height:Int):Void {
 		this.width = width;
 		this.height = height;
-
-		displayMatrix = stage.__displayMatrix;
 
 		var w = stage.stageWidth;
 		var h = stage.stageHeight;

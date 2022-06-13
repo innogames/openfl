@@ -78,7 +78,7 @@ class Stage extends DisplayObjectContainer {
 	private var __colorSplit:Array<Float>;
 	private var __colorString:String;
 	private var __contentsScaleFactor:Float;
-	private var __displayMatrix:Matrix;
+	private final __displayMatrix:Matrix;
 	private var __displayState:StageDisplayState;
 	private var __dragBounds:Rectangle;
 	private var __dragObject:Sprite;
