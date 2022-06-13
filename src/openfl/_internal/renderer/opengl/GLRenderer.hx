@@ -13,17 +13,19 @@ import openfl.geom.Matrix;
 class GLRenderer {
 	public var height:Int;
 	public var width:Int;
-	public var projectionFlipped:Matrix4;
 
-	private var stage:Stage;
-	private var renderSession:GLRenderSession;
-	private var displayWidth:Int;
-	private var displayHeight:Int;
-	private var displayMatrix:Matrix;
-	private var gl:GLRenderContext;
-	private var matrix:Matrix4;
-	private var offsetX:Int;
-	private var offsetY:Int;
+	final stage:Stage;
+	final gl:GLRenderContext;
+	final displayMatrix:Matrix;
+	final renderSession:GLRenderSession;
+
+	final matrix:Matrix4;
+
+	var offsetX:Int;
+	var offsetY:Int;
+	var displayWidth:Int;
+	var displayHeight:Int;
+	var projectionFlipped:Matrix4;
 
 	public function new(stage:Stage, gl:GLRenderContext) {
 		this.stage = stage;
