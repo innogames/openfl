@@ -43,7 +43,7 @@ class GLShape {
 				var renderer = renderSession.renderer;
 				var gl = renderSession.gl;
 
-				var shader = (cast renderSession.maskManager : GLMaskManager).maskShader;
+				var shader = renderSession.maskManager.maskShader;
 
 				// var shader = renderSession.shaderManager.initShader (shape.shader);
 				renderSession.shaderManager.setShader(shader);

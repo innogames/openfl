@@ -30,7 +30,7 @@ class GLBitmap {
 			var renderer = renderSession.renderer;
 			var gl = renderSession.gl;
 
-			var shader = (cast renderSession.maskManager : GLMaskManager).maskShader;
+			var shader = renderSession.maskManager.maskShader;
 			renderSession.shaderManager.setShader(shader);
 
 			shader.data.uImage0.input = bitmap.__bitmapData;
