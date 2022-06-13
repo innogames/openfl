@@ -14,6 +14,7 @@ class GLRenderSession extends RenderSession {
 	public final batcher:BatchRenderer;
 	public final blendModeManager:GLBlendModeManager;
 	public final maskManager:GLMaskManager;
+	public var forceSmoothing:Bool;
 
 	#if vertex_array_object
 	public final vaoContext:Null<IVertexArrayObjectContext>;
