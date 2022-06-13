@@ -2,3 +2,5 @@
 /test.swf
 /playground.js
 /playground.js.map
+/node_modules
+/package-lock.json
