@@ -12,7 +12,7 @@ interface IDataInput {
 	public function readFloat():Float;
 	public function readInt():Int;
 	public function readMultiByte(length:UInt, charSet:String):String;
-	// function readObject ():Dynamic;
+	public function readObject():Dynamic;
 	public function readShort():Int;
 	public function readUnsignedByte():Int;
 	public function readUnsignedInt():Int;

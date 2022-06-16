@@ -11,7 +11,7 @@ interface IDataOutput {
 	public function writeFloat(value:Float):Void;
 	public function writeInt(value:Int):Void;
 	public function writeMultiByte(value:String, charSet:String):Void;
-	// public function writeObject (object:Dynamic):Void;
+	public function writeObject(object:Dynamic):Void;
 	public function writeShort(value:Int):Void;
 	public function writeUTF(value:String):Void;
 	public function writeUTFBytes(value:String):Void;

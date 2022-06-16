@@ -561,6 +561,12 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData {
 	@:noCompletion private inline function set_endian(value:Endian):Endian {
 		return __endian = value;
 	}
+
+	public function readObject():Dynamic {
+		return null;
+	}
+
+	public function writeObject(object:Dynamic) {}
 }
 #else
 
