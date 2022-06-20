@@ -529,4 +529,10 @@ class Socket extends EventDispatcher implements IDataInput implements IDataOutpu
 
 		return __endian;
 	}
+
+	public function readObject():Dynamic {
+		return null;
+	}
+
+	public function writeObject(object:Dynamic) {}
 }
