@@ -37,20 +37,15 @@ import openfl.geom.Transform;
 @:access(openfl.geom.Matrix)
 @:access(openfl.geom.Rectangle)
 class DisplayObject extends EventDispatcher implements IBitmapDrawable {
-	private static var __broadcastEvents = new Map<String, Array<DisplayObject>>();
-	private static var __initStage:Stage;
-	private static var __instanceCount = 0;
-	private static var __tempStack = new ObjectPool<Vector<DisplayObject>>(function() {
-		return new Vector<DisplayObject>();
-	}, function(stack) {
-		stack.length = 0;
-	});
-	private static var __tempBoundsRectangle = new Rectangle();
+	static final __broadcastEvents = new Map<String, Array<DisplayObject>>();
+	static var __initStage:Null<Stage>;
+	static var __instanceCount = 0;
+	static final __tempStack = new ObjectPool<Array<DisplayObject>>(() -> [], stack -> stack.resize(0));
+	static final __tempBoundsRectangle = new Rectangle();
 
 	@:keep public var alpha(get, set):Float;
 	public var blendMode(get, set):BlendMode;
 	public var cacheAsBitmap(get, set):Bool;
-	public var cacheAsBitmapMatrix(get, set):Matrix;
 	public var filters(get, set):Array<BitmapFilter>;
 	@:keep public var height(get, set):Float;
 	public var loaderInfo(get, never):LoaderInfo;
@@ -76,7 +71,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	private var __alpha:Float;
 	private var __blendMode:BlendMode;
 	private var __cacheAsBitmap:Bool;
-	private var __cacheAsBitmapMatrix:Matrix;
 	private var __cacheBitmap:Bitmap;
 	private var __cacheBitmapBackground:Null<Int>;
 	private var __cacheBitmapColorTransform:ColorTransform;
@@ -964,15 +958,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	private function set_cacheAsBitmap(value:Bool):Bool {
 		__setRenderDirty();
 		return __cacheAsBitmap = value;
-	}
-
-	private function get_cacheAsBitmapMatrix():Matrix {
-		return __cacheAsBitmapMatrix;
-	}
-
-	private function set_cacheAsBitmapMatrix(value:Matrix):Matrix {
-		__setRenderDirty();
-		return __cacheAsBitmapMatrix = value.clone();
 	}
 
 	private function get_filters():Array<BitmapFilter> {
