@@ -5,17 +5,17 @@ import openfl.events.IEventDispatcher;
 
 @:access(openfl.events.Event)
 class EventDispatcher implements IEventDispatcher {
-	private var __eventMap:Map<String, Array<Listener>>;
-	private var __iterators:Map<String, Array<DispatchIterator>>;
-	private var __targetDispatcher:IEventDispatcher;
+	@:noCompletion var __eventMap:Map<String, Array<Listener>>;
+	@:noCompletion var __iterators:Map<String, Array<DispatchIterator>>;
+	@:noCompletion var __targetDispatcher:IEventDispatcher;
 
-	public function new(target:IEventDispatcher = null):Void {
+	public function new(target:IEventDispatcher = null) {
 		if (target != null) {
 			__targetDispatcher = target;
 		}
 	}
 
-	public function addEventListener<T:Event>(type:EventType<T>, listener:T->Void, useCapture:Bool = false, priority:Int = 0, useWeakReference:Bool = false):Void {
+	public function addEventListener<T:Event>(type:EventType<T>, listener:T->Void, useCapture:Bool = false, priority:Int = 0, useWeakReference:Bool = false) {
 		if (listener == null)
 			return;
 
@@ -69,7 +69,7 @@ class EventDispatcher implements IEventDispatcher {
 		return __eventMap.exists(type);
 	}
 
-	public function removeEventListener<T:Event>(type:EventType<T>, listener:T->Void, useCapture:Bool = false):Void {
+	public function removeEventListener<T:Event>(type:EventType<T>, listener:T->Void, useCapture:Bool = false) {
 		if (__eventMap == null || listener == null)
 			return;
 
@@ -112,7 +112,7 @@ class EventDispatcher implements IEventDispatcher {
 		return hasEventListener(type);
 	}
 
-	private function __dispatchEvent(event:Event):Bool {
+	@:noCompletion function __dispatchEvent(event:Event):Bool {
 		if (__eventMap == null || event == null)
 			return true;
 
@@ -166,12 +166,7 @@ class EventDispatcher implements IEventDispatcher {
 		return true;
 	}
 
-	private function __removeAllListeners():Void {
-		__eventMap = null;
-		__iterators = null;
-	}
-
-	private function __addListenerByPriority(list:Array<Listener>, listener:Listener):Void {
+	@:noCompletion function __addListenerByPriority(list:Array<Listener>, listener:Listener) {
 		var numElements:Int = list.length;
 		var addAtPosition:Int = numElements;
 
@@ -199,7 +194,7 @@ class EventDispatcher implements IEventDispatcher {
 		index = list.length;
 	}
 
-	public function copy():Void {
+	public function copy() {
 		if (!isCopy) {
 			list = list.copy();
 			isCopy = true;
@@ -219,7 +214,7 @@ class EventDispatcher implements IEventDispatcher {
 		return list[index++];
 	}
 
-	public function remove(listener:Listener, listIndex:Int):Void {
+	public function remove(listener:Listener, listIndex:Int) {
 		if (active) {
 			if (!isCopy) {
 				if (listIndex < index) {
@@ -236,7 +231,7 @@ class EventDispatcher implements IEventDispatcher {
 		}
 	}
 
-	public function reset(list:Array<Listener>):Void {
+	public function reset(list:Array<Listener>) {
 		this.list = list;
 
 		active = true;
