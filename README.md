@@ -1,6 +1,6 @@
 # InnoGames OpenFL
 
-[![Build Status](https://travis-ci.org/innogames/openfl.svg?branch=develop)](https://travis-ci.org/innogames/openfl)
+[![CI](https://github.com/innogames/openfl/actions/workflows/ci.yml/badge.svg)](https://github.com/innogames/openfl/actions/workflows/ci.yml)
 
 This repository contains a fork of the great [OpenFL](https://github.com/openfl/openfl) framework that we at [InnoGames](https://www.innogames.com) use to power our HTML5 games.
 
