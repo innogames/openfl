@@ -692,8 +692,8 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 
 				__getFilterBounds(rect, __renderTransform);
 
-				bitmapWidth = Math.ceil(rect.width * pixelRatio);
-				bitmapHeight = Math.ceil(rect.height * pixelRatio);
+				bitmapWidth = Math.ceil(Math.fround(rect.width * pixelRatio * 10) / 10);
+				bitmapHeight = Math.ceil(Math.fround(rect.height * pixelRatio * 10) / 10);
 
 				if (!needRender && __cacheBitmap != null && (bitmapWidth != __cacheBitmap.width || bitmapHeight != __cacheBitmap.height)) {
 					needRender = true;
