@@ -197,6 +197,7 @@ class GLContext3D {
 		// TODO
 	}
 
+	@:access(openfl.display.BitmapData.__getImage)
 	public static function drawToBitmapData(context:Context3D, destination:BitmapData):Void {
 		var window = context.__stage3D.__stage.window;
 
@@ -204,7 +205,8 @@ class GLContext3D {
 			var image = window.renderer.readPixels();
 			var heightOffset = image.height - context.backBufferHeight;
 
-			destination.image.copyPixels(image,
+			// TODO: render to texture
+			destination.__getImage().copyPixels(image,
 				new LimeRectangle(Std.int(context.__stage3D.x), Std.int(context.__stage3D.y + heightOffset), context.backBufferWidth,
 					context.backBufferHeight),
 				new Point());

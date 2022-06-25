@@ -24,9 +24,10 @@ final class ColorMatrixFilter extends BitmapFilter {
 		return new ColorMatrixFilter(__matrix);
 	}
 
+	@:access(openfl.display.BitmapData)
 	function __applyFilter(destBitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point) {
-		var sourceImage = sourceBitmapData.image;
-		var image = destBitmapData.image;
+		var sourceImage = sourceBitmapData.__getImage();
+		var image = destBitmapData.__getImage();
 
 		ImageCanvasUtil.convertToData(sourceImage);
 		ImageCanvasUtil.convertToData(image);
@@ -79,7 +80,7 @@ final class ColorMatrixFilter extends BitmapFilter {
 			}
 		}
 
-		destBitmapData.image.dirty = true;
+		image.dirty = true;
 	}
 
 	// Get & Set Methods

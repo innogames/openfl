@@ -1,5 +1,7 @@
 package openfl._internal.renderer.opengl;
 
+import js.html.webgl.Framebuffer;
+import js.html.webgl.Texture;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.math.Matrix4;
@@ -13,6 +15,7 @@ import openfl.geom.Matrix;
 class GLRenderer {
 	public var height:Int;
 	public var width:Int;
+	public var renderToTexture(default,null):Bool = false;
 
 	final stage:Stage;
 	final gl:GLRenderContext;
@@ -24,6 +27,27 @@ class GLRenderer {
 	var displayWidth:Int;
 	var displayHeight:Int;
 	var projectionFlipped:Matrix4;
+
+	var _viewportX:Int;
+	var _viewportY:Int;
+	var _viewportWidth:Int;
+	var _viewportHeight:Int;
+	var _currentFramebuffer:Framebuffer;
+
+	function _setViewport(x:Int, y:Int, width:Int, height:Int) {
+		_viewportX = x;
+		_viewportY = y;
+		_viewportWidth = width;
+		_viewportHeight = height;
+		gl.viewport(x, y, width, height);
+		// also pass the viewport to the batcher because it uses it for the out-of-screen quad culling
+		renderSession.batcher.setViewport(0, 0, width, height);
+	}
+
+	function _bindFramebuffer(framebuffer:Framebuffer) {
+		_currentFramebuffer = framebuffer;
+		gl.bindFramebuffer(GL.FRAMEBUFFER, framebuffer);
+	}
 
 	public function new(stage:Stage, gl:GLRenderContext) {
 		this.stage = stage;
@@ -47,6 +71,72 @@ class GLRenderer {
 		var height = Std.int(stage.window.height * stage.window.scale);
 
 		resize(width, height);
+	}
+
+	public extern inline function withTextureFramebuffer(texture:Texture, f:()->Void) {
+		var oldFramebuffer = _currentFramebuffer;
+		var framebuffer = gl.createFramebuffer(); // TODO: save this for re-renders?
+		_bindFramebuffer(framebuffer);
+		gl.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, texture, 0);
+		f();
+		_bindFramebuffer(oldFramebuffer);
+		gl.deleteFramebuffer(framebuffer);
+	}
+
+	public extern inline function invokeRenderToTexture(width:Int, height:Int, texture:Texture, f:GLRenderSession->Void) {
+		var renderSession = this.renderSession;
+
+		renderSession.batcher.flush();
+
+		// TODO: do we need to reset displayMatrix too?
+		var oldProjectionFlipped = this.projectionFlipped;
+		var oldRenderHeight = this.height;
+		var oldPixelRatio = renderSession.pixelRatio;
+		var oldSmoothing = renderSession.allowSmoothing;
+		var oldClearRenderDirty = renderSession.clearRenderDirty;
+		var oldBlendMode = renderSession.blendModeManager.currentBlendMode;
+		var oldShader = renderSession.shaderManager.currentShader;
+		var oldStencilReference = renderSession.maskManager.suspend();
+		var oldViewportX = _viewportX;
+		var oldViewportY = _viewportY;
+		var oldViewportWidth = _viewportWidth;
+		var oldViewportHeight = _viewportHeight;
+		var oldFramebuffer = _currentFramebuffer;
+		var oldRenderToTexture = renderToTexture;
+
+		renderToTexture = true;
+		this.projectionFlipped = Matrix4.createOrtho(0, width, 0, height, -1000, 1000); // not flipped actually
+		this.height = height;
+		renderSession.batcher.projectionMatrix = projectionFlipped;
+		_setViewport(0, 0, width, height);
+
+		var framebuffer = gl.createFramebuffer(); // TODO: save this for re-renders?
+		_bindFramebuffer(framebuffer);
+		gl.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, texture, 0);
+
+		// TODO: only create if there are masks inside the rendered object!
+		var depthStencilBuffer = gl.createRenderbuffer();
+		gl.bindRenderbuffer(GL.RENDERBUFFER, depthStencilBuffer);
+		gl.renderbufferStorage(GL.RENDERBUFFER, GL.DEPTH_STENCIL, width, height);
+		gl.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.STENCIL_ATTACHMENT, GL.RENDERBUFFER, depthStencilBuffer);
+		gl.bindRenderbuffer(GL.RENDERBUFFER, null);
+
+		f(renderSession);
+
+		_setViewport(oldViewportX, oldViewportY, oldViewportWidth, oldViewportHeight);
+		this.projectionFlipped = oldProjectionFlipped;
+		this.height = oldRenderHeight;
+		renderToTexture = oldRenderToTexture;
+		renderSession.pixelRatio = oldPixelRatio;
+		renderSession.allowSmoothing = oldSmoothing;
+		renderSession.clearRenderDirty = oldClearRenderDirty;
+		renderSession.batcher.projectionMatrix = oldProjectionFlipped;
+		renderSession.blendModeManager.setBlendMode(oldBlendMode);
+		renderSession.shaderManager.setShader(oldShader);
+		renderSession.maskManager.resume(oldStencilReference);
+		_bindFramebuffer(oldFramebuffer);
+		gl.deleteFramebuffer(framebuffer);
+		gl.deleteRenderbuffer(depthStencilBuffer);
 	}
 
 	public function clear():Void {
@@ -96,7 +186,7 @@ class GLRenderer {
 	public function render():Void {
 		if (gl == null) return;
 
-		gl.viewport(offsetX, offsetY, displayWidth, displayHeight);
+		_setViewport(offsetX, offsetY, displayWidth, displayHeight);
 
 		renderSession.pixelRatio = stage.window.scale;
 
@@ -105,8 +195,6 @@ class GLRenderer {
 
 		// setup projection matrix for the batcher as it's an uniform value for all the draw calls
 		renderSession.batcher.projectionMatrix = projectionFlipped;
-		// also pass the viewport to the batcher because it uses it for the out-of-screen quad culling
-		renderSession.batcher.setViewport(offsetX, offsetY, displayWidth, displayHeight);
 
 		stage.__renderGL(renderSession);
 

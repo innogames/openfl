@@ -11,10 +11,11 @@ import lime.graphics.utils.ImageCanvasUtil;
 import lime.math.color.ARGB;
 import lime.utils.Float32Array;
 import openfl.Vector;
-import openfl._internal.renderer.canvas.CanvasRenderSession;
-import openfl._internal.renderer.canvas.CanvasSmoothing;
+import openfl._internal.renderer.opengl.GLRenderSession;
+import openfl._internal.renderer.opengl.batcher.Quad;
 import openfl._internal.renderer.opengl.batcher.QuadTextureData;
 import openfl._internal.renderer.opengl.batcher.TextureData;
+import openfl._internal.renderer.opengl.batcher.BlendMode as BatcherBlendMode;
 import openfl._internal.renderer.opengl.vao.IVertexArrayObjectContext;
 import openfl._internal.utils.PerlinNoise;
 import openfl.display3D.textures.TextureBase;
@@ -28,7 +29,7 @@ import openfl.utils.ByteArray;
 import openfl.utils.Object;
 #if (js && html5)
 import js.html.CanvasElement;
-import js.html.CanvasRenderingContext2D;
+import js.lib.Uint8Array;
 #end
 
 @:access(lime.graphics.opengl.GL)
@@ -52,12 +53,12 @@ class BitmapData implements IBitmapDrawable {
 	private static var __textureInternalFormat:Int;
 
 	public var height(default, null):Int;
-	public var image(default, null):Image;
-	@:beta public var readable(default, null):Bool;
+	@:beta public var readable(default, null):Bool; // TODO: remove this? we can always readPixels and we do it
 	public var rect(default, null):Rectangle;
 	public var transparent(default, null):Bool;
 	public var width(default, null):Int;
 
+	var __image:Image;
 	private var __buffer:GLBuffer;
 	private var __bufferColorTransform:ColorTransform;
 	private var __bufferContext:GLRenderContext;
@@ -68,7 +69,7 @@ class BitmapData implements IBitmapDrawable {
 	private var __textureData:TextureData;
 	private var __quadTextureData:QuadTextureData;
 	private var __textureContext:GLRenderContext;
-	private var __textureVersion:Int;
+	private var __textureVersion:Int = -1;
 	private var __ownsTexture:Bool;
 	private var __transform:Matrix;
 	private var __lock:LockState;
@@ -103,8 +104,8 @@ class BitmapData implements IBitmapDrawable {
 
 			fillColor = (fillColor << 8) | ((fillColor >> 24) & 0xFF);
 
-			image = new Image(null, width, height, fillColor);
-			image.transparent = transparent;
+			__image = new Image(null, width, height, fillColor);
+			__image.transparent = transparent;
 
 			__isValid = true;
 			readable = true;
@@ -125,7 +126,10 @@ class BitmapData implements IBitmapDrawable {
 	public function clone():BitmapData {
 		if (!__isValid) {
 			return new BitmapData(width, height, transparent, 0);
-		} else if (!readable && image == null) {
+		}
+
+		var image = __getImage();
+		if (!readable && image == null) {
 			var bitmapData = new BitmapData(0, 0, transparent, 0);
 
 			bitmapData.width = width;
@@ -146,7 +150,7 @@ class BitmapData implements IBitmapDrawable {
 		if (!readable)
 			return;
 
-		image.colorTransform(rect.__toLimeRectangle(), colorTransform.__toLimeColorMatrix());
+		__getImage().colorTransform(rect.__toLimeRectangle(), colorTransform.__toLimeColorMatrix());
 
 		__markUsersRenderDirty();
 	}
@@ -180,9 +184,12 @@ class BitmapData implements IBitmapDrawable {
 			return -4;
 		}
 
-		if (image != null && otherBitmapData.image != null && image.format == otherBitmapData.image.format) {
-			var bytes = image.data;
-			var otherBytes = otherBitmapData.image.data;
+		var thisImage = __getImage();
+		var otherImage = otherBitmapData.__getImage();
+
+		if (thisImage != null && otherImage != null && thisImage.format == otherImage.format) {
+			var bytes = thisImage.data;
+			var otherBytes = otherImage.data;
 			var equal = true;
 
 			for (i in 0...bytes.length) {
@@ -253,7 +260,7 @@ class BitmapData implements IBitmapDrawable {
 						bitmapData = new BitmapData(width, height, transparent || otherBitmapData.transparent, 0x00000000);
 					}
 
-					bitmapData.image.setPixel32(x, y, comparePixel, ARGB32);
+					bitmapData.__getImage().setPixel32(x, y, comparePixel, ARGB32);
 				}
 			}
 		}
@@ -286,18 +293,18 @@ class BitmapData implements IBitmapDrawable {
 			default: return;
 		}
 
-		image.copyChannel(sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint, sourceChannel, destChannel);
+		__getImage().copyChannel(sourceBitmapData.__getImage(), sourceRect.__toLimeRectangle(), destPoint, sourceChannel, destChannel);
 
 		__markUsersRenderDirty();
 	}
 
 	public function copyPixels(sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData = null, alphaPoint:Point = null,
 			mergeAlpha:Bool = false):Void {
-		if (!readable || sourceBitmapData == null || !sourceBitmapData.__prepareImage())
-			return;
+		if (!readable || sourceBitmapData == null) return;
+		var sourceImage = sourceBitmapData.__getImage();
+		if (sourceImage == null) return;
 
-		image.copyPixels(sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint.__toTempCopy(),
-			alphaBitmapData != null ? alphaBitmapData.image : null, alphaPoint, mergeAlpha);
+		__getImage().copyPixels(sourceImage, sourceRect.__toLimeRectangle(), destPoint.__toTempCopy(), alphaBitmapData != null ? alphaBitmapData.__getImage() : null, alphaPoint, mergeAlpha);
 
 		__markUsersRenderDirty();
 	}
@@ -305,7 +312,7 @@ class BitmapData implements IBitmapDrawable {
 	public function dispose():Void {
 		__cleanup();
 
-		image = null;
+		__image = null;
 
 		width = 0;
 		height = 0;
@@ -367,6 +374,7 @@ class BitmapData implements IBitmapDrawable {
 			var width = Math.ceil(bounds.width);
 			var height = Math.ceil(bounds.height);
 
+			// TODO: test this
 			var copy = new BitmapData(width, height, true, 0);
 			copy.__pixelRatio = __pixelRatio;
 			copy.draw(source);
@@ -381,7 +389,34 @@ class BitmapData implements IBitmapDrawable {
 			blendMode = NORMAL;
 		}
 
-		__draw(source, matrix, blendMode, clipRect, smoothing, false);
+		var renderer = openfl.Lib.current.stage.__renderer;
+		var gl = renderer.gl;
+
+		getTexture(gl);
+
+		// TODO: unify this with __drawBitmapCache
+		renderer.invokeRenderToTexture(width, height, __textureData.glTexture, renderSession -> {
+			renderSession.pixelRatio = __pixelRatio;
+			renderSession.allowSmoothing = smoothing;
+			renderSession.clearRenderDirty = false;
+
+			if (clipRect != null) {
+				renderSession.maskManager.pushRect(clipRect, Matrix.__identity);
+			}
+
+			// render the object
+			source.__renderToBitmap(renderSession, matrix, blendMode);
+
+			if (clipRect != null) {
+				renderSession.maskManager.popRect();
+			}
+
+			// flush the batch
+			renderSession.batcher.flush();
+
+			// increase texture version
+			__textureVersion = __image.version + 1;
+		});
 
 		__markUsersRenderDirty();
 	}
@@ -397,7 +432,7 @@ class BitmapData implements IBitmapDrawable {
 		if (byteArray == null)
 			byteArray = new ByteArray();
 
-		var image = this.image;
+		var image = this.__getImage();
 
 		if (!rect.equals(this.rect)) {
 			var matrix = Matrix.__pool.get();
@@ -407,7 +442,7 @@ class BitmapData implements IBitmapDrawable {
 			var bitmapData = new BitmapData(Math.ceil(rect.width), Math.ceil(rect.height), true, 0);
 			bitmapData.draw(this, matrix);
 
-			image = bitmapData.image;
+			image = bitmapData.__getImage();
 
 			Matrix.__pool.release(matrix);
 		}
@@ -432,8 +467,7 @@ class BitmapData implements IBitmapDrawable {
 		}
 
 		if (readable) {
-			image.fillRect(rect.__toLimeRectangle(), color, ARGB32);
-
+			__getImage().fillRect(rect.__toLimeRectangle(), color, ARGB32);
 			__markUsersRenderDirty();
 		}
 	}
@@ -441,7 +475,7 @@ class BitmapData implements IBitmapDrawable {
 	public function floodFill(x:Int, y:Int, color:Int):Void {
 		if (!readable)
 			return;
-		image.floodFill(x, y, color, ARGB32);
+		__getImage().floodFill(x, y, color, ARGB32);
 		__markUsersRenderDirty();
 	}
 
@@ -462,8 +496,9 @@ class BitmapData implements IBitmapDrawable {
 			return null;
 
 		var bitmapData = new BitmapData(0, 0, transparent, 0);
-		bitmapData.__fromImage(Image.fromCanvas(canvas));
-		bitmapData.image.transparent = transparent;
+		var image = Image.fromCanvas(canvas);
+		image.transparent = transparent;
+		bitmapData.__fromImage(image);
 		return bitmapData;
 	}
 
@@ -477,9 +512,9 @@ class BitmapData implements IBitmapDrawable {
 		if (image == null || image.buffer == null)
 			return null;
 
+		image.transparent = transparent;
 		var bitmapData = new BitmapData(0, 0, transparent, 0);
 		bitmapData.__fromImage(image);
-		bitmapData.image.transparent = transparent;
 		return bitmapData;
 	}
 
@@ -491,7 +526,7 @@ class BitmapData implements IBitmapDrawable {
 		bitmapData.readable = false;
 		bitmapData.__textureData = texture.__textureData;
 		bitmapData.__textureContext = texture.__textureContext;
-		bitmapData.image = null;
+		bitmapData.__image = null;
 		return bitmapData;
 	}
 
@@ -674,20 +709,20 @@ class BitmapData implements IBitmapDrawable {
 				color = 0;
 		}
 
-		var rect = image.getColorBoundsRect(mask, color, findColor, ARGB32);
+		var rect = __getImage().getColorBoundsRect(mask, color, findColor, ARGB32);
 		return new Rectangle(rect.x, rect.y, rect.width, rect.height);
 	}
 
 	public function getPixel(x:Int, y:Int):Int {
 		if (!readable)
 			return 0;
-		return image.getPixel(x, y, ARGB32);
+		return __getImage().getPixel(x, y, ARGB32);
 	}
 
 	public function getPixel32(x:Int, y:Int):Int {
 		if (!readable)
 			return 0;
-		return image.getPixel32(x, y, ARGB32);
+		return __getImage().getPixel32(x, y, ARGB32);
 	}
 
 	public function getPixels(rect:Rectangle):ByteArray {
@@ -695,10 +730,23 @@ class BitmapData implements IBitmapDrawable {
 			return null;
 		if (rect == null)
 			rect = this.rect;
-		var byteArray = ByteArray.fromBytes(image.getPixels(rect.__toLimeRectangle(), ARGB32));
+		var byteArray = ByteArray.fromBytes(__getImage().getPixels(rect.__toLimeRectangle(), ARGB32));
 		// TODO: System endian order
 		byteArray.endian = BIG_ENDIAN;
 		return byteArray;
+	}
+
+	function __getImage():Image {
+		var image = __image;
+		if (image == null) return null;
+		if (image.version < __textureVersion) {
+			var renderer = openfl.Lib.current.stage.__renderer;
+			var glTexture = getTexture(renderer.gl).data.glTexture;
+			renderer.withTextureFramebuffer(glTexture, () -> {
+				__readPixelsToImage(renderer.gl);
+			});
+		}
+		return image;
 	}
 
 	public function getTexture(gl:GLRenderContext):QuadTextureData {
@@ -719,10 +767,11 @@ class BitmapData implements IBitmapDrawable {
 			__textureVersion = -1;
 		}
 
-		if (image != null && image.version != __textureVersion) {
+		var textureImage = __image;
+		if (textureImage != null && textureImage.version > __textureVersion) {
 			var internalFormat, format;
 
-			if (image.buffer.bitsPerPixel == 1) {
+			if (textureImage.buffer.bitsPerPixel == 1) {
 				internalFormat = GL.ALPHA;
 				format = GL.ALPHA;
 			} else {
@@ -752,8 +801,6 @@ class BitmapData implements IBitmapDrawable {
 			}
 
 			gl.bindTexture(GL.TEXTURE_2D, __textureData.glTexture);
-
-			var textureImage = image;
 
 			#if (js && html5)
 			if (textureImage.type != DATA && !textureImage.premultiplied) {
@@ -796,11 +843,11 @@ class BitmapData implements IBitmapDrawable {
 			#end
 
 			gl.bindTexture(GL.TEXTURE_2D, null);
-			__textureVersion = image.version;
+			__textureVersion = textureImage.version;
 		}
 
-		if (!readable && image != null) {
-			image = null;
+		if (!readable && __image != null) {
+			__image = null;
 		}
 
 		if (__quadTextureData == null) {
@@ -979,7 +1026,7 @@ class BitmapData implements IBitmapDrawable {
 			alphaMultiplier:UInt):Void {
 		if (!readable || sourceBitmapData == null || !sourceBitmapData.readable || sourceRect == null || destPoint == null)
 			return;
-		image.merge(sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint, redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier);
+		__getImage().merge(sourceBitmapData.__getImage(), sourceRect.__toLimeRectangle(), destPoint, redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier);
 		__markUsersRenderDirty();
 	}
 
@@ -988,12 +1035,10 @@ class BitmapData implements IBitmapDrawable {
 			return;
 
 		// Seeded Random Number Generator
-		var rand:Void->Int = {
-			function func():Int {
-				randomSeed = randomSeed * 1103515245 + 12345;
-				return Std.int(Math.abs(randomSeed / 65536)) % 32768;
-			}
-		};
+		function rand():Int {
+			randomSeed = randomSeed * 1103515245 + 12345;
+			return Std.int(Math.abs(randomSeed / 65536)) % 32768;
+		}
 		rand();
 
 		// Range of values to value to.
@@ -1005,6 +1050,7 @@ class BitmapData implements IBitmapDrawable {
 		var blueChannel:Bool = ((channelOptions & (1 << 2)) >> 2) == 1;
 		var alphaChannel:Bool = ((channelOptions & (1 << 3)) >> 3) == 1;
 
+		var image = __getImage();
 		for (y in 0...height) {
 			for (x in 0...width) {
 				// Default channel colours if all channel options are false.
@@ -1080,21 +1126,21 @@ class BitmapData implements IBitmapDrawable {
 	public function scroll(x:Int, y:Int):Void {
 		if (!readable)
 			return;
-		image.scroll(x, y);
+		__getImage().scroll(x, y);
 		__markUsersRenderDirty();
 	}
 
 	public function setPixel(x:Int, y:Int, color:Int):Void {
 		if (!readable)
 			return;
-		image.setPixel(x, y, color, ARGB32);
+		__getImage().setPixel(x, y, color, ARGB32);
 		__markUsersRenderDirty();
 	}
 
 	public function setPixel32(x:Int, y:Int, color:Int):Void {
 		if (!readable)
 			return;
-		image.setPixel32(x, y, color, ARGB32);
+		__getImage().setPixel32(x, y, color, ARGB32);
 		__markUsersRenderDirty();
 	}
 
@@ -1106,7 +1152,7 @@ class BitmapData implements IBitmapDrawable {
 		if (byteArray.bytesAvailable < length)
 			throw new Error("End of file was encountered.", 2030);
 
-		image.setPixels(rect.__toLimeRectangle(), byteArray, byteArray.position, ARGB32, byteArray.endian);
+		__getImage().setPixels(rect.__toLimeRectangle(), byteArray, byteArray.position, ARGB32, byteArray.endian);
 		__markUsersRenderDirty();
 	}
 
@@ -1133,7 +1179,7 @@ class BitmapData implements IBitmapDrawable {
 			|| destPoint.y > height)
 			return 0;
 
-		return image.threshold(sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint, operation, threshold, color, mask,
+		return __getImage().threshold(sourceBitmapData.__getImage(), sourceRect.__toLimeRectangle(), destPoint, operation, threshold, color, mask,
 			copySource, ARGB32);
 	}
 
@@ -1145,6 +1191,7 @@ class BitmapData implements IBitmapDrawable {
 	}
 
 	private function __applyAlpha(alpha:ByteArray):Void {
+		var image = __getImage();
 		#if (js && html5)
 		ImageCanvasUtil.convertToCanvas(image);
 		ImageCanvasUtil.createImageData(image);
@@ -1176,37 +1223,54 @@ class BitmapData implements IBitmapDrawable {
 		__vaoContext = null;
 	}
 
-	private function __draw(source:IBitmapDrawable, matrix:Matrix, blendMode:BlendMode, clipRect:Null<Rectangle>, smoothing:Bool, clearRenderDirty:Bool):Void {
-		ImageCanvasUtil.convertToCanvas(image);
+	function __drawBitmapCache(source:DisplayObject, matrix:Matrix, needReadPixels:Bool) {
+		var renderer = openfl.Lib.current.stage.__renderer;
+		var gl = renderer.gl;
 
-		var buffer = image.buffer;
+		// create and assign texture
+		var image = __image;
+		__image = null; // temporarily unset underlying image, so getTexture won't try uploading it
+		getTexture(gl);
+		__image = image;
 
-		var renderSession = new CanvasRenderSession(buffer.__srcContext, clearRenderDirty);
-		renderSession.allowSmoothing = smoothing;
-		renderSession.pixelRatio = __pixelRatio;
+		// allocate the texture
+		gl.bindTexture(GL.TEXTURE_2D, __textureData.glTexture);
+		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, width, height, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
+		gl.bindTexture(GL.TEXTURE_2D, null);
 
-		buffer.__srcContext.save();
+		renderer.invokeRenderToTexture(width, height, __textureData.glTexture, renderSession -> {
+			renderSession.pixelRatio = __pixelRatio;
 
-		CanvasSmoothing.setEnabled(buffer.__srcContext, smoothing);
+			// render the object
+			source.__renderToBitmap(renderSession, matrix, NORMAL);
 
-		if (clipRect != null) {
-			renderSession.maskManager.pushRect(clipRect, new Matrix());
-		}
+			// flush the batch
+			renderSession.batcher.flush();
 
-		source.__renderToBitmap(renderSession, matrix, blendMode);
+			// increase texture version, so the image can be synced back from texture if needed
+			__textureVersion = image.version + 1;
 
-		buffer.__srcContext.restore();
-
-		if (clipRect != null) {
-			renderSession.maskManager.popRect();
-		}
-
-		buffer.__srcImageData = null;
-		buffer.data = null;
-
-		image.dirty = true;
-		image.version++;
+			// read pixels back to memory
+			if (needReadPixels) {
+				__readPixelsToImage(gl);
+			}
+		});
 	}
+
+	function __readPixelsToImage(gl:GL) {
+		var image = __image;
+		if (image.type == CANVAS) {
+			// TODO: draw from webgl canvas to image canvas
+			image.buffer.__srcCanvas = null;
+			image.buffer.__srcContext = null;
+			image.buffer.__srcImage = null;
+			image.buffer.data = new Uint8Array(width * height * 4);
+			image.type = DATA;
+		}
+		gl.readPixels(0, 0, width, height, GL.RGBA, GL.UNSIGNED_BYTE, image.buffer.data, 0);
+		image.version = __textureVersion;
+		image.dirty = true; // TODO: is this required?
+}
 
 	private inline function __fromBase64(base64:String, type:String):Void {
 		var image = Image.fromBase64(base64, type);
@@ -1229,7 +1293,7 @@ class BitmapData implements IBitmapDrawable {
 
 	private function __fromImage(image:Image):Void {
 		if (image != null && image.buffer != null) {
-			this.image = image;
+			__image = image;
 
 			width = image.width;
 			height = image.height;
@@ -1270,9 +1334,6 @@ class BitmapData implements IBitmapDrawable {
 		});
 	}
 
-	private function __prepareImage()
-		return image != null;
-
 	private function __loadFromFile(path:String):Future<BitmapData> {
 		return Image.loadFromFile(path).then(function(image) {
 			__fromImage(image);
@@ -1280,46 +1341,16 @@ class BitmapData implements IBitmapDrawable {
 		});
 	}
 
-	#if (js && html5)
-	function __canBeDrawnToCanvas():Bool {
-		return image != null;
-	}
+	private function __renderToBitmap(renderSession:GLRenderSession, matrix:Matrix, blendMode:BlendMode) {
+		if (!__isValid) return;
 
-	function __drawToCanvas(context:CanvasRenderingContext2D, transform:Matrix, roundPixels:Bool, pixelRatio:Float, scrollRect:Rectangle,
-			useScrollRectCoords:Bool):Void {
-		if (image.type == DATA) {
-			ImageCanvasUtil.convertToCanvas(image);
-		}
-
-		var scale = pixelRatio / this.__pixelRatio; // Bitmaps can have different pixelRatio than display, therefore we need to scale them properly
-
-		if (roundPixels) {
-			context.setTransform(transform.a * scale, transform.b, transform.c, transform.d * scale, Math.round(transform.tx * pixelRatio),
-				Math.round(transform.ty * pixelRatio));
-		} else {
-			context.setTransform(transform.a * scale, transform.b, transform.c, transform.d * scale, transform.tx * pixelRatio, transform.ty * pixelRatio);
-		}
-
-		if (scrollRect == null) {
-			context.drawImage(image.src, 0, 0);
-		} else {
-			var dx, dy;
-			if (useScrollRectCoords) {
-				dx = scrollRect.x;
-				dy = scrollRect.y;
-			} else {
-				dx = dy = 0;
-			}
-
-			context.drawImage(image.src, scrollRect.x, scrollRect.y, scrollRect.width, scrollRect.height, dx, dy, scrollRect.width, scrollRect.height);
-		}
-	}
-	#end
-
-	private function __renderToBitmap(renderSession:CanvasRenderSession, matrix:Matrix, blendMode:BlendMode) {
-		renderSession.context.globalAlpha = 1;
-		renderSession.blendModeManager.setBlendMode(blendMode);
-		__drawToCanvas(renderSession.context, matrix, renderSession.roundPixels, renderSession.pixelRatio, null, false);
+		var quad = Quad.pool.get();
+		var transform = renderSession.renderer.getDisplayTransformTempMatrix(matrix, renderSession.roundPixels);
+		__fillBatchQuad(transform, quad.vertexData);
+		quad.texture = getTexture(renderSession.gl);
+		quad.setup(1, null, BatcherBlendMode.fromOpenFLBlendMode(blendMode), true);
+		renderSession.batcher.render(quad);
+		Quad.pool.release(quad);
 	}
 }
 

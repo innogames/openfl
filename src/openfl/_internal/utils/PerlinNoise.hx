@@ -55,6 +55,7 @@ class PerlinNoise {
 		octFreqPers(falloff);
 	}
 
+	@:access(openfl.display.BitmapData.__getImage)
 	public function fill(bitmap:BitmapData, _x:Float, _y:Float, _z:Float, ?_):Void {
 		var baseX:Float;
 
@@ -62,8 +63,9 @@ class PerlinNoise {
 		_y = _y * baseFactor + iYoffset;
 		_z = _z * baseFactor + iZoffset;
 
-		var width:Int = bitmap.width;
-		var height:Int = bitmap.height;
+		var width = bitmap.width;
+		var height = bitmap.height;
+		var image = bitmap.__getImage();
 
 		var p = P;
 		var octaves = octaves;
@@ -156,7 +158,7 @@ class PerlinNoise {
 
 				var color = Std.int((s * fPersMax + 1) * 128);
 
-				bitmap.image.setPixel32(px, py, 0xff000000 | color << 16 | color << 8 | color, ARGB32);
+				image.setPixel32(px, py, 0xff000000 | color << 16 | color << 8 | color, ARGB32);
 
 				_x += baseFactor;
 			}

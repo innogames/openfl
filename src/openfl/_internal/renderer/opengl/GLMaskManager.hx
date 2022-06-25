@@ -33,6 +33,29 @@ class GLMaskManager {
 		tempRect = new Rectangle();
 	}
 
+	public function suspend():Int {
+		var oldStencilReference = stencilReference;
+		stencilReference = 0;
+		if (oldStencilReference > 0) {
+			gl.disable(GL.STENCIL_TEST);
+		}
+		gl.disable(GL.SCISSOR_TEST);
+		gl.colorMask(true, true, true, true); // TODO: restore color mask in resume?
+		return oldStencilReference;
+	}
+
+	public function resume(oldStencilReference:Int) {
+		stencilReference = oldStencilReference;
+		if (oldStencilReference > 0) {
+			gl.enable(GL.STENCIL_TEST);
+		}
+		if (numClipRects > 0) {
+			scissorRect(clipRects[numClipRects - 1]);
+		} else {
+			scissorRect();
+		}
+	}
+
 	function pushMask(mask:DisplayObject) {
 		// flush everything in the current batch, since we're rendering stuff differently now
 		renderSession.batcher.flush();
@@ -165,12 +188,16 @@ class GLMaskManager {
 			var width = Math.ceil(clipRect.right) - x;
 			var height = Math.ceil(clipRect.bottom) - y;
 
+			if (!renderer.renderToTexture) {
+				y = renderer.height - y - height;
+			}
+
 			if (width < 0)
 				width = 0;
 			if (height < 0)
 				height = 0;
 
-			gl.scissor(x, renderer.height - y - height, width, height);
+			gl.scissor(x, y, width, height);
 		} else {
 			gl.disable(GL.SCISSOR_TEST);
 		}
@@ -180,38 +207,38 @@ class GLMaskManager {
 class GLMaskShader extends Shader {
 	override function __getGlFragmentSource() return "
 		varying vec2 vTexCoord;
-		
+
 		uniform sampler2D uImage0;
-		
+
 		void main(void) {
-			
+
 			vec4 color = texture2D (uImage0, vTexCoord);
-			
+
 			if (color.a == 0.0) {
-				
+
 				discard;
-				
+
 			} else {
-				
+
 				gl_FragColor = color;
-				
+
 			}
-			
+
 		}
 	";
 	override function __getGlVertexSource() return "
 		attribute vec4 aPosition;
 		attribute vec2 aTexCoord;
 		varying vec2 vTexCoord;
-		
+
 		uniform mat4 uMatrix;
-		
+
 		void main(void) {
-			
+
 			vTexCoord = aTexCoord;
-			
+
 			gl_Position = uMatrix * aPosition;
-			
+
 		}
 	";
 }

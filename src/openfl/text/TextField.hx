@@ -7,9 +7,6 @@ import lime.ui.KeyModifier;
 import lime.ui.MouseCursor;
 import lime.ui.Window.CopyDataProvider;
 import openfl.Lib;
-import openfl._internal.renderer.RenderSession;
-import openfl._internal.renderer.canvas.CanvasRenderSession;
-import openfl._internal.renderer.canvas.CanvasSmoothing;
 import openfl._internal.renderer.canvas.CanvasTextField;
 import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.text.HTMLParser;
@@ -914,24 +911,6 @@ class TextField extends InteractiveObject {
 		return false;
 	}
 
-	private override function __renderCanvas(renderSession:CanvasRenderSession):Void {
-		#if (js && html5)
-		__forceCachedBitmapUpdate = __forceCachedBitmapUpdate || __dirty;
-
-		CanvasTextField.render(this, renderSession.pixelRatio, renderSession.allowSmoothing, __worldTransform);
-
-		if (__textEngine.antiAliasType == ADVANCED && __textEngine.gridFitType == PIXEL) {
-			CanvasSmoothing.setEnabled(renderSession.context, false);
-
-			super.__renderCanvas(renderSession);
-
-			CanvasSmoothing.setEnabled(renderSession.context, true);
-		} else {
-			super.__renderCanvas(renderSession);
-		}
-		#end
-	}
-
 	private override function __renderGL(renderSession:GLRenderSession):Void {
 		__forceCachedBitmapUpdate = __forceCachedBitmapUpdate || __dirty;
 
@@ -986,7 +965,7 @@ class TextField extends InteractiveObject {
 		__disableInput();
 	}
 
-	private override function __updateCacheBitmap(renderSession:RenderSession, force:Bool):Bool {
+	private override function __updateCacheBitmap(renderSession:GLRenderSession, force:Bool):Bool {
 		var success = super.__updateCacheBitmap(renderSession, force);
 		__forceCachedBitmapUpdate = false;
 
