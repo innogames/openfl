@@ -934,6 +934,10 @@ class TextField extends InteractiveObject {
 
 	private override function __renderGL(renderSession:GLRenderSession):Void {
 		__forceCachedBitmapUpdate = __forceCachedBitmapUpdate || __dirty;
+
+		// return early to avoid rendering text to canvas if we're not visible
+		if (!__renderable || __worldAlpha <= 0) return;
+
 		#if (js && html5)
 		CanvasTextField.render(this, renderSession.pixelRatio, renderSession.allowSmoothing, __worldTransform);
 		#end
