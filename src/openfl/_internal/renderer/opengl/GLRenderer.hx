@@ -19,8 +19,6 @@ class GLRenderer {
 	final displayMatrix:Matrix;
 	final renderSession:GLRenderSession;
 
-	final matrix:Matrix4;
-
 	var offsetX:Int;
 	var offsetY:Int;
 	var displayWidth:Int;
@@ -31,11 +29,7 @@ class GLRenderer {
 		this.stage = stage;
 		this.gl = gl;
 
-		width = stage.stageWidth;
-		height = stage.stageHeight;
 		displayMatrix = stage.__displayMatrix;
-
-		matrix = new Matrix4();
 
 		if (gl != null) {
 			if (Graphics.maxTextureWidth == null) {
@@ -67,10 +61,11 @@ class GLRenderer {
 		gl.clear(GL.COLOR_BUFFER_BIT);
 	}
 
-	static var getMatrixHelperMatrix = new Matrix();
+	static final getDisplayTransformTempMatrixHelperMatrix = new Matrix();
+	static final getMatrixHelperMatrix:Matrix4 = new Matrix4();
 
 	public function getDisplayTransformTempMatrix(transform:Matrix, snapToPixel:Bool):Matrix {
-		var matrix = getMatrixHelperMatrix;
+		var matrix = getDisplayTransformTempMatrixHelperMatrix;
 		matrix.copyFrom(transform);
 		matrix.concat(displayMatrix);
 
@@ -85,6 +80,7 @@ class GLRenderer {
 	public function getMatrix(transform:Matrix, snapToPixel:Bool = false):Matrix4 {
 		var _matrix = getDisplayTransformTempMatrix(transform, renderSession.roundPixels || snapToPixel);
 
+		var matrix = getMatrixHelperMatrix;
 		matrix.identity();
 		matrix[0] = _matrix.a;
 		matrix[1] = _matrix.b;
@@ -148,6 +144,7 @@ class GLRenderer {
 	}
 
 	public function resize(width:Int, height:Int):Void {
+		// TODO: figure out and document the difference between width/height, stageWidth/stageHeight and displayWidth/displayHeight
 		this.width = width;
 		this.height = height;
 
