@@ -956,8 +956,11 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	}
 
 	private function set_cacheAsBitmap(value:Bool):Bool {
-		__setRenderDirty();
-		return __cacheAsBitmap = value;
+		if (value != __cacheAsBitmap) {
+			__cacheAsBitmap = value;
+			__setRenderDirty();
+		}
+		return value;
 	}
 
 	private function get_filters():Array<BitmapFilter> {
