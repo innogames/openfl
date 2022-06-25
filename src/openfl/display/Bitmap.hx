@@ -240,10 +240,6 @@ class Bitmap extends DisplayObject {
 
 		__setBitmapDataDirty();
 
-		if (__hasFilters()) {
-			// __updateFilters = true;
-		}
-
 		return __bitmapData;
 	}
 

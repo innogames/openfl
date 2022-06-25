@@ -965,23 +965,20 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 
 	private function get_filters():Array<BitmapFilter> {
 		if (__filters == null) {
-			return new Array();
+			return [];
 		} else {
 			return __filters.copy();
 		}
 	}
 
 	private function set_filters(value:Array<BitmapFilter>):Array<BitmapFilter> {
-		if (value != null && value.length > 0) {
-			__filters = value;
-			// __updateFilters = true;
-		} else {
-			__filters = null;
-			// __updateFilters = false;
+		if (value != null && value.length == 0) {
+			value = null;
 		}
-
-		__setRenderDirty();
-
+		if (value != __filters) {
+			__filters = value;
+			__setRenderDirty();
+		}
 		return value;
 	}
 
