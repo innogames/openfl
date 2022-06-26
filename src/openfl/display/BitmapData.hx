@@ -334,9 +334,9 @@ class BitmapData implements IBitmapDrawable {
 		if (__ownsTexture) {
 			__ownsTexture = false;
 			// TODO: handle context loss instead of doing isTexture as this brings a performance impact due to gpu sync
-			if (__textureContext.isTexture(__textureData.glTexture)) { // prevent the warning when the id becomes invalid after context loss+restore
+			// if (__textureContext.isTexture(__textureData.glTexture)) { // prevent the warning when the id becomes invalid after context loss+restore
 				__textureContext.deleteTexture(__textureData.glTexture);
-			}
+			// }
 			__textureData = null;
 			__textureContext = null;
 		}
