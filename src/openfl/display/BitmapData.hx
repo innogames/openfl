@@ -364,8 +364,8 @@ class BitmapData implements IBitmapDrawable {
 
 			source.__getBounds(bounds, boundsMatrix);
 
-			var width:Int = Math.ceil(bounds.width);
-			var height:Int = Math.ceil(bounds.height);
+			var width = Math.ceil(bounds.width);
+			var height = Math.ceil(bounds.height);
 
 			var copy = new BitmapData(width, height, true, 0);
 			copy.__pixelRatio = __pixelRatio;
