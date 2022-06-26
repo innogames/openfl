@@ -29,17 +29,14 @@ final class BlurFilter extends BitmapFilter {
 		__renderDirty = true;
 	}
 
-	public override function clone():BitmapFilter {
+	public function clone():BitmapFilter {
 		return new BlurFilter(__blurX, __blurY, __quality);
 	}
 
-	private override function __applyFilter(bitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point):BitmapData {
+	function __applyFilter(bitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point) {
 		@:privateAccess var pixelRatio = sourceBitmapData.__pixelRatio;
-		var finalImage = ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint,
+		ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint,
 			__blurX * pixelRatio, __blurY * pixelRatio, __quality);
-		if (finalImage == bitmapData.image)
-			return bitmapData;
-		return sourceBitmapData;
 	}
 
 	// Get & Set Methods

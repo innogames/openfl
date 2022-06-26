@@ -20,11 +20,11 @@ final class ColorMatrixFilter extends BitmapFilter {
 		__needSecondBitmapData = false;
 	}
 
-	public override function clone():BitmapFilter {
+	public function clone():BitmapFilter {
 		return new ColorMatrixFilter(__matrix);
 	}
 
-	private override function __applyFilter(destBitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point):BitmapData {
+	function __applyFilter(destBitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point) {
 		var sourceImage = sourceBitmapData.image;
 		var image = destBitmapData.image;
 
@@ -80,7 +80,6 @@ final class ColorMatrixFilter extends BitmapFilter {
 		}
 
 		destBitmapData.image.dirty = true;
-		return destBitmapData;
 	}
 
 	// Get & Set Methods

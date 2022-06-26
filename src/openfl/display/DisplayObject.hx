@@ -779,22 +779,21 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 
 					var sourceRect = bitmapData.rect;
 					var destPoint = new Point(); // TODO: ObjectPool
-					var cacheBitmap, lastBitmap;
 
 					for (filter in __filters) {
 						if (filter.__preserveObject) {
 							bitmapData3.copyPixels(bitmapData, bitmapData.rect, destPoint);
 						}
 
-						lastBitmap = filter.__applyFilter(bitmapData2, bitmapData, sourceRect, destPoint);
+						filter.__applyFilter(bitmapData2, bitmapData, sourceRect, destPoint);
 
 						if (filter.__preserveObject) {
-							lastBitmap.draw(bitmapData3, null, transform.colorTransform);
+							bitmapData2.draw(bitmapData3, null, transform.colorTransform);
 						}
 						filter.__renderDirty = false;
 
-						if (needSecondBitmapData && lastBitmap == bitmapData2) {
-							cacheBitmap = bitmapData;
+						if (needSecondBitmapData) {
+							var cacheBitmap = bitmapData;
 							bitmapData = bitmapData2;
 							bitmapData2 = cacheBitmap;
 						}

@@ -422,7 +422,7 @@ class ImageDataUtil {
 	}
 
 	public static function gaussianBlur(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, blurX:Float = 4, blurY:Float = 4,
-			quality:Int = 1, strength:Float = 1):Image {
+			quality:Int = 1, strength:Float = 1) {
 		// TODO: Support sourceRect better, do not modify sourceImage, create C++ implementation for native
 
 		if (image.buffer.premultiplied || sourceImage.buffer.premultiplied) {
@@ -430,7 +430,7 @@ class ImageDataUtil {
 			throw "Pre-multiplied bitmaps are not supported";
 		}
 
-		var boxesForGauss = function(sigma:Float, n:Int):Array<Float> {
+		function boxesForGauss(sigma:Float, n:Int):Array<Float> {
 			var wIdeal = Math.sqrt((12 * sigma * sigma / n) + 1); // Ideal averaging filter width
 			var wl = Math.floor(wIdeal);
 			if (wl % 2 == 0)
@@ -446,7 +446,7 @@ class ImageDataUtil {
 			return sizes;
 		}
 
-		var boxBlurH = function(imgA:UInt8Array, imgB:UInt8Array, w:Int, h:Int, r:Int, off:Int):Void {
+		function boxBlurH(imgA:UInt8Array, imgB:UInt8Array, w:Int, h:Int, r:Int, off:Int):Void {
 			var iarr = 1 / (r + r + 1);
 			for (i in 0...h) {
 				var ti = i * w, li = ti, ri = ti + r;
@@ -479,7 +479,7 @@ class ImageDataUtil {
 			}
 		}
 
-		var boxBlurT = function(imgA:UInt8Array, imgB:UInt8Array, w:Int, h:Int, r:Int, off:Int):Void {
+		function boxBlurT(imgA:UInt8Array, imgB:UInt8Array, w:Int, h:Int, r:Int, off:Int):Void {
 			var iarr = 1 / (r + r + 1);
 			var ws = w * 4;
 			for (i in 0...w) {
@@ -512,7 +512,7 @@ class ImageDataUtil {
 			}
 		}
 
-		var boxBlur = function(imgA:UInt8Array, imgB:UInt8Array, w:Int, h:Int, bx:Float, by:Float):Void {
+		function boxBlur(imgA:UInt8Array, imgB:UInt8Array, w:Int, h:Int, bx:Float, by:Float):Void {
 			for (i in 0...imgA.length)
 				imgB[i] = imgA[i];
 
@@ -580,10 +580,6 @@ class ImageDataUtil {
 		image.version++;
 		sourceImage.dirty = true;
 		sourceImage.version++;
-
-		if (imgB == image.data)
-			return image;
-		return sourceImage;
 	}
 
 	/**

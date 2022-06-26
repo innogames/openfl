@@ -1,5 +1,9 @@
 package openfl.filters;
 
+import openfl.display.BitmapData;
+import openfl.geom.Rectangle;
+import openfl.geom.Point;
+
 class ConvolutionFilter extends BitmapFilter {
 	public var alpha:Float;
 	public var bias:Float;
@@ -28,8 +32,12 @@ class ConvolutionFilter extends BitmapFilter {
 		this.alpha = alpha;
 	}
 
-	public override function clone():BitmapFilter {
+	public function clone():BitmapFilter {
 		return new ConvolutionFilter(matrixX, matrixY, __matrix, divisor, bias, preserveAlpha, clamp, color, alpha);
+	}
+
+	function __applyFilter(bitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point) {
+		// TODO
 	}
 
 	// Get & Set Methods

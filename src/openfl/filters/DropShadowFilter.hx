@@ -61,11 +61,11 @@ final class DropShadowFilter extends BitmapFilter {
 		__renderDirty = true;
 	}
 
-	public override function clone():BitmapFilter {
+	public function clone():BitmapFilter {
 		return new DropShadowFilter(__distance, __angle, __color, __alpha, __blurX, __blurY, __strength, __quality, __inner, __knockout, __hideObject);
 	}
 
-	private override function __applyFilter(bitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point):BitmapData {
+	function __applyFilter(bitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point) {
 		// TODO: Support knockout, inner
 		@:privateAccess var pixelRatio = sourceBitmapData.__pixelRatio;
 		var r = (__color >> 16) & 0xFF;
@@ -76,12 +76,8 @@ final class DropShadowFilter extends BitmapFilter {
 		destPoint.x += __offsetX * pixelRatio;
 		destPoint.y += __offsetY * pixelRatio;
 
-		var finalImage = ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint,
+		ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint,
 			__blurX * pixelRatio, __blurY * pixelRatio, __quality, __strength);
-
-		if (finalImage == bitmapData.image)
-			return bitmapData;
-		return sourceBitmapData;
 	}
 
 	private function __updateSize():Void {

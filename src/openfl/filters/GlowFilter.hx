@@ -45,11 +45,11 @@ final class GlowFilter extends BitmapFilter {
 		__renderDirty = true;
 	}
 
-	public override function clone():BitmapFilter {
+	public function clone():BitmapFilter {
 		return new GlowFilter(__color, __alpha, __blurX, __blurY, __strength, __quality, __inner, __knockout);
 	}
 
-	private override function __applyFilter(bitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point):BitmapData {
+	function __applyFilter(bitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point) {
 		// TODO: Support knockout, inner
 		@:privateAccess var pixelRatio = sourceBitmapData.__pixelRatio;
 		var r = (__color >> 16) & 0xFF;
@@ -57,12 +57,8 @@ final class GlowFilter extends BitmapFilter {
 		var b = __color & 0xFF;
 		sourceBitmapData.colorTransform(sourceBitmapData.rect, new ColorTransform(0, 0, 0, __alpha, r, g, b, 0));
 
-		var finalImage = ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint,
+		ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint,
 			__blurX * pixelRatio, __blurY * pixelRatio, __quality, __strength);
-
-		if (finalImage == bitmapData.image)
-			return bitmapData;
-		return sourceBitmapData;
 	}
 
 	// Get & Set Methods
