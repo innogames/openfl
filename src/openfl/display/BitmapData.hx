@@ -353,6 +353,7 @@ class BitmapData implements IBitmapDrawable {
 		readable = false;
 	}
 
+	// TODO: check pixelratio stuff!
 	public function draw(source:IBitmapDrawable, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:BlendMode = null,
 			clipRect:Rectangle = null, smoothing:Bool = false):Void {
 		if (matrix == null) {
@@ -1348,7 +1349,7 @@ class BitmapData implements IBitmapDrawable {
 		var transform = renderSession.renderer.getDisplayTransformTempMatrix(matrix, renderSession.roundPixels);
 		__fillBatchQuad(transform, quad.vertexData);
 		quad.texture = getTexture(renderSession.gl);
-		quad.setup(1, null, BatcherBlendMode.fromOpenFLBlendMode(blendMode), true);
+		quad.setup(1, null, BatcherBlendMode.fromOpenFLBlendMode(blendMode), renderSession.allowSmoothing);
 		renderSession.batcher.render(quad);
 		Quad.pool.release(quad);
 	}

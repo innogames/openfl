@@ -129,7 +129,7 @@ class Bitmap extends DisplayObject {
 			__batchQuadDirty = false;
 		}
 
-		__batchQuad.setup(__worldAlpha, __worldColorTransform, BatcherBlendMode.fromOpenFLBlendMode(__worldBlendMode), smoothing);
+		__batchQuad.setup(__worldAlpha, __worldColorTransform, BatcherBlendMode.fromOpenFLBlendMode(__worldBlendMode), renderSession.allowSmoothing && smoothing);
 
 		return __batchQuad;
 	}
