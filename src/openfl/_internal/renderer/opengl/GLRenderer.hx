@@ -19,9 +19,9 @@ class GLRenderer {
 
 	final stage:Stage;
 	final gl:GLRenderContext;
-	final displayMatrix:Matrix;
 	final renderSession:GLRenderSession;
 
+	var displayMatrix:Matrix;
 	var offsetX:Int;
 	var offsetY:Int;
 	var displayWidth:Int;
@@ -83,12 +83,14 @@ class GLRenderer {
 		gl.deleteFramebuffer(framebuffer);
 	}
 
-	public extern inline function invokeRenderToTexture(width:Int, height:Int, texture:Texture, f:GLRenderSession->Void) {
+	static final renderToTextureDisplayMatrix = new Matrix();
+
+	public extern inline function invokeRenderToTexture(width:Int, height:Int, texture:Texture, pixelRatio:Float, f:GLRenderSession->Void) {
 		var renderSession = this.renderSession;
 
 		renderSession.batcher.flush();
 
-		// TODO: do we need to reset displayMatrix too?
+		var oldDisplayMatrix = displayMatrix;
 		var oldProjectionFlipped = this.projectionFlipped;
 		var oldRenderHeight = this.height;
 		var oldPixelRatio = renderSession.pixelRatio;
@@ -104,7 +106,12 @@ class GLRenderer {
 		var oldFramebuffer = _currentFramebuffer;
 		var oldRenderToTexture = renderToTexture;
 
+		renderSession.pixelRatio = pixelRatio;
+		renderToTextureDisplayMatrix.a = renderToTextureDisplayMatrix.d = pixelRatio;
+		displayMatrix = renderToTextureDisplayMatrix;
+
 		renderToTexture = true;
+
 		this.projectionFlipped = Matrix4.createOrtho(0, width, 0, height, -1000, 1000); // not flipped actually
 		this.height = height;
 		renderSession.batcher.projectionMatrix = projectionFlipped;
@@ -127,6 +134,7 @@ class GLRenderer {
 		this.projectionFlipped = oldProjectionFlipped;
 		this.height = oldRenderHeight;
 		renderToTexture = oldRenderToTexture;
+		displayMatrix = oldDisplayMatrix;
 		renderSession.pixelRatio = oldPixelRatio;
 		renderSession.allowSmoothing = oldSmoothing;
 		renderSession.clearRenderDirty = oldClearRenderDirty;

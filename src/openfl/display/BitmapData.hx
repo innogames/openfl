@@ -396,8 +396,7 @@ class BitmapData implements IBitmapDrawable {
 		getTexture(gl);
 
 		// TODO: unify this with __drawBitmapCache
-		renderer.invokeRenderToTexture(width, height, __textureData.glTexture, renderSession -> {
-			renderSession.pixelRatio = __pixelRatio;
+		renderer.invokeRenderToTexture(width, height, __textureData.glTexture, __pixelRatio, renderSession -> {
 			renderSession.allowSmoothing = smoothing;
 			renderSession.clearRenderDirty = false;
 
@@ -1239,9 +1238,7 @@ class BitmapData implements IBitmapDrawable {
 		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, width, height, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
 		gl.bindTexture(GL.TEXTURE_2D, null);
 
-		renderer.invokeRenderToTexture(width, height, __textureData.glTexture, renderSession -> {
-			renderSession.pixelRatio = __pixelRatio;
-
+		renderer.invokeRenderToTexture(width, height, __textureData.glTexture, __pixelRatio, renderSession -> {
 			// render the object
 			source.__renderToBitmap(renderSession, matrix, NORMAL);
 
