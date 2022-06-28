@@ -988,12 +988,10 @@ class BitmapData implements IBitmapDrawable {
 			return;
 
 		// Seeded Random Number Generator
-		var rand:Void->Int = {
-			function func():Int {
-				randomSeed = randomSeed * 1103515245 + 12345;
-				return Std.int(Math.abs(randomSeed / 65536)) % 32768;
-			}
-		};
+		function rand():Int {
+			randomSeed = randomSeed * 1103515245 + 12345;
+			return Std.int(Math.abs(randomSeed / 65536)) % 32768;
+		}
 		rand();
 
 		// Range of values to value to.
