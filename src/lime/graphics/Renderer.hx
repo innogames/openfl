@@ -40,7 +40,7 @@ class Renderer {
 			stencil: Reflect.hasField(window.config, "stencilBuffer") ? window.config.stencilBuffer : false,
 			preserveDrawingBuffer: false,
 			failIfMajorPerformanceCaveat: failIfMajorPerformanceCaveat,
-			powerPreference: Reflect.hasField(window.config, "powerPreference") ? window.config.powerPreference.toString() : PowerPreferance.DEFAULT.toString(),
+			powerPreference: Reflect.hasField(window.config, "powerPreference") ? window.config.powerPreference.toString() : PowerPreference.DEFAULT.toString(),
 		};
 
 		for (name in ["webgl2", "webgl", "experimental-webgl"]) {

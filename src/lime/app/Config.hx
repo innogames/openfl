@@ -105,7 +105,7 @@ typedef WindowConfig = {
 	@:optional var minimized:Bool;
 	@:optional var parameters:Dynamic;
 	@:optional var renderer:String;
-	@:optional var powerPreference:PowerPreferance;
+	@:optional var powerPreference:PowerPreference;
 	@:optional var resizable:Bool;
 	@:optional var stencilBuffer:Bool;
 	@:optional var title:String;
@@ -115,7 +115,7 @@ typedef WindowConfig = {
 	@:optional var y:Int;
 }
 
-enum abstract PowerPreferance(String) {
+enum abstract PowerPreference(String) {
 	var DEFAULT = "default";
 	var HIGH_PERFORMANCE = "high-performance";
 	var LOW_POWER = "low-power";
