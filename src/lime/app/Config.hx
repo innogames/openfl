@@ -119,8 +119,4 @@ enum abstract PowerPreference(String) {
 	var DEFAULT = "default";
 	var HIGH_PERFORMANCE = "high-performance";
 	var LOW_POWER = "low-power";
-
-	public function toString():String {
-		return this;
-	}
 }
