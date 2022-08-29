@@ -88,6 +88,7 @@ typedef Config = {
 
 typedef WindowConfig = {
 	@:optional var failIfMajorPerformanceCaveat:Bool;
+	@:optional var alpha:Bool;
 	@:optional var allowHighDPI:Bool;
 	@:optional var alwaysOnTop:Bool;
 	@:optional var antialiasing:Int;
@@ -104,6 +105,7 @@ typedef WindowConfig = {
 	@:optional var minimized:Bool;
 	@:optional var parameters:Dynamic;
 	@:optional var renderer:String;
+	@:optional var powerPreference:PowerPreference;
 	@:optional var resizable:Bool;
 	@:optional var stencilBuffer:Bool;
 	@:optional var title:String;
@@ -111,4 +113,10 @@ typedef WindowConfig = {
 	@:optional var width:Int;
 	@:optional var x:Int;
 	@:optional var y:Int;
+}
+
+enum abstract PowerPreference(String) {
+	var DEFAULT = "default";
+	var HIGH_PERFORMANCE = "high-performance";
+	var LOW_POWER = "low-power";
 }

@@ -28,17 +28,15 @@ class Renderer {
 	}
 
 	private function createGLContext(failIfMajorPerformanceCaveat:Bool):Void {
-		var transparentBackground = Reflect.hasField(window.config, "background") && window.config.background == null;
-		var colorDepth = Reflect.hasField(window.config, "colorDepth") ? window.config.colorDepth : 16;
-
 		var options = {
-			alpha: (transparentBackground || colorDepth > 16) ? true : false,
+			alpha: Reflect.hasField(window.config, "alpha") ? window.config.alpha : false,
 			antialias: Reflect.hasField(window.config, "antialiasing") ? window.config.antialiasing > 0 : false,
 			depth: Reflect.hasField(window.config, "depthBuffer") ? window.config.depthBuffer : true,
 			premultipliedAlpha: true,
 			stencil: Reflect.hasField(window.config, "stencilBuffer") ? window.config.stencilBuffer : false,
 			preserveDrawingBuffer: false,
-			failIfMajorPerformanceCaveat: failIfMajorPerformanceCaveat
+			failIfMajorPerformanceCaveat: failIfMajorPerformanceCaveat,
+			powerPreference: Reflect.hasField(window.config, "powerPreference") ? window.config.powerPreference : PowerPreference.DEFAULT,
 		};
 
 		for (name in ["webgl2", "webgl", "experimental-webgl"]) {
