@@ -7,7 +7,12 @@ import openfl._internal.renderer.opengl.vao.VertexArrayObjectContext;
 import openfl._internal.renderer.opengl.vao.VertexArrayObjectExtension;
 import openfl._internal.stage3D.GLUtils;
 
-class GLRenderSession extends RenderSession {
+class GLRenderSession {
+	public var allowSmoothing:Bool;
+	public var clearRenderDirty:Bool;
+	public var roundPixels:Bool;
+	public var pixelRatio:Float = 1.0;
+
 	public final renderer:GLRenderer;
 	public final gl:GLRenderContext;
 	public final shaderManager:GLShaderManager;
@@ -21,7 +26,8 @@ class GLRenderSession extends RenderSession {
 	#end
 
 	public function new(renderer, gl, maxTexturesLimit) {
-		super(true);
+		allowSmoothing = true;
+		clearRenderDirty = true;
 
 		this.renderer = renderer;
 		this.gl = gl;

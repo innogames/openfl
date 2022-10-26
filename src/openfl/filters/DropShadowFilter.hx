@@ -65,9 +65,13 @@ final class DropShadowFilter extends BitmapFilter {
 		return new DropShadowFilter(__distance, __angle, __color, __alpha, __blurX, __blurY, __strength, __quality, __inner, __knockout, __hideObject);
 	}
 
+	@:access(openfl.display.BitmapData)
 	function __applyFilter(bitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point) {
 		// TODO: Support knockout, inner
-		@:privateAccess var pixelRatio = sourceBitmapData.__pixelRatio;
+		var pixelRatio = sourceBitmapData.__pixelRatio;
+		var sourceImage = sourceBitmapData.__getImage();
+		var destImage = bitmapData.__getImage();
+
 		var r = (__color >> 16) & 0xFF;
 		var g = (__color >> 8) & 0xFF;
 		var b = __color & 0xFF;
@@ -75,9 +79,7 @@ final class DropShadowFilter extends BitmapFilter {
 
 		destPoint.x += __offsetX * pixelRatio;
 		destPoint.y += __offsetY * pixelRatio;
-
-		ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint,
-			__blurX * pixelRatio, __blurY * pixelRatio, __quality, __strength);
+		ImageDataUtil.gaussianBlur(destImage, sourceImage, sourceRect.__toLimeRectangle(), destPoint, __blurX * pixelRatio, __blurY * pixelRatio, __quality, __strength);
 	}
 
 	private function __updateSize():Void {

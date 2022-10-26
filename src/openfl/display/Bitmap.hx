@@ -1,8 +1,5 @@
 package openfl.display;
 
-import openfl._internal.renderer.RenderSession;
-import openfl._internal.renderer.canvas.CanvasBitmap;
-import openfl._internal.renderer.canvas.CanvasRenderSession;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl._internal.renderer.opengl.batcher.BlendMode as BatcherBlendMode;
@@ -119,20 +116,6 @@ class Bitmap extends DisplayObject {
 		return false;
 	}
 
-	private override function __renderCanvas(renderSession:CanvasRenderSession):Void {
-		__updateCacheBitmap(renderSession, !__worldColorTransform.__isDefault());
-
-		if (__cacheBitmap != null && !__cacheBitmapRender) {
-			CanvasBitmap.render(__cacheBitmap, renderSession);
-		} else {
-			CanvasBitmap.render(this, renderSession);
-		}
-	}
-
-	private override function __renderCanvasMask(renderSession:CanvasRenderSession):Void {
-		renderSession.context.rect(0, 0, __bitmapData.width, __bitmapData.height);
-	}
-
 	function __getBatchQuad(renderSession:GLRenderSession):Quad {
 		if (__batchQuadDirty) {
 			if (__batchQuad == null) {
@@ -146,7 +129,7 @@ class Bitmap extends DisplayObject {
 			__batchQuadDirty = false;
 		}
 
-		__batchQuad.setup(__worldAlpha, __worldColorTransform, BatcherBlendMode.fromOpenFLBlendMode(__worldBlendMode), smoothing);
+		__batchQuad.setup(__worldAlpha, __worldColorTransform, BatcherBlendMode.fromOpenFLBlendMode(__worldBlendMode), renderSession.allowSmoothing && smoothing);
 
 		return __batchQuad;
 	}
@@ -176,7 +159,7 @@ class Bitmap extends DisplayObject {
 		}
 	}
 
-	private override function __updateCacheBitmap(renderSession:RenderSession, force:Bool):Bool {
+	private override function __updateCacheBitmap(renderSession:GLRenderSession, force:Bool):Bool {
 		if (!force && !__hasFilters() && __cacheBitmap == null)
 			return false;
 		return super.__updateCacheBitmap(renderSession, force);

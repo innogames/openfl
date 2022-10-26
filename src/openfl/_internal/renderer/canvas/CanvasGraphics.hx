@@ -19,7 +19,6 @@ import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 
-@:access(openfl.display.DisplayObject)
 @:access(openfl.display.BitmapData)
 @:access(openfl.display.Graphics)
 @:access(openfl.geom.Matrix)
@@ -85,12 +84,12 @@ class CanvasGraphics {
 	}
 
 	private static function createBitmapFill(bitmap:BitmapData, bitmapRepeat:Bool, smooth:Bool) {
-		if (!bitmap.__prepareImage())
-			return null;
+		var image = bitmap.__getImage();
+		if (image == null) return null;
 
-		ImageCanvasUtil.convertToCanvas(bitmap.image);
+		ImageCanvasUtil.convertToCanvas(image);
 		setSmoothing(smooth);
-		return context.createPattern(bitmap.image.src, bitmapRepeat ? "repeat" : "no-repeat");
+		return context.createPattern(image.src, bitmapRepeat ? "repeat" : "no-repeat");
 	}
 
 	private static function createGradientPattern(type:GradientType, colors:Array<Dynamic>, alphas:Array<Dynamic>, ratios:Array<Dynamic>, matrix:Matrix,
@@ -162,7 +161,7 @@ class CanvasGraphics {
 		canvas.width = width;
 		canvas.height = height;
 
-		context.fillStyle = context.createPattern(bitmap.image.src, repeat ? "repeat" : "no-repeat");
+		context.fillStyle = context.createPattern(bitmap.__getImage().src, repeat ? "repeat" : "no-repeat");
 		context.beginPath();
 		context.moveTo(0, 0);
 		context.lineTo(0, height);
@@ -849,7 +848,7 @@ class CanvasGraphics {
 						if (canOptimizeMatrix && st >= 0 && sl >= 0 && sr <= bitmapFill.width && sb <= bitmapFill.height) {
 							optimizationUsed = true;
 							if (!hitTesting)
-								context.drawImage(bitmapFill.image.src, sl, st, sr - sl, sb - st, c.x - offsetX, c.y - offsetY, c.width, c.height);
+								context.drawImage(bitmapFill.__getImage().src, sl, st, sr - sl, sb - st, c.x - offsetX, c.y - offsetY, c.width, c.height);
 						}
 					}
 
@@ -1151,99 +1150,6 @@ class CanvasGraphics {
 			}
 
 			graphics.__dirty = false;
-		}
-	}
-
-	public static function renderMask(graphics:Graphics, renderSession:CanvasRenderSession) {
-		if (graphics.__commands.length != 0) {
-			context = renderSession.context;
-
-			var positionX = 0.0;
-			var positionY = 0.0;
-
-			var offsetX = 0;
-			var offsetY = 0;
-
-			var data = new DrawCommandReader(graphics.__commands);
-
-			var x, y, width, height, kappa = .5522848, ox, oy, xe, ye, xm, ym;
-
-			for (type in graphics.__commands.types) {
-				switch (type) {
-					case CUBIC_CURVE_TO:
-						var c = data.readCubicCurveTo();
-						context.bezierCurveTo(c.controlX1
-							- offsetX, c.controlY1
-							- offsetY, c.controlX2
-							- offsetX, c.controlY2
-							- offsetY, c.anchorX
-							- offsetX,
-							c.anchorY
-							- offsetY);
-						positionX = c.anchorX;
-						positionY = c.anchorY;
-
-					case CURVE_TO:
-						var c = data.readCurveTo();
-						context.quadraticCurveTo(c.controlX - offsetX, c.controlY - offsetY, c.anchorX - offsetX, c.anchorY - offsetY);
-						positionX = c.anchorX;
-						positionY = c.anchorY;
-
-					case DRAW_CIRCLE:
-						var c = data.readDrawCircle();
-						context.arc(c.x - offsetX, c.y - offsetY, c.radius, 0, Math.PI * 2, true);
-
-					case DRAW_ELLIPSE:
-						var c = data.readDrawEllipse();
-						x = c.x;
-						y = c.y;
-						width = c.width;
-						height = c.height;
-						x -= offsetX;
-						y -= offsetY;
-
-						ox = (width / 2) * kappa; // control point offset horizontal
-						oy = (height / 2) * kappa; // control point offset vertical
-						xe = x + width; // x-end
-						ye = y + height; // y-end
-						xm = x + width / 2; // x-middle
-						ym = y + height / 2; // y-middle
-
-						// closePath (false);
-						// beginPath ();
-						context.moveTo(x, ym);
-						context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-						context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-						context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-						context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-					// closePath (false);
-
-					case DRAW_RECT:
-						var c = data.readDrawRect();
-						context.rect(c.x - offsetX, c.y - offsetY, c.width, c.height);
-
-					case DRAW_ROUND_RECT:
-						var c = data.readDrawRoundRect();
-						drawRoundRect(c.x - offsetX, c.y - offsetY, c.width, c.height, c.ellipseWidth, c.ellipseHeight);
-
-					case LINE_TO:
-						var c = data.readLineTo();
-						context.lineTo(c.x - offsetX, c.y - offsetY);
-						positionX = c.x;
-						positionY = c.y;
-
-					case MOVE_TO:
-						var c = data.readMoveTo();
-						context.moveTo(c.x - offsetX, c.y - offsetY);
-						positionX = c.x;
-						positionY = c.y;
-
-					default:
-						data.skip(type);
-				}
-			}
-
-			data.destroy();
 		}
 	}
 

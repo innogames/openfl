@@ -5,8 +5,9 @@ import lime.graphics.opengl.GL;
 import openfl.display.BlendMode;
 
 class GLBlendModeManager {
+	public var currentBlendMode(default, null):BlendMode;
+
 	final gl:GLRenderContext;
-	var currentBlendMode:BlendMode;
 
 	public function new(gl:GLRenderContext) {
 		this.gl = gl;

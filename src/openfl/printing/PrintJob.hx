@@ -39,6 +39,7 @@ class PrintJob {
 		__bitmapData.push(bitmapData);
 	}
 
+	@:access(openfl.display.BitmapData.__getImage)
 	public function send():Void {
 		if (!__started)
 			return;
@@ -50,30 +51,26 @@ class PrintJob {
 			style.innerText = "@media all {
 					.page-break	{ display: none; }
 				}
-				
+
 				@media print {
 					.page-break	{ display: block; page-break-before: always; }
 				}";
 
 			window.document.head.appendChild(style);
 
-			var div:DivElement;
-			var image:Image;
-			var bitmapData;
+			for (i => bitmapData in __bitmapData) {
+				var sourceImage = bitmapData.__getImage();
+				ImageCanvasUtil.sync(sourceImage, false);
 
-			for (i in 0...__bitmapData.length) {
-				bitmapData = __bitmapData[i];
-				ImageCanvasUtil.sync(bitmapData.image, false);
-
-				if (bitmapData.image.buffer.__srcCanvas != null) {
+				if (sourceImage.buffer.__srcCanvas != null) {
 					if (i > 0) {
-						div = cast window.document.createElement("div");
+						var div:DivElement = cast window.document.createElement("div");
 						div.className = "page-break";
 						window.document.body.appendChild(div);
 					}
 
-					image = new Image();
-					image.src = bitmapData.image.buffer.__srcCanvas.toDataURL("image/png");
+					var image = new Image();
+					image.src = sourceImage.buffer.__srcCanvas.toDataURL("image/png");
 					window.document.body.appendChild(image);
 				}
 			}

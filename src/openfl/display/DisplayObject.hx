@@ -4,11 +4,6 @@ import lime.ui.MouseCursor;
 import lime.utils.ObjectPool;
 import openfl.Vector;
 import openfl._internal.Lib;
-import openfl._internal.renderer.RenderSession;
-import openfl._internal.renderer.canvas.CanvasBitmap;
-import openfl._internal.renderer.canvas.CanvasDisplayObject;
-import openfl._internal.renderer.canvas.CanvasGraphics;
-import openfl._internal.renderer.canvas.CanvasRenderSession;
 import openfl._internal.renderer.opengl.GLBitmap;
 import openfl._internal.renderer.opengl.GLDisplayObject;
 import openfl._internal.renderer.opengl.GLRenderSession;
@@ -516,24 +511,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		}
 	}
 
-	private function __renderCanvas(renderSession:CanvasRenderSession):Void {
-		if (mask == null || (mask.width > 0 && mask.height > 0)) {
-			__updateCacheBitmap(renderSession, !__worldColorTransform.__isDefault());
-
-			if (__cacheBitmap != null && !__cacheBitmapRender) {
-				CanvasBitmap.render(__cacheBitmap, renderSession);
-			} else {
-				CanvasDisplayObject.render(this, renderSession);
-			}
-		}
-	}
-
-	private function __renderCanvasMask(renderSession:CanvasRenderSession):Void {
-		if (__graphics != null) {
-			CanvasGraphics.renderMask(__graphics, renderSession);
-		}
-	}
-
 	private function __renderGL(renderSession:GLRenderSession):Void {
 		__updateCacheBitmap(renderSession, false);
 
@@ -656,7 +633,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		return __scaleX == 0 || __scaleY == 0;
 	}
 
-	private function __updateCacheBitmap(renderSession:RenderSession, force:Bool):Bool {
+	private function __updateCacheBitmap(renderSession:GLRenderSession, force:Bool):Bool {
 		if (__cacheBitmapRender)
 			return false;
 
@@ -700,6 +677,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 
 				if (rect.width >= 0.5 && rect.height >= 0.5) {
 					if (__cacheBitmap == null || bitmapWidth != __cacheBitmap.width || bitmapHeight != __cacheBitmap.height) {
+						// TODO: avoid creating html canvas
 						__cacheBitmapData = new BitmapData(bitmapWidth, bitmapHeight, true, color);
 						@:privateAccess __cacheBitmapData.__pixelRatio = pixelRatio;
 						// __cacheBitmapData.disposeImage ();
@@ -742,7 +720,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 				matrix.tx -= Math.round(rect.x);
 				matrix.ty -= Math.round(rect.y);
 
-				@:privateAccess __cacheBitmapData.__draw(this, matrix, NORMAL, null, renderSession.allowSmoothing, true);
+				@:privateAccess __cacheBitmapData.__drawBitmapCache(this, matrix, hasFilters);
 
 				Matrix.__pool.release(matrix);
 
@@ -765,6 +743,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 
 					// TODO: Cache if used repeatedly
 
+					// TODO: avoid creating html canvas
 					if (needSecondBitmapData) {
 						bitmapData2 = new BitmapData(bitmapData.width, bitmapData.height, true, 0);
 						@:privateAccess bitmapData2.__pixelRatio = pixelRatio;
@@ -843,18 +822,20 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		return __maskTarget != null;
 	}
 
-	private function __renderToBitmap(renderSession:CanvasRenderSession, matrix:Matrix, blendMode:BlendMode) {
+	private function __renderToBitmap(renderSession:GLRenderSession, matrix:Matrix, blendMode:BlendMode) {
 		var cacheMaskTarget = __maskTarget;
 		var cacheVisible = __visible;
 		var cacheRenderable = __renderable;
 		var cacheWorldAlpha = __worldAlpha;
 		var cacheBlendMode = __worldBlendMode;
+		var cacheMask = __mask;
 
 		var cacheWorldTransform = Matrix.__pool.get();
 		var cacheRenderTransform = Matrix.__pool.get();
 		cacheWorldTransform.copyFrom(__worldTransform);
 		cacheRenderTransform.copyFrom(__renderTransform);
 
+		__mask = null; // TODO: we apply mask to the cache bitmap, should we instead bake it maybe?
 		__maskTarget = null;
 		__visible = true;
 		__renderable = true;
@@ -865,8 +846,9 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		__adjustRenderTransform();
 
 		__updateChildrenForRenderToBitmap();
-		__renderCanvas(renderSession);
+		__renderGL(renderSession);
 
+		__mask = cacheMask;
 		__maskTarget = cacheMaskTarget;
 		__visible = cacheVisible;
 		__renderable = cacheRenderable;

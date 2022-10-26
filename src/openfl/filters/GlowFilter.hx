@@ -49,16 +49,19 @@ final class GlowFilter extends BitmapFilter {
 		return new GlowFilter(__color, __alpha, __blurX, __blurY, __strength, __quality, __inner, __knockout);
 	}
 
+	@:access(openfl.display.BitmapData)
 	function __applyFilter(bitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point) {
 		// TODO: Support knockout, inner
-		@:privateAccess var pixelRatio = sourceBitmapData.__pixelRatio;
+		var pixelRatio = sourceBitmapData.__pixelRatio;
+		var sourceImage = sourceBitmapData.__getImage();
+		var destImage = bitmapData.__getImage();
+
 		var r = (__color >> 16) & 0xFF;
 		var g = (__color >> 8) & 0xFF;
 		var b = __color & 0xFF;
 		sourceBitmapData.colorTransform(sourceBitmapData.rect, new ColorTransform(0, 0, 0, __alpha, r, g, b, 0));
 
-		ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint,
-			__blurX * pixelRatio, __blurY * pixelRatio, __quality, __strength);
+		ImageDataUtil.gaussianBlur(destImage, sourceImage, sourceRect.__toLimeRectangle(), destPoint, __blurX * pixelRatio, __blurY * pixelRatio, __quality, __strength);
 	}
 
 	// Get & Set Methods

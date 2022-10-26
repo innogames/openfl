@@ -13,6 +13,7 @@ import openfl.geom.Point;
 import openfl.filters.BitmapFilter;
 import openfl.display.BitmapData.TextureRegionResult;
 import openfl.utils.ByteArray;
+import lime.graphics.Image;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLBuffer;
@@ -60,7 +61,7 @@ class SubBitmapData extends BitmapData {
 		rect = new Rectangle(0, 0, w, h);
 		__isValid = true;
 		readable = false;
-		image = null;
+		__image = null;
 
 		__parentBitmap = atlasBitmap;
 		__texX0 = x / atlasBitmap.width;
@@ -176,7 +177,7 @@ class SubBitmapData extends BitmapData {
 
 	override function getPixel(x:Int, y:Int):Int {
 		if (__getPixelAbsoluteCoords(x, y)) {
-			return __parentBitmap.image.getPixel(__getPixelAbsoluteCoordsX, __getPixelAbsoluteCoordsY, ARGB32);
+			return __parentBitmap.__getImage().getPixel(__getPixelAbsoluteCoordsX, __getPixelAbsoluteCoordsY, ARGB32);
 		} else {
 			return 0;
 		}
@@ -184,7 +185,7 @@ class SubBitmapData extends BitmapData {
 
 	override function getPixel32(x:Int, y:Int):Int {
 		if (__getPixelAbsoluteCoords(x, y)) {
-			return __parentBitmap.image.getPixel32(__getPixelAbsoluteCoordsX, __getPixelAbsoluteCoordsY, ARGB32);
+			return __parentBitmap.__getImage().getPixel32(__getPixelAbsoluteCoordsX, __getPixelAbsoluteCoordsY, ARGB32);
 		} else {
 			return 0;
 		}
@@ -208,7 +209,7 @@ class SubBitmapData extends BitmapData {
 
 	override function getTexture(gl:GLRenderContext):QuadTextureData {
 		var parentTexture = __parentBitmap.getTexture(gl);
-		if (__quadTextureData == null || __quadTextureData.data != parentTexture.data) {
+		if (__quadTextureData == null || __quadTextureData.data != parentTexture.data) { // TODO: why parent?
 			__quadTextureData = __prepareQuadTextureData(parentTexture.data);
 		}
 		return __quadTextureData;
@@ -437,28 +438,29 @@ class SubBitmapData extends BitmapData {
 		}
 	}
 
-	override function __prepareImage() {
-		if (image == null) {
+	override function __getImage():Image {
+		var parentImage = __parentBitmap.__getImage();
+		if (parentImage == null) {
+			__image = null;
+			return null;
+		}
+		if (__image == null || __image.version != parentImage.version) {
 			var canvas:CanvasElement = cast Browser.document.createElement("canvas");
 			canvas.width = width;
 			canvas.height = height;
 
-			__drawToCanvas(canvas.getContext("2d"), @:privateAccess Matrix.__identity, true, 1, null, false);
+			__drawToCanvas(parentImage, canvas.getContext("2d"), @:privateAccess Matrix.__identity, true, 1, null, false);
 
-			image = lime.graphics.Image.fromCanvas(canvas);
+			__image = lime.graphics.Image.fromCanvas(canvas);
+			__image.version = parentImage.version;
 		}
-		return true;
-	}
-
-	override function __canBeDrawnToCanvas():Bool {
-		return __parentBitmap.__canBeDrawnToCanvas();
+		return __image;
 	}
 
 	static var __drawToCanvasTransform = new Matrix();
 
-	override function __drawToCanvas(context:CanvasRenderingContext2D, transform:Matrix, roundPixels:Bool, pixelRatio:Float, scrollRect:Rectangle,
+	function __drawToCanvas(parentImage:Image, context:CanvasRenderingContext2D, transform:Matrix, roundPixels:Bool, pixelRatio:Float, scrollRect:Rectangle,
 			useScrollRectCoords:Bool):Void {
-		var parentImage = __parentBitmap.image;
 		if (parentImage.type == DATA) {
 			ImageCanvasUtil.convertToCanvas(parentImage);
 		}

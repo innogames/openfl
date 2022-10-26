@@ -1,8 +1,6 @@
 package openfl.display;
 
 import openfl.Vector;
-import openfl._internal.renderer.canvas.CanvasGraphics;
-import openfl._internal.renderer.canvas.CanvasRenderSession;
 import openfl._internal.renderer.opengl.GLRenderSession;
 import openfl.display.Stage;
 import openfl.errors.ArgumentError;
@@ -475,55 +473,6 @@ class DisplayObjectContainer extends InteractiveObject {
 				child.__readGraphicsData(graphicsData, recurse);
 			}
 		}
-	}
-
-	private override function __renderCanvas(renderSession:CanvasRenderSession):Void {
-		__cleanupRemovedChildren();
-
-		if (!__renderable || __worldAlpha <= 0 || (mask != null && (mask.width <= 0 || mask.height <= 0)))
-			return;
-
-		#if !neko
-		super.__renderCanvas(renderSession);
-
-		if (__cacheBitmap != null && !__cacheBitmapRender)
-			return;
-
-		renderSession.maskManager.pushObject(this);
-
-		if (renderSession.clearRenderDirty) {
-			for (child in __children) {
-				child.__renderCanvas(renderSession);
-				child.__renderDirty = false;
-			}
-
-			__renderDirty = false;
-		} else {
-			for (child in __children) {
-				child.__renderCanvas(renderSession);
-			}
-		}
-
-		renderSession.maskManager.popObject(this);
-		#end
-	}
-
-	private override function __renderCanvasMask(renderSession:CanvasRenderSession):Void {
-		if (__graphics != null) {
-			CanvasGraphics.renderMask(__graphics, renderSession);
-		}
-
-		var bounds = Rectangle.__pool.get();
-		__getLocalBounds(bounds);
-
-		renderSession.context.rect(0, 0, bounds.width, bounds.height);
-
-		Rectangle.__pool.release(bounds);
-		/*for (child in __children) {
-
-			child.__renderMask (renderSession);
-
-		}*/
 	}
 
 	private override function __renderGL(renderSession:GLRenderSession):Void {

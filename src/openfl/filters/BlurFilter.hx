@@ -33,10 +33,13 @@ final class BlurFilter extends BitmapFilter {
 		return new BlurFilter(__blurX, __blurY, __quality);
 	}
 
+	@:access(openfl.display.BitmapData)
 	function __applyFilter(bitmapData:BitmapData, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point) {
-		@:privateAccess var pixelRatio = sourceBitmapData.__pixelRatio;
-		ImageDataUtil.gaussianBlur(bitmapData.image, sourceBitmapData.image, sourceRect.__toLimeRectangle(), destPoint,
-			__blurX * pixelRatio, __blurY * pixelRatio, __quality);
+		var pixelRatio = sourceBitmapData.__pixelRatio;
+		var sourceImage = sourceBitmapData.__getImage();
+		var destImage = bitmapData.__getImage();
+
+		ImageDataUtil.gaussianBlur(destImage, sourceImage, sourceRect.__toLimeRectangle(), destPoint, __blurX * pixelRatio, __blurY * pixelRatio, __quality);
 	}
 
 	// Get & Set Methods
