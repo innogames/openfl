@@ -405,7 +405,7 @@ class BitmapData implements IBitmapDrawable {
 			}
 
 			// render the object
-			source.__renderToBitmap(renderSession, matrix, blendMode);
+			source.__renderToBitmap(renderSession, matrix, blendMode, true);
 
 			if (clipRect != null) {
 				renderSession.maskManager.popRect();
@@ -1240,7 +1240,7 @@ class BitmapData implements IBitmapDrawable {
 
 		renderer.invokeRenderToTexture(width, height, __textureData.glTexture, __pixelRatio, renderSession -> {
 			// render the object
-			source.__renderToBitmap(renderSession, matrix, NORMAL);
+			source.__renderToBitmap(renderSession, matrix, NORMAL, false);
 
 			// flush the batch
 			renderSession.batcher.flush();
@@ -1339,7 +1339,7 @@ class BitmapData implements IBitmapDrawable {
 		});
 	}
 
-	private function __renderToBitmap(renderSession:GLRenderSession, matrix:Matrix, blendMode:BlendMode) {
+	private function __renderToBitmap(renderSession:GLRenderSession, matrix:Matrix, blendMode:BlendMode, keepMask:Bool) {
 		if (!__isValid) return;
 
 		var quad = Quad.pool.get();
