@@ -822,7 +822,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		return __maskTarget != null;
 	}
 
-	private function __renderToBitmap(renderSession:GLRenderSession, matrix:Matrix, blendMode:BlendMode) {
+	private function __renderToBitmap(renderSession:GLRenderSession, matrix:Matrix, blendMode:BlendMode, keepMask:Bool) {
 		var cacheMaskTarget = __maskTarget;
 		var cacheVisible = __visible;
 		var cacheRenderable = __renderable;
@@ -835,7 +835,9 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		cacheWorldTransform.copyFrom(__worldTransform);
 		cacheRenderTransform.copyFrom(__renderTransform);
 
-		__mask = null; // TODO: we apply mask to the cache bitmap, should we instead bake it maybe?
+		if (!keepMask) { // TODO: should we also bake the mask for cache bitmap instead of applying it when rendering?
+			__mask = null;
+		}
 		__maskTarget = null;
 		__visible = true;
 		__renderable = true;

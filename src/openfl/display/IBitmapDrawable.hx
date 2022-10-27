@@ -8,5 +8,5 @@ interface IBitmapDrawable {
 	private var __transform:Matrix;
 
 	private function __getBounds(rect:Rectangle, matrix:Matrix):Void;
-	private function __renderToBitmap(renderSession:GLRenderSession, matrix:Matrix, blendMode:BlendMode):Void;
+	private function __renderToBitmap(renderSession:GLRenderSession, matrix:Matrix, blendMode:BlendMode, keepMask:Bool):Void;
 }
