@@ -46,6 +46,7 @@ class BlendMode {
 			case OpenFLBlendMode.MULTIPLY: MULTIPLY;
 			case OpenFLBlendMode.SCREEN: SCREEN;
 			case OpenFLBlendMode.SUBTRACT: SUBTRACT;
+			case OpenFLBlendMode.ERASE: ERASE;
 			case _: NORMAL;
 		}
 	}
