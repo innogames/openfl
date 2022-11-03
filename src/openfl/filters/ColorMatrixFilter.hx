@@ -81,6 +81,7 @@ final class ColorMatrixFilter extends BitmapFilter {
 		}
 
 		image.dirty = true;
+		image.version++;
 	}
 
 	// Get & Set Methods
