@@ -92,6 +92,7 @@ class GLRenderer {
 
 		var oldDisplayMatrix = displayMatrix;
 		var oldProjectionFlipped = this.projectionFlipped;
+		var oldBatcherProjectionMatrix = renderSession.batcher.projectionMatrix; // this can be different from projectionFlipped if Starling sets it
 		var oldRenderHeight = this.height;
 		var oldPixelRatio = renderSession.pixelRatio;
 		var oldSmoothing = renderSession.allowSmoothing;
@@ -138,7 +139,7 @@ class GLRenderer {
 		renderSession.pixelRatio = oldPixelRatio;
 		renderSession.allowSmoothing = oldSmoothing;
 		renderSession.clearRenderDirty = oldClearRenderDirty;
-		renderSession.batcher.projectionMatrix = oldProjectionFlipped;
+		renderSession.batcher.projectionMatrix = oldBatcherProjectionMatrix;
 		renderSession.blendModeManager.setBlendMode(oldBlendMode);
 		renderSession.shaderManager.setShader(oldShader);
 		renderSession.maskManager.resume(oldStencilReference);
