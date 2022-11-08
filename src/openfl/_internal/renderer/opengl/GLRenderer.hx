@@ -8,6 +8,7 @@ import lime.math.Matrix4;
 import openfl.display.Graphics;
 import openfl.display.Stage;
 import openfl.geom.Matrix;
+import openfl.geom.Rectangle;
 
 @:access(openfl.display.Graphics)
 @:access(openfl.display.Stage)
@@ -33,6 +34,7 @@ class GLRenderer {
 	var _viewportWidth:Int;
 	var _viewportHeight:Int;
 	var _currentFramebuffer:Framebuffer;
+	var _oldBatcherViewport:Rectangle;
 
 	function _setViewport(x:Int, y:Int, width:Int, height:Int) {
 		_viewportX = x;
@@ -85,6 +87,7 @@ class GLRenderer {
 
 	static final renderToTextureDisplayMatrix = new Matrix();
 
+	@:access(openfl._internal.renderer.opengl.batcher.BatchRenderer.viewport)
 	public extern inline function invokeRenderToTexture(width:Int, height:Int, texture:Texture, pixelRatio:Float, f:GLRenderSession->Void) {
 		var renderSession = this.renderSession;
 
@@ -106,6 +109,13 @@ class GLRenderer {
 		var oldViewportHeight = _viewportHeight;
 		var oldFramebuffer = _currentFramebuffer;
 		var oldRenderToTexture = renderToTexture;
+
+		// preserve current batcher viewport as well as it can be different from GL viewport, when Starling is involved...
+		if (_oldBatcherViewport == null) {
+			_oldBatcherViewport = renderSession.batcher.viewport.clone();
+		} else {
+			_oldBatcherViewport.copyFrom(renderSession.batcher.viewport);
+		}
 
 		renderSession.pixelRatio = pixelRatio;
 		renderToTextureDisplayMatrix.a = renderToTextureDisplayMatrix.d = pixelRatio;
@@ -140,6 +150,7 @@ class GLRenderer {
 		renderSession.allowSmoothing = oldSmoothing;
 		renderSession.clearRenderDirty = oldClearRenderDirty;
 		renderSession.batcher.projectionMatrix = oldBatcherProjectionMatrix;
+		renderSession.batcher.setViewport(_oldBatcherViewport.x, _oldBatcherViewport.y, _oldBatcherViewport.width, _oldBatcherViewport.height);
 		renderSession.blendModeManager.setBlendMode(oldBlendMode);
 		renderSession.shaderManager.setShader(oldShader);
 		renderSession.maskManager.resume(oldStencilReference);
