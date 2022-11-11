@@ -133,10 +133,10 @@ class GLRenderer {
 		gl.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, texture, 0);
 
 		// TODO: only create if there are masks inside the rendered object!
-		var depthStencilBuffer = gl.createRenderbuffer();
-		gl.bindRenderbuffer(GL.RENDERBUFFER, depthStencilBuffer);
-		gl.renderbufferStorage(GL.RENDERBUFFER, GL.DEPTH_STENCIL, width, height);
-		gl.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.STENCIL_ATTACHMENT, GL.RENDERBUFFER, depthStencilBuffer);
+		var stencilBuffer = gl.createRenderbuffer();
+		gl.bindRenderbuffer(GL.RENDERBUFFER, stencilBuffer);
+		gl.renderbufferStorage(GL.RENDERBUFFER, GL.STENCIL_INDEX8, width, height);
+		gl.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.STENCIL_ATTACHMENT, GL.RENDERBUFFER, stencilBuffer);
 		gl.bindRenderbuffer(GL.RENDERBUFFER, null);
 
 		f(renderSession);
@@ -156,7 +156,7 @@ class GLRenderer {
 		renderSession.maskManager.resume(oldStencilReference);
 		_bindFramebuffer(oldFramebuffer);
 		gl.deleteFramebuffer(framebuffer);
-		gl.deleteRenderbuffer(depthStencilBuffer);
+		gl.deleteRenderbuffer(stencilBuffer);
 	}
 
 	public function clear():Void {
