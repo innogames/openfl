@@ -958,10 +958,8 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		if (value != null && value.length == 0) {
 			value = null;
 		}
-		if (value != __filters) {
-			__filters = value;
-			__setRenderDirty();
-		}
+		__filters = value;
+		__setRenderDirty(); // always set the dirty flag, since elements might have been changed
 		return value;
 	}
 
