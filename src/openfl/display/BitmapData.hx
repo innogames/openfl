@@ -12,10 +12,10 @@ import lime.math.color.ARGB;
 import lime.utils.Float32Array;
 import openfl.Vector;
 import openfl._internal.renderer.opengl.GLRenderSession;
+import openfl._internal.renderer.opengl.batcher.BlendMode as BatcherBlendMode;
 import openfl._internal.renderer.opengl.batcher.Quad;
 import openfl._internal.renderer.opengl.batcher.QuadTextureData;
 import openfl._internal.renderer.opengl.batcher.TextureData;
-import openfl._internal.renderer.opengl.batcher.BlendMode as BatcherBlendMode;
 import openfl._internal.renderer.opengl.vao.IVertexArrayObjectContext;
 import openfl._internal.utils.PerlinNoise;
 import openfl.display3D.textures.TextureBase;
@@ -1265,7 +1265,13 @@ class BitmapData implements IBitmapDrawable {
 			image.buffer.data = new Uint8Array(width * height * 4);
 			image.type = DATA;
 		}
+
+		// BitmapData textures always have premultiplied alpha, so if we want to read them back,
+		// we make sure that we don't do any additional unpacking when reading and set the image premultiplied flag
+		gl.pixelStorei(GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
 		gl.readPixels(0, 0, width, height, GL.RGBA, GL.UNSIGNED_BYTE, image.buffer.data, 0);
+		image.buffer.premultiplied = true;
+
 		image.version = __textureVersion;
 		image.dirty = true; // TODO: is this required?
 }

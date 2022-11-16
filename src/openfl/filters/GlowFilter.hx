@@ -2,7 +2,6 @@ package openfl.filters;
 
 import lime.graphics.utils.ImageDataUtil;
 import openfl.display.BitmapData;
-import openfl.geom.ColorTransform;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 
@@ -56,12 +55,7 @@ final class GlowFilter extends BitmapFilter {
 		var sourceImage = sourceBitmapData.__getImage();
 		var destImage = bitmapData.__getImage();
 
-		var r = (__color >> 16) & 0xFF;
-		var g = (__color >> 8) & 0xFF;
-		var b = __color & 0xFF;
-		sourceBitmapData.colorTransform(sourceBitmapData.rect, new ColorTransform(0, 0, 0, __alpha, r, g, b, 0));
-
-		ImageDataUtil.gaussianBlur(destImage, sourceImage, sourceRect.__toLimeRectangle(), destPoint, __blurX * pixelRatio, __blurY * pixelRatio, __quality, __strength);
+		ImageDataUtil.coloredGaussianBlur(destImage, sourceImage, sourceRect.__toLimeRectangle(), destPoint, __blurX * pixelRatio, __blurY * pixelRatio, __quality, __strength, __color, __alpha);
 	}
 
 	// Get & Set Methods

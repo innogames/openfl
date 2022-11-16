@@ -1,17 +1,18 @@
 package lime.graphics.utils;
 
-import openfl.geom.Point;
 import haxe.io.Bytes;
+import js.lib.Float32Array;
 import lime.graphics.Image;
 import lime.graphics.ImageBuffer;
 import lime.graphics.PixelFormat;
+import lime.math.ColorMatrix;
+import lime.math.Rectangle;
 import lime.math.color.ARGB;
 import lime.math.color.BGRA;
 import lime.math.color.RGBA;
-import lime.math.ColorMatrix;
-import lime.math.Rectangle;
-import openfl.utils.Endian;
 import lime.utils.UInt8Array;
+import openfl.geom.Point;
+import openfl.utils.Endian;
 
 @:access(lime.graphics.ImageBuffer)
 @:access(lime.math.color.RGBA)
@@ -421,8 +422,50 @@ class ImageDataUtil {
 		image.version++;
 	}
 
-	public static function gaussianBlur(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, blurX:Float = 4, blurY:Float = 4,
-			quality:Int = 1, strength:Float = 1) {
+	static var __tempColorMatrix:Float32Array;
+
+	public static function coloredGaussianBlur(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, blurX:Float, blurY:Float,
+		quality:Int, strength:Float, color:Int, alpha:Float) {
+
+		var sourcePremultiplied = sourceImage.buffer.premultiplied;
+		if (sourcePremultiplied) {
+			unmultiplyAlpha(sourceImage);
+		}
+
+		var r = (color >> 16) & 0xFF;
+		var g = (color >> 8) & 0xFF;
+		var b = color & 0xFF;
+		if (__tempColorMatrix == null) __tempColorMatrix = new Float32Array(20);
+		__tempColorMatrix[4] = r / 255;
+		__tempColorMatrix[9] = g / 255;
+		__tempColorMatrix[14] = b / 255;
+		__tempColorMatrix[18] = alpha;
+		colorTransform(sourceImage, null, __tempColorMatrix);
+
+		_gaussianBlur(image, sourceImage, sourceRect, destPoint, blurX, blurY, quality, strength);
+
+		if (sourcePremultiplied) {
+			multiplyAlpha(sourceImage);
+		}
+	}
+
+	public static function gaussianBlur(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, blurX:Float, blurY:Float,
+		quality:Int, strength:Float) {
+
+		var sourcePremultiplied = sourceImage.buffer.premultiplied;
+		if (sourcePremultiplied) {
+			unmultiplyAlpha(sourceImage);
+		}
+
+		_gaussianBlur(image, sourceImage, sourceRect, destPoint, blurX, blurY, quality, strength);
+
+		if (sourcePremultiplied) {
+			multiplyAlpha(sourceImage);
+		}
+	}
+
+	static function _gaussianBlur(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, blurX:Float, blurY:Float,
+			quality:Int, strength:Float) {
 		// TODO: Support sourceRect better, do not modify sourceImage, create C++ implementation for native
 
 		if (image.buffer.premultiplied || sourceImage.buffer.premultiplied) {

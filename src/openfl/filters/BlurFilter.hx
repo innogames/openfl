@@ -39,7 +39,7 @@ final class BlurFilter extends BitmapFilter {
 		var sourceImage = sourceBitmapData.__getImage();
 		var destImage = bitmapData.__getImage();
 
-		ImageDataUtil.gaussianBlur(destImage, sourceImage, sourceRect.__toLimeRectangle(), destPoint, __blurX * pixelRatio, __blurY * pixelRatio, __quality);
+		ImageDataUtil.gaussianBlur(destImage, sourceImage, sourceRect.__toLimeRectangle(), destPoint, __blurX * pixelRatio, __blurY * pixelRatio, __quality, 1);
 	}
 
 	// Get & Set Methods
