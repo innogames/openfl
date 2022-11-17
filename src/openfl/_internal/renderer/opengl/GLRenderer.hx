@@ -34,7 +34,6 @@ class GLRenderer {
 	var _viewportWidth:Int;
 	var _viewportHeight:Int;
 	var _currentFramebuffer:Framebuffer;
-	var _oldBatcherViewport:Rectangle;
 
 	function _setViewport(x:Int, y:Int, width:Int, height:Int) {
 		_viewportX = x;
@@ -111,11 +110,8 @@ class GLRenderer {
 		var oldRenderToTexture = renderToTexture;
 
 		// preserve current batcher viewport as well as it can be different from GL viewport, when Starling is involved...
-		if (_oldBatcherViewport == null) {
-			_oldBatcherViewport = renderSession.batcher.viewport.clone();
-		} else {
-			_oldBatcherViewport.copyFrom(renderSession.batcher.viewport);
-		}
+		var oldBatcherViewport = @:privateAccess Rectangle.__pool.get();
+		oldBatcherViewport.copyFrom(renderSession.batcher.viewport);
 
 		renderSession.pixelRatio = pixelRatio;
 		renderToTextureDisplayMatrix.a = renderToTextureDisplayMatrix.d = pixelRatio;
@@ -150,7 +146,8 @@ class GLRenderer {
 		renderSession.allowSmoothing = oldSmoothing;
 		renderSession.clearRenderDirty = oldClearRenderDirty;
 		renderSession.batcher.projectionMatrix = oldBatcherProjectionMatrix;
-		renderSession.batcher.setViewport(_oldBatcherViewport.x, _oldBatcherViewport.y, _oldBatcherViewport.width, _oldBatcherViewport.height);
+		renderSession.batcher.setViewport(oldBatcherViewport.x, oldBatcherViewport.y, oldBatcherViewport.width, oldBatcherViewport.height);
+		@:privateAccess Rectangle.__pool.release(oldBatcherViewport);
 		renderSession.blendModeManager.setBlendMode(oldBlendMode);
 		renderSession.shaderManager.setShader(oldShader);
 		renderSession.maskManager.resume(oldStencilReference);
