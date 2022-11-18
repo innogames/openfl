@@ -427,51 +427,54 @@ class ImageDataUtil {
 	public static function coloredGaussianBlur(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, blurX:Float, blurY:Float,
 		quality:Int, strength:Float, color:Int, alpha:Float) {
 
-		var sourcePremultiplied = sourceImage.buffer.premultiplied;
-		if (sourcePremultiplied) {
-			unmultiplyAlpha(sourceImage);
-		}
+		withNonMultipliedAlpha(image, sourceImage, () -> {
+			var r = (color >> 16) & 0xFF;
+			var g = (color >> 8) & 0xFF;
+			var b = color & 0xFF;
+			if (__tempColorMatrix == null) __tempColorMatrix = new Float32Array(20);
+			__tempColorMatrix[4] = r / 255;
+			__tempColorMatrix[9] = g / 255;
+			__tempColorMatrix[14] = b / 255;
+			__tempColorMatrix[18] = alpha;
+			colorTransform(sourceImage, null, __tempColorMatrix);
 
-		var r = (color >> 16) & 0xFF;
-		var g = (color >> 8) & 0xFF;
-		var b = color & 0xFF;
-		if (__tempColorMatrix == null) __tempColorMatrix = new Float32Array(20);
-		__tempColorMatrix[4] = r / 255;
-		__tempColorMatrix[9] = g / 255;
-		__tempColorMatrix[14] = b / 255;
-		__tempColorMatrix[18] = alpha;
-		colorTransform(sourceImage, null, __tempColorMatrix);
-
-		_gaussianBlur(image, sourceImage, sourceRect, destPoint, blurX, blurY, quality, strength);
-
-		if (sourcePremultiplied) {
-			multiplyAlpha(sourceImage);
-		}
+			_gaussianBlur(image, sourceImage, sourceRect, destPoint, blurX, blurY, quality, strength);
+		});
 	}
 
 	public static function gaussianBlur(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, blurX:Float, blurY:Float,
 		quality:Int, strength:Float) {
 
+		withNonMultipliedAlpha(image, sourceImage, () -> {
+			_gaussianBlur(image, sourceImage, sourceRect, destPoint, blurX, blurY, quality, strength);
+		});
+	}
+
+	static extern inline function withNonMultipliedAlpha(destImage:Image, sourceImage:Image, f:()->Void) {
+		// TODO: Better handling of premultiplied alpha
+
 		var sourcePremultiplied = sourceImage.buffer.premultiplied;
 		if (sourcePremultiplied) {
 			unmultiplyAlpha(sourceImage);
 		}
+		var destPremultiplied = sourceImage.buffer.premultiplied;
+		if (destPremultiplied) {
+			unmultiplyAlpha(destImage);
+		}
 
-		_gaussianBlur(image, sourceImage, sourceRect, destPoint, blurX, blurY, quality, strength);
+		f();
 
 		if (sourcePremultiplied) {
 			multiplyAlpha(sourceImage);
+		}
+		if (destPremultiplied) {
+			multiplyAlpha(destImage);
 		}
 	}
 
 	static function _gaussianBlur(image:Image, sourceImage:Image, sourceRect:Rectangle, destPoint:Point, blurX:Float, blurY:Float,
 			quality:Int, strength:Float) {
 		// TODO: Support sourceRect better, do not modify sourceImage, create C++ implementation for native
-
-		if (image.buffer.premultiplied || sourceImage.buffer.premultiplied) {
-			// TODO: Better handling of premultiplied alpha
-			throw "Pre-multiplied bitmaps are not supported";
-		}
 
 		function boxesForGauss(sigma:Float, n:Int):Array<Float> {
 			var wIdeal = Math.sqrt((12 * sigma * sigma / n) + 1); // Ideal averaging filter width

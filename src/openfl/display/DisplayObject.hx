@@ -737,49 +737,61 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 						}
 					}
 
-					var bitmapData = __cacheBitmapData;
-					var bitmapData2 = null;
-					var bitmapData3 = null;
+					// TODO: cache BitmapDatas if used repeatedly
+					// TODO: avoid creating html canvas when creating BitmapDatas
 
-					// TODO: Cache if used repeatedly
+					// final result of all the processing, `__cacheBitmapData` will be set to it after filters are done
+					var resultBitmapData = __cacheBitmapData;
 
-					// TODO: avoid creating html canvas
+					// current target to draw filters into, if filters need a second one - allocate a new BitmapData, otherwise use the final result one
+					var targetBitmapData = null;
 					if (needSecondBitmapData) {
-						bitmapData2 = new BitmapData(bitmapData.width, bitmapData.height, true, 0);
-						@:privateAccess bitmapData2.__pixelRatio = pixelRatio;
+						targetBitmapData = new BitmapData(resultBitmapData.width, resultBitmapData.height, true, 0);
+						@:privateAccess targetBitmapData.__pixelRatio = pixelRatio;
 					} else {
-						bitmapData2 = bitmapData;
+						targetBitmapData = resultBitmapData;
 					}
 
+					// temporary BitmapData for preserving filtered object so we can draw it on top of the filter result (e.g. for shadows and glows)
+					var preserveObjectBitmapData = null;
 					if (needCopyOfOriginal) {
-						bitmapData3 = new BitmapData(bitmapData.width, bitmapData.height, true, 0);
-						@:privateAccess bitmapData3.__pixelRatio = pixelRatio;
+						preserveObjectBitmapData = new BitmapData(resultBitmapData.width, resultBitmapData.height, true, 0);
+						@:privateAccess preserveObjectBitmapData.__pixelRatio = pixelRatio;
 					}
 
-					var sourceRect = bitmapData.rect;
+					var sourceRect = resultBitmapData.rect;
 					var destPoint = new Point(); // TODO: ObjectPool
 
 					for (filter in __filters) {
+						// if filter wants to draw original on top, copy current result to a temporary BitmapData.
 						if (filter.__preserveObject) {
-							bitmapData3.copyPixels(bitmapData, bitmapData.rect, destPoint);
+							preserveObjectBitmapData.copyPixels(resultBitmapData, resultBitmapData.rect, destPoint);
 						}
 
-						filter.__applyFilter(bitmapData2, bitmapData, sourceRect, destPoint);
+						// apply the filters, drawing current resul object into target BitmapData
+						filter.__applyFilter(targetBitmapData, resultBitmapData, sourceRect, destPoint);
 
+						// if filter wants to draw original on top, do it now, after filter is applied in the target BitmapData
 						if (filter.__preserveObject) {
-							bitmapData2.draw(bitmapData3, null, transform.colorTransform);
+							targetBitmapData.draw(preserveObjectBitmapData, null, transform.colorTransform);
 						}
+
+						// reset the dirty flag (TODO: what if the same filter instance is used for multiple objects?)
 						filter.__renderDirty = false;
 
+						// if any of the filters needed a second (temporary) target BitmapData, this is where they drew their result
+						// so that target BitmapData becomes the current "result" bitmapdata, and the previous result BitmapData can
+						// be reused as a temporary second BitmapData, so we simply swap them
 						if (needSecondBitmapData) {
-							var cacheBitmap = bitmapData;
-							bitmapData = bitmapData2;
-							bitmapData2 = cacheBitmap;
+							var tmp = resultBitmapData;
+							resultBitmapData = targetBitmapData;
+							targetBitmapData = tmp;
 						}
 					}
 
-					__cacheBitmapData = bitmapData;
-					__cacheBitmap.bitmapData = bitmapData;
+					// finally, set the final result BitmapData as our cache
+					__cacheBitmapData = resultBitmapData;
+					__cacheBitmap.bitmapData = resultBitmapData;
 				}
 
 				__cacheBitmapRender = false;
