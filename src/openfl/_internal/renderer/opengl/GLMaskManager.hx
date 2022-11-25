@@ -205,9 +205,6 @@ class GLMaskManager {
 }
 
 class GLMaskShader extends Shader {
-	// TODO: because our stencil masking is binary (we either discard or not, we don't use alpha values from the mask),
-	// so we cannot achieve smooth mask borders, which is visible when e.g. rendering rounded masks from shapes
-	// we set the check for discard to `color.a < 0.5` instead of `== 0` to at least not include masked pixels that are "transparent enough" in the mask
 	override function __getGlFragmentSource() return "
 		varying vec2 vTexCoord;
 
@@ -217,7 +214,7 @@ class GLMaskShader extends Shader {
 
 			vec4 color = texture2D (uImage0, vTexCoord);
 
-			if (color.a < 0.5) {
+			if (color.a == 0.0) {
 
 				discard;
 
