@@ -50,7 +50,11 @@ import openfl.net.URLRequest;
 	}
 
 	public static function getTimer():Int {
+		#if !nodejs
 		return Std.int(Browser.window.performance.now());
+		#else
+		return Std.int(js.Node.process.uptime() * 1000);
+		#end
 	}
 
 	public static function getURL(request:URLRequest, target:String = null):Void {
