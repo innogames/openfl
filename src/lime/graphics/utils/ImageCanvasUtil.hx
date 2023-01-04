@@ -134,9 +134,9 @@ class ImageCanvasUtil {
 			if (!image.transparent) {
 				if (!image.transparent)
 					buffer.__srcCanvas.setAttribute("moz-opaque", "true");
-				buffer.__srcContext = buffer.__srcCanvas.getContext("2d", {alpha: false});
+				buffer.__srcContext = buffer.__srcCanvas.getContext("2d", {alpha: false, willReadFrequently: true});
 			} else {
-				buffer.__srcContext = buffer.__srcCanvas.getContext("2d");
+				buffer.__srcContext = buffer.__srcCanvas.getContext("2d", {willReadFrequently: true});
 			}
 
 			openfl._internal.renderer.canvas.CanvasSmoothing.setEnabled(buffer.__srcContext, false);
