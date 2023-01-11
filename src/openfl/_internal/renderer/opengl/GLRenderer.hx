@@ -129,10 +129,13 @@ class GLRenderer {
 		gl.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, texture, 0);
 
 		// TODO: only create if there are masks inside the rendered object!
-		var stencilBuffer = gl.createRenderbuffer();
-		gl.bindRenderbuffer(GL.RENDERBUFFER, stencilBuffer);
-		gl.renderbufferStorage(GL.RENDERBUFFER, GL.STENCIL_INDEX8, width, height);
-		gl.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.STENCIL_ATTACHMENT, GL.RENDERBUFFER, stencilBuffer);
+		// NOTE: we don't really need depth, but webgl spec doesn't require just color+stencil to work,
+		// and we had actual issues with that on some hardware/os/drivers/browser combinations (see FOE-74779)
+		// on the other hand, color + depth_stencil is specified and required to work (and it's also used in GLContext3D)
+		var depthStencilBuffer = gl.createRenderbuffer();
+		gl.bindRenderbuffer(GL.RENDERBUFFER, depthStencilBuffer);
+		gl.renderbufferStorage(GL.RENDERBUFFER, GL.DEPTH_STENCIL, width, height);
+		gl.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.DEPTH_STENCIL_ATTACHMENT, GL.RENDERBUFFER, depthStencilBuffer);
 		gl.bindRenderbuffer(GL.RENDERBUFFER, null);
 
 		f(renderSession);
@@ -153,7 +156,7 @@ class GLRenderer {
 		renderSession.maskManager.resume(oldStencilReference);
 		_bindFramebuffer(oldFramebuffer);
 		gl.deleteFramebuffer(framebuffer);
-		gl.deleteRenderbuffer(stencilBuffer);
+		gl.deleteRenderbuffer(depthStencilBuffer);
 	}
 
 	public function clear():Void {
