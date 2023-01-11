@@ -86,6 +86,7 @@ class Stage3D extends EventDispatcher {
 	private function __loseContext():Void {
 		if (context3D != null) {
 			__contextRequested = true; // because we want to dispatch `context3DCreate` on restore
+			context3D.dispose();
 		}
 
 		context3D = null;

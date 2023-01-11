@@ -194,7 +194,8 @@ class GLContext3D {
 	}
 
 	public static function dispose(context:Context3D, recreate:Bool = true):Void {
-		// TODO
+		// starling and some other code checks for this, so let's try maintaining compatibility with Flash here
+		context.driverInfo = "Disposed";
 	}
 
 	@:access(openfl.display.BitmapData.__getImage)

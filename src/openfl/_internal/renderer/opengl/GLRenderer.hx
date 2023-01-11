@@ -64,10 +64,6 @@ class GLRenderer {
 			renderSession = new GLRenderSession(this, gl, maxTexturesLimit);
 		}
 
-		if (stage.stage3Ds[0].context3D == null) {
-			stage.stage3Ds[0].__createContext(stage, renderSession);
-		}
-
 		var width = Std.int(stage.window.width * stage.window.scale);
 		var height = Std.int(stage.window.height * stage.window.scale);
 

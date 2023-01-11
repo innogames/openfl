@@ -477,6 +477,11 @@ class Stage extends DisplayObjectContainer {
 
 	private function __createRenderer():Void {
 		__renderer = new GLRenderer(this, window.renderer.context);
+		if (stage3Ds[0].context3D == null) {
+			// since this dispatches and potentially runs custom app-specific code (e.g. starling),
+			// make sure this is run after __renderer is set, so that code can work with the openfl API properly
+			stage3Ds[0].__createContext(this, @:privateAccess __renderer.renderSession);
+		}
 	}
 
 	private function __dispatchStack(event:Event, stack:Array<DisplayObject>):Void {
