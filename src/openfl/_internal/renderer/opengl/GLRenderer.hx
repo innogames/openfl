@@ -105,6 +105,11 @@ class GLRenderer {
 		var oldFramebuffer = _currentFramebuffer;
 		var oldRenderToTexture = renderToTexture;
 
+		// When stencilReference in GLMaskManager is 0(no masking in display list rendering), the stencil test enabled from Starling rendering will not be disabled with renderSession.maskManager.suspend() call.
+		// Hence here we explicitly check if it is enabled, disable it if it is and restore its state later after the renedering to texture is done.
+		var oldStencilTestEnabled = gl.isEnabled(GL.STENCIL_TEST);
+		if (oldStencilTestEnabled) gl.disable(GL.STENCIL_TEST);
+
 		// preserve current batcher viewport as well as it can be different from GL viewport, when Starling is involved...
 		var oldBatcherViewport = @:privateAccess Rectangle.__pool.get();
 		oldBatcherViewport.copyFrom(renderSession.batcher.viewport);
@@ -150,6 +155,7 @@ class GLRenderer {
 		renderSession.blendModeManager.setBlendMode(oldBlendMode);
 		renderSession.shaderManager.setShader(oldShader);
 		renderSession.maskManager.resume(oldStencilReference);
+		if (oldStencilTestEnabled) gl.enable(GL.STENCIL_TEST);
 		_bindFramebuffer(oldFramebuffer);
 		gl.deleteFramebuffer(framebuffer);
 		gl.deleteRenderbuffer(depthStencilBuffer);
