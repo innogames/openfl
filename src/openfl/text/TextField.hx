@@ -148,7 +148,7 @@ class TextField extends InteractiveObject {
 		__updateLayout();
 
 		for (group in __textEngine.layoutGroups) {
-			if (charIndex >= group.startIndex && charIndex <= group.endIndex) {
+			if (charIndex >= group.startIndex && charIndex < group.endIndex) {
 				try {
 					var x = group.offsetX;
 
