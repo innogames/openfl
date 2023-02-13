@@ -104,6 +104,7 @@ class CanvasTextField {
 					}
 
 					var advance;
+					var cursorWasDrawn = false;
 
 					for (group in textEngine.layoutGroups) {
 						if (group.lineIndex < textField.scrollV - 1)
@@ -135,9 +136,13 @@ class CanvasTextField {
 
 						if (textField.__caretIndex > -1 && textEngine.selectable) {
 							if (textField.__selectionIndex == textField.__caretIndex) {
-								if (textField.__showCursor
+								if (!cursorWasDrawn && textField.__showCursor
 									&& group.startIndex <= textField.__caretIndex
 									&& group.endIndex >= textField.__caretIndex) {
+
+									// only draw cursor on the first group that contains the caret index
+									cursorWasDrawn = true;
+
 									advance = 0.0;
 
 									for (i in 0...(textField.__caretIndex - group.startIndex)) {
@@ -178,8 +183,8 @@ class CanvasTextField {
 
 								start = textField.getCharBoundaries(selectionStart);
 
-								if (selectionEnd >= textEngine.text.length) {
-									end = textField.getCharBoundaries(textEngine.text.length - 1);
+								if (selectionEnd >= group.endIndex) {
+									end = textField.getCharBoundaries(group.endIndex - 1);
 									end.x += end.width + 2;
 								} else {
 									end = textField.getCharBoundaries(selectionEnd);
