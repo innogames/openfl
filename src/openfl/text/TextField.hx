@@ -481,8 +481,10 @@ class TextField extends InteractiveObject {
 	public function setSelection(beginIndex:Int, endIndex:Int) {
 		__selectionIndex = beginIndex;
 		__caretIndex = endIndex;
-		__stopCursorTimer();
-		__startCursorTimer();
+		if (__inputEnabled) {
+			__stopCursorTimer();
+			__startCursorTimer();
+		}
 	}
 
 	public function setTextFormat(format:TextFormat, beginIndex:Int = 0, endIndex:Int = 0):Void {
