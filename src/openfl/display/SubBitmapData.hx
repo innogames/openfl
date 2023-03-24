@@ -472,15 +472,11 @@ class SubBitmapData extends BitmapData {
 		if (__rotated) {
 			/*
 			TBD
-			var u0 = (__texX + __texWidth - top + __offsetY) / __parentBitmap.width;
-			var v0 = (__texY + left - __offsetX) / __parentBitmap.height;
-			var u1 = (__texX + __texWidth - bottom + __offsetY) / __parentBitmap.width;
-			var v1 = (__texY + right - __offsetX) / __parentBitmap.height;
-			result.u0 = u0;
-			result.v0 = v0;
-			result.u1 = u1;
-			result.v1 = v1;
 			*/
+			offsets.u0 = 0;
+			offsets.v0 = 0;
+			offsets.u1 = 0;
+			offsets.v1 = 0;
 		} else {
 
 
