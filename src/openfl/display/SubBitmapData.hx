@@ -410,6 +410,9 @@ class SubBitmapData extends BitmapData {
 		var bottom = uvHeight * height;
 
 		if (__rotated) {
+			/*
+			TBD
+			*/
 			var u0 = (__texX + __texWidth - top + __offsetY) / __parentBitmap.width;
 			var v0 = (__texY + left - __offsetX) / __parentBitmap.height;
 			var u1 = (__texX + __texWidth - bottom + __offsetY) / __parentBitmap.width;
@@ -423,10 +426,30 @@ class SubBitmapData extends BitmapData {
 			result.u3 = u1;
 			result.v3 = v0;
 		} else {
-			var u0 = (__texX + left - __offsetX) / __parentBitmap.width;
+			/*var u0 = (__texX + left - __offsetX) / __parentBitmap.width;
 			var v0 = (__texY + top - __offsetY) / __parentBitmap.height;
 			var u1 = (__texX + right - __offsetX) / __parentBitmap.width;
 			var v1 = (__texY + bottom - __offsetY) / __parentBitmap.height;
+			*/
+
+			// adjust the uvs in case we have subbitmap data with trimmed alpha on the texture atlas
+			var u0 = if (left < __offsetX) __texX else
+							if (left - __offsetX > __texWidth) __texX + __texWidth else __texX + left - __offsetX;
+
+			var v0 = if (top < __offsetY) __texY else
+							if (top - __offsetY > __texHeight) __texY + __texHeight else __texY + top - __offsetY;
+
+			var u1 = if (right < __offsetX) __texX else
+							if (right - __offsetX > __texWidth) __texX + __texWidth else __texX + right - __offsetX;
+
+			var v1 = if (bottom < __offsetY) __texY else
+							if (bottom - __offsetY > __texHeight) __texY + __texHeight else __texY + bottom - __offsetY;
+
+			u0 \= __parentBitmap.width;
+			v0 \= __parentBitmap.height;
+			u1 \= __parentBitmap.width;
+			v1 \= __parentBitmap.height;
+
 			result.u0 = u0;
 			result.v0 = v0;
 			result.u1 = u1;
@@ -435,6 +458,44 @@ class SubBitmapData extends BitmapData {
 			result.v2 = v1;
 			result.u3 = u0;
 			result.v3 = v1;
+		}
+	}
+
+	override function __getTexturePositionOffset(uvX:Float, uvY:Float, uvWidth:Float, uvHeight:Float, offsets:TextureRegionResult) {
+		// translate (back) to pixel coordinates inside the SubBitmapData region
+		if (__rotated) {
+			/*
+			TBD
+			var u0 = (__texX + __texWidth - top + __offsetY) / __parentBitmap.width;
+			var v0 = (__texY + left - __offsetX) / __parentBitmap.height;
+			var u1 = (__texX + __texWidth - bottom + __offsetY) / __parentBitmap.width;
+			var v1 = (__texY + right - __offsetX) / __parentBitmap.height;
+			result.u0 = u0;
+			result.v0 = v0;
+			result.u1 = u1;
+			result.v1 = v1;
+			*/
+		} else {
+
+
+			// find the position offets in case we have subbitmap data with trimmed alpha on the texture atlas
+			var u0 = if (left < __offsetX) __offsetX - left else
+							if (left - __offsetX > __texWidth) __offsetX + __texWidth - left else 0;
+
+			var v0 = if (top < __offsetY) __offsetY - top else
+							if (top - __offsetY > __texHeight) __offsetY + __texHeight - top else 0;
+
+			var u1 = if (right < __offsetX) __offsetX - right else
+							if (right - __offsetX > __texWidth) __offsetX + __texWidth - right else 0;
+
+			var v1 = if (bottom < __offsetY) __offsetY - bottom else
+							if (bottom - __offsetY > __texHeight) __offsetY + __texHeight - bottom else 0;
+
+
+			offsets.u0 = u0;
+			offsets.v0 = v0;
+			offsets.u1 = u1;
+			offsets.v1 = v1;
 		}
 	}
 

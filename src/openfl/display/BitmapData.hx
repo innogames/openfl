@@ -699,6 +699,13 @@ class BitmapData implements IBitmapDrawable {
 		result.v3 = uvHeight;
 	}
 
+	override function __getTexturePositionOffset(uvX:Float, uvY:Float, uvWidth:Float, uvHeight:Float, offsets:TextureRegionResult) {
+		offsets.u0 = 0;
+		offsets.v0 = 0;
+		offsets.u1 = 0;
+		offsets.v1 = 0;
+	}
+
 	public function getColorBoundsRect(mask:Int, color:Int, findColor:Bool = true):Rectangle {
 		if (!readable)
 			return new Rectangle(0, 0, width, height);
