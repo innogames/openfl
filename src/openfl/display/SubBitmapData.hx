@@ -463,6 +463,12 @@ class SubBitmapData extends BitmapData {
 
 	override function __getTexturePositionOffset(uvX:Float, uvY:Float, uvWidth:Float, uvHeight:Float, offsets:TextureRegionResult) {
 		// translate (back) to pixel coordinates inside the SubBitmapData region
+		var left = uvX * width;
+		var right = uvWidth * width;
+		var top = uvY * height;
+		var bottom = uvHeight * height;
+
+		// translate (back) to pixel coordinates inside the SubBitmapData region
 		if (__rotated) {
 			/*
 			TBD
