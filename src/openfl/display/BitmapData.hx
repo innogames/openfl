@@ -699,7 +699,7 @@ class BitmapData implements IBitmapDrawable {
 		result.v3 = uvHeight;
 	}
 
-	override function __getTexturePositionOffset(uvX:Float, uvY:Float, uvWidth:Float, uvHeight:Float, offsets:TextureRegionResult) {
+	public function __getTexturePositionOffset(uvX:Float, uvY:Float, uvWidth:Float, uvHeight:Float, offsets:TextureRegionResult) {
 		offsets.u0 = 0;
 		offsets.v0 = 0;
 		offsets.u1 = 0;
