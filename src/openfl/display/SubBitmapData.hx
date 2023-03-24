@@ -445,10 +445,10 @@ class SubBitmapData extends BitmapData {
 			var v1 = if (bottom < __offsetY) __texY else
 							if (bottom - __offsetY > __texHeight) __texY + __texHeight else __texY + bottom - __offsetY;
 
-			u0 \= __parentBitmap.width;
-			v0 \= __parentBitmap.height;
-			u1 \= __parentBitmap.width;
-			v1 \= __parentBitmap.height;
+			u0 /= __parentBitmap.width;
+			v0 /= __parentBitmap.height;
+			u1 /= __parentBitmap.width;
+			v1 /= __parentBitmap.height;
 
 			result.u0 = u0;
 			result.v0 = v0;
