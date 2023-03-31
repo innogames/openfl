@@ -140,6 +140,9 @@ class Bitmap extends DisplayObject {
 	}
 
 	private override function __renderGL(renderSession:GLRenderSession):Void {
+		if (!__renderable || __worldAlpha <= 0)
+			return;
+
 		__updateCacheBitmap(renderSession, false);
 
 		if (__cacheBitmap != null && !__cacheBitmapRender) {
