@@ -5,6 +5,7 @@ import haxe.Timer;
 import js.Browser;
 import js.html.CanvasElement;
 import js.html.ClipboardEvent;
+import js.html.CompositionEvent;
 import js.html.DragEvent;
 import js.html.Element;
 import js.html.EventTarget;
@@ -161,6 +162,17 @@ class HTML5Window {
 		});
 	}
 
+	var imeCompositionActive = false;
+
+	function handleCompositionstartEvent(event:CompositionEvent) {
+		imeCompositionActive = true;
+	}
+
+	function handleCompositionendEvent(event:CompositionEvent) {
+		imeCompositionActive = false;
+		handleInputEvent(null);
+	}
+
 	public function getEnableTextEvents():Bool {
 		return enableTextEvents;
 	}
@@ -281,6 +293,8 @@ class HTML5Window {
 	}
 
 	private function handleInputEvent(event:InputEvent):Void {
+		if (imeCompositionActive) return;
+
 		// In order to ensure that the browser will fire clipboard events, we always need to have something selected.
 		// Therefore, `value` cannot be "".
 
@@ -622,19 +636,25 @@ class HTML5Window {
 				textInput.addEventListener('cut', handleCutEvent, true);
 				textInput.addEventListener('copy', handleCopyEvent, true);
 				textInput.addEventListener('paste', handlePasteEvent, true);
+				textInput.addEventListener('compositionstart', handleCompositionstartEvent, true);
+				textInput.addEventListener('compositionend', handleCompositionendEvent, true);
 			}
 
 			textInput.focus();
 			textInput.select();
 		} else {
 			if (textInput != null) {
+				// call blur() before removing the compositionend listener
+				// to ensure that incomplete IME input is committed
+				textInput.blur();
+
 				textInput.removeEventListener('input', handleInputEvent, true);
 				textInput.removeEventListener('blur', handleFocusEvent, true);
 				textInput.removeEventListener('cut', handleCutEvent, true);
 				textInput.removeEventListener('copy', handleCopyEvent, true);
 				textInput.removeEventListener('paste', handlePasteEvent, true);
-
-				textInput.blur();
+				textInput.removeEventListener('compositionstart', handleCompositionstartEvent, true);
+				textInput.removeEventListener('compositionend', handleCompositionendEvent, true);
 			}
 		}
 
