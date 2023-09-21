@@ -91,6 +91,8 @@ class TextField extends InteractiveObject {
 	private var __textEngine:TextEngine;
 	private var __textFormat:TextFormat;
 	private var __forceCachedBitmapUpdate:Bool = false;
+	private var __compositionStartIndex:Int = -1;
+	private var __compositionEndIndex:Int = -1;
 
 	#if (js && html5)
 	private var __rawHtmlText:String;
@@ -663,6 +665,9 @@ class TextField extends InteractiveObject {
 		if (__inputEnabled && stage != null) {
 			stage.window.enableTextEvents = false;
 			stage.window.onTextInput.remove(window_onTextInput);
+			stage.window.onTextCompositionStart.remove(window_onTextCompositionStart);
+			stage.window.onTextCompositionUpdate.remove(window_onTextCompositionUpdate);
+			stage.window.onTextCompositionEnd.remove(window_onTextCompositionEnd);
 			stage.window.onTextPaste.remove(window_onTextPaste);
 			stage.window.onKeyDown.remove(window_onKeyDown);
 			stage.window.onTextCopy.remove(window_onTextCopy);
@@ -703,6 +708,9 @@ class TextField extends InteractiveObject {
 
 				if (!stage.window.onTextInput.has(window_onTextInput)) {
 					stage.window.onTextInput.add(window_onTextInput);
+					stage.window.onTextCompositionStart.add(window_onTextCompositionStart);
+					stage.window.onTextCompositionUpdate.add(window_onTextCompositionUpdate);
+					stage.window.onTextCompositionEnd.add(window_onTextCompositionEnd);
 					stage.window.onTextPaste.add(window_onTextPaste);
 					stage.window.onKeyDown.add(window_onKeyDown);
 					stage.window.onTextCopy.add(window_onTextCopy);
@@ -1742,6 +1750,9 @@ class TextField extends InteractiveObject {
 			__stopTextInput();
 		} else {
 			stage.window.onTextInput.remove(window_onTextInput);
+			stage.window.onTextCompositionStart.remove(window_onTextCompositionStart);
+			stage.window.onTextCompositionUpdate.remove(window_onTextCompositionUpdate);
+			stage.window.onTextCompositionEnd.remove(window_onTextCompositionEnd);
 			stage.window.onTextPaste.remove(window_onTextPaste);
 			stage.window.onKeyDown.remove(window_onKeyDown);
 			stage.window.onTextCopy.remove(window_onTextCopy);
@@ -1930,6 +1941,23 @@ class TextField extends InteractiveObject {
 
 	private function window_onTextInput(value:String):Void {
 		__inputText(value);
+	}
+
+	function window_onTextCompositionStart() {
+		replaceSelectedText("");
+		__compositionStartIndex = __compositionEndIndex = __caretIndex;
+	}
+
+	function window_onTextCompositionUpdate(value:String) {
+		replaceText(__compositionStartIndex, __compositionEndIndex, value);
+		__compositionEndIndex = __compositionStartIndex + value.length;
+		setSelection(__compositionEndIndex, __compositionEndIndex);
+	}
+
+	function window_onTextCompositionEnd() {
+		replaceText(__compositionStartIndex, __compositionEndIndex, "");
+		setSelection(__compositionStartIndex, __compositionStartIndex);
+		__compositionStartIndex = __compositionEndIndex = -1;
 	}
 
 	private function window_onTextPaste(value:String):Void {

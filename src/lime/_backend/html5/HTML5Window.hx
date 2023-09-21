@@ -165,10 +165,18 @@ class HTML5Window {
 	var imeCompositionActive = false;
 
 	function handleCompositionstartEvent(event:CompositionEvent) {
+		parent.onTextCompositionStart.dispatch();
+
 		imeCompositionActive = true;
 	}
 
+	function handleCompositionupdateEvent(event:CompositionEvent) {
+		parent.onTextCompositionUpdate.dispatch(event.data);
+	}
+
 	function handleCompositionendEvent(event:CompositionEvent) {
+		parent.onTextCompositionEnd.dispatch(); // dispatch this before onTextInput, so TextField can remove the current composition text
+
 		imeCompositionActive = false;
 		handleInputEvent(null);
 	}
@@ -637,6 +645,7 @@ class HTML5Window {
 				textInput.addEventListener('copy', handleCopyEvent, true);
 				textInput.addEventListener('paste', handlePasteEvent, true);
 				textInput.addEventListener('compositionstart', handleCompositionstartEvent, true);
+				textInput.addEventListener('compositionupdate', handleCompositionupdateEvent, true);
 				textInput.addEventListener('compositionend', handleCompositionendEvent, true);
 			}
 
@@ -654,6 +663,7 @@ class HTML5Window {
 				textInput.removeEventListener('copy', handleCopyEvent, true);
 				textInput.removeEventListener('paste', handlePasteEvent, true);
 				textInput.removeEventListener('compositionstart', handleCompositionstartEvent, true);
+				textInput.removeEventListener('compositionupdate', handleCompositionupdateEvent, true);
 				textInput.removeEventListener('compositionend', handleCompositionendEvent, true);
 			}
 		}
