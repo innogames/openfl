@@ -178,7 +178,7 @@ class HTML5Window {
 		parent.onTextCompositionEnd.dispatch(); // dispatch this before onTextInput, so TextField can remove the current composition text
 
 		imeCompositionActive = false;
-		handleInputEvent(null);
+		consumeTextInput();
 	}
 
 	public function getEnableTextEvents():Bool {
@@ -302,7 +302,10 @@ class HTML5Window {
 
 	private function handleInputEvent(event:InputEvent):Void {
 		if (imeCompositionActive) return;
+		consumeTextInput();
+	}
 
+	function consumeTextInput() {
 		// In order to ensure that the browser will fire clipboard events, we always need to have something selected.
 		// Therefore, `value` cannot be "".
 
