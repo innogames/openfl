@@ -1950,7 +1950,7 @@ class TextField extends InteractiveObject {
 
 	function window_onTextCompositionUpdate(value:String) {
 		replaceText(__compositionStartIndex, __compositionEndIndex, value);
-		__compositionEndIndex = __compositionStartIndex + value.length;
+		__compositionEndIndex = __compositionStartIndex + (value : UnicodeString).length;
 		setSelection(__compositionEndIndex, __compositionEndIndex);
 	}
 
