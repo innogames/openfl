@@ -38,6 +38,9 @@ class Window {
 	public var onResize = new Event<Int->Int->Void>();
 	public var onRestore = new Event<Void->Void>();
 	public var onTextInput = new Event<String->Void>();
+	public var onTextCompositionStart = new Event<()->Void>();
+	public var onTextCompositionUpdate = new Event<String->Void>();
+	public var onTextCompositionEnd = new Event<()->Void>();
 	public var onTextCopy = new Event<CopyDataProvider->Void>();
 	public var onTextCut = new Event<CopyDataProvider->Void>();
 	public var onTextPaste = new Event<String->Void>();
