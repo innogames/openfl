@@ -439,7 +439,7 @@ class TextField extends InteractiveObject {
 		__ensureCaretVisible();
 	}
 
-	function __replaceText(beginIndex:Int, endIndex:Int, newText:String) {
+	function __replaceText(beginIndex:Int, endIndex:Int, newText:UnicodeString) {
 		if (endIndex < beginIndex || beginIndex < 0 || endIndex > __text.length || newText == null)
 			return;
 
