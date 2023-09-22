@@ -704,7 +704,8 @@ class TextField extends InteractiveObject {
 			stage.window.enableTextEvents = true;
 
 			if (!__inputEnabled) {
-				stage.window.enableTextEvents = true;
+				var globalTransform = __getRenderTransform();
+				stage.window.setTextInputRect(globalTransform.tx, globalTransform.ty, height, width);
 
 				if (!stage.window.onTextInput.has(window_onTextInput)) {
 					stage.window.onTextInput.add(window_onTextInput);

@@ -674,6 +674,21 @@ class HTML5Window {
 		return enableTextEvents = value;
 	}
 
+	public function setTextInputRect(x:Float, y:Float, height:Float, width:Float) {
+		if (textInput == null) {
+			// this should be called after setEnableTextEvents, and ideally be a part of it (but I dont't want to change lots of code right now)
+			return;
+		}
+
+		// we don't change height and instead set the top coordinate to y + height to make the IME popup appear at the bottom left,
+		// because if we set the proper rect, it might happen that the popup will overlap the text, because the input ever only contains
+		// the currently composed part and not the actual text of a TextField, so the system wouldn't know where to place the IME popup correctly
+		// in future we could make TextField call this function with the single-line height and y position where the actual caret is, but it's more involved
+		textInput.style.left = x + "px";
+		textInput.style.top = (y + height) + "px";
+		textInput.style.width = width + "px";
+	}
+
 	public function setFullscreen(value:Bool):Bool {
 		if (value) {
 			if (!requestedFullscreen && !isFullscreen) {
