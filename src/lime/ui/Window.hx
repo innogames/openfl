@@ -93,6 +93,10 @@ class Window {
 		renderer.create();
 	}
 
+	public inline function setTextInputRect(x:Float, y:Float, height:Float, width:Float) {
+		backend.setTextInputRect(x, y, height, width);
+	}
+
 	// Get & Set Methods
 
 	@:noCompletion inline function get_displayWidth():Int {
