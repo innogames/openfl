@@ -97,7 +97,6 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 	private var __worldColorTransform:ColorTransform;
 	private var __worldTransform:Matrix;
 	private var __worldTransformInvalid:Bool;
-	private var __pixelSnapping:PixelSnapping;
 
 	private function new() {
 		super();
@@ -899,28 +898,7 @@ class DisplayObject extends EventDispatcher implements IBitmapDrawable {
 		}
 	}
 
-	private inline function __snapToPixel():Bool {
-		return switch __pixelSnapping {
-			case null | NEVER: false;
-			case ALWAYS: true;
-			case AUTO: Math.abs(__renderTransform.a) == 1 && Math.abs(__renderTransform.d) == 1; // only snap when not scaled/rotated/skewed
-		}
-	}
-
 	// Get & Set Methods
-
-	inline function get_pixelSnapping() {
-		return __pixelSnapping;
-	}
-
-	function set_pixelSnapping(value) {
-		if (__pixelSnapping != value) {
-			__pixelSnapping = value;
-			__setRenderDirty();
-		}
-
-		return value;
-	}
 
 	private function get_alpha():Float {
 		return __alpha;

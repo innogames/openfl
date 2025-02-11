@@ -17,7 +17,6 @@ class Tilemap extends DisplayObject {
 	@:beta public var shader:Shader;
 	public var tileset(get, set):Tileset;
 
-	public var pixelSnapping(get, set):PixelSnapping;
 	public var smoothing:Bool;
 
 	private var __tiles:Vector<Tile>;
@@ -27,14 +26,10 @@ class Tilemap extends DisplayObject {
 	private var __height:Int;
 	private var __width:Int;
 
-	public function new(width:Int, height:Int, tileset:Tileset = null, pixelSnapping:PixelSnapping = null, smoothing:Bool = true) {
+	public function new(width:Int, height:Int, tileset:Tileset = null, smoothing:Bool = true) {
 		super();
 
 		__tileset = tileset;
-
-		if (pixelSnapping == null)
-			pixelSnapping = PixelSnapping.AUTO;
-		__pixelSnapping = pixelSnapping;
 
 		this.smoothing = smoothing;
 

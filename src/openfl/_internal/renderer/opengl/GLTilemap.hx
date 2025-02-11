@@ -40,7 +40,10 @@ class GLTilemap {
 
 		var shader = renderSession.shaderManager.initShader(tilemap.shader);
 
-		var uMatrix = renderer.getMatrix(tilemap.__renderTransform, tilemap.__snapToPixel());
+		// PixelSnapping AUTO is fixed value used for pixel snapping when rendering TileMaps in the latest version of OpenFL 9.4.1.
+		// check -> https://github.com/openfl/openfl/blob/9.4.1/src/openfl/display/_internal/Context3DTilemap.hx#L315
+		var pixelSnappingAUTO = Math.abs(tilemap.__renderTransform.a) == 1 && Math.abs(tilemap.__renderTransform.d) == 1;
+		var uMatrix = renderer.getMatrix(tilemap.__renderTransform, pixelSnappingAUTO);
 		var smoothing = (renderSession.allowSmoothing && tilemap.smoothing);
 
 		var useColorTransform = true || !tilemap.__worldColorTransform.__isDefault();
