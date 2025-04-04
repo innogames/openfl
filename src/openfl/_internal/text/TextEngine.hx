@@ -998,7 +998,7 @@ class TextEngine {
 		return value;
 	}
 
-	private function set_text(value:String):String {
+	private function set_text(value:UnicodeString):UnicodeString {
 		if (value == null) {
 			return text = value;
 		}
