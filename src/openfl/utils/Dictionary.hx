@@ -57,16 +57,16 @@ abstract Dictionary<K, V>(IMap<K, V>) {
 		return new EnumValueMap<K, V>();
 	}
 
+	@:to static function toClassMap<K:Class<Dynamic>, V>(t:IMap<K, V>, weakKeys:Bool):ClassMap<K, V> {
+		return new ClassMap<K, V>();
+	}
+
 	@:to static function toObjectMap<K:{}, V>(t:IMap<K, V>, weakKeys:Bool):ObjectMap<K, V> {
 		return new ObjectMap<K, V>();
 	}
 
 	@:to static function toUtilsObjectMap<K:Object, V>(t:IMap<K, V>, weakKeys:Bool):UtilsObjectMap<K, V> {
 		return new UtilsObjectMap<K, V>();
-	}
-
-	@:to static function toClassMap<K:Class<Dynamic>, V>(t:IMap<K, V>, weakKeys:Bool):ClassMap<K, V> {
-		return new ClassMap<K, V>();
 	}
 
 	@:from static inline function fromStringMap<V>(map:StringMap<V>):Dictionary<String, V> {
@@ -81,15 +81,15 @@ abstract Dictionary<K, V>(IMap<K, V>) {
 		return cast map;
 	}
 
+	@:from static inline function fromClassMap<K:Class<Dynamic>, V>(map:ClassMap<K, V>):Dictionary<K, V> {
+		return cast map;
+	}
+
 	@:from static inline function fromObjectMap<K:{}, V>(map:ObjectMap<K, V>):Dictionary<K, V> {
 		return cast map;
 	}
 
 	@:from static inline function fromUtilsObjectMap<K:Object, V>(map:UtilsObjectMap<K, V>):Dictionary<K, V> {
-		return cast map;
-	}
-
-	@:from static inline function fromClassMap<K:Class<Dynamic>, V>(map:ClassMap<K, V>):Dictionary<K, V> {
 		return cast map;
 	}
 }
