@@ -8,7 +8,7 @@ import openfl.utils.ByteArray;
 
 @:access(openfl.display3D.Context3D)
 final class RectangleTexture extends TextureBase {
-	private function new(context:Context3D, width:Int, height:Int, format:String, optimizeForRenderToTexture:Bool) {
+	private function new(context:Context3D, width:Int, height:Int, format:Context3DTextureFormat, optimizeForRenderToTexture:Bool) {
 		super(context);
 
 		__width = width;

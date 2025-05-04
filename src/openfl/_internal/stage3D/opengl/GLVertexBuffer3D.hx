@@ -15,15 +15,15 @@ class GLVertexBuffer3D {
 	public static function create(vertexBuffer:VertexBuffer3D, renderSession:GLRenderSession, bufferUsage:Context3DBufferUsage) {
 		var gl = renderSession.gl;
 
+		vertexBuffer.__stride = vertexBuffer.__vertexSize * 4;
+
 		vertexBuffer.__id = gl.createBuffer();
 		GLUtils.checkGLError(gl);
-
-		vertexBuffer.__stride = vertexBuffer.__vertexSize * 4;
-		// __memoryUsage = 0;
 
 		vertexBuffer.__usage = (bufferUsage == Context3DBufferUsage.DYNAMIC_DRAW) ? GL.DYNAMIC_DRAW : GL.STATIC_DRAW;
 
 		// __context.__statsIncrement (Context3D.Context3DTelemetry.COUNT_VERTEX_BUFFER);
+		// __memoryUsage = 0;
 	}
 
 	public static function dispose(vertexBuffer:VertexBuffer3D, renderSession:GLRenderSession):Void {
@@ -41,6 +41,9 @@ class GLVertexBuffer3D {
 
 	public static function uploadFromByteArray(vertexBuffer:VertexBuffer3D, renderSession:GLRenderSession, data:ByteArray, byteArrayOffset:Int, startVertex:Int,
 			numVertices:Int):Void {
+		if (data == null)
+			return;
+
 		var offset = byteArrayOffset + startVertex * vertexBuffer.__stride;
 		var length = numVertices * vertexBuffer.__vertexSize;
 
@@ -48,8 +51,6 @@ class GLVertexBuffer3D {
 	}
 
 	public static function uploadFromTypedArray(vertexBuffer:VertexBuffer3D, renderSession:GLRenderSession, data:ArrayBufferView):Void {
-		if (data == null)
-			return;
 		var gl = renderSession.gl;
 
 		gl.bindBuffer(GL.ARRAY_BUFFER, vertexBuffer.__id);
@@ -70,6 +71,7 @@ class GLVertexBuffer3D {
 			numVertices:Int):Void {
 		if (data == null)
 			return;
+
 		var gl = renderSession.gl;
 
 		// TODO: Optimize more
@@ -79,7 +81,6 @@ class GLVertexBuffer3D {
 		var length = start + count;
 
 		var existingFloat32Array = vertexBuffer.__tempFloat32Array;
-
 		if (vertexBuffer.__tempFloat32Array == null || vertexBuffer.__tempFloat32Array.length < count) {
 			vertexBuffer.__tempFloat32Array = new Float32Array(count);
 
