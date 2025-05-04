@@ -26,6 +26,7 @@ class Bitmap extends DisplayObject {
 	private var __bitmapData:BitmapData;
 	private var __bitmapDataUserPrev:Bitmap;
 	private var __bitmapDataUserNext:Bitmap;
+	private var __pixelSnapping:PixelSnapping;
 
 	var __batchQuad:Quad;
 	var __batchQuadDirty:Bool = true;
@@ -134,6 +135,14 @@ class Bitmap extends DisplayObject {
 		return __batchQuad;
 	}
 
+	inline function __snapToPixel():Bool {
+		return switch __pixelSnapping {
+			case null | NEVER: false;
+			case ALWAYS: true;
+			case AUTO: Math.abs(__renderTransform.a) == 1 && Math.abs(__renderTransform.d) == 1; // only snap when not scaled/rotated/skewed
+		}
+	}
+
 	override function __updateTransforms():Void {
 		super.__updateTransforms();
 		__batchQuadDirty = true;
@@ -227,6 +236,19 @@ class Bitmap extends DisplayObject {
 		__setBitmapDataDirty();
 
 		return __bitmapData;
+	}
+
+	inline function get_pixelSnapping() {
+		return __pixelSnapping;
+	}
+
+	function set_pixelSnapping(value) {
+		if (__pixelSnapping != value) {
+			__pixelSnapping = value;
+			__setRenderDirty();
+		}
+
+		return value;
 	}
 
 	private override function get_height():Float {
